@@ -85,6 +85,38 @@ def main() -> int:
         if not ok:
             FEJL.append("domfiler")
 
+        forvent("gentaget dom efter stop ignoreres",
+                kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": dom(L, "afvist", blok_fund, "byg-sager/2026-09-25-bad")}, env), "tilladt")
+        ok = len(list((sag / "kvalitet").glob("*.json"))) == 3
+        print(("OK   " if ok else "FEJL ") + "gentaget dom efter stop giver ingen ny domfil")
+        if not ok:
+            FEJL.append("gentaget domfil")
+
+        # Gentaget dom fra en genoptaget kontrolagent må ikke tælle som næste forsøg
+        L3 = "2026-09-25-bad/vvs/03"
+        kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L3}"}}, env)
+        kald("pretool", {**S, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {L3}"}}, env)
+        gammel = dom(L3, "afvist", blok_fund, "byg-sager/2026-09-25-bad").replace('"dom":', '"forsoeg": 1, "dom":')
+        kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": gammel}, env)
+        kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L3}"}}, env)
+        kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": gammel}, env)
+        forvent("gentaget dom før kontrolkald registreres ikke",
+                kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L3}"}}, env), "afvist")
+        kald("pretool", {**S, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {L3}"}}, env)
+        kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": gammel}, env)
+        forvent("dom med forkert forsøgsnummer registreres ikke",
+                kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L3}"}}, env), "afvist")
+        ok = not (sag / "kvalitet" / "2026-09-25-bad__vvs__03__forsoeg-2.json").exists()
+        print(("OK   " if ok else "FEJL ") + "ingen domfil for forsøg 2 ved forældet dom")
+        if not ok:
+            FEJL.append("forældet domfil")
+        ny = dom(L3, "godkendt", [], "byg-sager/2026-09-25-bad").replace('"dom":', '"forsoeg": 2, "dom":')
+        kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": ny}, env)
+        ok = (sag / "kvalitet" / "2026-09-25-bad__vvs__03__forsoeg-2.json").exists()
+        print(("OK   " if ok else "FEJL ") + "dom med rigtigt forsøgsnummer registreres")
+        if not ok:
+            FEJL.append("aktuel dom")
+
         L2 = "2026-09-25-bad/vvs/02"
         kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L2}"}}, env)
         kald("pretool", {**S, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {L2}"}}, env)

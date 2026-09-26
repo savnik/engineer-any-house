@@ -44,6 +44,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 8. **Sidste forsøg (3 af 3):** send kun de blokerende fund (kritisk/væsentlig) og de mindre fund, der står i dommen, retur. Kontrollens usikkerheder og bemærkninger uden fund-ID (fx om den samlede budgetramme) må ikke udvide leverancen i sidste forsøg – flyt dem til projektlederens integration.
 9. **Koordineringsbeslutninger undervejs:** en beslutning, der berører flere fag, skrives i beslutningsloggen og gives med i alle berørte fags næste fagkald eller retur – ikke kun til det fag, der udløste den.
 10. **Baggrundsagenter:** kører kontrolagenten i baggrunden, kan dens rapport nå frem, før hooken har registreret dommen (hooken sender først en dom uden JSON retur én gang). Vent, til leverancen ikke længere står som `under_kontrol` i `kontrol_gate.py status`, før næste fagkald – ellers afviser hooken kaldet.
+11. **Retur og genoptagelse:** Send altid fundene retur til fagagenten med et nyt kald i Agent-værktøjet (skabelonen i afsnit 4). Genoptager du fagagenten med SendMessage, registrerer hooken ikke forsøget. Er en dom fra en baggrundskørsel ikke registreret, må kontrolagenten gerne genoptages, så den gentager JSON-dommen, men kun mens leverancen står som `under_kontrol`. Hooken ignorerer domme, der er gentaget eller forældede (status er ikke `under_kontrol`, eller dommens `forsoeg` passer ikke), så de ikke tæller som et nyt forsøg.
 
 ## 3. Skabelon – kontrolkald
 ```

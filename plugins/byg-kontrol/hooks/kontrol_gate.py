@@ -354,6 +354,16 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
                 fejl = [f"leverance_id '{lev}' matcher ikke en registreret leverance – brug præcis ID'et fra prompten."]
             elif e.get("fag") != fag:
                 fejl = [f"leverance_id '{lev}' tilhører faget '{e.get('fag')}', ikke '{fag}'."]
+            else:
+                # Gentaget eller forældet dom (fx fra en genoptaget kontrolagent) registreres ikke
+                forældet = None
+                if e.get("status") != "under_kontrol":
+                    forældet = f"status er '{e.get('status')}', ikke 'under_kontrol'"
+                elif str(dom.get("forsoeg") or "").strip().isdigit() and int(dom["forsoeg"]) != int(e.get("forsoeg", 0)):
+                    forældet = f"dommen gælder forsøg {dom['forsoeg']}, men leverancen er i forsøg {e.get('forsoeg')}"
+                if forældet:
+                    log(d, haendelse="forældet_dom", leverance=lev, agent=at, grund=forældet)
+                    return
         if fejl:
             log(d, haendelse="ugyldig_dom", agent=at, fejl=fejl, gentaget=bool(inp.get("stop_hook_active")))
             if not inp.get("stop_hook_active"):
