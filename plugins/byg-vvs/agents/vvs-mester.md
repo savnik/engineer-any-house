@@ -7,7 +7,8 @@ description: >-
   VVS-spørgsmål, projektering, fejlfinding, tilbudsvurdering og second opinion –
   og når projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: blue
 memory: user
 ---

@@ -8,7 +8,7 @@
 | Selvbærende | Hvert fag-plugin virker alene (med `byg-kontrol`); skill-fallback til claude.ai uden subagenter |
 | Opbygge viden over tid, forankret til hurtig genbrug | Fire videnlag: kanon, agenthukommelse, videnbank, sagsmappe; `/byg:erfaring` og forankringskø |
 | Modsvarende kvalitetskontrolagent pr. fag | `byg-kontrol`: én kontrolagent pr. fag + `projekt-kontrol` |
-| Hårdt og kritisk review, adskilt fra den udførende | Egen agent, egen model (Opus vs. Sonnet), egen kontrolviden, kun læse-/søgeværktøjer, ingen hukommelse, ingen adgang til fagagentens ræsonnement; efterprøvning mod primærkilder |
+| Hårdt og kritisk review, adskilt fra den udførende | Egen agent, egen kontrolviden, kun læse-/søgeværktøjer, ingen hukommelse, ingen adgang til fagagentens ræsonnement; efterprøvning mod primærkilder |
 | Projektlederen sikrer kontrol af hver leverance og looper til godkendelse | Skill `kvalitetskontrol` + hooks (PreToolUse, SubagentStop, Stop) |
 | Maks. 3 forsøg, derefter stop og root cause-analyse | Hook-tilstand pr. leverance-ID; 4. forsøg afvises; Stop blokeres indtil RCA-fil findes; RCA-skabelon med årsagskategorier K1–K7 og læring tilbage |
 
@@ -19,8 +19,9 @@ byg ─────────────────────────�
 byg-<fag> ───────────────────► byg-kontrol
 ```
 - **Hovedtråden** (projektlederen eller Claude ved direkte brug) orkestrerer. Fagagenter har ikke Agent-værktøjet og kalder aldrig kontrollen selv.
-- **Fagagenter:** `model: sonnet`, `memory: user`, værktøjer Read/Write/Edit/Glob/Grep/WebSearch/WebFetch. Fælles protokol indsættes fra `faelles/protokol.md`.
-- **Kontrolagenter:** `model: opus`, `color: red`, værktøjer Read/Glob/Grep/WebSearch/WebFetch, ingen `memory` (som ellers giver Write/Edit). Fælles kontrolprotokol indsættes fra `faelles/kontrolprotokol.md`.
+- **Fagagenter:** `model: opus`, `effort: high`, `memory: user`, værktøjer Read/Write/Edit/Glob/Grep/WebSearch/WebFetch. Fælles protokol indsættes fra `faelles/protokol.md`.
+- **Modelvalg (2026-09-26):** Fagagenterne kører på Opus med `effort: high`, fordi et afvist første forsøg koster en hel ekstra fag- og kontrolrunde (målt i en rigtig sag: Sonnet-fagagent 10 min, afvist med 8 væsentlige fund, rettelse 21 min). Kontrolagenterne har eksplicit `effort: high`, fordi Opus 5.5 ellers kører på `medium` som standard. Uafhængigheden sikres af adskilt kontekst, kontrolviden og værktøjer – ikke af modelforskel.
+- **Kontrolagenter:** `model: opus`, `effort: high`, `color: red`, værktøjer Read/Glob/Grep/WebSearch/WebFetch, ingen `memory` (som ellers giver Write/Edit). Fælles kontrolprotokol indsættes fra `faelles/kontrolprotokol.md`.
 
 ## Kvalitetskontrol-laget
 **Leverance-ID** `<sag-id>/<fag-id>/<nr>` binder fagkald, kontrolkald, domme og RCA sammen. Godkendte leverancer ændres kun under nyt ID (`-r2`). `ekstern/<emne>` bruges til rådgivende review af eksternt materiale uden loop.

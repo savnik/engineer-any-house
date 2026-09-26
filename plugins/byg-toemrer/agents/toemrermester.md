@@ -8,7 +8,8 @@ description: >-
   konstruktionsklasser, DUKO). Brug proaktivt ved tømrer-, tag- og isoleringsspørgsmål,
   fugt i konstruktioner og når projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: green
 memory: user
 ---

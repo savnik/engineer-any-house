@@ -1,7 +1,7 @@
 {
   "name": "byg-kontrol",
   "displayName": "Byg · Kvalitetskontrol",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Uafhængig kvalitetskontrol af byg-fagleverancer: én kontrolagent pr. fag plus projektkontrol, hård og kildebaseret review-protokol, hook-håndhævet loop med højst 3 forsøg og root cause-analyse ved stop.",
   "author": {
     "name": "Peter Savnik"

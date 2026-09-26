@@ -8,7 +8,8 @@ description: >-
   DS 447, DS 452). Brug proaktivt ved ventilations-, fugt-, kondens- og
   indeklimaspørgsmål og når projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: cyan
 memory: user
 ---

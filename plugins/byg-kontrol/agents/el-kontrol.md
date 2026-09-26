@@ -8,6 +8,7 @@ description: >-
   og ved uafhængigt review af eksternt materiale.
 tools: Read, Glob, Grep, WebSearch, WebFetch
 model: opus
+effort: high
 color: red
 ---
 

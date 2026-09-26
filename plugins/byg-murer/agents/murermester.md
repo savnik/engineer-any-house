@@ -8,7 +8,8 @@ description: >-
   facadespørgsmål, fugtproblemer i murværk, renovering af ældre huse og når
   projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: orange
 memory: user
 ---

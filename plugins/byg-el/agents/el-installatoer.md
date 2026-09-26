@@ -7,7 +7,8 @@ description: >-
   (Elsikkerhedsloven, DS/HD 60364, Sikkerhedsstyrelsen). Brug proaktivt ved el-spørgsmål,
   gør-det-selv-grænser, projektering, verifikation og når projektlederen koordinerer.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: yellow
 memory: user
 ---

@@ -8,7 +8,8 @@ description: >-
   Brug proaktivt ved maler- og overfladespørgsmål, afskalning, misfarvning, skimmel på
   overflader og når projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: pink
 memory: user
 ---

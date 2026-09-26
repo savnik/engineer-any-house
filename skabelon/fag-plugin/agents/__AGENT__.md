@@ -5,7 +5,8 @@ description: >-
   efter dansk regelgrundlag. Brug proaktivt ved <typiske spørgsmål> og når
   projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
-model: sonnet
+model: opus
+effort: high
 color: {{FARVE}}
 memory: user
 ---
