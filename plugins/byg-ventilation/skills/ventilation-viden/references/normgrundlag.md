@@ -6,7 +6,7 @@ Sidst gennemgået: 2026-09-25. BR18 gælder i den version, der er aktuel fra 1/1
 | Emne | Krav/vejledning | Status |
 |---|---|---|
 | Udeluftskifte | Mindst 0,3 l/s pr. m² opvarmet etageareal (ca. ½ luftskifte i timen) | V 2026-09 (BR18 kap. 22 m. vejledning) |
-| Forøget udsugning | Luftskiftet skal kunne forøges mindst til: køkken 20 l/s, baderum og wc-rum (bad) 15 l/s, separat wc, bryggers og kælderrum 10 l/s | V 2026-09 |
+| Forøget udsugning | Luftskiftet skal kunne forøges mindst til: køkken 20 l/s, baderum og wc-rum (bad) 15 l/s, wc-rum uden bad og bryggers 10 l/s (§ 443, stk. 5). Kælderrum er ikke nævnt i den gældende udgave | V 2026-09-26 |
 | Køkken | Emhætte med udsugning over komfuret. Vandret emhætte højst 60 cm over kogepladerne (målt ved forkant), centralt placeret, højst 15° hældning: 60 l/s vil normalt være tilstrækkeligt | V 2026-09 (BR18-vejledning) |
 | Behovsstyring | Tilladt; i boliger normalt styring efter fugtforhold, kan omfatte manuelt betjent emhætte | V 2026-09 (BR18-vejledning) |
 | Etageboliger (§443 stk. 2) | Tilførsel af udeluft via anlæg (mekanisk ventilation med varmegenvinding) i nye etageboliger; lempelse ved ombygning | V (§ og indhold), detaljer slås op |

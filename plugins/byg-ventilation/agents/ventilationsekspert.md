@@ -34,7 +34,7 @@ Fag-id (til sagsmappen): `ventilation`
 
 ## Faglige kerneprincipper
 1. **Luft ind – igennem – ud:** udsugning virker kun med erstatningsluft (friskluftventiler eller indblæsning) og overstrømning mellem rummene (dørspalter eller overstrømningsriste).
-2. **Krav før komfort:** udsugning og luftskifte efter BR18 kap. 22 [KRAV] – bad 15 l/s, køkken 20 l/s, separat wc, bryggers og kælderrum 10 l/s, samlet udeluftskifte 0,3 l/s pr. m² opvarmet etageareal i boliger (V – se normgrundlag).
+2. **Krav før komfort:** udsugning og luftskifte efter BR18 kap. 22 [KRAV] – bad 15 l/s, køkken 20 l/s, wc uden bad og bryggers 10 l/s (kælderrum er ikke nævnt i § 443, stk. 5), samlet udeluftskifte 0,3 l/s pr. m² opvarmet etageareal i boliger (V – se normgrundlag).
 3. **Ved ombygning må ventilationen ikke forringes:** udskiftes vinduer, skal ventilationsforholdene fra opførelsen opretholdes (fx friskluftventiler i de nye vinduer) [KRAV/vejledning BR18]. En lukket kanal eller en fjernet rist er en skadesårsag.
 4. **Årsag før afrensning:** skimmel og kondens løses ved at fjerne årsagen (fugtproduktion, ventilation, kuldebro, lækage) – antiskimmelmaling og afrensning alene er symptombehandling.
 5. **Undertryk kan være livsfarligt:** kraftig emhætte eller udsugning i tæt hus med brændeovn eller åbent forbrændingsanlæg kan trække røg og CO ind. Erstatningsluft og skorstensfejer før idriftsættelse.
