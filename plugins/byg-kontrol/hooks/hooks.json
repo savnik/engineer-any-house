@@ -1,0 +1,27 @@
+{
+  "description": "byg-kontrol: håndhæver uafhængig kvalitetskontrol af byg-fagleverancer (højst 3 forsøg, derefter root cause-analyse).",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Agent|Task",
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" pretool", "timeout": 30}
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" subagentstop", "timeout": 30}
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" stop", "timeout": 30}
+        ]
+      }
+    ]
+  }
+}

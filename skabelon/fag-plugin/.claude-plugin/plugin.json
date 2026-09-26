@@ -1,0 +1,9 @@
+{
+  "name": "{{PLUGIN}}",
+  "displayName": "Byg · {{FAGNAVN}}",
+  "version": "0.1.0",
+  "description": "{{FAGNAVN}} som subagent efter dansk regelgrundlag – med egen videnbase, hukommelse og evals. TODO: præcisér fagområdet.",
+  "author": { "name": "Peter Savnik" },
+  "keywords": ["byggeri", "{{SLUG}}", "danmark"],
+  "dependencies": ["byg-kontrol"]
+}

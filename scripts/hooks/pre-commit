@@ -1,0 +1,7 @@
+#!/bin/sh
+# Dataseparation: stop commits med sager, brugerdata eller hemmeligheder (se ARKITEKTUR.md).
+# Aktivér:  git config core.hooksPath scripts/hooks
+python3 "$(git rev-parse --show-toplevel)/scripts/tjek_data.py" || {
+  echo "Commit afvist af dataseparationen. Fjern sagsdata/hemmeligheder, eller generalisér teksten." >&2
+  exit 1
+}

@@ -1,0 +1,13 @@
+**/evals/results/
+dist/
+.DS_Store
+__pycache__/
+
+# Dataseparation – sager, brugerdata og hemmeligheder hører aldrig til i repoet (se ARKITEKTUR.md)
+byg-sager/
+ejendomsdata/
+videnbank/
+*.pdf
+.env
+*.key
+datafordeler_api_key

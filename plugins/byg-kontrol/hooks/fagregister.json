@@ -1,0 +1,14 @@
+{
+  "fag": {
+    "vvs": {"agent": "vvs-mester", "kontrol": "vvs-kontrol"},
+    "el": {"agent": "el-installatoer", "kontrol": "el-kontrol"},
+    "murer": {"agent": "murermester", "kontrol": "murer-kontrol"},
+    "ventilation": {"agent": "ventilationsekspert", "kontrol": "ventilation-kontrol"},
+    "maler": {"agent": "malermester", "kontrol": "maler-kontrol"},
+    "toemrer": {"agent": "toemrermester", "kontrol": "toemrer-kontrol"}
+  },
+  "projekt_kontrol": "projekt-kontrol",
+  "kontrol_plugin": "byg-kontrol",
+  "samlet_plugin": "byg",
+  "maks_forsoeg": 3
+}

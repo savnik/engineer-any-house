@@ -1,0 +1,62 @@
+{
+  "name": "byg-eksperter",
+  "owner": {
+    "name": "Peter Savnik"
+  },
+  "metadata": {
+    "description": "Danske byggefaglige ekspertagenter: projektleder, fagagenter på mesterniveau og uafhængig kvalitetskontrol af hver leverance.",
+    "version": "0.1.8"
+  },
+  "plugins": [
+    {
+      "name": "byg-team",
+      "source": "./plugins/byg-team",
+      "description": "Hele teamet – installér denne (trækker alle andre med)."
+    },
+    {
+      "name": "byg",
+      "source": "./plugins/byg",
+      "description": "Projektleder: interview, sagsmappe, koordinering, kvalitetskontrol-loop og erfaringer."
+    },
+    {
+      "name": "byg-data",
+      "source": "./plugins/byg-data",
+      "description": "Ejendomsdata: BBR, matrikel, plan, fredning, jord og grundvand, klima, energimærke og vurdering ud fra en adresse."
+    },
+    {
+      "name": "byg-kontrol",
+      "source": "./plugins/byg-kontrol",
+      "description": "Uafhængige kontrolagenter pr. fag, kontrolviden og hook-håndhævet loop (højst 3 forsøg, derefter RCA)."
+    },
+    {
+      "name": "byg-vvs",
+      "source": "./plugins/byg-vvs",
+      "description": "VVS-mester: vand, afløb, varme, varmepumper og vådrumsinstallationer."
+    },
+    {
+      "name": "byg-el",
+      "source": "./plugins/byg-el",
+      "description": "El-installatør: installationer, kapacitet, elbil, solceller og særlige rum."
+    },
+    {
+      "name": "byg-murer",
+      "source": "./plugins/byg-murer",
+      "description": "Murermester: murværk, puds, fugt i mur og kælder, vådrum og fliser."
+    },
+    {
+      "name": "byg-ventilation",
+      "source": "./plugins/byg-ventilation",
+      "description": "Ventilationsekspert: luftskifte, udsugning, anlæg, skimmel og indeklima."
+    },
+    {
+      "name": "byg-maler",
+      "source": "./plugins/byg-maler",
+      "description": "Malermester: underlag, systemvalg, vinduer, facader, bly/PCB og vådrumsmaling."
+    },
+    {
+      "name": "byg-toemrer",
+      "source": "./plugins/byg-toemrer",
+      "description": "Tømrermester: tage, undertag, efterisolering, dampspærre, vinduer og bærende træ."
+    }
+  ]
+}
