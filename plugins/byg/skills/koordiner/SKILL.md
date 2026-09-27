@@ -9,6 +9,6 @@ Koordinér sagen: $ARGUMENTS (er intet angivet: den senest ændrede mappe i `byg
 
 1. Læs `${CLAUDE_PLUGIN_ROOT}/skills/projektleder/SKILL.md` (fase 4–6), `references/koordinering.md` og sagens `projektgrundlag.md` og `status.md`.
 2. Er projektgrundlaget ikke accepteret, så stop og kør interviewet færdigt først.
-3. Send fagforespørgsler med leverance-ID'er; kør kontrol-loopet for hver leverance efter skill `kvalitetskontrol` (højst 3 forsøg, derefter RCA og eskalering).
+3. Send fagforespørgsler med leverance-ID'er; kør kontrol-loopet for hver leverance efter skill `kvalitetskontrol` (højst 3 forsøg pr. runde; derefter RCA, forbedring af fagagenten og ny runde; efter 3 runder eskalering).
 4. Integrér: grænseflader, konflikter, tidsplan, risici, kontrolplan, myndighed og aftaler; få den samlede plan kontrolleret af `projekt-kontrol`.
 5. Præsentér kort for brugeren, og opdatér `status.md`.

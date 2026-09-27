@@ -22,7 +22,7 @@ byg-sager/<sag-id>/
 ├── kvalitet/
 │   ├── kontrollog.md       én linje pr. dom
 │   ├── <leverance>__forsoeg-<n>.json   kontroldomme (gemmes af hooken)
-│   └── RCA-<leverance>.md  root cause-analyser
+│   └── RCA-<leverance>[__runde-<n>].md  root cause-analyser (én pr. stoppet runde)
 └── bilag/                  fotos, tilbud, rapporter, tegninger
 ```
 

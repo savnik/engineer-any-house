@@ -2,8 +2,8 @@
 name: kvalitetskontrol
 description: >-
   Protokol for uafhængig kvalitetskontrol af byg-leverancer: leverance-ID, kald af
-  fagets kontrolagent, håndtering af dommen, retur til fagagenten, højst 3 forsøg og
-  root cause-analyse ved stop. Brug ALTID, når en byg-fagagent (vvs-mester,
+  fagets kontrolagent, håndtering af dommen, retur til fagagenten, højst 3 forsøg pr. runde,
+  root cause-analyse og forbedring af fagagenten ved stop og højst 3 runder. Brug ALTID, når en byg-fagagent (vvs-mester,
   el-installatoer, murermester, ventilationsekspert, malermester, toemrermester) skal
   levere eller har leveret, når projektlederens egne leverancer skal kontrolleres, og
   når eksternt materiale (tilbud, rapport, tegning) skal have et uafhængigt review.
@@ -39,7 +39,17 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 3. **Dom:** hooken gemmer JSON-dommen i `<sagsmappe>/kvalitet/`. Tilføj en linje i `<sagsmappe>/kvalitet/kontrollog.md`: dato · leverance · forsøg · dom · åbne fund (kritisk/væsentlig/mindre).
 4. **Godkendt:** leverancen må bruges. **Afvist:** send fundene ordret retur til fagagenten (afsnit 4) som forsøg n+1.
 5. **Fund der kræver brugeren** ("afklar med bruger" eller `eskaler: true`): stop loopet og spørg brugeren (AskUserQuestion, hvis tilgængelig). Svaret skrives ind i projektgrundlaget, derefter fortsætter loopet.
-6. **Højst 3 forsøg.** Afvises 3. forsøg: STOP. Skriv root cause-analysen efter `${CLAUDE_PLUGIN_ROOT}/skills/kontrol-viden/references/rca-skabelon.md` til `<sagsmappe>/kvalitet/RCA-<leverance-id med / erstattet af __>.md`, eskalér til brugeren med konkret beslutningsbehov, og læg læringen i forankringskøen (`/byg:erfaring`). Fortsæt kun efter brugerens beslutning og under et nyt leverance-ID.
+6. **Højst 3 forsøg pr. runde, højst 3 runder.** Afvises 3. forsøg i en runde:
+   1. **Stop runden.**
+   2. **Root cause-analyse:** skriv RCA'en efter `${CLAUDE_PLUGIN_ROOT}/skills/kontrol-viden/references/rca-skabelon.md` til `<sagsmappe>/kvalitet/RCA-<leverance-id med / erstattet af __>.md`. Fra runde 2 får filnavnet `__runde-<n>`. Analysen undersøger, **hvorfor fagagenten ikke kunne levere korrekt i første forsøg**.
+   3. **Forbedr fagagenten:**
+      - Skriv læringen i agentens egen hukommelse (`~/.claude/agent-memory/<plugin>-<agent>/`, med en linje i dens `MEMORY.md`), så den virker i næste runde.
+      - Skriv den samtidig generaliseret i byg-eksperter-repoet (agentprompt eller videnbase), med commit og versionsløft.
+      - Skriv `Forbedring implementeret: ja` i RCA'en.
+   4. **Ny runde:** send et nyt fagkald under **samme leverance-ID**. Hooken starter runde n+1 med forsøg 1. Prompten indeholder RCA-stien, den oprindelige opgave og de seneste fund, og fagagenten løser opgaven forfra.
+   5. **Efter runde 3:** eskalér til brugeren med et konkret beslutningsbehov. Fortsæt kun efter brugerens beslutning og under et nyt leverance-ID.
+
+   Fortæl brugeren kort om hver RCA og forbedring, men start den nye runde uden at vente på svar. Læg også læringen i forankringskøen (`/byg:erfaring`).
 7. **Parallelle fag:** fagkald må køre parallelt; kontrollér hver leverance, så snart den er klar.
 8. **Sidste forsøg (3 af 3):** send kun de blokerende fund (kritisk/væsentlig) og de mindre fund, der står i dommen, retur. Kontrollens usikkerheder og bemærkninger uden fund-ID (fx om den samlede budgetramme) må ikke udvide leverancen i sidste forsøg – flyt dem til projektlederens integration.
 9. **Koordineringsbeslutninger undervejs:** en beslutning, der berører flere fag, skrives i beslutningsloggen og gives med i alle berørte fags næste fagkald eller retur – ikke kun til det fag, der udløste den.
@@ -49,7 +59,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 ## 3. Skabelon – kontrolkald
 ```
 LEVERANCE: <id>
-Forsøg: <n> af 3
+Runde: <r> af 3 · Forsøg: <n> af 3
 Opgave: <den oprindelige opgave til fagagenten, ordret>
 Leverance: <sti til fagnotat>
 Projektgrundlag: <sti>
@@ -68,6 +78,17 @@ Fund der skal adresseres (ordret): <F1 · klasse · påstand · krav · handling
 Instruks: Opdatér <sti til notat>. Adressér hvert fund-ID under "Kontrolrespons" (lukket eller bestridt med kilde). Ændr ikke andet uden at notere det. Returnér kort resumé.
 ```
 
+## 4b. Skabelon – ny runde efter RCA
+```
+LEVERANCE: <samme id>
+Runde: <n+1> af 3 · Forsøg: 1 af 3 – ny runde efter root cause-analyse.
+RCA: <sti til RCA-filen> (læs afsnit 2 "Hvad forsøg 1 manglede" og afsnit 6 "Forbedring af fagagenten")
+Læs din opdaterede hukommelse, før du går i gang.
+Opgave: <den oprindelige opgave, ordret>
+Seneste dom: <sti>
+Instruks: Løs opgaven forfra med den nye læring, og skriv en ny version af <sti til notat>. Vis under "Kontrolrespons (runde <n+1>)", hvordan læringen og hvert åbent fund er håndteret. Returnér kort resumé.
+```
+
 ## 5. Projektlederens egne leverancer
 Projektgrundlaget (efter Definition of Ready), koordineringsplanen med grænseflader, tidsplan og kontrolplan samt den samlede anbefaling til brugeren kontrolleres af `projekt-kontrol` i samme loop med `LEVERANCE: <sag-id>/projekt/<nr>`. Her tælles et forsøg ved hvert kontrolkald.
 
@@ -76,7 +97,8 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 
 ## 7. Det håndhæver hooks
 - Fag- og kontrolkald uden `LEVERANCE:` afvises med besked om, hvad der mangler.
-- Ny fagversion før kontrol, forkert kontrolagent, 4. forsøg og ændring af en godkendt leverance afvises.
+- Ny fagversion før kontrol, forkert kontrolagent, 4. forsøg i en runde og ændring af en godkendt leverance afvises.
+- En ny runde afvises, indtil RCA-filen for runden findes med linjen `Forbedring implementeret: ja`. En 4. runde afvises altid.
 - Ugyldig dom (fx blokerende fund uden kilde eller "godkendt" med åbne fund) sendes retur til kontrolagenten.
 - Hovedtråden kan ikke afslutte, mens sessionens leverancer afventer kontrol, er afvist eller mangler RCA (én påmindelse pr. stop).
 - Status for alle leverancer: `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py" status`.

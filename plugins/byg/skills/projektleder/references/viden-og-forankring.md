@@ -18,7 +18,7 @@ Videnbanken overlever opdateringer af pluginet. Fagagenter kan ikke læse projek
 5. Opdatér `sager.md` i videnbanken (sag-id, sti, emne, fag, resultat, læring i én linje).
 
 ## Læring fra kvalitetskontrol
-- Hver RCA giver mindst ét forslag i forankringskøen efter årsagskategorien (K1–K7 i RCA-skabelonen): nyt interviewspørgsmål, rettelse i fagets videnbase, præcisering i fagagentens prompt, ny rubric-version for kontrollen, markering af emner der kræver normadgang, nyt tværfagligt tjekpunkt – og en ny eval-case.
+- Hver RCA implementerer forbedringen i fagagenten med det samme (agentens hukommelse og repoet, RCA-skabelonen afsnit 6). Den giver også mindst ét forslag i forankringskøen efter årsagskategorien (F1–F5, K4, K7 i RCA-skabelonen): nyt interviewspørgsmål, rettelse i fagets videnbase, præcisering i fagagentens prompt, ny rubric-version for kontrollen, markering af emner der kræver normadgang, nyt tværfagligt tjekpunkt – og en ny eval-case.
 - Gentagne fund af samme type på tværs af sager er kanon-kandidater, selv uden RCA.
 
 ## Forankringskø – forankringskoe.md

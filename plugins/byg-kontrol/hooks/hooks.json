@@ -1,5 +1,5 @@
 {
-  "description": "byg-kontrol: håndhæver uafhængig kvalitetskontrol af byg-fagleverancer (højst 3 forsøg, derefter root cause-analyse).",
+  "description": "byg-kontrol: håndhæver uafhængig kvalitetskontrol af byg-fagleverancer (højst 3 forsøg pr. runde, derefter root cause-analyse, forbedring af fagagenten og ny runde; højst 3 runder).",
   "hooks": {
     "PreToolUse": [
       {

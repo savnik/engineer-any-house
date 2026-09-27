@@ -53,7 +53,7 @@ def saml(maal: pathlib.Path) -> None:
         "displayName": "Byg – projektleder, fagagenter og kvalitetskontrol",
         "version": version,
         "description": "Samlet pakke: projektleder, fagagenter på mesterniveau (vvs, el, murer, ventilation, maler, tømrer) "
-                       "og uafhængig kvalitetskontrol af hver leverance (højst 3 forsøg, derefter RCA).",
+                       "og uafhængig kvalitetskontrol af hver leverance (højst 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde).",
         "author": {"name": "Peter Savnik"},
         "keywords": ["byggeri", "renovering", "projektledelse", "kvalitetskontrol", "danmark"],
     }

@@ -10,5 +10,6 @@
   "projekt_kontrol": "projekt-kontrol",
   "kontrol_plugin": "byg-kontrol",
   "samlet_plugin": "byg",
-  "maks_forsoeg": 3
+  "maks_forsoeg": 3,
+  "maks_runder": 3
 }

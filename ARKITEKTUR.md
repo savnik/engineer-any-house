@@ -10,7 +10,7 @@
 | Modsvarende kvalitetskontrolagent pr. fag | `byg-kontrol`: én kontrolagent pr. fag + `projekt-kontrol` |
 | Hårdt og kritisk review, adskilt fra den udførende | Egen agent, egen kontrolviden, kun læse-/søgeværktøjer, ingen hukommelse, ingen adgang til fagagentens ræsonnement; efterprøvning mod primærkilder |
 | Projektlederen sikrer kontrol af hver leverance og looper til godkendelse | Skill `kvalitetskontrol` + hooks (PreToolUse, SubagentStop, Stop) |
-| Maks. 3 forsøg, derefter stop og root cause-analyse | Hook-tilstand pr. leverance-ID; 4. forsøg afvises; Stop blokeres indtil RCA-fil findes; RCA-skabelon med årsagskategorier K1–K7 og læring tilbage |
+| Maks. 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde (maks. 3 runder) | Hook-tilstand pr. leverance-ID med runde og forsøg; 4. forsøg afvises; Stop blokeres, indtil RCA-filen for runden findes; ny runde kræver 'Forbedring implementeret: ja' i RCA'en; 4. runde afvises og eskaleres; RCA-skabelonen fokuserer på, hvorfor forsøg 1 ikke var korrekt |
 
 ## Komponenter
 ```
@@ -39,7 +39,7 @@ byg-<fag> ───────────────────► byg-kontr
 
 Agentnavne matches på basisnavnet, så både `byg-vvs:vvs-mester` (marketplace) og `byg:vvs-mester` (samlet pakke) virker; fag→kontrol-mapping ligger i `hooks/fagregister.json`.
 
-**Læring:** RCA → forankringskø → ny tekst i fagets videnbase, ny `rubric_version` i kontrolviden, præciseret prompt, nyt interviewspørgsmål eller ny eval-case.
+**Læring:** RCA → forbedring af fagagenten straks (agentens hukommelse) og varigt (repoet: prompt/videnbase, commit og versionsløft) → ny runde. Desuden forankringskø → ny tekst i fagets videnbase, ny `rubric_version` i kontrolviden, præciseret prompt, nyt interviewspørgsmål eller ny eval-case.
 
 ## Videnmodel
 | Lag | Placering | Livscyklus |

@@ -11,8 +11,11 @@ Regler
 - Et fagkald sætter leverancen til "afventer_kontrol". En ny fagversion kræver først en kontroldom.
 - Kontrolagentens slutbesked skal indeholde en gyldig JSON-dom (faelles/kontrolprotokol.md, afsnit 5).
   Ugyldig dom → kontrolagenten sendes tilbage én gang for at rette den.
-- Højst 3 forsøg. Tredje afviste dom → "stoppet": root cause-analyse og eskalering til brugeren;
-  leverancen kan kun genoptages under et nyt leverance-ID.
+- Højst 3 forsøg pr. runde. Tredje afviste dom → "stoppet": root cause-analyse af, hvorfor fagagenten
+  ikke leverede korrekt i første forsøg, og implementeret forbedring af fagagenten.
+- Ny runde (højst 3 runder): et nyt fagkald under samme leverance-ID starter runde n+1 med forsøg 1,
+  når RCA-filen for runden findes og indeholder linjen "Forbedring implementeret: ja".
+  Efter sidste runde: eskalering til brugeren, og leverancen kan kun genoptages under et nyt leverance-ID.
 - Stop-hooken forhindrer (én gang pr. stop) afslutning, mens sessionens leverancer mangler kontrol,
   er afvist eller mangler RCA.
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
@@ -29,6 +32,8 @@ import traceback
 HER = pathlib.Path(__file__).resolve().parent
 REG = json.loads((HER / "fagregister.json").read_text(encoding="utf-8"))
 MAKS = int(REG.get("maks_forsoeg", 3))
+MAKS_RUNDER = int(REG.get("maks_runder", 3))
+FORBEDRING_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECASE)
 LEV_RE = re.compile(r"LEVERANCE\s*:\s*([^\s`'\"<>]+)", re.IGNORECASE)
 BLOKERENDE = {"kritisk", "væsentlig"}
 STATUSSER = {"nyt", "aabent", "åbent", "lukket", "bestridt"}
@@ -141,15 +146,31 @@ def bloker(grund: str) -> None:
     print(json.dumps({"decision": "block", "reason": grund}, ensure_ascii=False))
 
 
+def runde(e: dict) -> int:
+    return int(e.get("runde") or 1)
+
+
+def rca_navn(lev: str, r: int) -> str:
+    return f"RCA-{sikkert(lev)}.md" if r <= 1 else f"RCA-{sikkert(lev)}__runde-{r}.md"
+
+
 def naeste_skridt(lev: str, e: dict) -> str:
     st = e.get("status")
+    r = runde(e)
     if st == "afvist":
         hvem = e.get("fag_agent") or "projektlederen (egen leverance)"
-        return (f"Afvist (forsøg {e.get('forsoeg')}/{MAKS}): send fundene retur til {hvem} med 'LEVERANCE: {lev}' "
-                f"og kald derefter {e.get('kontrol_agent')} igen.")
+        return (f"Afvist (runde {r}/{MAKS_RUNDER}, forsøg {e.get('forsoeg')}/{MAKS}): send fundene retur til {hvem} med "
+                f"'LEVERANCE: {lev}' og kald derefter {e.get('kontrol_agent')} igen.")
     if st in ("stoppet", "rca_udfoert"):
-        return (f"Stoppet efter {MAKS} afviste forsøg: skriv root cause-analysen til <sagsmappe>/kvalitet/RCA-{sikkert(lev)}.md "
-                f"(skill 'kvalitetskontrol'), eskalér til brugeren og fortsæt under et nyt leverance-ID.")
+        if r < MAKS_RUNDER:
+            return (f"Stoppet efter {MAKS} afviste forsøg i runde {r}/{MAKS_RUNDER}: skriv root cause-analysen til "
+                    f"<sagsmappe>/kvalitet/{rca_navn(lev, r)} – hvorfor kunne fagagenten ikke levere korrekt i første forsøg? "
+                    f"Implementér læringen som forbedring af fagagenten (agentens hukommelse og repoet), skriv linjen "
+                    f"'Forbedring implementeret: ja' i RCA'en, og start runde {r + 1} med et nyt fagkald under samme "
+                    f"leverance-ID (højst {MAKS} nye forsøg) – se skill 'kvalitetskontrol'.")
+        return (f"Stoppet efter {MAKS_RUNDER} runder à {MAKS} forsøg: skriv root cause-analysen til "
+                f"<sagsmappe>/kvalitet/{rca_navn(lev, r)}, implementér læringen i fagagenten, eskalér til brugeren, "
+                f"og fortsæt kun efter brugerens beslutning under et nyt leverance-ID.")
     if st == "godkendt":
         return f"Godkendt: ændringer kræver et nyt leverance-ID (fx '{lev}-r2')."
     return ""
@@ -187,19 +208,25 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 if status in ("afventer_kontrol", "under_kontrol"):
                     return afvis_kald(f"Leverance {lev} (forsøg {e.get('forsoeg')}/{MAKS}) er ikke kontrolleret endnu. "
                                       f"Kald {e.get('kontrol_agent')} med 'LEVERANCE: {lev}' og stien til fagnotatet først.")
-                if status in ("godkendt", "stoppet", "rca_udfoert"):
+                if status == "godkendt":
                     return afvis_kald(naeste_skridt(lev, e))
-                if int(e.get("forsoeg", 0)) >= MAKS:
+                if status in ("stoppet", "rca_udfoert"):
+                    grund = ny_runde_blokeret(inp, e, lev)
+                    if grund:
+                        return afvis_kald(grund)
+                    start_ny_runde(d, e, lev)
+                elif int(e.get("forsoeg", 0)) >= MAKS:
                     e["status"] = "stoppet"
                     gem(d, s)
                     return afvis_kald(naeste_skridt(lev, e))
-                e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
+                else:
+                    e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
             else:
                 e = L[lev] = {"fag": fag, "type": "fag", "forsoeg": 1, "fag_agent": st,
                               "kontrol_agent": kontrolnavn(fag, pre), "oprettet": nu(), "domme": []}
             e.update(status="afventer_kontrol", session_id=sid, opdateret=nu())
             gem(d, s)
-            log(d, haendelse="fagkald", leverance=lev, forsoeg=e["forsoeg"], agent=st)
+            log(d, haendelse="fagkald", leverance=lev, runde=runde(e), forsoeg=e["forsoeg"], agent=st)
             return
         # kontrolkald
         if fag == "projekt":
@@ -208,9 +235,14 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             if not e:
                 e = L[lev] = {"fag": "projekt", "type": "projekt", "forsoeg": 0, "kontrol_agent": st,
                               "oprettet": nu(), "domme": []}
-            if e.get("status") in ("godkendt", "stoppet", "rca_udfoert"):
+            if e.get("status") == "godkendt":
                 return afvis_kald(naeste_skridt(lev, e))
-            if e.get("status") != "under_kontrol":
+            if e.get("status") in ("stoppet", "rca_udfoert"):
+                grund = ny_runde_blokeret(inp, e, lev)
+                if grund:
+                    return afvis_kald(grund)
+                start_ny_runde(d, e, lev)
+            elif e.get("status") != "under_kontrol":
                 if int(e.get("forsoeg", 0)) >= MAKS:
                     e["status"] = "stoppet"
                     gem(d, s)
@@ -231,7 +263,7 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                                   f"kontrollere. {naeste_skridt(lev, e)}")
         e.update(status="under_kontrol", session_id=sid, opdateret=nu())
         gem(d, s)
-        log(d, haendelse="kontrolkald", leverance=lev, forsoeg=e.get("forsoeg"), agent=st, type=e.get("type"))
+        log(d, haendelse="kontrolkald", leverance=lev, runde=runde(e), forsoeg=e.get("forsoeg"), agent=st, type=e.get("type"))
 
 
 # ---------- SubagentStop ----------
@@ -370,7 +402,7 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
                 bloker("Ugyldig kontroldom – ret den, før du afslutter:\n- " + "\n- ".join(fejl) +
                        "\nAfslut med præcis én JSON-blok efter skemaet i kontrolprotokollen (afsnit 5).")
             return
-        e.setdefault("domme", []).append({"forsoeg": e.get("forsoeg"), "dom": dom["dom"],
+        e.setdefault("domme", []).append({"runde": runde(e), "forsoeg": e.get("forsoeg"), "dom": dom["dom"],
                                           "aabne_fund": taelling(dom), "tid": nu()})
         if e.get("type") == "ekstern":
             e["status"] = "vurderet_ekstern"
@@ -382,26 +414,56 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
             e["sagsmappe"] = dom.get("sagsmappe")
         e["opdateret"] = nu()
         gem(d, s)
-    log(d, haendelse="dom", leverance=lev, dom=dom["dom"], status=e["status"], forsoeg=e.get("forsoeg"))
+    log(d, haendelse="dom", leverance=lev, dom=dom["dom"], status=e["status"], runde=runde(e), forsoeg=e.get("forsoeg"))
     try:
         sm = sagsmappe_sti(inp, e)
         if sm:
             kv = sm / "kvalitet"
             kv.mkdir(exist_ok=True)
-            (kv / f"{sikkert(lev)}__forsoeg-{e.get('forsoeg')}.json").write_text(
+            rdel = f"__runde-{runde(e)}" if runde(e) > 1 else ""
+            (kv / f"{sikkert(lev)}{rdel}__forsoeg-{e.get('forsoeg')}.json").write_text(
                 json.dumps(dom, ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception:
         log(d, haendelse="domfil_fejl", fejl=traceback.format_exc()[-400:])
 
 
 # ---------- Stop ----------
-def rca_findes(inp: dict, e: dict, lev: str) -> bool:
-    navn = f"RCA-{sikkert(lev)}.md"
+def rca_fil(inp: dict, e: dict, lev: str):
+    navn = rca_navn(lev, runde(e))
     sm = sagsmappe_sti(inp, e)
     if sm and (sm / "kvalitet" / navn).exists():
-        return True
+        return sm / "kvalitet" / navn
     cwd = pathlib.Path(str(inp.get("cwd") or os.getcwd()))
-    return any(cwd.glob(f"byg-sager/*/kvalitet/{navn}"))
+    return next(iter(cwd.glob(f"byg-sager/*/kvalitet/{navn}")), None)
+
+
+def rca_findes(inp: dict, e: dict, lev: str) -> bool:
+    return rca_fil(inp, e, lev) is not None
+
+
+def ny_runde_blokeret(inp: dict, e: dict, lev: str):
+    """Grund til at en ny runde ikke må starte – eller None, hvis den må."""
+    r = runde(e)
+    if r >= MAKS_RUNDER:
+        return naeste_skridt(lev, e)
+    f = rca_fil(inp, e, lev)
+    if f is None:
+        return (f"Runde {r + 1} kræver først root cause-analysen for runde {r}. " + naeste_skridt(lev, e))
+    try:
+        tekst = f.read_text(encoding="utf-8")
+    except Exception:
+        tekst = ""
+    if not FORBEDRING_RE.search(tekst):
+        return (f"{f.name} mangler linjen 'Forbedring implementeret: ja'. Implementér læringen som forbedring af "
+                f"fagagenten (agentens hukommelse og repoet), notér hvad der er ændret, og skriv linjen i RCA'en, før "
+                f"runde {r + 1} starter.")
+    return None
+
+
+def start_ny_runde(d: pathlib.Path, e: dict, lev: str) -> None:
+    e["runde"] = runde(e) + 1
+    e["forsoeg"] = 1
+    log(d, haendelse="ny_runde", leverance=lev, runde=e["runde"])
 
 
 def stop(inp: dict, d: pathlib.Path) -> None:
@@ -446,7 +508,8 @@ def manuel(cmd: str, args: list) -> int:
             if not s["leverancer"]:
                 print("Ingen registrerede leverancer.")
             for lev, e in sorted(s["leverancer"].items()):
-                print(f"{lev:45} {e.get('fag', ''):12} {e.get('status', ''):18} forsøg {e.get('forsoeg')}/{MAKS}")
+                print(f"{lev:45} {e.get('fag', ''):12} {e.get('status', ''):18} "
+                      f"runde {runde(e)}/{MAKS_RUNDER} forsøg {e.get('forsoeg')}/{MAKS}")
             return 0
         if cmd == "nulstil" and args:
             fjernet = s["leverancer"].pop(args[0], None)

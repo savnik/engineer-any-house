@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Danske byggefaglige ekspertagenter: projektleder, fagagenter på mesterniveau og uafhængig kvalitetskontrol af hver leverance.",
-    "version": "0.1.8"
+    "version": "0.1.9"
   },
   "plugins": [
     {
@@ -26,7 +26,7 @@
     {
       "name": "byg-kontrol",
       "source": "./plugins/byg-kontrol",
-      "description": "Uafhængige kontrolagenter pr. fag, kontrolviden og hook-håndhævet loop (højst 3 forsøg, derefter RCA)."
+      "description": "Uafhængige kontrolagenter pr. fag, kontrolviden og hook-håndhævet loop (højst 3 forsøg pr. runde, RCA og forbedring af fagagenten, højst 3 runder)."
     },
     {
       "name": "byg-vvs",
