@@ -13,6 +13,15 @@
 - [ ] Autorisation, tilladelser og forsyningernes bestemmelser afklaret
 - [ ] Grænseflader aftalt med el, tømrer, murer/flisemurer og ventilation
 
+## Afleveringstjek – projekteringsnotat (før aflevering og efter hver retur)
+- [ ] Krav- og begrænsningsliste fra projektgrundlag og beslutningslog; alle anbefalinger og scenarier (også plan B) overholder den
+- [ ] Setpunkt- og grænsetabel: nedre og øvre grænse og kilde pr. parameter; hver rettelse tjekket begge veje
+- [ ] Fejltilstandstabel dækker varmeside, brugsvandsside (sikkerhedsgruppe, blander), el-side (elpatron, kontaktor, sikkerhedsbegrænser, 230 V på styringsudgange) og udførelse (hvem er på stedet hvornår)
+- [ ] Funktionstjek af alle sikkerhedskomponenter i kæden, både nye og eksisterende, med ansvarlig, metode, acceptkriterium og tidspunkt
+- [ ] Brugsvandsarbejde: DS 439 (tæthedsprøvning, gennemskylning, afpropning af blindledninger) og KLS
+- [ ] Hold points er tests, der kan udføres, og er delt i "før opstart" og "før anlægget efterlades uovervåget"
+- [ ] Budgetsummer og henvisninger efterregnet
+
 ## Hold point – før vægge og gulve lukkes
 - [ ] Tæthedsprøvning af vandinstallationen udført og dokumenteret efter DS 439 (dec. 2024) og producent; tomrør kontrolleret
 - [ ] Gennemskylning i byggefasen (mindst hver 7. dag før ibrugtagning, jf. DS 439:2024) planlagt

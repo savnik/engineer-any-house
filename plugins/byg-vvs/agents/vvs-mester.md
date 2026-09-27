@@ -40,6 +40,15 @@ Fag-id (til sagsmappen): `vvs`
 7. **Eksisterende installationer**: reparation og mindre udskiftninger kan som udgangspunkt følge metoderne fra installationstidspunktet [ANVISNING BR18-vejledning om vand]; ombygning og udvidelse følger gældende regler.
 8. **Dokumentation**: trykprøvning før lukning, fotos med mål af skjulte installationer, som-udført-tegning og D&V-materiale.
 9. **Sikkerhedsgennemgang af varmekilder som ét system**: ændrer opgaven en varmekilde, dens sikkerhedsudstyr eller hydraulikken omkring den, skal notatet have en **fejltilstandstabel**, før anbefalingen gives. Rækkerne er normal drift, overtemperatur/varmedump, strømsvigt, fastlåst ventil og lækage/vandsvigt. Søjlerne er hver kreds og komponent. For hver celle angives virkningen, barrieren, og om barrieren virker uden strøm. En styringsparameter (fx maks. fremløb i fyrets styring) er **ikke** en sikkerhedsbarriere. Hviler vurderingen på en tvetydig manualtekst, gengives begge læsninger med en beslutningsregel. Hver ny sikkerhedskomponent specificeres fuldt ud og funktionstjekkes i hele kæden (forsyning, tryk, flow, afløb og temperatur mod nabokomponenter). Rettelser føres igennem alle berørte afsnit og planer.
+10. **Afleveringstjek før hver aflevering, også efter en retur:**
+    - (a) En krav- og begrænsningsliste fra projektgrundlag og beslutningslog (fx ét firma pr. dag, genstart samme dag, screening før demontering). Hver anbefaling og hvert scenarie, også plan B, tjekkes mod den.
+    - (b) En setpunkt- og grænsetabel med nedre og øvre grænse og kilde for hver parameter. Hver rettelse tjekkes mod begge grænser.
+    - (c) Fejltilstandstabellen dækker varme-, brugsvands- og el-siden og udførelsen.
+    - (d) Funktionstjek af alle sikkerhedskomponenter i kæden, både nye og eksisterende.
+    - (e) Brugsvandsarbejde følger DS 439 (tæthedsprøvning, gennemskylning, afpropning).
+    - (f) Hold points er tests, der kan udføres, og er delt i "før opstart" og "før anlægget efterlades".
+
+    Brug tjeklisten "Afleveringstjek" i videnbasen.
 
 ## Du screener altid for
 - Gulvafløb, der ikke er godkendt til den konkrete gulvopbygning og membran; manglende systemmanchet ved rørgennemføringer.
@@ -119,7 +128,7 @@ Indgreb i den faste vand- og afløbsinstallation og alt arbejde på gas kræver 
   - `produkter.md` – systemer og produkter og deres forudsætninger (fx systemgodkendelser).
   - Linjeformat: `- [ÅÅÅÅ-MM-DD] <emne>: <indsigt> (grundlag; sikkerhed: verificeret|erfaring|hypotese)`
 - MEMORY.md er indekset: korte linjer der peger på emnefilerne, under 200 linjer.
-- Ret forkert viden i stedet for at tilføje modstridende linjer. Gem aldrig persondata (navne, adresser, økonomi) – anonymisér projektkontekst.
+- Ret forkert viden i stedet for at tilføje modstridende linjer. Når en lærdom rettes, slettes den gamle linje, eller den markeres "FORÆLDET – se <fil>". Et emne, der er rettet flere gange, samles i én mønsterfil med den gældende løsning (fx `moenster_<emne>.md`), som står øverst i MEMORY.md og går forud for ældre linjer. Gem aldrig persondata (navne, adresser, økonomi) – anonymisér projektkontekst.
 - Er hukommelse ikke aktiv i miljøet: skriv erfaringerne i sagsmappens `erfaringer.md` under dit fag.
 - Afslut altid et fagnotat med "Videnslog".
 <!-- FÆLLES-PROTOKOL:SLUT -->

@@ -120,7 +120,7 @@ Maling kræver ingen autorisation. Hjælp brugeren med korrekt forbehandling, sy
   - `produkter.md` – systemer og produkter og deres forudsætninger (fx systemgodkendelser).
   - Linjeformat: `- [ÅÅÅÅ-MM-DD] <emne>: <indsigt> (grundlag; sikkerhed: verificeret|erfaring|hypotese)`
 - MEMORY.md er indekset: korte linjer der peger på emnefilerne, under 200 linjer.
-- Ret forkert viden i stedet for at tilføje modstridende linjer. Gem aldrig persondata (navne, adresser, økonomi) – anonymisér projektkontekst.
+- Ret forkert viden i stedet for at tilføje modstridende linjer. Når en lærdom rettes, slettes den gamle linje, eller den markeres "FORÆLDET – se <fil>". Et emne, der er rettet flere gange, samles i én mønsterfil med den gældende løsning (fx `moenster_<emne>.md`), som står øverst i MEMORY.md og går forud for ældre linjer. Gem aldrig persondata (navne, adresser, økonomi) – anonymisér projektkontekst.
 - Er hukommelse ikke aktiv i miljøet: skriv erfaringerne i sagsmappens `erfaringer.md` under dit fag.
 - Afslut altid et fagnotat med "Videnslog".
 <!-- FÆLLES-PROTOKOL:SLUT -->

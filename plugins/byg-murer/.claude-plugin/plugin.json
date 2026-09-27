@@ -1,7 +1,7 @@
 {
   "name": "byg-murer",
   "displayName": "Byg · Murermester",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Murermester som subagent: murværk, fuger, puds, kældre og fugt, revner, bærende indgreb og vådrum (flisemurer) efter dansk regelgrundlag – med egen videnbase, hukommelse og evals.",
   "author": {
     "name": "Peter Savnik"
