@@ -96,7 +96,11 @@ def main() -> int:
         rca1 = sag / "kvalitet" / "RCA-2026-09-25-bad__vvs__01.md"
         forvent("ny runde afvises uden implementeret forbedring",
                 kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
-        rca1.write_text("# RCA\n## 6. Forbedring af fagagenten\n**Forbedring implementeret:** ja\n", encoding="utf-8")
+        rca1.write_text("# RCA\n**Forbedring implementeret:** ja\n", encoding="utf-8")
+        forvent("ny runde afvises uden 5 Why-kæde",
+                kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
+        HV = "".join(f"{i}. Hvorfor x{i}? → y{i}\n" for i in range(1, 6)) + "**Grundårsag:** z\n"
+        rca1.write_text("# RCA\n## 3. 5 Why\n" + HV + "## 6. Forbedring af fagagenten\n**Forbedring implementeret:** ja\n", encoding="utf-8")
         for r in (2, 3):
             forvent(f"runde {r} starter med nyt fagkald",
                     kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "tilladt")
@@ -114,7 +118,7 @@ def main() -> int:
                     kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
             forvent(f"stop blokeres uden RCA for runde {r}", kald("stop", S, env), "blokeret")
             (sag / "kvalitet" / f"RCA-2026-09-25-bad__vvs__01__runde-{r}.md").write_text(
-                "# RCA\nForbedring implementeret: ja\n", encoding="utf-8")
+                "# RCA\n" + HV + "Forbedring implementeret: ja\n", encoding="utf-8")
             forvent(f"stop tilladt med RCA for runde {r}", kald("stop", S, env), "tilladt")
         r = kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env)
         ok = bool(r) and "brugerens beslutning" in r["hookSpecificOutput"]["permissionDecisionReason"]
@@ -171,7 +175,7 @@ def main() -> int:
             kald("subagentstop", {**P, "agent_type": "byg-kontrol:projekt-kontrol",
                                   "last_assistant_message": dom("sag/projekt/01", "afvist", blok_fund).replace('"vvs"', '"projekt"')}, env)
         forvent("projektkontrol: 4. forsøg afvises", kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01"}}, env), "afvist")
-        (sag / "kvalitet" / "RCA-sag__projekt__01.md").write_text("Forbedring implementeret: ja\n", encoding="utf-8")
+        (sag / "kvalitet" / "RCA-sag__projekt__01.md").write_text(HV + "Forbedring implementeret: ja\n", encoding="utf-8")
         forvent("projektkontrol: runde 2 starter efter RCA med forbedring",
                 kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01"}}, env), "tilladt")
 

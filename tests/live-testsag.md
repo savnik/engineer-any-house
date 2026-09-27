@@ -92,7 +92,7 @@ Skriv: *"Test af kontrol-loopet: bed vvs-mester fastholde, at tæthedsprøvning 
 |---|---|---|---|
 | D1 | Loop | Kontrollen afviser; fagagenten bestrider uden kilde eller retter ikke; forsøg 2 og 3 afvises | Status, `kvalitet/*.json` |
 | D2 | Stop | Et 4. fagkald på samme ID afvises af hooken | Transcript |
-| D3 | RCA | `kvalitet/RCA-<id>.md` følger skabelonen: hvad forsøg 1 manglede, 5 × hvorfor, årsagskategori, forbedring af fagagenten og 'Forbedring implementeret: ja' | Sagsmappen |
+| D3 | RCA | `kvalitet/RCA-<id>.md` følger skabelonen: hvad forsøg 1 manglede, 5 Why-kæde(r) med evidens og handlingsbar grundårsag, årsagskategori, forbedring af fagagenten og 'Forbedring implementeret: ja' | Sagsmappen |
 | D4 | Ny runde | Fagkald under samme ID afvises før forbedringslinjen og tillades efter. Status viser runde 2/3 forsøg 1/3 | `kontrol_gate.py status` |
 | D4 | Eskalering | Du får en kort status og en konkret beslutning, du skal træffe | Samtalen |
 

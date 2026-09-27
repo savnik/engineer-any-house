@@ -10,7 +10,7 @@
 | Modsvarende kvalitetskontrolagent pr. fag | `byg-kontrol`: én kontrolagent pr. fag + `projekt-kontrol` |
 | Hårdt og kritisk review, adskilt fra den udførende | Egen agent, egen kontrolviden, kun læse-/søgeværktøjer, ingen hukommelse, ingen adgang til fagagentens ræsonnement; efterprøvning mod primærkilder |
 | Projektlederen sikrer kontrol af hver leverance og looper til godkendelse | Skill `kvalitetskontrol` + hooks (PreToolUse, SubagentStop, Stop) |
-| Maks. 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde (maks. 3 runder) | Hook-tilstand pr. leverance-ID med runde og forsøg; 4. forsøg afvises; Stop blokeres, indtil RCA-filen for runden findes; ny runde kræver 'Forbedring implementeret: ja' i RCA'en; 4. runde afvises og eskaleres; RCA-skabelonen fokuserer på, hvorfor forsøg 1 ikke var korrekt |
+| Maks. 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde (maks. 3 runder) | Hook-tilstand pr. leverance-ID med runde og forsøg; 4. forsøg afvises; Stop blokeres, indtil RCA-filen for runden findes; ny runde kræver en 5 Why-kæde (≥ 5 hvorfor-niveauer og en grundårsag) og 'Forbedring implementeret: ja' i RCA'en; 4. runde afvises og eskaleres; RCA-skabelonen fokuserer på, hvorfor forsøg 1 ikke var korrekt |
 
 ## Komponenter
 ```

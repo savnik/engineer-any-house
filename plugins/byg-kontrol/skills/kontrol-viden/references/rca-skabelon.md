@@ -4,8 +4,16 @@ Skrives af orkestratoren (projektlederen) til `<sagsmappe>/kvalitet/RCA-<leveran
 
 **Formål:** Find ud af, **hvorfor fagagenten ikke kunne levere korrekt i første forsøg**, og gør fagagenten bedre, så det samme ikke sker igen. Analysen er blameless: fejlen ligger i systemet (agentens viden, metode, prompt og input), ikke i "agenten". Der ledes efter det, der skal ændres i fagagenten, ikke efter en skyldig.
 
+**Metode: 5 Why (fem gange hvorfor) er obligatorisk.** Hver RCA skal have mindst én fuld 5 Why-kæde. Reglerne:
+- **Start** i det konkrete problem: hvad forsøg 1 manglede (afsnit 2). Grupper fund med samme årsag i én kæde. Fund med forskellige årsager får hver sin kæde.
+- **Hvert "hvorfor"** besvarer det foregående svar, ikke det oprindelige problem. Svaret skal være et faktum med evidens: en dom, fagnotatet, agentens prompt eller videnbase, eller fagforespørgslen. Et gæt tæller ikke.
+- **Mindst fem niveauer.** Stop ikke ved symptomet ("agenten glemte X"). Fortsæt, til svaret peger på noget i systemet, der kan ændres: fagagentens viden, metode, prompt eller input. Gå videre end fem, hvis femte svar ikke er handlingsbart.
+- **Grundårsagen** skrives på sin egen linje efter kæden og kobles til en årsagskategori (afsnit 4) og mindst én forbedring (afsnit 6).
+- **Kontrol af kæden:** læs den baglæns med "derfor". Hænger kæden ikke logisk sammen fra grundårsag til problem, er den ikke færdig.
+- Hooken kræver mindst fem nummererede "Hvorfor"-linjer og en linje med "Grundårsag", før en ny runde må starte.
+
 **Forløb:**
-1. RCA.
+1. RCA med 5 Why.
 2. Forbedringen implementeres i fagagenten.
 3. Linjen `Forbedring implementeret: ja` skrives i RCA'en.
 4. Ny runde under **samme leverance-ID** med højst 3 nye forsøg.
@@ -26,10 +34,18 @@ allerede til stede i forsøg 1?
 | Fund | Til stede i forsøg 1? | Hvad skulle fagagenten have vidst eller gjort for at ramme rigtigt første gang? |
 |---|---|---|
 
-## 3. Fem gange hvorfor: hvorfor ramte fagagenten ikke rigtigt første gang?
-1. Hvorfor indeholdt forsøg 1 <mangel>? → …
-2. …
-5. Grundårsag (i fagagenten eller dens input): …
+## 3. 5 Why: hvorfor ramte fagagenten ikke rigtigt første gang?
+### Kæde A – <fund eller fundgruppe, fx F1, F3>
+1. Hvorfor <problem: hvad forsøg 1 manglede>? → <svar> (evidens: <kilde>)
+2. Hvorfor <svar 1>? → <svar> (evidens: …)
+3. Hvorfor <svar 2>? → <svar> (evidens: …)
+4. Hvorfor <svar 3>? → <svar> (evidens: …)
+5. Hvorfor <svar 4>? → <svar> (evidens: …)
+**Grundårsag A:** <handlingsbar årsag i fagagentens viden, metode, prompt eller input> → kategori <F…> → forbedring #<n>
+Kontrol baglæns: <grundårsag> → derfor <svar 4> → … → derfor <problem>.
+
+### Kæde B – <nødvendig ved fund med en anden årsag>
+…
 
 ## 4. Årsagskategori (én primær, eventuelt sekundære)
 - [ ] F1 Fagviden: videnbasen mangler, er forældet eller forkert (fx gammel normudgave)

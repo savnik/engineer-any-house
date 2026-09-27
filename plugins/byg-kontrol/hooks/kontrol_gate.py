@@ -14,7 +14,8 @@ Regler
 - Højst 3 forsøg pr. runde. Tredje afviste dom → "stoppet": root cause-analyse af, hvorfor fagagenten
   ikke leverede korrekt i første forsøg, og implementeret forbedring af fagagenten.
 - Ny runde (højst 3 runder): et nyt fagkald under samme leverance-ID starter runde n+1 med forsøg 1,
-  når RCA-filen for runden findes og indeholder linjen "Forbedring implementeret: ja".
+  når RCA-filen for runden findes med en 5 Why-kæde (mindst fem nummererede "Hvorfor"-linjer og en
+  "Grundårsag") og linjen "Forbedring implementeret: ja".
   Efter sidste runde: eskalering til brugeren, og leverancen kan kun genoptages under et nyt leverance-ID.
 - Stop-hooken forhindrer (én gang pr. stop) afslutning, mens sessionens leverancer mangler kontrol,
   er afvist eller mangler RCA.
@@ -34,6 +35,8 @@ REG = json.loads((HER / "fagregister.json").read_text(encoding="utf-8"))
 MAKS = int(REG.get("maks_forsoeg", 3))
 MAKS_RUNDER = int(REG.get("maks_runder", 3))
 FORBEDRING_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECASE)
+HVORFOR_RE = re.compile(r"^\s*\d+\.\s.*\bhvorfor\b", re.IGNORECASE | re.MULTILINE)
+GRUNDAARSAG_RE = re.compile(r"grundårsag", re.IGNORECASE)
 LEV_RE = re.compile(r"LEVERANCE\s*:\s*([^\s`'\"<>]+)", re.IGNORECASE)
 BLOKERENDE = {"kritisk", "væsentlig"}
 STATUSSER = {"nyt", "aabent", "åbent", "lukket", "bestridt"}
@@ -453,6 +456,9 @@ def ny_runde_blokeret(inp: dict, e: dict, lev: str):
         tekst = f.read_text(encoding="utf-8")
     except Exception:
         tekst = ""
+    if len(HVORFOR_RE.findall(tekst)) < 5 or not GRUNDAARSAG_RE.search(tekst):
+        return (f"{f.name} mangler en 5 Why-kæde: mindst fem nummererede 'Hvorfor'-linjer (hvert svar besvarer det "
+                f"foregående, med evidens) og en linje med 'Grundårsag' (skabelonens afsnit 3), før runde {r + 1} starter.")
     if not FORBEDRING_RE.search(tekst):
         return (f"{f.name} mangler linjen 'Forbedring implementeret: ja'. Implementér læringen som forbedring af "
                 f"fagagenten (agentens hukommelse og repoet), notér hvad der er ændret, og skriv linjen i RCA'en, før "
