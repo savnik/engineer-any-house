@@ -28,6 +28,14 @@ Værdier markeret **(T)** er typiske branche- eller erfaringsværdier. Verificé
 - **Gulvvarme:** fremløbs- og overfladetemperatur tilpasset belægningen (trægulve har producentkrav – T), rumstyring, kredslængder og rørafstand efter producent, indregulering af kredse. I vådrum: koordinér med gulvafløb og fald.
 - **Indregulering:** forindstilling af termostatventiler, flow pr. kreds, differenstryk – og en protokol.
 - **Sikkerhed:** ekspansionsbeholder, sikkerhedsventil med ført afløb, påfyldning med tilbagestrømningssikring, afluftning.
+- **Fastbrændsels- og pillekedler:**
+  - **Metode:** fejltilstandstabel efter kerneprincip 9. Ublandet kedelvand (typisk 70–90 °C, op til STB) løber i metal til og med den første blandeventil.
+  - **Styringsfunktioner er ikke barrierer:** fyrets egen fremløbsbegrænsning og varmedump er driftsfunktioner. Indtil PEX-rørets klasse (Tmal) er dokumenteret, eller fremløbet under dump er målt, kræves en uafhængig barriere efter blandeventilen. Brug en selvvirkende termostatisk begrænsningsventil, der holder flow, eller en temperaturbegrænser. En begrænser, der stopper pumpen, kan blokere dumpvejen og virker ikke ved strømsvigt.
+  - **Strømsvigt:** tyngdekraftsbremser og kontraventiler fjerner passiv selvcirkulation. Afklar termisk afløbssikring efter DS 469/DS/EN 303-5 og producenten (T, normerne ligger bag betalingsmur). Uden kølesløjfe i kedlen er typen en "positive action"-ventil med automatisk påfyldning. Den skal have vandværkstryk: tilbagestrømningssikringen skal være trykbærende efter kedelvandets kategori (kategori 3 → CA, ikke-kontrollerbar; kategori 4 med inhibitorer → BA, kontrollerbar med snavssamler, frit afløb og periodisk kontrol). **Aldrig luftgab (AA/AB) foran en afløbssikring.** Tryk og flow dokumenteres, og afløbet føres synligt. Sammenhold åbningstemperaturen med dump og STB.
+  - **Ekspansion (DS/EN 12828, gengivet sekundært, T):** Vn = (Ve + Vwr) × (pe + 1)/(pe − p0). Her er pe = psv − 0,5 bar (psv ≤ 5 bar), Ve = udvidelse ved STB-temperatur × anlægsvolumen og Vwr = vandreserve. Udvidelsen er ca. 3,6 % ved 90 °C, 4,3 % ved 100 °C og 5,1 % ved 110 °C.
+  - **Varmedump og brugsvand:** under dump kan beholderens ladepumpe køre uafhængigt af setpunktet. Sæt derfor en termostatisk brugsvandsblander ved afgangen.
+  - **Elpatron som backup:** elpatronen sættes med en fast margin under fyrets ladestart (fx −5 K) og aldrig under 50 °C (§ 411).
+  - **Kilder:** At-vejledning B.4.8 er ophævet (1. juni 2025) og bruges ikke som kilde.
 
 ## 4. Vådrum – VVS-delen
 - **Vådzone** (BUILD/SBi 252): hele gulvet, de nederste 100 mm af alle vægge og væggene ved bruseniche og badekar op til loftet, inkl. 500 mm ud over brusenichens og badekarrets afgrænsning. Små vådrum (< 3,25 m² eller bredde under ca. 1,3 m): hele rummet. Over 2,3 m i høje rum må regnes som fugtig zone. Minimér rørgennemføringer i vådzonen.

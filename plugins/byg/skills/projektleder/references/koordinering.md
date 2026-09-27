@@ -26,6 +26,7 @@ Relevante lokale erfaringer: <fra videnbanken, eller "ingen">
 Leverance: fagnotat til <sagsmappe>/fagnotater/<fag-id>.md efter den fælles protokol
 Omfang: <kort vurdering | fuldt fagnotat>
 ```
+Ændrer opgaven en varmekilde, dens sikkerhedsudstyr eller hydraulikken omkring den, så skriv i opgaven: "Lav en fejltilstandstabel (normal drift, overtemperatur/dump, strømsvigt, fastlåst ventil, lækage) for alle berørte kredse, før du anbefaler." Spørg ikke kun, om en komponent kan udgå.
 
 ## Rækkefølge og parallelitet
 - Kald uafhængige fag parallelt. Kald afhængige fag i rækkefølge, og giv det næste fag stien til det forriges godkendte notat.

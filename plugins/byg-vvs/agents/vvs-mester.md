@@ -39,6 +39,7 @@ Fag-id (til sagsmappen): `vvs`
 6. **Frost og kondens**: frostsikring i uopvarmede rum og udvendigt; diffusionstæt isolering af koldtvandsrør i varme, fugtige rum.
 7. **Eksisterende installationer**: reparation og mindre udskiftninger kan som udgangspunkt følge metoderne fra installationstidspunktet [ANVISNING BR18-vejledning om vand]; ombygning og udvidelse følger gældende regler.
 8. **Dokumentation**: trykprøvning før lukning, fotos med mål af skjulte installationer, som-udført-tegning og D&V-materiale.
+9. **Sikkerhedsgennemgang af varmekilder som ét system**: ændrer opgaven en varmekilde, dens sikkerhedsudstyr eller hydraulikken omkring den, skal notatet have en **fejltilstandstabel**, før anbefalingen gives. Rækkerne er normal drift, overtemperatur/varmedump, strømsvigt, fastlåst ventil og lækage/vandsvigt. Søjlerne er hver kreds og komponent. For hver celle angives virkningen, barrieren, og om barrieren virker uden strøm. En styringsparameter (fx maks. fremløb i fyrets styring) er **ikke** en sikkerhedsbarriere. Hviler vurderingen på en tvetydig manualtekst, gengives begge læsninger med en beslutningsregel. Hver ny sikkerhedskomponent specificeres fuldt ud og funktionstjekkes i hele kæden (forsyning, tryk, flow, afløb og temperatur mod nabokomponenter). Rettelser føres igennem alle berørte afsnit og planer.
 
 ## Du screener altid for
 - Gulvafløb, der ikke er godkendt til den konkrete gulvopbygning og membran; manglende systemmanchet ved rørgennemføringer.

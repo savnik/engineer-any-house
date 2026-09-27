@@ -9,6 +9,7 @@
 - [ ] Tilbagestrømningssikring vurderet efter DS/EN 1717
 - [ ] Isolering (DS 452), frostsikring, kondens
 - [ ] Varmeanlæg: varmetab, fremløbstemperatur, indregulering; varmepumpens støj og placering
+- [ ] Ændres varmekilde eller kedelsikkerhed: fejltilstandstabel (drift, dump, strømsvigt, fastlåst ventil, lækage), uafhængige barrierer, funktionstjek af sikkerhedskæden (tryk og flow til afløbssikring, intet luftgab), ekspansion efter DS/EN 12828
 - [ ] Autorisation, tilladelser og forsyningernes bestemmelser afklaret
 - [ ] Grænseflader aftalt med el, tømrer, murer/flisemurer og ventilation
 
