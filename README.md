@@ -45,14 +45,15 @@ Projektlederen kan også køre som hovedagent: `claude --agent byg:projektleder`
 Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 
 ## Kvalitetskontrol-loopet
+0. Projektet kører i faser med gates (`byg/skills/projektleder/references/faser-og-gates.md`): **0** afklaring og Definition of Ready pr. fag → **1** dispositionsforslag → **2** design og design freeze → **3** samlet plan (tidsplan, budget, montage) → **4** udbud og udførelse. Ændringer efter design freeze samles i `aendringer.md`. Kontrolniveau `let` eller `fuld` efter fase og risiko.
 1. Hver opgave får et leverance-ID `<sag-id>/<fag-id>/<nr>` (første linje i prompten: `LEVERANCE: …`).
 2. Fagagenten leverer et fagnotat med kilder.
 3. Fagets kontrolagent (Opus, kun læse- og søgeværktøjer, egen kontrolviden, ingen adgang til fagagentens ræsonnement) laver et hårdt review og afgiver en JSON-dom: **godkendt** eller **afvist** med fund klassificeret som kritisk, væsentlig eller mindre – blokerende fund skal have krav, kilde og evidens.
-4. Afvist → fundene sendes ordret retur til fagagenten. Højst 3 forsøg pr. runde.
+4. Afvist → fundene sendes ordret retur til fagagenten, som kun retter de berørte afsnit. Højst 3 forsøg pr. runde. Forsøg 1 er det fulde review. Forsøg 2–3 tjekker kun lukning og regressioner (fund-fastlåsning).
 5. 3. afvisning → root cause-analyse med 5 Why-metoden i `kvalitet/RCA-….md` af, hvorfor fagagenten ikke ramte rigtigt første gang. Læringen implementeres i fagagenten (hukommelse og repo), og en ny runde med 3 forsøg starter under samme leverance-ID. Efter 3 runder eskaleres der til brugeren.
 6. Projektlederens egne leverancer (projektgrundlag, samlet plan) kontrolleres af `projekt-kontrol`.
 
-Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
+Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
 
 I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar som "IKKE UAFHÆNGIGT KVALITETSKONTROLLERET".
 

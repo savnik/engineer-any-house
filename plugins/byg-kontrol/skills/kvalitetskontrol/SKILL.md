@@ -60,14 +60,18 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 ```
 LEVERANCE: <id>
 Runde: <r> af 3 · Forsøg: <n> af 3
+FASE: <0-4> · KONTROLNIVEAU: <let|fuld>
+DESIGNGRUNDLAG: <kun for projektleverancer i fase 3+: godkendte fagleverance-ID'er>
 Opgave: <den oprindelige opgave til fagagenten, ordret>
 Leverance: <sti til fagnotat>
 Projektgrundlag: <sti>
 Relevante andre fagnotater: <stier eller "ingen">
 Tidligere domme: <stier eller "ingen">
 Sagsmappe: <sti>
-Udfør et hårdt og kritisk review efter din kontrolprotokol, og afslut med JSON-dommen.
+Udfør et review på det angivne kontrolniveau efter din kontrolprotokol (forsøg 1: fuldt review; forsøg 2–3: kun lukning af fund og regressioner i ændrede afsnit), og afslut med JSON-dommen.
 ```
+- **FASE og KONTROLNIVEAU** følger `faser-og-gates.md` i projektlederens skill. `fuld` gælder sikkerhedskritiske fag i fase 2 og den samlede plan i fase 3. Ellers er niveauet `let`.
+- **Projektkontrol** kræver `FASE:`. I fase 3+ kræver den også `DESIGNGRUNDLAG:` med godkendte fagleverancer (hooken håndhæver det).
 
 ## 4. Skabelon – retur til fagagent
 ```
@@ -75,7 +79,7 @@ LEVERANCE: <id>
 Forsøg: <n+1> af 3 – leverancen blev afvist af kvalitetskontrollen.
 Dom: <sti til dommen>
 Fund der skal adresseres (ordret): <F1 · klasse · påstand · krav · handling>, …
-Instruks: Opdatér <sti til notat>. Adressér hvert fund-ID under "Kontrolrespons" (lukket eller bestridt med kilde). Ændr ikke andet uden at notere det. Returnér kort resumé.
+Instruks: Ret **kun de berørte afsnit** i <sti til notat> med Edit. Skriv ikke notatet om. Adressér hvert fund-ID i en kort tabel under "Kontrolrespons" (lukket eller bestridt med kilde). Kør afleveringstjekket på de ændrede afsnit. Ændr ikke andet uden at notere det. Returnér kort resumé.
 ```
 
 ## 4b. Skabelon – ny runde efter RCA
@@ -98,6 +102,8 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 ## 7. Det håndhæver hooks
 - Fag- og kontrolkald uden `LEVERANCE:` afvises med besked om, hvad der mangler.
 - Ny fagversion før kontrol, forkert kontrolagent, 4. forsøg i en runde og ændring af en godkendt leverance afvises.
+- Projektkontrol uden `FASE:` afvises. En planleverance i fase 3+ afvises, hvis `DESIGNGRUNDLAG` mangler eller indeholder fagleverancer, der ikke er godkendt (fase-gate).
+- Et nyt kritisk eller væsentligt fund i forsøg 2–3 uden `nyt_grundlag` sendes retur til kontrolagenten (fund-fastlåsning).
 - En ny runde afvises, indtil RCA-filen for runden findes med en 5 Why-kæde (mindst fem nummererede "Hvorfor"-linjer og en "Grundårsag") og linjen `Forbedring implementeret: ja`. En 4. runde afvises altid.
 - Ugyldig dom (fx blokerende fund uden kilde eller "godkendt" med åbne fund) sendes retur til kontrolagenten.
 - Hovedtråden kan ikke afslutte, mens sessionens leverancer afventer kontrol, er afvist eller mangler RCA (én påmindelse pr. stop).

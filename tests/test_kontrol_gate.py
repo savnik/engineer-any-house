@@ -51,7 +51,7 @@ def main() -> int:
         L = "2026-09-25-bad/vvs/01"
         FAG = "byg-vvs:vvs-mester"
         KON = "byg-kontrol:vvs-kontrol"
-        blok_fund = [{"id": "F1", "klasse": "væsentlig", "status": "nyt", "krav": "DS 439:2024 tæthedsprøvning",
+        blok_fund = [{"id": "F1", "klasse": "væsentlig", "status": "aabent", "krav": "DS 439:2024 tæthedsprøvning",
                       "kilde": "ds.dk", "evidens": "Notatet nævner ingen tæthedsprøvning", "handling": "Tilføj hold point"}]
 
         forvent("fagkald uden leverance-ID afvises", kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": "Vurdér"}}, env), "afvist")
@@ -171,13 +171,38 @@ def main() -> int:
 
         P = {"session_id": "s3", "cwd": str(cwd)}
         for n in (1, 2, 3):
-            kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01"}}, env)
+            kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env)
             kald("subagentstop", {**P, "agent_type": "byg-kontrol:projekt-kontrol",
                                   "last_assistant_message": dom("sag/projekt/01", "afvist", blok_fund).replace('"vvs"', '"projekt"')}, env)
-        forvent("projektkontrol: 4. forsøg afvises", kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01"}}, env), "afvist")
+        forvent("projektkontrol: 4. forsøg afvises", kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env), "afvist")
         (sag / "kvalitet" / "RCA-sag__projekt__01.md").write_text(HV + "Forbedring implementeret: ja\n", encoding="utf-8")
         forvent("projektkontrol: runde 2 starter efter RCA med forbedring",
-                kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01"}}, env), "tilladt")
+                kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env), "tilladt")
+
+        # Fase-gate: planleverance i fase 3 kræver godkendt designgrundlag
+        PK = "byg-kontrol:projekt-kontrol"
+        forvent("projektkontrol uden FASE afvises",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": "LEVERANCE: sag/projekt/05"}}, env), "afvist")
+        forvent("fase 3 uden DESIGNGRUNDLAG afvises",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": "LEVERANCE: sag/projekt/05\nFASE: 3"}}, env), "afvist")
+        forvent("fase 3 med ikke-godkendt designgrundlag afvises",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: sag/projekt/05\nFASE: 3\nDESIGNGRUNDLAG: {L3}, {L}"}}, env), "afvist")
+        forvent("fase 3 med godkendt designgrundlag tilladt",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: sag/projekt/05\nFASE: 3\nDESIGNGRUNDLAG: {L3}, {L2}"}}, env), "tilladt")
+
+        # Fund-fastlåsning: nyt blokerende fund i forsøg 2 kræver nyt_grundlag
+        L4 = "2026-09-25-bad/vvs/04"
+        kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L4}"}}, env)
+        kald("pretool", {**S, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {L4}"}}, env)
+        kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": dom(L4, "afvist", blok_fund, "byg-sager/2026-09-25-bad")}, env)
+        kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L4}"}}, env)
+        kald("pretool", {**S, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {L4}"}}, env)
+        nytfund = [{**blok_fund[0], "id": "F9", "status": "nyt"}]
+        forvent("nyt væsentligt fund i forsøg 2 uden nyt_grundlag sendes retur",
+                kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": dom(L4, "afvist", nytfund)}, env), "blokeret")
+        forvent("nyt væsentligt fund i forsøg 2 med nyt_grundlag=regression registreres",
+                kald("subagentstop", {**S, "agent_type": KON, "stop_hook_active": True,
+                                      "last_assistant_message": dom(L4, "afvist", [{**nytfund[0], "nyt_grundlag": "regression"}])}, env), "tilladt")
 
         # Manuel status uden CLAUDE_PLUGIN_DATA skal finde pluginets datamappe under ~/.claude/plugins/data/
         hjem = pathlib.Path(tmp) / "hjem"

@@ -20,6 +20,8 @@ Ved rum-projekter (fx bad, køkken) spørges altid til **rummets placering og ge
 
 **E – Myndighed og risici:** Ændres bærende konstruktioner, facade, areal eller anvendelse? Lokalplan, servitutter, bevaring? Installationer (gas, fjernvarme, olie, varmepumpe)? Opførelsesår → asbest, PCB, bly. Forsikring, ejerskifte, naboer.
 
+**Fagfakta (efter blok B–E):** Gå `definition-of-ready.md` igennem for hvert berørt fag, og bed om fotos og dokumenter samlet i én runde. Spørg altid efter eksisterende registreringer, servicerapporter og manualer.
+
 **F – Afslutning:** Opsummér forståelsen, antagelser og prioriteringer; få brugerens accept.
 
 ## Definition of Ready
@@ -28,6 +30,7 @@ Ved rum-projekter (fx bad, køkken) spørges altid til **rummets placering og ge
 - [ ] Bygningen er beskrevet (type, år, konstruktion, kendte problemer) – ved rum-projekter også rummets placering og geometri (etage, skråvæg, vinduer, vægtyper, bredde, loftshøjde, hvad der er under gulvet)
 - [ ] Rammer for budget, tid og kvalitet – eller bevidst åbne
 - [ ] Udførelsesform og brugerens egen rolle er kendt
+- [ ] Fakta pr. berørt fag er indsamlet efter `definition-of-ready.md` (fotos, typeskilte, manualer, registreringer), eller manglerne er markeret som antagelser
 - [ ] Myndighedsforhold og farlige stoffer er markeret som afklaret eller åbne
 - [ ] Antagelser er skrevet ned og accepteret af brugeren
 - [ ] Brugeren har accepteret projektgrundlaget

@@ -20,6 +20,10 @@ Regler
 - Stop-hooken forhindrer (én gang pr. stop) afslutning, mens sessionens leverancer mangler kontrol,
   er afvist eller mangler RCA.
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
+- Fase-gate: projektkontrol af en planleverance i fase 3 eller senere ("FASE: 3" i prompten) kræver
+  "DESIGNGRUNDLAG: <id>, <id> …" med fagleverancer, der alle er godkendt (design freeze).
+- Fund-fastlåsning: i forsøg 2 og 3 skal et nyt kritisk eller væsentligt fund have
+  "nyt_grundlag": "regression" | "aendret_tekst" | "kritisk_sikkerhed" (kun klasse kritisk).
 Fail-safe: uventede fejl blokerer aldrig – de logges i <data>/kontrol/log.jsonl.
 """
 import json
@@ -38,6 +42,9 @@ FORBEDRING_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECA
 HVORFOR_RE = re.compile(r"^\s*\d+\.\s.*\bhvorfor\b", re.IGNORECASE | re.MULTILINE)
 GRUNDAARSAG_RE = re.compile(r"grundårsag", re.IGNORECASE)
 LEV_RE = re.compile(r"LEVERANCE\s*:\s*([^\s`'\"<>]+)", re.IGNORECASE)
+FASE_RE = re.compile(r"^\s*FASE\s*:\s*(\d)", re.IGNORECASE | re.MULTILINE)
+DESIGN_RE = re.compile(r"^\s*DESIGNGRUNDLAG\s*:\s*(.+)$", re.IGNORECASE | re.MULTILINE)
+NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
 BLOKERENDE = {"kritisk", "væsentlig"}
 STATUSSER = {"nyt", "aabent", "åbent", "lukket", "bestridt"}
 
@@ -235,9 +242,27 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
         if fag == "projekt":
             if e and e.get("type") != "projekt":
                 return afvis_kald(f"Leverance {lev} er en {e.get('fag')}-leverance og kontrolleres af {e.get('kontrol_agent')}.")
+            prompt = str(ti.get("prompt") or "")
+            fm = FASE_RE.search(prompt)
+            if not fm:
+                return afvis_kald("Projektkontrol kræver linjen 'FASE: <0-4>' i prompten (0 afklaring, 1 dispositionsforslag, "
+                                  "2 design, 3 integration/plan, 4 udførelse) – se skill 'kvalitetskontrol', afsnit 3.")
+            fase = int(fm.group(1))
+            if fase >= 3:
+                dm = DESIGN_RE.search(prompt)
+                ids = [x.strip().rstrip(".,;") for x in re.split(r"[,\s]+", dm.group(1)) if x.strip()] if dm else []
+                if not ids:
+                    return afvis_kald("Fase-gate: en planleverance i fase 3+ kræver linjen 'DESIGNGRUNDLAG: <leverance-id>, …' "
+                                      "med de godkendte fagnotater, planen bygger på (design freeze).")
+                mangler = [f"{i} ({(L.get(i) or {}).get('status', 'ukendt')})" for i in ids
+                           if (L.get(i) or {}).get("status") != "godkendt"]
+                if mangler:
+                    return afvis_kald("Fase-gate: designgrundlaget er ikke frosset – disse fagleverancer er ikke godkendt: "
+                                      + ", ".join(mangler) + ". Planlæg (tidsplan, budget, montage) først, når designet er godkendt.")
             if not e:
                 e = L[lev] = {"fag": "projekt", "type": "projekt", "forsoeg": 0, "kontrol_agent": st,
                               "oprettet": nu(), "domme": []}
+            e["fase"] = fase
             if e.get("status") == "godkendt":
                 return afvis_kald(naeste_skridt(lev, e))
             if e.get("status") in ("stoppet", "rca_udfoert"):
@@ -399,6 +424,16 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
                 if forældet:
                     log(d, haendelse="forældet_dom", leverance=lev, agent=at, grund=forældet)
                     return
+                if int(e.get("forsoeg", 1)) > 1 and e.get("type") != "ekstern":
+                    for f in dom.get("fund") or []:
+                        kl = normklasse(f.get("klasse"))
+                        if str(f.get("status") or "").lower() == "nyt" and kl in BLOKERENDE:
+                            ng = str(f.get("nyt_grundlag") or "").strip().lower()
+                            if ng not in NYT_GRUNDLAG or (ng == "kritisk_sikkerhed" and kl != "kritisk"):
+                                fejl.append(f"{f.get('id')}: nyt {kl} fund i forsøg {e.get('forsoeg')} kræver \"nyt_grundlag\": "
+                                            "\"regression\" eller \"aendret_tekst\" (eller \"kritisk_sikkerhed\" for kritiske fund). "
+                                            "Blev det overset i forsøg 1, så nedgradér det til 'mindre' og skriv det under kontrolsvigt "
+                                            "(fund-fastlåsning, kontrolprotokol afsnit 4).")
         if fejl:
             log(d, haendelse="ugyldig_dom", agent=at, fejl=fejl, gentaget=bool(inp.get("stop_hook_active")))
             if not inp.get("stop_hook_active"):

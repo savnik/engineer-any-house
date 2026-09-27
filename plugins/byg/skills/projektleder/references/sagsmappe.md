@@ -11,11 +11,12 @@
 byg-sager/<sag-id>/
 ├── projektgrundlag.md      formål, bygning, omfang, rammer, antagelser (skabelon i interview.md)
 ├── beslutningslog.md       beslutninger med begrundelse
+├── aendringer.md           ændringslog efter design freeze: ændring, kilde, konsekvensanalyse, batch
 ├── status.md               fase, næste skridt, åbne spørgsmål, kontrolstatus
 ├── fagnotater/<fag-id>.md  ét notat pr. fag (fælles protokol)
 ├── graenseflader.md        grænsefladematrix
-├── budget.md               samlet budget (ejes af projektlederen)
-├── tidsplan.md             aktiviteter, afhængigheder, hold points
+├── budget.md               samlet budget (ejes af projektlederen; detaljer først i fase 3)
+├── tidsplan.md             aktiviteter, afhængigheder, hold points (først i fase 3)
 ├── risici.md               risikoregister
 ├── kontrolplan.md          hold points og lovpligtige kontroller
 ├── erfaringer.md           kandidater til forankring
@@ -29,7 +30,7 @@ byg-sager/<sag-id>/
 ## status.md
 ```
 # Status – <sag-id>
-**Fase:** <1–7> · **Opdateret:** <dato>
+**Fase:** <0–4> · **Gate:** <G0–G3 opnået> · **Design freeze:** <ja/nej, dato> · **Opdateret:** <dato>
 ## Næste skridt
 ## Åbne spørgsmål (til bruger / til fag)
 ## Kontrolstatus

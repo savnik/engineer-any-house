@@ -1,7 +1,7 @@
 {
   "name": "byg-maler",
   "displayName": "Byg · Malermester",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Malermester som subagent: underlagsanalyse, systemvalg, indvendig og udvendig maling, gamle vinduer, facader, vådrumsmaling, spartling, skimmel, bly/PCB og MAL-koder efter dansk regelgrundlag og MBK – med egen videnbase, hukommelse og evals.",
   "author": { "name": "Peter Savnik" },
   "keywords": ["byggeri", "maler", "maling", "MBK", "vinduer", "facade", "bly", "skimmel", "danmark"],

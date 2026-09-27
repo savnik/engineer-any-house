@@ -28,13 +28,15 @@ byg-<fag> ───────────────────► byg-kontr
 
 **Dom** (sidste JSON-blok i kontrolagentens svar): `leverance_id, fag, forsoeg, dom, rubric_version, sagsmappe, fund[id, klasse, status, sted, paastand, krav, kilde, evidens, handling, eskaler], regressioner, efterproevet_mod_primaerkilde, usikkerheder, kontrolsvigt`. Godkendt ⇔ ingen åbne kritiske/væsentlige fund. Blokerende fund kræver krav, kilde og evidens.
 
-**Stabilitet:** rubric fryses ved første runde; runde 2–3 tager stilling til tidligere fund før nye; nye væsentlige fund kun ved ændringer (ellers registreres kontrolsvigt); bestridte kritiske fund eskaleres til brugeren.
+**Faser og gates:** projektet går gennem fase 0 (afklaring og Definition of Ready pr. fag), 1 (dispositionsforslag), 2 (design → design freeze) og 3 (én samlet plan), derefter 4 (udførelse, ændringsstyring). Kontrolniveau `let` eller `fuld` efter fase og risiko. Formålet er, at planer ikke revideres, hver gang designet ændres, og at ændringer samles.
+
+**Stabilitet og fund-fastlåsning:** rubric fryses i forsøg 1, som er det fulde review. Forsøg 2–3 tager kun stilling til tidligere fund og regressioner i ændrede afsnit. Et nyt blokerende fund kræver `nyt_grundlag` (regression / aendret_tekst / kritisk_sikkerhed), ellers sender hooken dommen retur. Oversete forhold rejses som mindre og under kontrolsvigt. Bestridte kritiske fund eskaleres til brugeren.
 
 **Hooks** (`plugins/byg-kontrol/hooks/kontrol_gate.py`, python3, fail-safe):
 | Hændelse | Regel |
 |---|---|
-| PreToolUse (Agent/Task) | Kræver `LEVERANCE:`; fagkald → "afventer_kontrol"; ny fagversion før dom, forkert kontrolagent, 4. forsøg og ændring af godkendt leverance afvises |
-| SubagentStop (kontrolagenter) | Validerer dommen; ugyldig dom sendes retur én gang; opdaterer status (godkendt / afvist / stoppet); gemmer dommen i `<sagsmappe>/kvalitet/` |
+| PreToolUse (Agent/Task) | Kræver `LEVERANCE:`; fagkald → "afventer_kontrol"; ny fagversion før dom, forkert kontrolagent, 4. forsøg og ændring af godkendt leverance afvises; projektkontrol kræver `FASE:`, og i fase 3+ `DESIGNGRUNDLAG:` med godkendte fagleverancer |
+| SubagentStop (kontrolagenter) | Validerer dommen (inkl. `nyt_grundlag` på nye blokerende fund i forsøg 2–3); ugyldig dom sendes retur én gang; opdaterer status (godkendt / afvist / stoppet); gemmer dommen i `<sagsmappe>/kvalitet/` |
 | Stop (hovedtråd) | Blokerer én gang, hvis sessionens leverancer afventer kontrol, er afvist eller mangler RCA |
 
 Agentnavne matches på basisnavnet, så både `byg-vvs:vvs-mester` (marketplace) og `byg:vvs-mester` (samlet pakke) virker; fag→kontrol-mapping ligger i `hooks/fagregister.json`.

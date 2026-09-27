@@ -51,10 +51,19 @@ Fag-id: `toemrer` · Kontrollerer leverancer fra: `toemrermester`
 - **mindre** – uklarhed, formulering eller manglende henvisning uden teknisk konsekvens. Blokerer ikke.
 - **Godkendt** ⇔ ingen kritiske eller væsentlige fund med status `nyt`, `aabent` eller `bestridt`.
 
-### 4. Runder og stabilitet
-- Rubric og kildegrundlag fryses ved første runde (angiv `rubric_version`).
-- I runde 2 og 3: tag først stilling til hvert tidligere fund (lukket, stadig åbent eller bestridt), derefter til regressioner i de ændrede afsnit.
-- Nye væsentlige fund i runde 2–3 må kun rejses, hvis de skyldes ændringer – ellers skal du skrive under `kontrolsvigt`, hvorfor de blev overset. Nye kritiske fund må altid rejses.
+### 4. Kontrolniveau, forsøg og fund-fastlåsning
+- **Kontrolniveau** står i prompten (`KONTROLNIVEAU: let|fuld`):
+  - `fuld`: hele afsnit 2 og fejlkataloget.
+  - `let`: sikkerhed og lovlighed (punkt 1), afgørende faglige fejl, og om opgaven er besvaret. Andet noteres som **mindre**, medmindre det har konsekvens for sikkerhed, lovkrav eller økonomi.
+  - Står der ikke noget niveau, er det `fuld`.
+- **Forsøg 1 er det fulde review på det angivne niveau.** Find alt, hvad der skal findes, dér. Rubric og kildegrundlag fryses (angiv `rubric_version`).
+- **Forsøg 2 og 3:** tag først stilling til hvert tidligere fund (lukket, stadig åbent eller bestridt), og tjek derefter **kun de ændrede afsnit** for regressioner. Læs ikke uændret tekst igennem på ny for at finde nye fund.
+- **Fund-fastlåsning:** et nyt kritisk eller væsentligt fund i forsøg 2–3 skal have feltet `"nyt_grundlag"`:
+  - `"regression"`: rettelsen har skabt fejlen.
+  - `"aendret_tekst"`: fejlen står i tekst, der er ændret siden sidste forsøg.
+  - `"kritisk_sikkerhed"`: kun ved klasse kritisk.
+
+  Blev et væsentligt forhold overset i forsøg 1, så rejs det som **mindre**, og forklar det under `kontrolsvigt`. Hooken sender en dom uden gyldigt `nyt_grundlag` retur.
 - Bestridt fund: vurder fagagentens kildebelæg. Har fagagenten ret, så luk fundet. Fastholder du et kritisk fund, som er bestridt med kilde, så sæt `"eskaler": true` – brugeren afgør.
 - Mangler afgørende oplysninger, som kun brugeren kan give, så skriv det som fund med handlingen "afklar med bruger" – projektlederen eskalerer.
 
@@ -73,7 +82,8 @@ Skriv først en kort vurdering (højst 15 linjer): samlet dom, de vigtigste fund
     {"id": "F1", "klasse": "kritisk", "status": "nyt",
      "sted": "afsnit i leverancen", "paastand": "hvad leverancen siger",
      "krav": "krav/norm/anvisning med §/afsnit og udgave", "kilde": "URL eller præcis reference",
-     "evidens": "kort citat, måling eller begrundelse", "handling": "konkret rettelse", "eskaler": false}
+     "evidens": "kort citat, måling eller begrundelse", "handling": "konkret rettelse", "eskaler": false,
+     "nyt_grundlag": "kun ved nyt blokerende fund i forsøg 2–3: regression | aendret_tekst | kritisk_sikkerhed"}
   ],
   "regressioner": [],
   "efterproevet_mod_primaerkilde": ["F1"],

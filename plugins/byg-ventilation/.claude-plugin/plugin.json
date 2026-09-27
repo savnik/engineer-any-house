@@ -1,7 +1,7 @@
 {
   "name": "byg-ventilation",
   "displayName": "Byg · Ventilationsekspert",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Ventilationsekspert som subagent: boligventilation, udsugning og erstatningsluft, varmegenvinding, emhætter, fugt og skimmel, kanaler, brand, lyd, radon og indregulering efter dansk regelgrundlag – med egen videnbase, hukommelse og evals.",
   "author": {
     "name": "Peter Savnik"

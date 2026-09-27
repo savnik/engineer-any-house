@@ -17,6 +17,7 @@
 ## Fagforespørgsel (skabelon)
 ```
 LEVERANCE: <sag-id>/<fag-id>/<nr>
+FASE: <1|2> · KONTROLNIVEAU: <let|fuld>
 Sagsmappe: <sti>
 Opgave: <præcist spørgsmål eller leverance>
 Kontekst: se projektgrundlag.md – kort resumé: <2–3 linjer>
@@ -24,7 +25,8 @@ Afgrænsning: <hvad er ikke med>
 Grænseflader, der skal belyses: <fag + emne>
 Relevante lokale erfaringer: <fra videnbanken, eller "ingen">
 Leverance: fagnotat til <sagsmappe>/fagnotater/<fag-id>.md efter den fælles protokol
-Omfang: <kort vurdering | fuldt fagnotat>
+Omfang: <fase 1: beslutningsnotat (højst ca. 2 sider) | fase 2: fagnotat uden tilbudsgrundlag>
+Projektets rammer: <krav- og begrænsningsliste fra projektgrundlag og beslutningslog, fx ét firma pr. dag>
 ```
 Ændrer opgaven en varmekilde, dens sikkerhedsudstyr eller hydraulikken omkring den, så skriv i opgaven: "Lav en fejltilstandstabel (normal drift, overtemperatur/dump, strømsvigt, fastlåst ventil, lækage) for alle berørte kredse, før du anbefaler." Spørg ikke kun, om en komponent kan udgå.
 
@@ -64,7 +66,7 @@ Projektlederen ejer den samlede budgetsum fra første fagnotat. Fagene angiver k
 
 **Vinduer:** opmåling og valg → screening (PCB i fuger, bly i maling) → montage (tømrer) → murer (lysninger, sålbænke) → ventilation (friskluft) → maler.
 
-## Tidsplan – tidsplan.md
+## Tidsplan – tidsplan.md (først i fase 3, efter design freeze)
 | Uge/dato | Aktivitet | Fag | Afhænger af | Hold point / kontrol | Tørretid/ventetid |
 |---|---|---|---|---|---|
 Afsæt tid til kontrol-loopet (op til 3 forsøg) og til tørretider efter produktdatablade.

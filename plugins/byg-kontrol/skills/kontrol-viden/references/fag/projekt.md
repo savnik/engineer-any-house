@@ -1,11 +1,12 @@
 # Kontrol – projektlederens leverancer
 
-**rubric_version:** `kontrol-projekt@1.0` (2026-09-25)
+**rubric_version:** `kontrol-projekt@1.1` (2026-09-27)
 
 Kontrollerer projektgrundlag, koordineringsplan, grænsefladematrix, tidsplan, risikoregister, kontrolplan, beslutningslog og samlede anbefalinger til brugeren.
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
-1. Definition of Ready: formål, omfang, bygning (type, år, konstruktion), rammer (budget, tid, kvalitet), udførende, kendte problemer og myndighedsforhold er afklaret eller markeret som antagelser (væsentlig).
+1. Definition of Ready (G0): formål, omfang, bygning (type, år, konstruktion), rammer (budget, tid, kvalitet), udførende, kendte problemer og myndighedsforhold er afklaret eller markeret som antagelser. **Fagfakta pr. berørt fag** efter projektlederens `definition-of-ready.md` er indsamlet eller markeret som antagelser (væsentlig).
+1a. Fase og gate: en planleverance (tidsplan, detailbudget, montage) bygger kun på godkendte fagnotater (design freeze, G2). Ændringer efter G2 er ført i `aendringer.md` med konsekvensanalyse (væsentlig). Delplaner, der burde være samlet, noteres som mindre.
 2. Alle berørte fag er inddraget; ingen fag mangler i forhold til opgavens art (væsentlig).
 3. Alle fagleverancer har en godkendt kontroldom, eller afvigelse er eskaleret til brugeren (kritisk).
 4. Grænseflader: hver snitflade har ejer, tidspunkt og leverance; konflikter mellem fagnotater er løst eller eskaleret (væsentlig).
@@ -19,6 +20,7 @@ Kontrollerer projektgrundlag, koordineringsplan, grænsefladematrix, tidsplan, r
 ## Fejlkatalog
 - Fag udeladt (fx ventilation ved nye vinduer, el ved badeværelse).
 - Tidsplan uden tørretider og uden plads til kontrol og afvist leverance.
+- Plan skrevet før design freeze, eller revideret for hver enkelt ny oplysning i stedet for samlet (ændringsstyring).
 - Myndighedsforhold antaget i stedet for undersøgt.
 - Konflikt mellem fag skjult i stedet for eskaleret.
 
