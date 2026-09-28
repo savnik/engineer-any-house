@@ -45,7 +45,7 @@ Projektlederen kan også køre som hovedagent: `claude --agent byg:projektleder`
 Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 
 ## Kvalitetskontrol-loopet
-0. Projektet kører i faser med gates (`byg/skills/projektleder/references/faser-og-gates.md`): **0** afklaring og Definition of Ready pr. fag → **1** dispositionsforslag → **2** design og design freeze → **3** samlet plan (tidsplan, budget, montage) → **4** udbud og udførelse. Ændringer efter design freeze samles i `aendringer.md`. Kontrolniveau `let` eller `fuld` efter fase og risiko.
+0. Projektet kører i faser med gates (`byg/skills/projektleder/references/faser-og-gates.md`): **0** afklaring og Definition of Ready pr. fag → **1** dispositionsforslag → **2** design og design freeze → **3** samlet plan (tidsplan, budget, montage) → **4** udbud og udførelse. Ændringer efter design freeze samles i `aendringer.md`. Ved G1 laver projektlederen grænsefladeregistret og prissætter fag uden agent. G2 kræver brugerens accept af åbne punkter. Hold points hedder `HP-<FAG>-n` fra start. Kontrolniveau `let` eller `fuld` efter fase og risiko.
 1. Hver opgave får et leverance-ID `<sag-id>/<fag-id>/<nr>` (første linje i prompten: `LEVERANCE: …`).
 2. Fagagenten leverer et fagnotat med kilder.
 3. Fagets kontrolagent (Opus, kun læse- og søgeværktøjer, egen kontrolviden, ingen adgang til fagagentens ræsonnement) laver et hårdt review og afgiver en JSON-dom: **godkendt** eller **afvist** med fund klassificeret som kritisk, væsentlig eller mindre – blokerende fund skal have krav, kilde og evidens.

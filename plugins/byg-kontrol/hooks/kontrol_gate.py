@@ -8,7 +8,12 @@ Manuelt:               python3 kontrol_gate.py status
 
 Regler
 - Kald af byg-fagagenter og kontrolagenter skal have linjen "LEVERANCE: <id>" i prompten.
-- Et fagkald sætter leverancen til "afventer_kontrol". En ny fagversion kræver først en kontroldom.
+- Et fagkald sætter leverancen til "fagkald_igang". Når fagagenten afleverer (SubagentStop), bliver den
+  "afventer_kontrol". Et nyt fagkald, mens status er "fagkald_igang" (fx efter et afbrudt kald), er et
+  genforsøg og tæller ikke som nyt forsøg. En ny fagversion kræver først en kontroldom.
+- Godkendte leverancer beskyttes: kontrolkaldets linje "Leverance: <sti>" huskes. Write/Edit på den sti
+  afvises for subagenter og giver en advarsel i hovedtråden (brug nyt leverance-ID).
+- Domme findes også i hand-back-rapporter (tool_use-input i agentens transkript).
 - Kontrolagentens slutbesked skal indeholde en gyldig JSON-dom (faelles/kontrolprotokol.md, afsnit 5).
   Ugyldig dom → kontrolagenten sendes tilbage én gang for at rette den.
 - Højst 3 forsøg pr. runde. Tredje afviste dom → "stoppet": root cause-analyse af, hvorfor fagagenten
@@ -42,6 +47,8 @@ FORBEDRING_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECA
 HVORFOR_RE = re.compile(r"^\s*\d+\.\s.*\bhvorfor\b", re.IGNORECASE | re.MULTILINE)
 GRUNDAARSAG_RE = re.compile(r"grundårsag", re.IGNORECASE)
 LEV_RE = re.compile(r"LEVERANCE\s*:\s*([^\s`'\"<>]+)", re.IGNORECASE)
+STI_RE = re.compile(r"^\s*Leverance\s*:\s*(\S+\.md)\b", re.IGNORECASE | re.MULTILINE)
+IGANG_MAKS_SEK = 90 * 60
 FASE_RE = re.compile(r"^\s*FASE\s*:\s*(\d)", re.IGNORECASE | re.MULTILINE)
 DESIGN_RE = re.compile(r"^\s*DESIGNGRUNDLAG\s*:\s*(.+)$", re.IGNORECASE | re.MULTILINE)
 NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
@@ -215,6 +222,11 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 if e.get("fag") != fag:
                     return afvis_kald(f"Leverance-ID {lev} tilhører faget '{e.get('fag')}'. Brug et nyt ID til {fag}.")
                 status = e.get("status")
+                if status == "fagkald_igang":
+                    e.update(session_id=sid, opdateret=nu())
+                    gem(d, s)
+                    log(d, haendelse="fagkald_gentaget", leverance=lev, forsoeg=e.get("forsoeg"), agent=st)
+                    return
                 if status in ("afventer_kontrol", "under_kontrol"):
                     return afvis_kald(f"Leverance {lev} (forsøg {e.get('forsoeg')}/{MAKS}) er ikke kontrolleret endnu. "
                                       f"Kald {e.get('kontrol_agent')} med 'LEVERANCE: {lev}' og stien til fagnotatet først.")
@@ -234,7 +246,7 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             else:
                 e = L[lev] = {"fag": fag, "type": "fag", "forsoeg": 1, "fag_agent": st,
                               "kontrol_agent": kontrolnavn(fag, pre), "oprettet": nu(), "domme": []}
-            e.update(status="afventer_kontrol", session_id=sid, opdateret=nu())
+            e.update(status="fagkald_igang", session_id=sid, opdateret=nu())
             gem(d, s)
             log(d, haendelse="fagkald", leverance=lev, runde=runde(e), forsoeg=e["forsoeg"], agent=st)
             return
@@ -286,9 +298,12 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             if e.get("type") == "ekstern":
                 if e.get("status") != "under_kontrol":
                     e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
-            elif e.get("status") not in ("afventer_kontrol", "under_kontrol"):
+            elif e.get("status") not in ("fagkald_igang", "afventer_kontrol", "under_kontrol"):
                 return afvis_kald(f"Leverance {lev} har status '{e.get('status')}' – der er ingen ny fagversion at "
                                   f"kontrollere. {naeste_skridt(lev, e)}")
+        sm = STI_RE.search(str(ti.get("prompt") or ""))
+        if sm and e.get("type") != "ekstern":
+            e["sti"] = str(pathlib.Path(sm.group(1)).expanduser())
         e.update(status="under_kontrol", session_id=sid, opdateret=nu())
         gem(d, s)
         log(d, haendelse="kontrolkald", leverance=lev, runde=runde(e), forsoeg=e.get("forsoeg"), agent=st, type=e.get("type"))
@@ -377,30 +392,91 @@ def sagsmappe_sti(inp: dict, e: dict):
     return p if p.is_dir() else None
 
 
-def laes_transkript(sti) -> str:
+def _tekst(indhold) -> str:
+    if isinstance(indhold, str):
+        return indhold
+    dele = []
+    for b in indhold or []:
+        if not isinstance(b, dict):
+            continue
+        if b.get("type") == "text":
+            dele.append(b.get("text", ""))
+        elif b.get("type") == "tool_use":
+            # Hand-back og lignende: dommen kan ligge i værktøjskaldets input
+            for v in (b.get("input") or {}).values():
+                if isinstance(v, str):
+                    dele.append(v)
+        elif b.get("type") == "tool_result":
+            dele.append(_tekst(b.get("content")))
+    return "\n".join(dele)
+
+
+def laes_transkript(sti, antal: int = 3) -> str:
+    """Tekst fra de sidste assistent-beskeder (inkl. tool_use-input), nyeste sidst."""
     try:
         linjer = pathlib.Path(sti).read_text(encoding="utf-8").splitlines()
+        fundne = []
         for linje in reversed(linjer):
             obj = json.loads(linje)
             msg = obj.get("message") or {}
             if msg.get("role") == "assistant":
-                indhold = msg.get("content")
-                if isinstance(indhold, str):
-                    return indhold
-                return "\n".join(b.get("text", "") for b in indhold or [] if isinstance(b, dict))
+                fundne.append(_tekst(msg.get("content")))
+                if len(fundne) >= antal:
+                    break
+        return "\n".join(reversed(fundne))
+    except Exception:
+        return ""
+
+
+def foerste_prompt(sti) -> str:
+    """Første brugerbesked i agentens transkript (prompten fra orkestratoren)."""
+    try:
+        for linje in pathlib.Path(sti).read_text(encoding="utf-8").splitlines():
+            obj = json.loads(linje)
+            msg = obj.get("message") or {}
+            if msg.get("role") == "user":
+                return _tekst(msg.get("content"))
     except Exception:
         pass
     return ""
+
+
+def fagaflevering(inp: dict, d: pathlib.Path, fag: str, at: str) -> None:
+    m = LEV_RE.search(foerste_prompt(inp.get("agent_transcript_path")) or "")
+    with Laas(d):
+        s = indlaes(d)
+        kandidater = []
+        if m:
+            kandidater = [m.group(1).rstrip(".,;:)")]
+        else:
+            sid = str(inp.get("session_id") or "")
+            kandidater = [lev for lev, e in s["leverancer"].items()
+                          if e.get("fag") == fag and e.get("status") == "fagkald_igang" and e.get("session_id") == sid]
+            if len(kandidater) != 1:
+                log(d, haendelse="fagaflevering_uklar", agent=at, kandidater=kandidater)
+                return
+        for lev in kandidater:
+            e = s["leverancer"].get(lev)
+            if e and e.get("fag") == fag and e.get("status") == "fagkald_igang":
+                e.update(status="afventer_kontrol", opdateret=nu())
+                gem(d, s)
+                log(d, haendelse="fagaflevering", leverance=lev, forsoeg=e.get("forsoeg"), agent=at)
 
 
 def subagentstop(inp: dict, d: pathlib.Path) -> None:
     at = str(inp.get("agent_type") or "")
     _, base = del_navn(at)
     art, fag = klassificer(base)
+    if art == "fag":
+        return fagaflevering(inp, d, fag, at)
     if art != "kontrol":
         return
-    msg = inp.get("last_assistant_message") or laes_transkript(inp.get("agent_transcript_path"))
+    msg = inp.get("last_assistant_message") or ""
     dom, fejl = find_dom(msg)
+    if fejl:
+        dom2, fejl2 = find_dom(laes_transkript(inp.get("agent_transcript_path")))
+        if not fejl2:
+            dom, fejl = dom2, fejl2
     if not fejl:
         fejl = valider(dom)
     with Laas(d):
@@ -507,6 +583,36 @@ def start_ny_runde(d: pathlib.Path, e: dict, lev: str) -> None:
     log(d, haendelse="ny_runde", leverance=lev, runde=e["runde"])
 
 
+def alder_sek(e: dict) -> float:
+    try:
+        return time.time() - time.mktime(time.strptime(str(e.get("opdateret")), "%Y-%m-%dT%H:%M:%S"))
+    except Exception:
+        return 0
+
+
+def beskyt(inp: dict, d: pathlib.Path) -> None:
+    """PreToolUse Write/Edit: beskyt filer, der hører til godkendte leverancer."""
+    ti = inp.get("tool_input") or {}
+    fil = ti.get("file_path") or ti.get("notebook_path")
+    if not fil:
+        return
+    fil = str(pathlib.Path(str(fil)).expanduser())
+    s = indlaes(d)
+    for lev, e in s["leverancer"].items():
+        if e.get("status") == "godkendt" and e.get("sti") and e["sti"] == fil:
+            grund = (f"{fil} er leverancen {lev}, som er godkendt af kvalitetskontrollen. Ret den ikke direkte: "
+                     f"skriv afvigelsen i dit eget notat og bed projektlederen om en ændring under nyt leverance-ID "
+                     f"(fx '{lev}-r2') via aendringer.md.")
+            if inp.get("agent_type") or inp.get("agent_id"):
+                log(d, haendelse="beskyttet_fil_afvist", leverance=lev, fil=fil, agent=inp.get("agent_type"))
+                return afvis_kald(grund)
+            log(d, haendelse="beskyttet_fil_advarsel", leverance=lev, fil=fil)
+            print(json.dumps({"systemMessage": "byg-kontrol: " + grund,
+                              "hookSpecificOutput": {"hookEventName": "PreToolUse", "additionalContext": grund}},
+                             ensure_ascii=False))
+            return
+
+
 def stop(inp: dict, d: pathlib.Path) -> None:
     if inp.get("stop_hook_active"):
         return
@@ -521,6 +627,11 @@ def stop(inp: dict, d: pathlib.Path) -> None:
             if typ == "ekstern":
                 if status == "under_kontrol":
                     punkter.append(f"{lev}: kontrolagentens gyldige dom mangler → kald {e.get('kontrol_agent')} igen.")
+                continue
+            if status == "fagkald_igang":
+                if alder_sek(e) > IGANG_MAKS_SEK:
+                    punkter.append(f"{lev}: fagkaldet har ikke afleveret i over {IGANG_MAKS_SEK // 60} min. Er agenten "
+                                   f"afbrudt, så kald {e.get('fag_agent')} igen med 'LEVERANCE: {lev}' (tæller ikke som nyt forsøg).")
                 continue
             if status == "afventer_kontrol":
                 punkter.append(f"{lev}: afventer kontrol → kald {e.get('kontrol_agent')} med 'LEVERANCE: {lev}'.")
@@ -569,7 +680,7 @@ def main() -> int:
     try:
         raw = sys.stdin.read()
         inp = json.loads(raw) if raw.strip() else {}
-        handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop}.get(cmd)
+        handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "beskyt": beskyt}.get(cmd)
         if handler:
             handler(inp, datamappe())
     except Exception:

@@ -19,6 +19,8 @@
 LEVERANCE: <sag-id>/<fag-id>/<nr>
 FASE: <1|2> · KONTROLNIVEAU: <let|fuld>
 Sagsmappe: <sti>
+Grænsefladeregister: <sagsmappe>/graenseflader.md (fra G1; i fase 1: "udfyldes af PL efter fase 1")
+Hold point-præfiks: HP-<FAG>-n (HP1–HPn projektfælles)
 Opgave: <præcist spørgsmål eller leverance>
 Kontekst: se projektgrundlag.md – kort resumé: <2–3 linjer>
 Afgrænsning: <hvad er ikke med>
@@ -38,7 +40,7 @@ Projektets rammer: <krav- og begrænsningsliste fra projektgrundlag og beslutnin
 - Ændres en grundforudsætning undervejs (fx rummets placering), så suspendér de bindende detaljer, der bygger på den gamle forudsætning, i beslutningsloggen, og revidér alle berørte fagnotater under nye leverance-ID'er.
 
 ## Budget – budget.md
-Projektlederen ejer den samlede budgetsum fra første fagnotat. Fagene angiver kun eget skøn inkl. moms, med grundydelse og optioner adskilt; de vurderer ikke den samlede ramme.
+Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent** (screening og analyser, affaldsanmeldelse, kloakmester, statiker, varmetabsberegning, skorstensfejer, servicefirma, midlertidige løsninger) prissættes af PL med skøn [T] ved G1, så R-rammen vurderes på et komplet tal. Fagene angiver kun eget skøn inkl. moms, med grundydelse og optioner adskilt; de vurderer ikke den samlede ramme.
 - Tjek altid, hvem der leverer selve produkterne (sanitet, armaturer, glasvæg, dør, vindue) og fælles poster (container/affald, faldsikring og stillads, tagdækker, PSS, screening, midlertidige løsninger). De glemmes let i fagenes skøn.
 - Bufferen (typisk 10–15 %) lægges oveni grundydelsen.
 - Afviger det sandsynlige niveau fra rammen, forelægges det bygherren som beslutningspunkt (hæv rammen eller vælg besparelser), før tilbud indhentes.
@@ -46,9 +48,12 @@ Projektlederen ejer den samlede budgetsum fra første fagnotat. Fagene angiver k
 | Post | Lav | Høj | Kilde |
 |---|---:|---:|---|
 
-## Grænsefladematrix – graenseflader.md
-| Grænseflade | Fag A | Fag B | Hvad | Hvornår | Ejer | Status |
-|---|---|---|---|---|---|---|
+## Grænsefladeregister – graenseflader.md (laves ved G1, lukkes ved G2)
+| # | Snitflade | Fag A | Fag B | **Ejer** (leverer og dokumenterer) | Hvad | Fase/hvornår | Status (åben/afgjort/lukket) | Beslutning (link til beslutningslog) |
+|---|---|---|---|---|---|---|---|---|
+- Én ejer pr. snitflade. Komponenter på tværs af fag (fx sikkerhedskomponent, der skal el-tilsluttes) står med **leverandør, montør og tilslutter** hver for sig.
+- Fagene må ikke selv ændre en ejer. Afvigelser meldes til PL, som afgør dem og opdaterer registret, før næste fagkald eller retur.
+- Omfatter også **fag uden agent** (screening, kloakmester, servicefirma, skorstensfejer, statiker).
 
 ## Fagsekvenser (typiske – tilpasses sagen)
 **Badeværelse:** screening (asbest/PCB/bly) → nedrivning og affald → vvs-råføring (afløb, vand; tæthedsprøvning) + el-råinstallation → vægge/underlag (tømrer/murer) → fald og afretning → membran (hold point: kontrol og tørretid) → fliser → vvs- og el-montering → ventilation → maler (fugtig zone/loft) → funktions- og slutkontroller.

@@ -56,6 +56,8 @@ Fag-id: `el` · Kontrollerer leverancer fra: `el-installatoer`
   - `fuld`: hele afsnit 2 og fejlkataloget.
   - `let`: sikkerhed og lovlighed (punkt 1), afgørende faglige fejl, og om opgaven er besvaret. Andet noteres som **mindre**, medmindre det har konsekvens for sikkerhed, lovkrav eller økonomi.
   - Står der ikke noget niveau, er det `fuld`.
+  - **Uanset niveau:** mangler et fase 1-notat afsnittet "Sikkerhedsprincipper", eller mangler et afgørende sikkerhedsprincip for opgaven, er det et væsentligt fund.
+  - Et fase 2-notat over ca. 250 linjer uden bilag noteres som mindre fund.
 - **Forsøg 1 er det fulde review på det angivne niveau.** Find alt, hvad der skal findes, dér. Rubric og kildegrundlag fryses (angiv `rubric_version`).
 - **Forsøg 2 og 3:** tag først stilling til hvert tidligere fund (lukket, stadig åbent eller bestridt), og tjek derefter **kun de ændrede afsnit** for regressioner. Læs ikke uændret tekst igennem på ny for at finde nye fund.
 - **Fund-fastlåsning:** et nyt kritisk eller væsentligt fund i forsøg 2–3 skal have feltet `"nyt_grundlag"`:

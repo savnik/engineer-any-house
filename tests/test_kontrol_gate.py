@@ -15,11 +15,37 @@ GATE = ROD / "plugins" / "byg-kontrol" / "hooks" / "kontrol_gate.py"
 FEJL = []
 
 
-def kald(hændelse: str, data: dict, env: dict) -> dict | None:
+FAGAGENTER = ("vvs-mester", "el-installatoer", "murermester", "ventilationsekspert", "malermester", "toemrermester")
+
+
+def kald_raa(hændelse: str, data: dict, env: dict) -> dict | None:
     r = subprocess.run([sys.executable, str(GATE), hændelse], input=json.dumps(data), text=True,
                        capture_output=True, env=env, timeout=30)
     assert r.returncode == 0, r.stderr
     return json.loads(r.stdout) if r.stdout.strip() else None
+
+
+def transkript(prompt: str, svar: str = "Notat skrevet.", handback: str | None = None) -> str:
+    fd, sti = tempfile.mkstemp(suffix=".jsonl")
+    linjer = [{"message": {"role": "user", "content": prompt}},
+              {"message": {"role": "assistant", "content": [{"type": "text", "text": svar}]}}]
+    if handback is not None:
+        linjer.append({"message": {"role": "assistant", "content": [
+            {"type": "tool_use", "name": "SubagentHandback", "input": {"report": handback}}]}})
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write("\n".join(json.dumps(x, ensure_ascii=False) for x in linjer))
+    return sti
+
+
+def kald(hændelse: str, data: dict, env: dict) -> dict | None:
+    """Som kald_raa, men et tilladt fagkald afleveres straks (SubagentStop for fagagenten)."""
+    r = kald_raa(hændelse, data, env)
+    ti = data.get("tool_input") or {}
+    at = str(ti.get("subagent_type") or "")
+    if hændelse == "pretool" and r is None and at.split(":")[-1] in FAGAGENTER:
+        kald_raa("subagentstop", {**{k: v for k, v in data.items() if k != "tool_input"}, "agent_type": at,
+                                  "agent_transcript_path": transkript(str(ti.get("prompt") or ""))}, env)
+    return r
 
 
 def dom(lev, udfald, fund, sagsmappe=None):
@@ -203,6 +229,43 @@ def main() -> int:
         forvent("nyt væsentligt fund i forsøg 2 med nyt_grundlag=regression registreres",
                 kald("subagentstop", {**S, "agent_type": KON, "stop_hook_active": True,
                                       "last_assistant_message": dom(L4, "afvist", [{**nytfund[0], "nyt_grundlag": "regression"}])}, env), "tilladt")
+
+        # Fagkald i gang: stop blokerer ikke, genforsøg tæller ikke, aflevering giver afventer_kontrol
+        G = {"session_id": "s4", "cwd": str(cwd)}
+        LG = "2026-09-25-bad/vvs/07"
+        forvent("fagkald (uden aflevering) tilladt", kald_raa("pretool", {**G, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {LG}"}}, env), "tilladt")
+        forvent("stop blokerer ikke, mens fagkald er i gang", kald("stop", G, env), "tilladt")
+        forvent("genforsøg af afbrudt fagkald tilladt", kald_raa("pretool", {**G, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {LG}"}}, env), "tilladt")
+        tilst = json.loads((pathlib.Path(env["CLAUDE_PLUGIN_DATA"]) / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+        ok = tilst["leverancer"][LG]["forsoeg"] == 1
+        print(("OK   " if ok else "FEJL ") + "genforsøg tæller ikke som nyt forsøg")
+        if not ok:
+            FEJL.append("genforsøg")
+        kald_raa("subagentstop", {**G, "agent_type": FAG, "agent_transcript_path": transkript(f"LEVERANCE: {LG}\nOpgave")}, env)
+        forvent("efter aflevering blokerer stop (afventer kontrol)", kald("stop", G, env), "blokeret")
+
+        # Dom i hand-back (tool_use-input) registreres uden retur
+        forvent("kontrolkald med sti", kald("pretool", {**G, "tool_input": {"subagent_type": KON, "prompt":
+                f"LEVERANCE: {LG}\nLeverance: {sag}/fagnotater/vvs-07.md"}}, env), "tilladt")
+        hb = dom(LG, "godkendt", [], "byg-sager/2026-09-25-bad")
+        forvent("dom i hand-back registreres", kald("subagentstop", {**G, "agent_type": KON, "last_assistant_message": "Rapport afleveret.",
+                "agent_transcript_path": transkript("x", handback=hb)}, env), "tilladt")
+        tilst = json.loads((pathlib.Path(env["CLAUDE_PLUGIN_DATA"]) / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+        ok = tilst["leverancer"][LG]["status"] == "godkendt"
+        print(("OK   " if ok else "FEJL ") + "hand-back-dom gav status godkendt")
+        if not ok:
+            FEJL.append("handback")
+
+        # Beskyttelse af godkendt notat
+        fil = str(sag / "fagnotater" / "vvs-07.md")
+        forvent("subagent må ikke rette godkendt notat", kald("beskyt", {**G, "agent_type": "byg-murer:murermester",
+                "tool_input": {"file_path": fil}}, env), "afvist")
+        r = kald("beskyt", {**G, "tool_input": {"file_path": fil}}, env)
+        ok = bool(r) and "systemMessage" in r and "hookSpecificOutput" in r and r["hookSpecificOutput"].get("permissionDecision") is None
+        print(("OK   " if ok else "FEJL ") + "hovedtråden får advarsel ved godkendt notat")
+        if not ok:
+            FEJL.append(f"beskyt hovedtråd: {r}")
+        forvent("andre filer påvirkes ikke", kald("beskyt", {**G, "agent_type": "x", "tool_input": {"file_path": str(sag / "andet.md")}}, env), "tilladt")
 
         # Manuel status uden CLAUDE_PLUGIN_DATA skal finde pluginets datamappe under ~/.claude/plugins/data/
         hjem = pathlib.Path(tmp) / "hjem"

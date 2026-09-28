@@ -53,7 +53,8 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 7. **Parallelle fag:** fagkald må køre parallelt; kontrollér hver leverance, så snart den er klar.
 8. **Sidste forsøg (3 af 3):** send kun de blokerende fund (kritisk/væsentlig) og de mindre fund, der står i dommen, retur. Kontrollens usikkerheder og bemærkninger uden fund-ID (fx om den samlede budgetramme) må ikke udvide leverancen i sidste forsøg – flyt dem til projektlederens integration.
 9. **Koordineringsbeslutninger undervejs:** en beslutning, der berører flere fag, skrives i beslutningsloggen og gives med i alle berørte fags næste fagkald eller retur – ikke kun til det fag, der udløste den.
-10. **Baggrundsagenter:** kører kontrolagenten i baggrunden, kan dens rapport nå frem, før hooken har registreret dommen (hooken sender først en dom uden JSON retur én gang). Vent, til leverancen ikke længere står som `under_kontrol` i `kontrol_gate.py status`, før næste fagkald – ellers afviser hooken kaldet.
+9b. **Returer til fag, der afhænger af hinanden, i rækkefølge:** Deler to fag en snitflade eller henviser til hinandens hold points, afgør projektlederen konflikten først (grænsefladeregistret). Derefter rettes ejeren af snitfladen før det fag, der henviser. Uafhængige fag rettes parallelt.
+10. **Baggrundsagenter:** kører kontrolagenten i baggrunden, kan dens rapport nå frem, før hooken har registreret dommen (hooken sender først en dom uden JSON retur én gang). Vent, til leverancen ikke længere står som `under_kontrol` i `kontrol_gate.py status`, før næste fagkald – ellers afviser hooken kaldet. Agentens rapport når ofte frem 20–60 sekunder før hooken har registreret dommen. Tjek derfor status, før du handler på en dom. Kør helst kontrolkald i forgrunden.
 11. **Retur og genoptagelse:** Send altid fundene retur til fagagenten med et nyt kald i Agent-værktøjet (skabelonen i afsnit 4). Genoptager du fagagenten med SendMessage, registrerer hooken ikke forsøget. Er en dom fra en baggrundskørsel ikke registreret, må kontrolagenten gerne genoptages, så den gentager JSON-dommen, men kun mens leverancen står som `under_kontrol`. Hooken ignorerer domme, der er gentaget eller forældede (status er ikke `under_kontrol`, eller dommens `forsoeg` passer ikke), så de ikke tæller som et nyt forsøg.
 
 ## 3. Skabelon – kontrolkald
@@ -101,6 +102,9 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 
 ## 7. Det håndhæver hooks
 - Fag- og kontrolkald uden `LEVERANCE:` afvises med besked om, hvad der mangler.
+- Et fagkald står som `fagkald_igang`, indtil fagagenten afleverer. Imens blokerer stop-hooken ikke (først efter 90 min uden aflevering). Et nyt fagkald på en leverance i `fagkald_igang` (fx efter et afbrudt kald) er et genforsøg og tæller ikke som nyt forsøg.
+- En kontrolagents dom findes også i dens hand-back-rapport (transkriptet).
+- Godkendte leverancer beskyttes: stien fra kontrolkaldets linje `Leverance: <sti>` huskes. Write/Edit på filen afvises for subagenter og giver en advarsel i hovedtråden. Brug nyt leverance-ID via ændringsstyring.
 - Ny fagversion før kontrol, forkert kontrolagent, 4. forsøg i en runde og ændring af en godkendt leverance afvises.
 - Projektkontrol uden `FASE:` afvises. En planleverance i fase 3+ afvises, hvis `DESIGNGRUNDLAG` mangler eller indeholder fagleverancer, der ikke er godkendt (fase-gate).
 - Et nyt kritisk eller væsentligt fund i forsøg 2–3 uden `nyt_grundlag` sendes retur til kontrolagenten (fund-fastlåsning).

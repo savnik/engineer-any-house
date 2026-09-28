@@ -45,7 +45,10 @@ Ved rum-projekter (fx bad, køkken) spørges altid til **rummets placering og ge
 ## Rammer (budget, tid, kvalitet, energi)
 ## Udførelse og brugerens rolle
 ## Myndighed, stoffer og risici (afklaret / åbent)
+## Projektets rammer (krav- og begrænsningsliste R1–Rn med kilde)
 ## Antagelser
 ## Åbne spørgsmål
-## Berørte fag (foreløbigt)
+## Berørte fag (foreløbigt), sikkerhedskritiske fag (fuld kontrol) og DoR-status pr. fag
+## Fag uden agent (screening, kloakmester, statiker, servicefirma …) – PL prissætter ved G1
+## Hold points: navngivning HP-<FAG>-n pr. fag, HP1–HPn projektfælles (fast for hele sagen)
 ```

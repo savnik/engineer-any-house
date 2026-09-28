@@ -7,6 +7,12 @@
         "hooks": [
           {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" pretool", "timeout": 30}
         ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" beskyt", "timeout": 15}
+        ]
       }
     ],
     "SubagentStop": [
