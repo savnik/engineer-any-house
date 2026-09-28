@@ -39,6 +39,7 @@ byg-<fag> ───────────────────► byg-kontr
 | PreToolUse (Agent/Task) | Kræver `LEVERANCE:`; fagkald → "afventer_kontrol"; ny fagversion før dom, forkert kontrolagent, 4. forsøg og ændring af godkendt leverance afvises; projektkontrol kræver `FASE:`, og i fase 3+ `DESIGNGRUNDLAG:` med godkendte fagleverancer |
 | SubagentStop (fagagenter) | `fagkald_igang` → `afventer_kontrol` ved aflevering (leverance-ID fra agentens prompt). Genforsøg af afbrudt fagkald tæller ikke |
 | SubagentStop (kontrolagenter) | Validerer dommen (inkl. `nyt_grundlag` på nye blokerende fund i forsøg 2–3); ugyldig dom sendes retur én gang; opdaterer status (godkendt / afvist / stoppet); gemmer dommen i `<sagsmappe>/kvalitet/` |
+| UserPromptSubmit | Brugerens egen `Godkend G2 <sag-id>` registrerer den manuelle løsningsgodkendelse, bundet til de godkendte fagleverancer. Fase 3 (projektkontrol og fagkald med FASE ≥ 3) kræver den |
 | Stop (hovedtråd) | Blokerer én gang, hvis sessionens leverancer afventer kontrol, er afvist eller mangler RCA |
 
 Agentnavne matches på basisnavnet, så både `byg-vvs:vvs-mester` (marketplace) og `byg:vvs-mester` (samlet pakke) virker; fag→kontrol-mapping ligger i `hooks/fagregister.json`.

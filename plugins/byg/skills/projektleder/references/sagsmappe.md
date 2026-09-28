@@ -11,6 +11,7 @@
 byg-sager/<sag-id>/
 ├── projektgrundlag.md      formål, bygning, omfang, rammer, antagelser (skabelon i interview.md)
 ├── beslutningslog.md       beslutninger med begrundelse
+├── loesningspraesentation.md  løsningen til brugerens manuelle godkendelse efter fase 2 (Godkend G2 <sag-id>)
 ├── aendringer.md           ændringslog efter design freeze: ændring, kilde, konsekvensanalyse, batch
 ├── status.md               fase, næste skridt, åbne spørgsmål, kontrolstatus
 ├── fagnotater/<fag-id>.md  ét notat pr. fag (fælles protokol)

@@ -1,12 +1,13 @@
 # Kontrol – projektlederens leverancer
 
-**rubric_version:** `kontrol-projekt@1.2` (2026-09-28)
+**rubric_version:** `kontrol-projekt@1.3` (2026-09-28)
 
 Kontrollerer projektgrundlag, koordineringsplan, grænsefladematrix, tidsplan, risikoregister, kontrolplan, beslutningslog og samlede anbefalinger til brugeren.
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
 1. Definition of Ready (G0): formål, omfang, bygning (type, år, konstruktion), rammer (budget, tid, kvalitet), udførende, kendte problemer og myndighedsforhold er afklaret eller markeret som antagelser. **Fagfakta pr. berørt fag** efter projektlederens `definition-of-ready.md` er indsamlet eller markeret som antagelser (væsentlig).
 1b. G1 og G2: grænsefladeregistret har én ejer pr. snitflade, og konflikter er afgjort og logget. Fag uden agent er prissat ved G1. G2 med åbne punkter kræver brugerens skriftlige accept af dem som hold points (væsentlig). Hold points følger navngivningen fra fase 0 (mindre).
+1d. Manuel gate: den samlede plan stemmer med den løsning, brugeren godkendte (loesningspraesentation.md og beslutningslog). Afvigelser fra den godkendte løsning er ændringer, der kræver ny godkendelse (væsentlig).
 1c. Samlet plan (fase 3): tjeklisten for tværgående tidsregler (faser-og-gates.md) er gennemgået. Lovfrister, maksimale intervaller med reservedag, driftstilstande (varme, fyr på Aus), R1, R-rammer med tidlig, forventet og sen gren, og kritisk vej med slæk (væsentlig).
 1a. Fase og gate: en planleverance (tidsplan, detailbudget, montage) bygger kun på godkendte fagnotater (design freeze, G2). Ændringer efter G2 er ført i `aendringer.md` med konsekvensanalyse (væsentlig). Delplaner, der burde være samlet, noteres som mindre.
 2. Alle berørte fag er inddraget; ingen fag mangler i forhold til opgavens art (væsentlig).

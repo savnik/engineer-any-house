@@ -213,8 +213,21 @@ def main() -> int:
                 kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": "LEVERANCE: sag/projekt/05\nFASE: 3"}}, env), "afvist")
         forvent("fase 3 med ikke-godkendt designgrundlag afvises",
                 kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: sag/projekt/05\nFASE: 3\nDESIGNGRUNDLAG: {L3}, {L}"}}, env), "afvist")
-        forvent("fase 3 med godkendt designgrundlag tilladt",
-                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: sag/projekt/05\nFASE: 3\nDESIGNGRUNDLAG: {L3}, {L2}"}}, env), "tilladt")
+        LP = "2026-09-25-bad/projekt/05"
+        forvent("fase 3 uden brugerens G2-godkendelse afvises",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: {LP}\nFASE: 3\nDESIGNGRUNDLAG: {L3}, {L2}"}}, env), "afvist")
+        forvent("fagkald i fase 3 uden G2 afvises",
+                kald("pretool", {**P, "tool_input": {"subagent_type": FAG, "prompt": "LEVERANCE: 2026-09-25-bad/vvs/09\nFASE: 3"}}, env), "afvist")
+        r = kald("prompt", {**P, "prompt": "Det ser fint ud. Godkend G2 2026-09-25-bad"}, env)
+        ok = bool(r) and "G2" in r.get("hookSpecificOutput", {}).get("additionalContext", "")
+        print(("OK   " if ok else "FEJL ") + "brugerens 'Godkend G2 <sag>' registreres")
+        if not ok:
+            FEJL.append(f"G2 prompt: {r}")
+        forvent("fase 3 med G2 og godkendt designgrundlag tilladt",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: {LP}\nFASE: 3\nDESIGNGRUNDLAG: {L3}, {L2}"}}, env), "tilladt")
+        forvent("designgrundlag uden for det G2-godkendte design afvises",
+                kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: 2026-09-25-bad/projekt/06\nFASE: 3\nDESIGNGRUNDLAG: {L3}, 2026-09-25-bad/vvs/07"}}, env), "afvist")
+        forvent("almindelig brugerprompt påvirkes ikke", kald("prompt", {**P, "prompt": "Hvad koster det?"}, env), "tilladt")
 
         # Fund-fastlåsning: nyt blokerende fund i forsøg 2 kræver nyt_grundlag
         L4 = "2026-09-25-bad/vvs/04"

@@ -27,6 +27,10 @@ Regler
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
 - Fase-gate: projektkontrol af en planleverance i fase 3 eller senere ("FASE: 3" i prompten) kræver
   "DESIGNGRUNDLAG: <id>, <id> …" med fagleverancer, der alle er godkendt (design freeze).
+- Manuel gate G2 (løsningsgodkendelse): kun brugeren kan åbne den ved selv at skrive
+  "Godkend G2 <sag-id>" (UserPromptSubmit). Godkendelsen gemmes med de fagleverancer, der er godkendt i
+  sagen på det tidspunkt. Fase 3 (projektkontrol med FASE ≥ 3 og fagkald med FASE ≥ 3) kræver godkendelsen,
+  og DESIGNGRUNDLAG skal være en delmængde af det godkendte design.
 - Fund-fastlåsning: i forsøg 2 og 3 skal et nyt kritisk eller væsentligt fund have
   "nyt_grundlag": "regression" | "aendret_tekst" | "kritisk_sikkerhed" (kun klasse kritisk).
 Fail-safe: uventede fejl blokerer aldrig – de logges i <data>/kontrol/log.jsonl.
@@ -51,6 +55,7 @@ STI_RE = re.compile(r"^\s*Leverance\s*:\s*(\S+\.md)\b", re.IGNORECASE | re.MULTI
 IGANG_MAKS_SEK = 90 * 60
 FASE_RE = re.compile(r"^\s*FASE\s*:\s*(\d)", re.IGNORECASE | re.MULTILINE)
 DESIGN_RE = re.compile(r"^\s*DESIGNGRUNDLAG\s*:\s*(.+)$", re.IGNORECASE | re.MULTILINE)
+GODKEND_G2_RE = re.compile(r"\bgodkend(?:er|t)?\s+G2\s+([A-Za-z0-9ÆØÅæøå._-]+)", re.IGNORECASE)
 NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
 BLOKERENDE = {"kritisk", "væsentlig"}
 STATUSSER = {"nyt", "aabent", "åbent", "lukket", "bestridt"}
@@ -171,6 +176,23 @@ def rca_navn(lev: str, r: int) -> str:
     return f"RCA-{sikkert(lev)}.md" if r <= 1 else f"RCA-{sikkert(lev)}__runde-{r}.md"
 
 
+def sag_af(lev: str) -> str:
+    return lev.split("/", 1)[0]
+
+
+def g2_mangler(s: dict, sag: str, ids: list) -> str | None:
+    g2 = (s.get("gates") or {}).get(sag, {}).get("G2")
+    if not g2:
+        return (f"Manuel gate G2 mangler for sagen {sag}: detailplanlægning (fase 3) må først starte, når brugeren har "
+                f"godkendt løsningen. Præsentér løsningen (loesningspraesentation.md, se projektlederens faser-og-gates.md), "
+                f"og bed brugeren selv skrive: 'Godkend G2 {sag}'. Claude kan ikke give denne godkendelse.")
+    ukendte = [i for i in ids if i not in (g2.get("design") or [])]
+    if ukendte:
+        return (f"Designgrundlaget er ændret efter brugerens G2-godkendelse ({g2.get('tid')}): {', '.join(ukendte)} "
+                f"indgik ikke i det godkendte design. Præsentér ændringen, og bed brugeren skrive 'Godkend G2 {sag}' igen.")
+    return None
+
+
 def naeste_skridt(lev: str, e: dict) -> str:
     st = e.get("status")
     r = runde(e)
@@ -218,6 +240,11 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
         L = s["leverancer"]
         e = L.get(lev)
         if art == "fag":
+            fm = FASE_RE.search(str(ti.get("prompt") or ""))
+            if fm and int(fm.group(1)) >= 3:
+                grund = g2_mangler(s, sag_af(lev), [])
+                if grund:
+                    return afvis_kald(grund)
             if e:
                 if e.get("fag") != fag:
                     return afvis_kald(f"Leverance-ID {lev} tilhører faget '{e.get('fag')}'. Brug et nyt ID til {fag}.")
@@ -271,6 +298,9 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 if mangler:
                     return afvis_kald("Fase-gate: designgrundlaget er ikke frosset – disse fagleverancer er ikke godkendt: "
                                       + ", ".join(mangler) + ". Planlæg (tidsplan, budget, montage) først, når designet er godkendt.")
+                grund = g2_mangler(s, sag_af(lev), ids)
+                if grund:
+                    return afvis_kald(grund)
             if not e:
                 e = L[lev] = {"fag": "projekt", "type": "projekt", "forsoeg": 0, "kontrol_agent": st,
                               "oprettet": nu(), "domme": []}
@@ -613,6 +643,29 @@ def beskyt(inp: dict, d: pathlib.Path) -> None:
             return
 
 
+def brugerprompt(inp: dict, d: pathlib.Path) -> None:
+    """UserPromptSubmit: brugerens egen godkendelse af G2 ('Godkend G2 <sag-id>')."""
+    tekst = str(inp.get("prompt") or "")
+    fundne = [m.group(1).rstrip(".,;:)") for m in GODKEND_G2_RE.finditer(tekst)]
+    if not fundne:
+        return
+    beskeder = []
+    with Laas(d):
+        s = indlaes(d)
+        for sag in fundne:
+            design = sorted(lev for lev, e in s["leverancer"].items()
+                            if sag_af(lev) == sag and e.get("type") == "fag" and e.get("status") == "godkendt")
+            s.setdefault("gates", {}).setdefault(sag, {})["G2"] = {
+                "tid": nu(), "design": design, "session_id": str(inp.get("session_id") or ""), "tekst": tekst[:300]}
+            log(d, haendelse="gate_G2_godkendt", sag=sag, design=design)
+            beskeder.append(f"G2 (løsningsgodkendelse) for {sag} er registreret som godkendt af brugeren med "
+                            f"{len(design)} godkendte fagleverancer: {', '.join(design) or 'ingen'}. "
+                            "Skriv godkendelsen i beslutningsloggen, og start fase 3.")
+        gem(d, s)
+    print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit",
+                                             "additionalContext": " ".join(beskeder)}}, ensure_ascii=False))
+
+
 def stop(inp: dict, d: pathlib.Path) -> None:
     if inp.get("stop_hook_active"):
         return
@@ -662,6 +715,9 @@ def manuel(cmd: str, args: list) -> int:
             for lev, e in sorted(s["leverancer"].items()):
                 print(f"{lev:45} {e.get('fag', ''):12} {e.get('status', ''):18} "
                       f"runde {runde(e)}/{MAKS_RUNDER} forsøg {e.get('forsoeg')}/{MAKS}")
+            for sag, g in sorted((s.get("gates") or {}).items()):
+                if g.get("G2"):
+                    print(f"GATE G2 {sag}: godkendt af bruger {g['G2'].get('tid')} ({len(g['G2'].get('design') or [])} fagleverancer)")
             return 0
         if cmd == "nulstil" and args:
             fjernet = s["leverancer"].pop(args[0], None)
@@ -680,7 +736,8 @@ def main() -> int:
     try:
         raw = sys.stdin.read()
         inp = json.loads(raw) if raw.strip() else {}
-        handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "beskyt": beskyt}.get(cmd)
+        handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "beskyt": beskyt,
+                   "prompt": brugerprompt}.get(cmd)
         if handler:
             handler(inp, datamappe())
     except Exception:

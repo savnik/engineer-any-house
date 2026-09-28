@@ -102,6 +102,7 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 
 ## 7. Det håndhæver hooks
 - Fag- og kontrolkald uden `LEVERANCE:` afvises med besked om, hvad der mangler.
+- **Manuel gate G2:** projektkontrol med `FASE: 3+` og fagkald med `FASE: 3+` afvises, indtil brugeren selv har skrevet `Godkend G2 <sag-id>`. DESIGNGRUNDLAG skal ligge inden for det design, brugeren godkendte.
 - Et fagkald står som `fagkald_igang`, indtil fagagenten afleverer. Imens blokerer stop-hooken ikke (først efter 90 min uden aflevering). Et nyt fagkald på en leverance i `fagkald_igang` (fx efter et afbrudt kald) er et genforsøg og tæller ikke som nyt forsøg.
 - En kontrolagents dom findes også i dens hand-back-rapport (transkriptet).
 - Godkendte leverancer beskyttes: stien fra kontrolkaldets linje `Leverance: <sti>` huskes. Write/Edit på filen afvises for subagenter og giver en advarsel i hovedtråden. Brug nyt leverance-ID via ændringsstyring.

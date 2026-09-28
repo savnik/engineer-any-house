@@ -7,7 +7,8 @@ Fasemodellen følger byggeriets egen faseopdeling. Den bygger på Ydelsesbeskriv
 |---|---|---|---|---|
 | **0** | Afklaring | `projektgrundlag.md`, fakta pr. fag efter `definition-of-ready.md`, fotos, registreringer, manualer | `projekt-kontrol`, let (`KONTROLNIVEAU: let`) | **G0:** Definition of Ready er opfyldt for hvert berørt fag. Manglende fakta er indsamlet eller markeret som antagelse og accepteret af brugeren. Projektgrundlaget er accepteret |
 | **1** | Dispositionsforslag | Kort beslutningsnotat pr. fag: princip, 1–2 alternativer, groft budget ±30 %, afgørende risici og **sikkerhedsprincipper** | Let review | **G1:** Brugeren har valgt løsningsprincip pr. fag (beslutningsloggen). Projektlederen har lavet **grænsefladeregistret** (`graenseflader.md`) med én ejer pr. snitflade og har prissat **fag uden agent** (screening, kloakmester, statiker, varmetab, skorstensfejer, servicefirma m.fl.) i `budget.md` |
-| **2** | Design (projektforslag) | Fagnotat (højst ca. 250 linjer + bilag): fuld faglig løsning, fejltilstande for sikkerhedskritiske anlæg, grænseflader, kontrol | **Fuld** for sikkerhedskritiske fag, **let** for øvrige | **G2 – design freeze:** alle fagnotater er godkendt, og grænsefladeregistret er lukket (alle konflikter afgjort og logget). Åbne spørgsmål er enten afklaret, eller **brugeren har accepteret dem skriftligt som hold points før tilbud** (AskUserQuestion, logget). Uden accept er G2 ikke nået |
+| **2** | Design (projektforslag) | Fagnotat (højst ca. 250 linjer + bilag): fuld faglig løsning, fejltilstande for sikkerhedskritiske anlæg, grænseflader, kontrol | **Fuld** for sikkerhedskritiske fag, **let** for øvrige | **G2 – design freeze:** alle fagnotater er godkendt, og grænsefladeregistret er lukket. Åbne afklaringer er accepteret af brugeren som hold points før tilbud |
+| **2→3** | **Manuel gate: løsningsgodkendelse** | Projektlederen præsenterer løsningen for brugeren i `loesningspraesentation.md` (skabelon nedenfor) og kort i chatten | Ingen agentkontrol – brugeren beslutter | **G2-godkendt:** brugeren skriver selv `Godkend G2 <sag-id>`. Hooken registrerer det og binder det til de godkendte fagleverancer. Uden det afvises al detailplanlægning (fase 3) |
 | **3** | Integration og plan | Tidsplan, samlet budget ±10–15 %, montage og rækkefølge, kontrolplan, risikoregister og tilbudsgrundlag. **Én samlet planleverance** | Fuld `projekt-kontrol` på den samlede plan | **G3:** Planen er godkendt og accepteret af brugeren. Hooken kræver `DESIGNGRUNDLAG` med godkendte fagleverancer |
 | **4** | Udbud og udførelse | Tilbudsvurdering, kontrakter, hold points, dokumentation | Efter behov (`ekstern/` for tilbud) | Ændringer kun via ændringsstyring |
 
@@ -19,7 +20,38 @@ Fasemodellen følger byggeriets egen faseopdeling. Den bygger på Ydelsesbeskriv
 - **Sikkerhedskritiske fag** (fuld kontrol i fase 2): vvs ved kedel, fjernvarme eller gas; el; bærende konstruktioner; brand; asbest, PCB og bly. Øvrige får let review i fase 2.
 - **Parallelt og i baggrunden:** fag uden indbyrdes afhængighed kaldes samtidig. Kontrolkald køres i baggrunden, så brugeren kan stille spørgsmål imens. Kvalitetskontrollen afsnit 2.10 beskriver, hvordan en baggrundsdom registreres.
 
-## Rækkefølge ved returer
+## Manuel gate efter fase 2 – løsningsgodkendelse
+Detailplanlægning (tidsplan, detailbudget, montage og tilbudsgrundlag) starter først, når brugeren har set og godkendt den samlede løsning.
+
+**Sådan gør projektlederen:**
+1. Når G2 (design freeze) er nået, skrives `loesningspraesentation.md` **kun** ud fra de godkendte fagnotater og beslutningsloggen. Der må ikke være nye faglige løsninger i den.
+2. Præsentér den kort i chatten (højst ca. 15 linjer) med henvisning til filen. Tilbyd gerne en side, der kan deles.
+3. Bed brugeren om én af tre ting:
+   - **godkende:** brugeren skriver selv `Godkend G2 <sag-id>`
+   - **ændre:** ønskerne går via ændringsstyring tilbage til fase 2, og der kommer en ny præsentation
+   - **stoppe:** projektet parkeres
+4. Et svar i AskUserQuestion eller en formulering fra Claude tæller **ikke**. Kun brugerens egen besked med den præcise sætning åbner gaten, og hooken registrerer den (UserPromptSubmit).
+5. Skriv godkendelsen i beslutningsloggen: dato, hvilke fagleverancer (versioner) der er godkendt, og de accepterede hold points.
+6. Ændres en godkendt fagleverance bagefter (nyt `-r2`), falder godkendelsen for den del. Præsentér ændringen, og få en ny `Godkend G2 <sag-id>`.
+
+**Skabelon – loesningspraesentation.md**
+```
+# Løsningspræsentation – <sag-id> (til godkendelse før detailplanlægning)
+Grundlag: <godkendte fagleverancer med ID> · beslutningslog <dato>
+## 1. Hvad vi laver – i klart sprog (højst 10 linjer)
+## 2. Løsningen pr. fag
+| Fag | Valgt løsning | Fravalgt og hvorfor | Hvad det betyder for dig |
+## 3. Sikkerhed – de vigtigste barrierer og hvem der sikrer dem
+## 4. Økonomi (groft ±20 %) mod rammen, inkl. fag uden agent og buffer
+## 5. Tid – milepæle og realistisk slutdato (tidlig, forventet, sen) mod rammen
+## 6. Det du selv skal gøre, og gør-det-selv-grænser
+## 7. Åbne punkter og hold points før tilbud (accepteret ved G2)
+## 8. Risici og hvad der kan ændre løsningen
+## 9. Beslutning
+Godkend ved selv at skrive: **Godkend G2 <sag-id>**. Eller skriv, hvad der skal ændres.
+```
+
+
 - Uafhængige fag rettes parallelt.
 - Fag, der deler en snitflade eller henviser til hinandens hold points, rettes **i rækkefølge**: først ejeren af snitfladen, derefter det fag, der henviser. Projektlederen afgør konflikten først og giver begge fag samme beslutning.
 - Omdøbninger og ID-ændringer foretages aldrig i en retur, mens et andet fag retter parallelt.
