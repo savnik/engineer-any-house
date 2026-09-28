@@ -29,6 +29,7 @@ Relevante lokale erfaringer: <fra videnbanken, eller "ingen">
 Leverance: fagnotat til <sagsmappe>/fagnotater/<fag-id>.md efter den fælles protokol
 Omfang: <fase 1: beslutningsnotat (højst ca. 2 sider) | fase 2: fagnotat uden tilbudsgrundlag>
 Projektets rammer: <krav- og begrænsningsliste fra projektgrundlag og beslutningslog, fx ét firma pr. dag>
+Enkelhed: den enkleste sikre standardløsning. Højst ét alternativ. Ekstra komponenter og scenarier kun med begrundelse på én linje.
 ```
 Ændrer opgaven en varmekilde, dens sikkerhedsudstyr eller hydraulikken omkring den, så skriv i opgaven: "Lav en fejltilstandstabel (normal drift, overtemperatur/dump, strømsvigt, fastlåst ventil, lækage) for alle berørte kredse, før du anbefaler." Spørg ikke kun, om en komponent kan udgå.
 

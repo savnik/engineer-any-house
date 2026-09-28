@@ -20,11 +20,20 @@ Fasemodellen følger byggeriets egen faseopdeling. Den bygger på Ydelsesbeskriv
 - **Sikkerhedskritiske fag** (fuld kontrol i fase 2): vvs ved kedel, fjernvarme eller gas; el; bærende konstruktioner; brand; asbest, PCB og bly. Øvrige får let review i fase 2.
 - **Parallelt og i baggrunden:** fag uden indbyrdes afhængighed kaldes samtidig. Kontrolkald køres i baggrunden, så brugeren kan stille spørgsmål imens. Kvalitetskontrollen afsnit 2.10 beskriver, hvordan en baggrundsdom registreres.
 
+## Enkelhedstjek (projektlederen, ved G1 og før løsningspræsentationen)
+Stil disse spørgsmål til hvert fag, før gaten passeres. Er svaret ja, så bed faget forenkle, før du går videre.
+- Er der en standardløsning, som en almindelig håndværker kender, men som ikke er valgt?
+- Er der komponenter, trin eller hold points uden en begrundelse på én linje (krav, risiko eller brugerens ønske)?
+- Er der mere end én primær løsning og ét alternativ, eller betingede grene i flere niveauer?
+- Kan flere fag løse samme problem med færre firmaer eller dage?
+- Kan en håndværker bruge notatet uden at skulle læse alt?
+Beslutninger om forenkling skrives i beslutningsloggen.
+
 ## Manuel gate efter fase 2 – løsningsgodkendelse
 Detailplanlægning (tidsplan, detailbudget, montage og tilbudsgrundlag) starter først, når brugeren har set og godkendt den samlede løsning.
 
 **Sådan gør projektlederen:**
-1. Når G2 (design freeze) er nået, skrives `loesningspraesentation.md` **kun** ud fra de godkendte fagnotater og beslutningsloggen. Der må ikke være nye faglige løsninger i den.
+1. Når G2 (design freeze) er nået, og enkelhedstjekket er gennemført, skrives `loesningspraesentation.md` **kun** ud fra de godkendte fagnotater og beslutningsloggen. Der må ikke være nye faglige løsninger i den.
 2. Præsentér den kort i chatten (højst ca. 15 linjer) med henvisning til filen. Tilbyd gerne en side, der kan deles.
 3. Bed brugeren om én af tre ting:
    - **godkende:** brugeren skriver selv `Godkend G2 <sag-id>`

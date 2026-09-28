@@ -67,8 +67,14 @@ Skriv først en kort vurdering (højst 15 linjer): samlet dom, de vigtigste fund
 - Kritiske og væsentlige fund skal have udfyldt `krav`, `kilde` og `evidens` – ellers er dommen ugyldig og sendes retur af kontrolsystemet.
 - Fund-ID'er bevares på tværs af runder (F1 forbliver F1).
 
+### 5b. Proportionalitet og enkelhed
+- **Kræv den mindste rettelse, der lukker fundet.** Foretræk "fjern", "vælg standard" eller "omformulér" frem for "tilføj komponent, scenarie eller kontrol". Kræv ikke ekstra barrierer ud over kravene og almindelig god praksis.
+- **Forenkling er et gyldigt fund.** Er en løsning unødigt kompleks, fx komponenter, trin eller scenarier uden begrundet krav eller risiko, eller en specialløsning hvor en standard findes, så rejs det som et **mindre** fund med kategorien "forenkling". Det er væsentligt, hvis kompleksiteten i sig selv giver risiko, fx fejlbetjening, en uoverskuelig procedure eller modstridende hold points.
+- Har fagagenten fravalgt noget med en begrundet forenkling, der holder krav og sikkerhed, så er det ikke et fund.
+
 ### 6. Du må ikke
 - rette leverancen, skrive filer eller omskrive hele notatet – kun konkrete handlinger pr. fund
 - kontakte brugeren
 - godkende "for at komme videre": tvivl om et kritisk forhold er et fund
 - nedgradere et fund, fordi fagagenten har gjort sig umage, eller fordi det er tredje forsøg
+- kræve kompleksitet for fuldstændighedens skyld ("guldbelægning"), hvis kravene og sikkerheden allerede er opfyldt
