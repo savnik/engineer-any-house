@@ -16,6 +16,7 @@ NOEGLE = "x" * 8 + "TESTNOEGLE" + "y" * 30  # falsk nøgle – kun til testen
 SAG = "2031-02-03-tag-test"
 LINJE = "Tagfladen mod syd har tre knækkede teglsten over køkkenvinduet og en utæt inddækning."
 EJENDOMSLINJE = "Træpillekedel på 12 kW fra 2009 med integreret returløft og elpatron på 6 kW i beholderen"
+SKABELONLINJE = "**Kilder:** F foto · D dokument (typeskilt, manual, rapport, BBR) · M måling · B bygherren"
 
 
 def kør(hjem, repo):
@@ -48,7 +49,9 @@ def main() -> int:
         (hjem / ".config" / "byg-eksperter" / "private-termer.txt").write_text("# egne termer\nSolsikkevej 99\n", encoding="utf-8")
         (repo / "plugins" / "p" / "skills" / "s").mkdir(parents=True)
         ren = repo / "plugins" / "p" / "skills" / "s" / "SKILL.md"
-        ren.write_text("# Generel viden\nTestadresse til evals: Rådhuspladsen 1, 1550 København V.\n", encoding="utf-8")
+        ren.write_text("# Generel viden\nTestadresse til evals: Rådhuspladsen 1, 1550 København V.\n\n```\n"
+                       f"{SKABELONLINJE}\n```\n", encoding="utf-8")
+        (sagsmappe / "status.md").write_text(f"# Status\n{SKABELONLINJE}\n", encoding="utf-8")  # skabelon brugt i sagen
 
         kode, ud = kør(hjem, repo)
         forvent("rent repo med testdata godkendes (sagsmappe + ejendomme)", kode == 0 and "2 sagsmappe(r)" in ud, ud)

@@ -112,6 +112,21 @@ def fingeraftryk(mapper):
     return linjer
 
 
+def skabelonlinjer():
+    """Linjer i kodeblokke i repoets egne .md-filer (skabeloner). Sagsfiler genbruger dem ordret, så de er ikke sagstekst."""
+    linjer, i_blok = set(), False
+    for f, _ in repo_filer():
+        if f.suffix.lower() != ".md":
+            continue
+        for l in f.read_text(encoding="utf-8", errors="ignore").splitlines():
+            if l.lstrip().startswith("```"):
+                i_blok = not i_blok
+            elif i_blok:
+                linjer.add(norm(l))
+        i_blok = False
+    return linjer
+
+
 def main() -> int:
     fejl = []
     hemmeligheder = lokale_hemmeligheder()
@@ -119,7 +134,7 @@ def main() -> int:
     # ejendom-id'er (filnavnet på ejendomskortet) er typisk en adresse
     ejendomme = {f.stem for m in mapper if m.name == "ejendomme" for f in m.glob("*.md")}
     termer = sorted(set(private_termer()) | ejendomme, key=len, reverse=True)
-    aftryk = fingeraftryk(mapper)
+    aftryk = fingeraftryk(mapper) - skabelonlinjer()
 
     for f, rel in repo_filer():
         # 1. Struktur
