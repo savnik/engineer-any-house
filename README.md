@@ -49,13 +49,15 @@ Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 1. Hver opgave får et leverance-ID `<sag-id>/<fag-id>/<nr>` (første linje i prompten: `LEVERANCE: …`).
 2. Fagagenten leverer et fagnotat med kilder.
 3. Fagets kontrolagent (Opus, kun læse- og søgeværktøjer, egen kontrolviden, ingen adgang til fagagentens ræsonnement) laver et hårdt review og afgiver en JSON-dom: **godkendt** eller **afvist** med fund klassificeret som kritisk, væsentlig eller mindre – blokerende fund skal have krav, kilde og evidens.
-4. Afvist → fundene sendes ordret retur til fagagenten, som kun retter de berørte afsnit. Højst 3 forsøg pr. runde. Forsøg 1 er det fulde review. Forsøg 2–3 tjekker kun lukning og regressioner (fund-fastlåsning).
+4. Afvist → de blokerende fund (kritisk og væsentlig) sendes ordret retur til fagagenten, som kun retter de berørte afsnit. Mindre fund sendes ikke retur. Højst 3 forsøg pr. runde. Forsøg 1 er det fulde review. Forsøg 2–3 tjekker kun lukning og regressioner (fund-fastlåsning). Kontrolniveauet (`let` eller `fuld`) følger opgavens risiko.
 5. 3. afvisning → root cause-analyse med 5 Why-metoden i `kvalitet/RCA-….md` af, hvorfor fagagenten ikke ramte rigtigt første gang. Læringen implementeres i fagagenten (hukommelse og repo), og en ny runde med 3 forsøg starter under samme leverance-ID. Efter 3 runder eskaleres der til brugeren.
 6. Projektlederens egne leverancer (projektgrundlag, samlet plan) kontrolleres af `projekt-kontrol`.
 
 Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
 
 I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar som "IKKE UAFHÆNGIGT KVALITETSKONTROLLERET".
+
+**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <byg-eksperter>/scripts/forbrug.py --siden <dato>` fra din arbejdsmappe.
 
 ## Viden og forankring
 1. **Kanon** i pluginenes `references/` (normgrundlag med status V/T, faglig praksis, tjeklister, erfaringsblade) og kontrolviden i `byg-kontrol`.
@@ -80,6 +82,7 @@ scripts/valider.py           strukturtjek, navne, stier, protokoller, evals og h
 scripts/tjek_data.py         dataseparation: ingen sager, brugerdata eller nøgler i repoet
 scripts/hooks/pre-commit     kører tjek_data.py før hvert commit (git config core.hooksPath scripts/hooks)
 scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
+scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur)
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session

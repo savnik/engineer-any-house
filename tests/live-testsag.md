@@ -75,7 +75,8 @@ Kør `/byg:koordiner`.
 | B2 | Leverance-ID | Første linje i hvert fagkald er `LEVERANCE: <sag-id>/<fag>/<nr>` | Transcript, hook-log |
 | B3 | Fag → modsvarende kontrol | Hver fagleverance følges af sit eget fags kontrolagent | `kvalitet/kontrollog.md`, hook-log |
 | B4 | Dommens form | JSON-blok; blokerende fund har krav, kilde og evidens; "godkendt" kun uden åbne kritiske/væsentlige fund | `kvalitet/*.json` |
-| B5 | Retur ved afvisning | Fundene sendes ordret retur; fagnotatet får "Kontrolrespons" og "Revisioner"; forsøg 2 registreres | Fagnotat, status-kommandoen |
+| B5 | Retur ved afvisning | Kun de blokerende fund sendes ordret retur (ingen mindre fund, ingen nye ønsker); fagnotatet får "Kontrolrespons" og "Revisioner"; forsøg 2 registreres | Fagnotat, status-kommandoen |
+| B5b | Effektivitet | Kontrolkald kører i forgrunden (ingen statuskald for at vente); prisopslag laves i en subagent; projektlederen foreslår en ny session med `/byg:status <sag-id>`, når opgaven er færdig, eller når hooken minder om kontekstbudgettet (> 200k) | Transcript, `scripts/forbrug.py` |
 | B6 | Uafhængighed | Kontrolagenten bruger egne kilder (WebSearch/WebFetch) og retter ikke selv i notatet | Transcript, notatets historik |
 
 ### Fase C – Hooks (negative tests)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """byg-kontrol: håndhæver det uafhængige kvalitetskontrol-loop (plugin-hook til Claude Code/Cowork).
 
-Fra hooks/hooks.json:  python3 kontrol_gate.py pretool | subagentstop | stop   (hook-input på stdin)
+Fra hooks/hooks.json:  python3 kontrol_gate.py pretool | beskyt | subagentstop | prompt | stop   (hook-input på stdin)
 Manuelt:               python3 kontrol_gate.py status
                        python3 kontrol_gate.py nulstil <leverance-id>
                        (uden CLAUDE_PLUGIN_DATA findes pluginets datamappe under ~/.claude/plugins/data/)
@@ -33,6 +33,9 @@ Regler
   og DESIGNGRUNDLAG skal være en delmængde af det godkendte design.
 - Fund-fastlåsning: i forsøg 2 og 3 skal et nyt kritisk eller væsentligt fund have
   "nyt_grundlag": "regression" | "aendret_tekst" | "kritisk_sikkerhed" (kun klasse kritisk).
+- Kontekstbudget (UserPromptSubmit): har sessionen byg-leverancer, og er hovedtrådens kontekst over
+  KONTEKST_GRAENSE tokens, får brugeren og projektlederen én påmindelse pr. KONTEKST_TRIN om at afslutte
+  opgaven og fortsætte i en ny session med /byg:status <sag-id>. Hvert svar læser hele tråden igen.
 Fail-safe: uventede fejl blokerer aldrig – de logges i <data>/kontrol/log.jsonl.
 """
 import json
@@ -59,6 +62,8 @@ GODKEND_G2_RE = re.compile(r"\bgodkend(?:er|t)?\s+G2\s+([A-Za-z0-9ÆØÅæøå._
 NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
 BLOKERENDE = {"kritisk", "væsentlig"}
 STATUSSER = {"nyt", "aabent", "åbent", "lukket", "bestridt"}
+KONTEKST_GRAENSE = 200_000
+KONTEKST_TRIN = 100_000
 
 
 # ---------- hjælpere ----------
@@ -198,8 +203,8 @@ def naeste_skridt(lev: str, e: dict) -> str:
     r = runde(e)
     if st == "afvist":
         hvem = e.get("fag_agent") or "projektlederen (egen leverance)"
-        return (f"Afvist (runde {r}/{MAKS_RUNDER}, forsøg {e.get('forsoeg')}/{MAKS}): send fundene retur til {hvem} med "
-                f"'LEVERANCE: {lev}' og kald derefter {e.get('kontrol_agent')} igen.")
+        return (f"Afvist (runde {r}/{MAKS_RUNDER}, forsøg {e.get('forsoeg')}/{MAKS}): send de blokerende fund (ikke de mindre) "
+                f"retur til {hvem} med 'LEVERANCE: {lev}', og kald derefter {e.get('kontrol_agent')} igen i forgrunden.")
     if st in ("stoppet", "rca_udfoert"):
         if r < MAKS_RUNDER:
             return (f"Stoppet efter {MAKS} afviste forsøg i runde {r}/{MAKS_RUNDER}: skriv root cause-analysen til "
@@ -643,15 +648,66 @@ def beskyt(inp: dict, d: pathlib.Path) -> None:
             return
 
 
+def kontekst_tokens(sti) -> int:
+    """Hovedtrådens kontekst (input + cache) i det seneste svar, læst bagfra i transkriptets sidste 2 MB."""
+    try:
+        with open(sti, "rb") as fh:
+            fh.seek(0, os.SEEK_END)
+            start = max(0, fh.tell() - 2_000_000)
+            fh.seek(start)
+            linjer = fh.read().split(b"\n")
+        for linje in reversed(linjer[1:] if start else linjer):
+            if b'"usage"' not in linje:
+                continue
+            try:
+                obj = json.loads(linje)
+            except Exception:
+                continue
+            msg = obj.get("message") or {}
+            if msg.get("role") != "assistant" or obj.get("isSidechain"):
+                continue
+            u = msg.get("usage") or {}
+            n = sum(int(u.get(k) or 0) for k in ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens"))
+            if n:
+                return n
+    except Exception:
+        pass
+    return 0
+
+
+def kontekst_paamindelse(inp: dict, s: dict) -> tuple[str, str] | None:
+    """(til brugeren, til modellen), når en byg-sessions hovedtråd har passeret næste kontekstgrænse."""
+    sid = str(inp.get("session_id") or "")
+    sager = sorted({sag_af(lev) for lev, e in s["leverancer"].items() if sid and e.get("session_id") == sid})
+    if not sager:
+        return None
+    n = kontekst_tokens(inp.get("transcript_path"))
+    if n < KONTEKST_GRAENSE:
+        return None
+    trin = 1 + (n - KONTEKST_GRAENSE) // KONTEKST_TRIN
+    advaret = s.setdefault("kontekst", {})
+    if int(advaret.get(sid, 0)) >= trin:
+        return None
+    advaret[sid] = trin
+    sag = sager[0] if len(sager) == 1 else "<sag-id>"
+    k = f"{n // 1000}k"
+    til_bruger = (f"byg: Samtalen fylder nu ca. {k} tokens, og hvert svar læser det hele igen. Når den igangværende "
+                  f"opgave er færdig, så fortsæt i en ny session med /byg:status {sag} – sagsmappen husker resten.")
+    til_model = (f"Kontekstbudget: hovedtråden er ca. {k} tokens, og hvert svar læser det hele igen. Afslut den igangværende "
+                 f"opgave, opdatér status.md (næste skridt, åbne punkter, leverancer), og foreslå brugeren at fortsætte i en "
+                 f"ny session med /byg:status {sag}. Lav ikke research og læs ikke store filer i denne tråd; send det til en "
+                 f"subagent (projektleder-skill, 'Effektivitet').")
+    return til_bruger, til_model
+
+
 def brugerprompt(inp: dict, d: pathlib.Path) -> None:
-    """UserPromptSubmit: brugerens egen godkendelse af G2 ('Godkend G2 <sag-id>')."""
+    """UserPromptSubmit: brugerens egen godkendelse af G2 ('Godkend G2 <sag-id>') og påmindelse om kontekstbudget."""
     tekst = str(inp.get("prompt") or "")
     fundne = [m.group(1).rstrip(".,;:)") for m in GODKEND_G2_RE.finditer(tekst)]
-    if not fundne:
-        return
     beskeder = []
     with Laas(d):
         s = indlaes(d)
+        paamindelse = kontekst_paamindelse(inp, s)
         for sag in fundne:
             design = sorted(lev for lev, e in s["leverancer"].items()
                             if sag_af(lev) == sag and e.get("type") == "fag" and e.get("status") == "godkendt")
@@ -661,9 +717,17 @@ def brugerprompt(inp: dict, d: pathlib.Path) -> None:
             beskeder.append(f"G2 (løsningsgodkendelse) for {sag} er registreret som godkendt af brugeren med "
                             f"{len(design)} godkendte fagleverancer: {', '.join(design) or 'ingen'}. "
                             "Skriv godkendelsen i beslutningsloggen, og start fase 3.")
-        gem(d, s)
-    print(json.dumps({"hookSpecificOutput": {"hookEventName": "UserPromptSubmit",
-                                             "additionalContext": " ".join(beskeder)}}, ensure_ascii=False))
+        if fundne or paamindelse:
+            gem(d, s)
+    if paamindelse:
+        log(d, haendelse="kontekst_paamindelse", session_id=str(inp.get("session_id") or ""))
+        beskeder.append(paamindelse[1])
+    if not beskeder:
+        return
+    ud = {"hookSpecificOutput": {"hookEventName": "UserPromptSubmit", "additionalContext": " ".join(beskeder)}}
+    if paamindelse:
+        ud["systemMessage"] = paamindelse[0]
+    print(json.dumps(ud, ensure_ascii=False))
 
 
 def stop(inp: dict, d: pathlib.Path) -> None:

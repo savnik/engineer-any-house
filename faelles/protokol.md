@@ -4,6 +4,7 @@
 - Mærk faglige udsagn med grundlag: **[KRAV]** lov, bekendtgørelse, BR18 · **[NORM]** DS/EN-standard (bindende i det omfang BR18 henviser) · **[ANVISNING]** BUILD/SBi, Byg-Erfa, branchevejledning, producentens godkendelse/monteringsvejledning · **[ERFARING]** fagligt skøn.
 - Paragraffer, tal, udgaver og grænseværdier nævnes kun som fakta, når de er verificeret: videnbasen (status V), din hukommelse (med kilde og dato) eller et opslag i denne opgave. Ellers skriv "skal verificeres" og hvor. Opfind aldrig et paragrafnummer, en standardudgave eller en godkendelse.
 - Regler ændres løbende (BR18 revideres flere gange årligt; en byggesag vurderes efter reglerne på ansøgningstidspunktet). Er udgaven afgørende: slå op på primærkilden – bygningsreglementet.dk, retsinformation.dk, sik.dk, at.dk, mst.dk, build.dk, byg-erfa.dk, ds.dk – med WebSearch/WebFetch når de er tilgængelige.
+- **Genbrug kilder, der allerede er efterprøvet, før du slår op:** først din hukommelse (`normer.md` med kilde og dato), derefter sagens kontroldomme (`<sagsmappe>/kvalitet/*.json`, felterne `kilde` og `evidens`). Slå kun op, når kilden mangler, er ældre end ca. 3 måneder, eller udgaven er afgørende. Hent aldrig den samme side to gange i samme opgave.
 - DS-standarder er ophavsretligt beskyttede: henvis og parafrasér, citér ikke lange uddrag.
 - "Skal" bruges kun om [KRAV]/[NORM]. God praksis hedder "bør" eller "anbefales".
 
@@ -54,11 +55,11 @@
 
 ### 6. Leverancer og uafhængig kvalitetskontrol
 - Hver opgave har et leverance-ID (`LEVERANCE: <id>` i prompten). Skriv det fulde fagnotat til den sti, prompten angiver – ellers `<sagsmappe>/fagnotater/<dit fag-id>.md`. Findes filen, så opdatér den og tilføj en linje under "Revisioner".
-- Læs `projektgrundlag.md` og de andre fags notater, der berører dine grænseflader, før du skriver.
+- **Læs målrettet.** Læs de afsnit, fagforespørgslen peger på. Find resten med Grep (dit fag, dine hold points, grænseflader, beslutninger) i `projektgrundlag.md`, `beslutningslog.md`, `aendringer.md` og andre fags notater, og læs kun de afsnit, du skal bruge. Læs kun hele filer, når de er korte (under ca. 150 linjer) eller er din egen leverance. Hver side, du læser, betaler du for igen i hvert eneste af dine næste kald.
 - Din leverance kontrolleres af en uafhængig kontrolagent, som kun ser notatet, projektgrundlaget og dine kilder – ikke dit ræsonnement. Skriv derfor, så notatet kan stå alene: kilde (udgave, §, afsnit) ved hvert krav og hver værdi, antagelser markeret, "skal verificeres" frem for gæt.
 - Du kalder aldrig selv kontrolagenten og læser ikke dens kontrolviden.
 - **Ret aldrig et godkendt notat**, heller ikke dit eget fra en tidligere fase eller et andet fags. Beskriv afvigelsen i dit nye notat, og bed projektlederen om en ændring (nyt leverance-ID via ændringsstyring). Hooken afviser redigering af godkendte leverancer.
-- Kommer leverancen retur med fund: **ret kun de berørte afsnit med Edit, og skriv ikke notatet om.** Adressér hvert fund med dets ID i en kort tabel under "Kontrolrespons": ret og markér "lukket", eller bestrid med kildebelæg ("bestridt"). Ændr ikke andet uden at skrive det i "Kontrolrespons" (regressionsrisiko).
+- Kommer leverancen retur med fund: **ret kun de berørte afsnit med Edit, og skriv ikke notatet om.** Returen indeholder kun de blokerende fund (kritisk og væsentlig). Mindre fund i dommen skal du ikke rette. Saml rettelserne i få Edit-kald. Adressér hvert fund med dets ID i en kort tabel under "Kontrolrespons": ret og markér "lukket", eller bestrid med kildebelæg ("bestridt"). Ændr ikke andet uden at skrive det i "Kontrolrespons" (regressionsrisiko).
 - Returnér kun: leverance-ID, konklusion (højst 5 linjer), kritiske grænseflader, risici med høj konsekvens, åbne spørgsmål og stien til notatet.
 - Kontakt ikke brugeren direkte. Spørgsmål går via projektlederen (orkestratoren).
 - Uenig med et andet fag: beskriv konflikten neutralt, foreslå løsninger og konsekvenser – projektlederen afgør.

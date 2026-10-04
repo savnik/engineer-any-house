@@ -229,6 +229,35 @@ def main() -> int:
                 kald("pretool", {**P, "tool_input": {"subagent_type": PK, "prompt": f"LEVERANCE: 2026-09-25-bad/projekt/06\nFASE: 3\nDESIGNGRUNDLAG: {L3}, 2026-09-25-bad/vvs/07"}}, env), "afvist")
         forvent("almindelig brugerprompt påvirkes ikke", kald("prompt", {**P, "prompt": "Hvad koster det?"}, env), "tilladt")
 
+        # Kontekstbudget: påmindelse, når en byg-sessions hovedtråd passerer 200k og derefter hver 100k
+        def hovedtraad(n: int) -> str:
+            fd, sti = tempfile.mkstemp(suffix=".jsonl")
+            linjer = [{"type": "user", "message": {"role": "user", "content": "x"}},
+                      {"type": "assistant", "message": {"role": "assistant", "content": [{"type": "text", "text": "y"}],
+                       "usage": {"input_tokens": 5, "cache_creation_input_tokens": 995, "cache_read_input_tokens": n - 1000}}},
+                      {"type": "assistant", "isSidechain": True, "message": {"role": "assistant", "content": [],
+                       "usage": {"input_tokens": 5, "cache_read_input_tokens": 10}}}]
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                fh.write("\n".join(json.dumps(x) for x in linjer))
+            return sti
+
+        def paamindet(r) -> bool:
+            return bool(r) and "ny session" in r.get("systemMessage", "") and \
+                "Kontekstbudget" in r.get("hookSpecificOutput", {}).get("additionalContext", "")
+
+        for navn, sid, n, forventet in [
+                ("kontekst under 200k giver ingen påmindelse", "s3", 150_000, False),
+                ("kontekst over 200k giver påmindelse", "s3", 250_000, True),
+                ("samme trin giver ikke påmindelse igen", "s3", 280_000, False),
+                ("næste trin (300k+) giver ny påmindelse", "s3", 320_000, True),
+                ("session uden byg-leverancer påvirkes ikke", "s9", 500_000, False)]:
+            r = kald("prompt", {"session_id": sid, "cwd": str(cwd), "prompt": "Næste spørgsmål",
+                                "transcript_path": hovedtraad(n)}, env)
+            ok = paamindet(r) == forventet
+            print(("OK   " if ok else "FEJL ") + navn)
+            if not ok:
+                FEJL.append(f"{navn}: {r}")
+
         # Fund-fastlåsning: nyt blokerende fund i forsøg 2 kræver nyt_grundlag
         L4 = "2026-09-25-bad/vvs/04"
         kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L4}"}}, env)

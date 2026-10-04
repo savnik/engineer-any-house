@@ -39,12 +39,24 @@ byg-<fag> ───────────────────► byg-kontr
 | PreToolUse (Agent/Task) | Kræver `LEVERANCE:`; fagkald → "afventer_kontrol"; ny fagversion før dom, forkert kontrolagent, 4. forsøg og ændring af godkendt leverance afvises; projektkontrol kræver `FASE:`, og i fase 3+ `DESIGNGRUNDLAG:` med godkendte fagleverancer |
 | SubagentStop (fagagenter) | `fagkald_igang` → `afventer_kontrol` ved aflevering (leverance-ID fra agentens prompt). Genforsøg af afbrudt fagkald tæller ikke |
 | SubagentStop (kontrolagenter) | Validerer dommen (inkl. `nyt_grundlag` på nye blokerende fund i forsøg 2–3); ugyldig dom sendes retur én gang; opdaterer status (godkendt / afvist / stoppet); gemmer dommen i `<sagsmappe>/kvalitet/` |
-| UserPromptSubmit | Brugerens egen `Godkend G2 <sag-id>` registrerer den manuelle løsningsgodkendelse, bundet til de godkendte fagleverancer. Fase 3 (projektkontrol og fagkald med FASE ≥ 3) kræver den |
+| UserPromptSubmit | Brugerens egen `Godkend G2 <sag-id>` registrerer den manuelle løsningsgodkendelse, bundet til de godkendte fagleverancer. Fase 3 (projektkontrol og fagkald med FASE ≥ 3) kræver den. **Kontekstbudget:** i en session med byg-leverancer får brugeren og projektlederen én påmindelse, når hovedtrådens kontekst passerer 200k tokens, og derefter for hver 100k: afslut opgaven, og fortsæt i en ny session med `/byg:status <sag-id>` |
 | Stop (hovedtråd) | Blokerer én gang, hvis sessionens leverancer afventer kontrol, er afvist eller mangler RCA |
 
 Agentnavne matches på basisnavnet, så både `byg-vvs:vvs-mester` (marketplace) og `byg:vvs-mester` (samlet pakke) virker; fag→kontrol-mapping ligger i `hooks/fagregister.json`.
 
 **Læring:** RCA → forbedring af fagagenten straks (agentens hukommelse) og varigt (repoet: prompt/videnbase, commit og versionsløft) → ny runde. Desuden forankringskø → ny tekst i fagets videnbase, ny `rubric_version` i kontrolviden, præciseret prompt, nyt interviewspørgsmål eller ny eval-case.
+
+## Effektivitet (RCA 2026-10-04)
+Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger kontekstens størrelse. En måling på rigtige sager fandt fire kilder til spild omkring kontrollen, ikke i den, og dertil designet:
+
+| Kilde | Design |
+|---|---|
+| Hovedtråden voksede til 300–500k tokens, fordi én session blev brugt til mange opgaver over dage, og projektlederen lavede research selv | **Kontekstbudget:** én opgave pr. session; sagsmappen er hukommelsen, og `/byg:status <sag-id>` genoptager. Research (priser, marked, datablade) går til en subagent; rene prisopslag er ikke en fagleverance. Hook-påmindelse fra 200k |
+| Returer med alle fund, også mindre, og fuld kontrol på lavrisiko-opgaver | **Kontrol i forhold til risikoen:** kun blokerende fund sendes retur. Nye ønsker bliver en ny leverance. Kontrolniveauet følger opgavens risiko: `fuld` kun når en sikkerhedsfunktion fastlægges eller ændres; indkøb, priser og styklister får `let` |
+| Fuld indlæsning af sagsmappen og gentagne opslag af de samme kilder | **Målrettet læsning og genbrug:** Grep og relevante afsnit; fagforespørgslen peger på afsnit; `normer.md` og sagens domme før nye opslag. Kontrollen genbruger sine egne efterprøvede kilder og slår kun op i forsøg 2–3 ved nyt grundlag |
+| Kontrol i baggrunden gav status-polling i hovedtråden | **Forgrund:** fag- og kontrolkald køres parallelt i forgrunden (flere Agent-kald i samme besked) |
+
+`scripts/forbrug.py` måler effekten: vægtet forbrug pr. del, hovedtrådens kontekst, retur-andel, gentagne opslag og statuskald.
 
 ## Videnmodel
 | Lag | Placering | Livscyklus |

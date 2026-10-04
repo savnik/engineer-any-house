@@ -18,7 +18,8 @@ Fasemodellen følger byggeriets egen faseopdeling. Den bygger på Ydelsesbeskriv
 - **Ingen tidsplan, intet detailbudget og ingen montagerækkefølge før G2.** Før det findes kun milepæle ("tilbud uge 40–41", "montage i fyringssæsonen") i `status.md`.
 - **Planleverancer samles.** Beholderplan, rumsplan og samlet plan skrives som ét dokument (eller ét dokument med delafsnit) med ét leverance-ID, ikke som flere delplaner, der hver skal kontrolleres og revideres.
 - **Sikkerhedskritiske fag** (fuld kontrol i fase 2): vvs ved kedel, fjernvarme eller gas; el; bærende konstruktioner; brand; asbest, PCB og bly. Øvrige får let review i fase 2.
-- **Parallelt og i baggrunden:** fag uden indbyrdes afhængighed kaldes samtidig. Kontrolkald køres i baggrunden, så brugeren kan stille spørgsmål imens. Kvalitetskontrollen afsnit 2.10 beskriver, hvordan en baggrundsdom registreres.
+- **Kontrolniveauet følger opgavens risiko, ikke kun faget.** `fuld` kræver, at leverancen fastlægger eller ændrer en sikkerhedsfunktion: sikkerhedsudstyr, hydraulik ved varmekilden, el-beskyttelse, bærende konstruktion eller brand. Indkøb, priser, sortiment, materialelister og styklister til et godkendt design får `let`, også i et sikkerhedskritisk fag. Ændrer et produktvalg en sikkerhedsfunktion (fx temperaturklassen på rør ved en kedel), er det `fuld`.
+- **Parallelt i forgrunden:** fag uden indbyrdes afhængighed kaldes samtidig som flere Agent-kald i samme besked. Kontrolkald køres i forgrunden, så dommen er registreret, når svaret kommer, og der ikke skal tjekkes status. Brugerens beskeder venter i køen imens.
 
 ## Enkelhedstjek (projektlederen, ved G1 og før løsningspræsentationen)
 Stil disse spørgsmål til hvert fag, før gaten passeres. Er svaret ja, så bed faget forenkle, før du går videre.
@@ -79,8 +80,8 @@ Den samlede plan tjekkes mod alle tidsregler i fagnotater og projektgrundlag, f�
 ## Kontrolniveauer
 | Niveau | Hvad kontrollen gør | Hvornår |
 |---|---|---|
-| `let` | Tjekker sikkerhed og lovkrav, afgørende fejl og om opgaven er besvaret. Kun kritiske fund og væsentlige fund med sikkerheds- eller lovkonsekvens blokerer | Fase 0 og 1, ikke-sikkerhedskritiske fag i fase 2 |
-| `fuld` | Hele kontrolprotokollen, alle punkter og fejlkataloget | Sikkerhedskritiske fag i fase 2 og den samlede plan i fase 3 |
+| `let` | Tjekker sikkerhed og lovkrav, afgørende fejl og om opgaven er besvaret. Kun kritiske fund og væsentlige fund med sikkerheds- eller lovkonsekvens blokerer | Fase 0 og 1, ikke-sikkerhedskritiske fag i fase 2, og opgaver uden ændring af en sikkerhedsfunktion (indkøb, priser, sortiment, materialelister, styklister) |
+| `fuld` | Hele kontrolprotokollen, alle punkter og fejlkataloget | Design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3 |
 
 **Fund-fastlåsning (alle niveauer):** Forsøg 1 er det fulde review. I forsøg 2 og 3 tjekker kontrollen kun, om fundene er lukket, og om de ændrede afsnit har skabt regressioner. Et nyt blokerende fund skal have `nyt_grundlag` (`regression`, `aendret_tekst` eller `kritisk_sikkerhed`). Ellers sender hooken dommen retur.
 
@@ -88,10 +89,11 @@ Den samlede plan tjekkes mod alle tidsregler i fagnotater og projektgrundlag, f�
 En ny oplysning eller beslutning, der ændrer et godkendt design, behandles sådan:
 1. Skriv den i `aendringer.md`: dato, ændring, kilde og **konsekvensanalyse** (hvilke leverancer rammes: fagnotat, plan, budget, grænseflader).
 2. **Saml ændringerne.** Revidér én gang pr. batch, fx når et sæt afklaringer fra servicefirma, installatør eller bruger er modtaget. Revidér ikke pr. oplysning.
-3. Revisionen får nyt leverance-ID (`-r2`) og fuldt kontrolniveau på det ændrede. Planen revideres først, når de ændrede fagnotater er godkendt (hooken håndhæver det).
+3. Revisionen får nyt leverance-ID (`-r2`) og et kontrolniveau efter ændringens risiko (se tabellen ovenfor): `fuld`, når den ændrer en sikkerhedsfunktion, ellers `let`. Planen revideres først, når de ændrede fagnotater er godkendt (hooken håndhæver det).
 4. Små ændringer uden faglig konsekvens (fx en dato) noteres kun i `aendringer.md` og `status.md` uden ny kontrol.
 
 ## Fagforespørgsel og retur – hold det kort
 - Fagforespørgslen angiver `FASE: <n>` og `KONTROLNIVEAU: let|fuld` og, i fase 3, `DESIGNGRUNDLAG:`.
 - Fase 1: beslutningsnotat (højst ca. 2 sider). Fase 2: fagnotat uden tilbudsgrundlag. Tilbudstjekliste og montagetrin skrives først i fase 3 som en del af den samlede plan.
-- Retur: fagagenten retter **kun de berørte afsnit** med Edit og skriver ikke notatet om. Kontrolrespons står i en kort tabel.
+- Fagforespørgslen peger på de relevante afsnit (fil og afsnit) frem for hele filer.
+- Retur: kun de blokerende fund (kritisk og væsentlig) sendes retur. Mindre fund og nye ønsker sendes ikke med; nye ønsker bliver en ny leverance. Fagagenten retter **kun de berørte afsnit** med Edit og skriver ikke notatet om. Kontrolrespons står i en kort tabel.

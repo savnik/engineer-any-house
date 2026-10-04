@@ -37,7 +37,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 1. **Fagkald (forsøg n):** LEVERANCE, opgaven, sagsmappen og stien til notatet (`<sagsmappe>/fagnotater/<fag-id>.md`).
 2. **Kontrolkald:** brug skabelonen i afsnit 3. Giv kun leverancen, projektgrundlaget, relevante andre fagnotater og tidligere domme – aldrig fagagentens ræsonnement eller dit eget forsvar for løsningen.
 3. **Dom:** hooken gemmer JSON-dommen i `<sagsmappe>/kvalitet/`. Tilføj en linje i `<sagsmappe>/kvalitet/kontrollog.md`: dato · leverance · forsøg · dom · åbne fund (kritisk/væsentlig/mindre).
-4. **Godkendt:** leverancen må bruges. **Afvist:** send fundene ordret retur til fagagenten (afsnit 4) som forsøg n+1.
+4. **Godkendt:** leverancen må bruges. **Afvist:** send **kun de blokerende fund** (kritisk og væsentlig) ordret retur til fagagenten (afsnit 4) som forsøg n+1. Mindre fund sendes ikke retur. De står i dommen og tages kun med, hvis notatet alligevel revideres senere. En retur må ikke indeholde nye ønsker eller opgaver; de bliver en ny leverance med nyt ID.
 5. **Fund der kræver brugeren** ("afklar med bruger" eller `eskaler: true`): stop loopet og spørg brugeren (AskUserQuestion, hvis tilgængelig). Svaret skrives ind i projektgrundlaget, derefter fortsætter loopet.
 6. **Højst 3 forsøg pr. runde, højst 3 runder.** Afvises 3. forsøg i en runde:
    1. **Stop runden.**
@@ -50,12 +50,12 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
    5. **Efter runde 3:** eskalér til brugeren med et konkret beslutningsbehov. Fortsæt kun efter brugerens beslutning og under et nyt leverance-ID.
 
    Fortæl brugeren kort om hver RCA og forbedring, men start den nye runde uden at vente på svar. Læg også læringen i forankringskøen (`/byg:erfaring`).
-7. **Parallelle fag:** fagkald må køre parallelt; kontrollér hver leverance, så snart den er klar.
-8. **Sidste forsøg (3 af 3):** send kun de blokerende fund (kritisk/væsentlig) og de mindre fund, der står i dommen, retur. Kontrollens usikkerheder og bemærkninger uden fund-ID (fx om den samlede budgetramme) må ikke udvide leverancen i sidste forsøg – flyt dem til projektlederens integration.
+7. **Parallelle fag i forgrunden:** fag- og kontrolkald køres i forgrunden. Uafhængige kald sendes parallelt som flere Agent-kald i samme besked, og hver leverance kontrolleres, så snart den er klar. Brugerens beskeder venter i køen imens.
+8. **Kontrollens bemærkninger uden fund-ID** (usikkerheder, fx om den samlede budgetramme) udvider ikke leverancen i en retur. Flyt dem til projektlederens integration.
 9. **Koordineringsbeslutninger undervejs:** en beslutning, der berører flere fag, skrives i beslutningsloggen og gives med i alle berørte fags næste fagkald eller retur – ikke kun til det fag, der udløste den.
 9b. **Returer til fag, der afhænger af hinanden, i rækkefølge:** Deler to fag en snitflade eller henviser til hinandens hold points, afgør projektlederen konflikten først (grænsefladeregistret). Derefter rettes ejeren af snitfladen før det fag, der henviser. Uafhængige fag rettes parallelt.
-10. **Baggrundsagenter:** kører kontrolagenten i baggrunden, kan dens rapport nå frem, før hooken har registreret dommen (hooken sender først en dom uden JSON retur én gang). Vent, til leverancen ikke længere står som `under_kontrol` i `kontrol_gate.py status`, før næste fagkald – ellers afviser hooken kaldet. Agentens rapport når ofte frem 20–60 sekunder før hooken har registreret dommen. Tjek derfor status, før du handler på en dom. Kør helst kontrolkald i forgrunden.
-11. **Retur og genoptagelse:** Send altid fundene retur til fagagenten med et nyt kald i Agent-værktøjet (skabelonen i afsnit 4). Genoptager du fagagenten med SendMessage, registrerer hooken ikke forsøget. Er en dom fra en baggrundskørsel ikke registreret, må kontrolagenten gerne genoptages, så den gentager JSON-dommen, men kun mens leverancen står som `under_kontrol`. Hooken ignorerer domme, der er gentaget eller forældede (status er ikke `under_kontrol`, eller dommens `forsoeg` passer ikke), så de ikke tæller som et nyt forsøg.
+10. **Ingen baggrundskontrol:** kør ikke kontrolkald i baggrunden. Agentens rapport når frem 20–60 sekunder før hooken har registreret dommen, og venten på hooken koster et statuskald i hovedtråden hver gang. Er en kontrol alligevel kørt i baggrunden, og afviser hooken næste fagkald med "er ikke kontrolleret endnu", så vent på næste hændelse i stedet for at tjekke status gentagne gange.
+11. **Retur og genoptagelse:** Send altid de blokerende fund retur til fagagenten med et nyt kald i Agent-værktøjet (skabelonen i afsnit 4). Genoptager du fagagenten med SendMessage, registrerer hooken ikke forsøget. Er en dom fra en baggrundskørsel ikke registreret, må kontrolagenten gerne genoptages, så den gentager JSON-dommen, men kun mens leverancen står som `under_kontrol`. Hooken ignorerer domme, der er gentaget eller forældede (status er ikke `under_kontrol`, eller dommens `forsoeg` passer ikke), så de ikke tæller som et nyt forsøg.
 
 ## 3. Skabelon – kontrolkald
 ```
@@ -71,7 +71,8 @@ Tidligere domme: <stier eller "ingen">
 Sagsmappe: <sti>
 Udfør et review på det angivne kontrolniveau efter din kontrolprotokol (forsøg 1: fuldt review; forsøg 2–3: kun lukning af fund og regressioner i ændrede afsnit), og afslut med JSON-dommen.
 ```
-- **FASE og KONTROLNIVEAU** følger `faser-og-gates.md` i projektlederens skill. `fuld` gælder sikkerhedskritiske fag i fase 2 og den samlede plan i fase 3. Ellers er niveauet `let`.
+- **FASE og KONTROLNIVEAU** følger `faser-og-gates.md` i projektlederens skill. Niveauet sættes efter **opgavens risiko**, ikke kun efter faget. `fuld` gælder design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3. Ellers er niveauet `let`, også for indkøb, priser, sortiment, materialelister og styklister til et godkendt design.
+- **Giv kun det nødvendige med:** henvis til de relevante afsnit i andre fagnotater (fil og afsnit) frem for hele filer.
 - **Projektkontrol** kræver `FASE:`. I fase 3+ kræver den også `DESIGNGRUNDLAG:` med godkendte fagleverancer (hooken håndhæver det).
 
 ## 4. Skabelon – retur til fagagent
@@ -79,9 +80,10 @@ Udfør et review på det angivne kontrolniveau efter din kontrolprotokol (forsø
 LEVERANCE: <id>
 Forsøg: <n+1> af 3 – leverancen blev afvist af kvalitetskontrollen.
 Dom: <sti til dommen>
-Fund der skal adresseres (ordret): <F1 · klasse · påstand · krav · handling>, …
-Instruks: Ret **kun de berørte afsnit** i <sti til notat> med Edit. Skriv ikke notatet om. Adressér hvert fund-ID i en kort tabel under "Kontrolrespons" (lukket eller bestridt med kilde). Kør afleveringstjekket på de ændrede afsnit. Ændr ikke andet uden at notere det. Returnér kort resumé.
+Blokerende fund der skal adresseres (ordret): <F1 · klasse · påstand · krav · handling>, …
+Instruks: Ret **kun de berørte afsnit** i <sti til notat> med Edit, og saml rettelserne i få Edit-kald. Skriv ikke notatet om. Mindre fund i dommen skal ikke rettes. Adressér hvert fund-ID i en kort tabel under "Kontrolrespons" (lukket eller bestridt med kilde). Kør afleveringstjekket på de ændrede afsnit. Ændr ikke andet uden at notere det. Returnér kort resumé.
 ```
+Kun kritiske og væsentlige fund. Ingen mindre fund, ingen nye ønsker og ingen nye opgaver – de kræver et nyt leverance-ID.
 
 ## 4b. Skabelon – ny runde efter RCA
 ```
