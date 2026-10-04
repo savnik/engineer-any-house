@@ -101,6 +101,8 @@ def fingeraftryk(mapper):
                 naeste = rækker[i + 1] if i + 1 < len(rækker) else ""
                 if l.lstrip().startswith("|") and re.match(r"^\s*\|[\s:|-]+\|\s*$", naeste):
                     continue  # tabeloverskrift – typisk fra en skabelon i repoet
+                if l.lstrip().startswith("#"):
+                    continue  # overskrift – typisk fra en skabelon i repoet (fx løsningspræsentationen)
                 n = norm(l)
                 if len(n) >= 60:
                     linjer.add(n)
