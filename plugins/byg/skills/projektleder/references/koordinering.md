@@ -23,6 +23,7 @@ Grænsefladeregister: <sagsmappe>/graenseflader.md (fra G1; i fase 1: "udfyldes 
 Hold point-præfiks: HP-<FAG>-n (HP1–HPn projektfælles)
 Opgave: <præcist spørgsmål eller leverance>
 Kontekst: kort resumé: <2–3 linjer>
+Ejendomskort: <sti> – læs "Fælles", afsnittet for dit fag og "Problemstoffer og kendte skader"; citér fakta med ID
 Læs: <de filer og afsnit, opgaven bygger på, fx "projektgrundlag.md afsn. 3; vvs-r2.md afsn. 4–5; beslutningslog M3–M4">
 Afgrænsning: <hvad er ikke med>
 Grænseflader, der skal belyses: <fag + emne>

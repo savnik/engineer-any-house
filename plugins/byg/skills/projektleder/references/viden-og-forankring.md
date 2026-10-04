@@ -1,21 +1,24 @@
 # Viden og forankring
 
-## Fire videnlag
-| Lag | Hvor | Indhold | Ændres af |
-|---|---|---|---|
-| 1. Kanon | Fag-pluginenes `references/` og byg-kontrols kontrolviden | Normgrundlag, faglig praksis, tjeklister, erfaringsblade, kontrolpunkter | Review og ny pluginversion |
-| 2. Agenthukommelse | Hver fagagents `memory: user` | Personlige erfaringer, præferencer, produkter, lokale forhold | Fagagenten selv |
-| 3. Videnbank | `${CLAUDE_PLUGIN_DATA}/videnbank/` | `sager.md` (indeks med sti til sagsmappen), `erfaringsblade/<fag-id>.md` (lokalt forankrede), `forankringskoe.md` | Projektlederen efter brugerens accept |
-| 4. Sagsmappe | `byg-sager/<sag-id>/` | Alt om den konkrete sag | Projektlederen og fagene |
+## Fem videnlag – fagviden og sagsviden hver for sig
+| Lag | Hvor | Indhold | Levetid | Ændres af |
+|---|---|---|---|---|
+| 1. Kanon | Fag-pluginenes `references/` og byg-kontrols kontrolviden | Fagviden: normgrundlag, faglig praksis, tjeklister, erfaringsblade, kontrolpunkter | Lang | Review og ny pluginversion |
+| 2. Agenthukommelse | Hver fagagents `memory: user`, én mappe pr. fag | Fagviden, der ikke er forankret endnu: erfaringer, produkter, mønstre. Aldrig sagsdata | Lang, til den er forankret | Fagagenten selv |
+| 3. Videnbank | `${CLAUDE_PLUGIN_DATA}/videnbank/` | `sager.md` (indeks med sti til sagsmappe og ejendomskort), `erfaringsblade/<fag-id>.md` (lokalt forankrede), `forankringskoe.md` | Lang | Projektlederen efter brugerens accept |
+| 4. Ejendomskort | `byg-sager/ejendomme/<ejendom-id>.md` | Sagsviden om huset: faste fakta med kilde og dato, delt i afsnit pr. fag (`sagsmappe.md`) | Lang, så længe huset | Projektlederen |
+| 5. Sagsmappe | `byg-sager/<sag-id>/` | Sagsviden om projektet: omfang, beslutninger, leverancer, status | Kort, så længe sagen | Projektlederen og fagene |
 
-Videnbanken overlever opdateringer af pluginet. Fagagenter kan ikke læse projektlederens datamappe – giv dem de relevante lokale erfaringer i fagforespørgslen.
+Kun indekset (agentens `MEMORY.md`, skill-indgangen) ligger altid i konteksten. Resten læses afsnitsvis efter behov. Hvert fag læser kun sin egen hukommelse og videnbase og kun sit eget afsnit af ejendomskortet. Videnbanken overlever opdateringer af pluginet. Fagagenter kan ikke læse projektlederens datamappe – giv dem de relevante lokale erfaringer i fagforespørgslen.
 
 ## Erfaringshøst (`/byg:erfaring`)
+**Hvornår:** altid, når en sag eller et delprojekt afsluttes (sidste leverance godkendt og besvaret, eller sagen parkeres), og efter hver RCA. Et spørgsmål via `/byg:spoerg` høstes, når svaret er givet. Skriv datoen i linjen `**Erfaringshøst:**` i `status.md`. `/byg:status` viser sager, der ikke er høstet.
 1. Læs `erfaringer.md`, beslutningsloggen, domme og RCA'er i sagen.
-2. Formulér kandidater som erfaringsblade: Situation/Problem/Løsning, Grundlag, Gyldighed, Status.
-3. Sortér: sagsspecifikt (bliver i sagen) · generaliserbart (→ videnbank) · kanon-kandidat (→ forankringskø med målfil og forslag til ny tekst).
-4. Vis kandidaterne for brugeren; gem kun det accepterede.
-5. Opdatér `sager.md` i videnbanken (sag-id, sti, emne, fag, resultat, læring i én linje).
+2. **Husets fakta → ejendomskortet:** nye eller ændrede fakta fra sagen (målinger, fotos, typeskilte, godkendte fagnotater) føres ind med kilde og dato. Gamle værdier flyttes til "Erstattede oplysninger".
+3. Formulér erfaringerne som erfaringsblade: Situation/Problem/Løsning, Grundlag, Gyldighed, Status.
+4. Sortér: sagsspecifikt (bliver i sagen) · generaliserbart (→ videnbank) · kanon-kandidat (→ forankringskø med målfil og forslag til ny tekst).
+5. Vis kandidaterne for brugeren; gem kun det accepterede.
+6. Opdatér `sager.md` i videnbanken (sag-id, sti, emne, fag, resultat, læring i én linje, ejendomskort).
 
 ## Læring fra kvalitetskontrol
 - Hver RCA implementerer forbedringen i fagagenten med det samme (agentens hukommelse og repoet, RCA-skabelonen afsnit 6). Den giver også mindst ét forslag i forankringskøen efter årsagskategorien (F1–F5, K4, K7 i RCA-skabelonen): nyt interviewspørgsmål, rettelse i fagets videnbase, præcisering i fagagentens prompt, ny rubric-version for kontrollen, markering af emner der kræver normadgang, nyt tværfagligt tjekpunkt – og en ny eval-case.

@@ -15,6 +15,7 @@ FEJL = []
 NOEGLE = "x" * 8 + "TESTNOEGLE" + "y" * 30  # falsk nøgle – kun til testen
 SAG = "2031-02-03-tag-test"
 LINJE = "Tagfladen mod syd har tre knækkede teglsten over køkkenvinduet og en utæt inddækning."
+EJENDOMSLINJE = "Træpillekedel på 12 kW fra 2009 med integreret returløft og elpatron på 6 kW i beholderen"
 
 
 def kør(hjem, repo):
@@ -35,6 +36,9 @@ def main() -> int:
         sagsmappe = pathlib.Path(tmp) / "arbejde" / "byg-sager" / SAG
         sagsmappe.mkdir(parents=True)
         (sagsmappe / "projektgrundlag.md").write_text(f"# Projektgrundlag\n\n{LINJE}\n", encoding="utf-8")
+        ejendomme = sagsmappe.parent / "ejendomme"
+        ejendomme.mkdir()
+        (ejendomme / "lindevej-7b.md").write_text(f"# Ejendomskort\n\n| E-VVS-01 | Kedel | {EJENDOMSLINJE} |\n", encoding="utf-8")
         vb = hjem / ".claude" / "plugins" / "data" / "byg-test" / "videnbank"
         vb.mkdir(parents=True)
         (vb / "sager.md").write_text(f"| Sag-id | Sti |\n|---|---|\n| {SAG} | `{sagsmappe}` |\n| lindevej-7b | – |\n", encoding="utf-8")
@@ -47,13 +51,15 @@ def main() -> int:
         ren.write_text("# Generel viden\nTestadresse til evals: Rådhuspladsen 1, 1550 København V.\n", encoding="utf-8")
 
         kode, ud = kør(hjem, repo)
-        forvent("rent repo med testdata godkendes", kode == 0 and "1 sagsmappe(r)" in ud, ud)
+        forvent("rent repo med testdata godkendes (sagsmappe + ejendomme)", kode == 0 and "2 sagsmappe(r)" in ud, ud)
 
         tilfaelde = {
             "sag-id fra videnbanken afvises": ("plugins/p/eksempel.md", f"Se sagen {SAG}."),
             "sag-id uden dato afvises": ("plugins/p/eksempel.md", "Som i sagen Lindevej-7B viste …"),
             "privat term afvises": ("plugins/p/eksempel.md", "Huset på Solsikkevej 99 har …"),
             "kopieret sagstekst afvises": ("plugins/p/references/praksis.md", f"- **Erfaring:** {LINJE}"),
+            "kopieret tekst fra ejendomskort afvises": ("plugins/p/references/praksis.md", f"- {EJENDOMSLINJE}"),
+            "ejendomskort i repoet afvises": ("ejendomme/lindevej-7b.md", "kort"),
             "lokal API-nøgle afvises": ("tests/fixture.py", f'KEY = "{NOEGLE}"'),
             "nøgle i URL afvises": ("plugins/p/x.md", "https://graphql.datafordeler.dk/BBR/v3?apiKey=" + "A1b2" * 8),
             "sagsmappe i repoet afvises": ("byg-sager/2031-01-01-x/noter.md", "noter"),

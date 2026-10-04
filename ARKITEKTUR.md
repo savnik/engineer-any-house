@@ -59,12 +59,17 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 `scripts/forbrug.py` måler effekten: vægtet forbrug pr. del, hovedtrådens kontekst, retur-andel, gentagne opslag og statuskald.
 
 ## Videnmodel
-| Lag | Placering | Livscyklus |
-|---|---|---|
-| Kanon | `plugins/*/skills/*/references/` | Versioneret i repoet; review før ændring |
-| Agenthukommelse | `~/.claude/agent-memory/<agent>/` (memory: user) | Fagagenten kuraterer selv |
-| Videnbank | `${CLAUDE_PLUGIN_DATA}/videnbank/` (byg) | Overlever plugin-opdateringer; brugeren accepterer |
-| Sagsmappe | `byg-sager/<sag-id>/` i arbejdsmappen | Pr. projekt |
+Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
+
+| Lag | Slags | Placering | Livscyklus |
+|---|---|---|---|
+| Kanon | Fagviden | `plugins/*/skills/*/references/` | Versioneret i repoet; review før ændring |
+| Agenthukommelse | Fagviden, ikke forankret endnu | `~/.claude/agent-memory/<agent>/` (memory: user), én mappe pr. fag | Fagagenten kuraterer selv; aldrig sagsdata |
+| Videnbank | Lokal fagviden og sagsindeks | `${CLAUDE_PLUGIN_DATA}/videnbank/` (byg) | Overlever plugin-opdateringer; brugeren accepterer |
+| Ejendomskort | Sagsviden om huset (lang) | `byg-sager/ejendomme/<ejendom-id>.md` | Så længe huset; kun projektlederen skriver; afsnit pr. fag |
+| Sagsmappe | Sagsviden om projektet (kort) | `byg-sager/<sag-id>/` i arbejdsmappen | Pr. projekt; høstes ved afslutning |
+
+**Lagdeling uden ekstra mekanik (vurderet 2026-10-04):** kun indekset (agentens `MEMORY.md`, skill-indgangen) ligger i konteksten; resten læses afsnitsvis. Platformen giver hver fagagent sin egen hukommelsesmappe, og et fag læser kun sit eget afsnit af ejendomskortet. En fuld lagmodel med budgetter, forfremmelse og hook-håndhævelse blev fravalgt: hukommelse er 3–5k tokens pr. fagkørsel, og der var ingen krydslæsninger mellem fag. Den bygges først, hvis `scripts/forbrug.py` viser et reelt problem. Gevinsten ligger i korrekthed: husets fakta ét sted og fast erfaringshøst, når en sag afsluttes.
 
 ## Dataseparation
 Repoet er offentligt. Konkrete sager, brugerens data og hemmeligheder må aldrig komme i det.

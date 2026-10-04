@@ -63,9 +63,10 @@ I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar so
 1. **Kanon** i pluginenes `references/` (normgrundlag med status V/T, faglig praksis, tjeklister, erfaringsblade) og kontrolviden i `byg-kontrol`.
 2. **Agenthukommelse** pr. fagagent (`memory: user`).
 3. **Videnbank** i projektlederens datamappe: sagsindeks, lokale erfaringsblade, forankringskø.
-4. **Sagsmappe** pr. projekt.
+4. **Ejendomskort** pr. hus (`byg-sager/ejendomme/<ejendom-id>.md`): husets faste fakta med kilde og dato, delt i afsnit pr. fag og fælles for alle sager på ejendommen.
+5. **Sagsmappe** pr. projekt.
 
-`/byg:erfaring` høster erfaringer og RCA-læring; accepterede kanon-kandidater indarbejdes i repoet med ny version.
+Fagviden og sagsviden holdes adskilt: agenternes hukommelse er kun til fagviden. Når en sag afsluttes, høster projektlederen den (`/byg:erfaring`): husets fakta går til ejendomskortet, og fagviden går til videnbanken og forankringskøen. Accepterede kanon-kandidater indarbejdes i repoet med ny version.
 
 ## Data og privatliv
 Sager og brugerdata ligger kun lokalt: sagsmapper i `byg-sager/` i din arbejdsmappe, videnbank og kontroltilstand i pluginets datamappe og API-nøgler i `~/.config/`. Intet af det kommer i pluginet. Læring fra sager kommer kun i repoet som generaliseret viden via `/byg:erfaring`. Se "Dataseparation" i `ARKITEKTUR.md`.

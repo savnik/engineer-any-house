@@ -28,7 +28,7 @@ TEKST = {".md", ".json", ".py", ".txt", ".yml", ".yaml", ".toml", ".sh", ".html"
 SAGSFILER = {"projektgrundlag.md", "beslutningslog.md", "kontrollog.md", "budget.md", "tidsplan.md", "risici.md",
              "graenseflader.md", "kontrolplan.md", "erfaringer.md", "status.md", "ejendomsdata.json",
              "ejendomsdata.md", "tilstand.json", "forankringskoe.md", "sager.md"}
-SAGSMAPPER = {"byg-sager", "fagnotater", "kvalitet", "bilag", "videnbank"}
+SAGSMAPPER = {"byg-sager", "fagnotater", "kvalitet", "bilag", "videnbank", "ejendomme"}
 NOEGLE_MOENSTRE = [re.compile(r"apiKey=[A-Za-z0-9_\-]{20,}"),
                    re.compile(r"(?i)(api[_-]?key|secret|password|token)\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{32,}")]
 SAG_ID = re.compile(r"\b\d{4}-\d{2}-\d{2}-[a-z0-9æøå-]+\b")
@@ -75,7 +75,8 @@ def private_termer():
 
 
 def sagsmapper():
-    """Stier fra videnbankens sager.md (kolonnen Sti) og fra ~/.config/byg-eksperter/sagsmapper.txt."""
+    """Stier fra videnbankens sager.md (kolonnen Sti) og fra ~/.config/byg-eksperter/sagsmapper.txt,
+    plus ejendomskortene i byg-sager/ejendomme/ ved siden af sagsmapperne."""
     stier = set()
     for vb in videnbanker():
         s = vb / "sager.md"
@@ -85,6 +86,7 @@ def sagsmapper():
     if f.exists():
         stier |= {pathlib.Path(l.strip()).expanduser() for l in f.read_text(encoding="utf-8").splitlines()
                   if l.strip() and not l.startswith("#")}
+    stier |= {p.parent / "ejendomme" for p in list(stier)}
     return sorted(p for p in stier if p.is_dir() and ROD not in (p, *p.parents))
 
 
@@ -102,14 +104,19 @@ def fingeraftryk(mapper):
                 n = norm(l)
                 if len(n) >= 60:
                     linjer.add(n)
+                if l.lstrip().startswith("|"):
+                    # tabelceller for sig (fx et faktum i ejendomskortet), så en kopieret værdi også fanges
+                    linjer |= {c for c in (norm(x) for x in l.split("|")) if len(c) >= 60}
     return linjer
 
 
 def main() -> int:
     fejl = []
     hemmeligheder = lokale_hemmeligheder()
-    termer = private_termer()
     mapper = sagsmapper()
+    # ejendom-id'er (filnavnet på ejendomskortet) er typisk en adresse
+    ejendomme = {f.stem for m in mapper if m.name == "ejendomme" for f in m.glob("*.md")}
+    termer = sorted(set(private_termer()) | ejendomme, key=len, reverse=True)
     aftryk = fingeraftryk(mapper)
 
     for f, rel in repo_filer():

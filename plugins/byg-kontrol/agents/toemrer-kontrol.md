@@ -42,7 +42,7 @@ Fag-id: `toemrer` · Kontrollerer leverancer fra: `toemrermester`
 2. **Faglig korrekthed:** værdier, dimensioner, metoder, materialeforligelighed og rækkefølge – mod kilde.
 3. **Kildedisciplin:** hvert krav er mærket [KRAV]/[NORM]/[ANVISNING]/[ERFARING] med korrekt status; ingen opfundne §, udgaver eller godkendelser; "skal" kun om krav; forældede udgaver opdages (BR18 revideres løbende – regler på ansøgningstidspunktet).
 4. **Fuldstændighed:** er opgaven besvaret, og er kritiske forudsætninger afklaret eller markeret som antagelser?
-5. **Grænseflader:** er de nødvendige snitflader til andre fag beskrevet, og er der modstrid med andre fagnotater?
+5. **Grænseflader og husets fakta:** er de nødvendige snitflader til andre fag beskrevet, og er der modstrid med andre fagnotater? Strider leverancen mod et dokumenteret faktum i ejendomskortet (kilde F, D, M, B eller K) eller i et anlægsregister, det henviser til, er det et væsentligt fund.
 6. **Kontrol og dokumentation:** hold points, målinger og lovpligtige kontroller (fx KLS-slutkontrol, verifikation, trykprøvning, funktionsafprøvning, tæthedsprøvning) er planlagt og dokumenteret.
 7. **Fejlkataloget:** hvert punkt i dit fags fejlkatalog, der er relevant for opgaven, tjekkes eksplicit.
 

@@ -35,7 +35,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 
 ## 2. Loopet
 1. **Fagkald (forsøg n):** LEVERANCE, opgaven, sagsmappen og stien til notatet (`<sagsmappe>/fagnotater/<fag-id>.md`).
-2. **Kontrolkald:** brug skabelonen i afsnit 3. Giv kun leverancen, projektgrundlaget, relevante andre fagnotater og tidligere domme – aldrig fagagentens ræsonnement eller dit eget forsvar for løsningen.
+2. **Kontrolkald:** brug skabelonen i afsnit 3. Giv kun leverancen, projektgrundlaget, ejendomskortet, relevante andre fagnotater og tidligere domme – aldrig fagagentens ræsonnement eller dit eget forsvar for løsningen.
 3. **Dom:** hooken gemmer JSON-dommen i `<sagsmappe>/kvalitet/`. Tilføj en linje i `<sagsmappe>/kvalitet/kontrollog.md`: dato · leverance · forsøg · dom · åbne fund (kritisk/væsentlig/mindre).
 4. **Godkendt:** leverancen må bruges. **Afvist:** send **kun de blokerende fund** (kritisk og væsentlig) ordret retur til fagagenten (afsnit 4) som forsøg n+1. Mindre fund sendes ikke retur. De står i dommen og tages kun med, hvis notatet alligevel revideres senere. En retur må ikke indeholde nye ønsker eller opgaver; de bliver en ny leverance med nyt ID.
 5. **Fund der kræver brugeren** ("afklar med bruger" eller `eskaler: true`): stop loopet og spørg brugeren (AskUserQuestion, hvis tilgængelig). Svaret skrives ind i projektgrundlaget, derefter fortsætter loopet.
@@ -66,6 +66,7 @@ DESIGNGRUNDLAG: <kun for projektleverancer i fase 3+: godkendte fagleverance-ID'
 Opgave: <den oprindelige opgave til fagagenten, ordret>
 Leverance: <sti til fagnotat>
 Projektgrundlag: <sti>
+Ejendomskort: <sti eller "ingen">
 Relevante andre fagnotater: <stier eller "ingen">
 Tidligere domme: <stier eller "ingen">
 Sagsmappe: <sti>

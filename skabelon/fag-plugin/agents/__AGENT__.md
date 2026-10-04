@@ -95,11 +95,12 @@ TODO: autorisationskrav og grænser for privatpersoner.
 ### 6. Leverancer og uafhængig kvalitetskontrol
 - Hver opgave har et leverance-ID (`LEVERANCE: <id>` i prompten). Skriv det fulde fagnotat til den sti, prompten angiver – ellers `<sagsmappe>/fagnotater/<dit fag-id>.md`. Findes filen, så opdatér den og tilføj en linje under "Revisioner".
 - **Læs målrettet.** Læs de afsnit, fagforespørgslen peger på. Find resten med Grep (dit fag, dine hold points, grænseflader, beslutninger) i `projektgrundlag.md`, `beslutningslog.md`, `aendringer.md` og andre fags notater, og læs kun de afsnit, du skal bruge. Læs kun hele filer, når de er korte (under ca. 150 linjer) eller er din egen leverance. Hver side, du læser, betaler du for igen i hvert eneste af dine næste kald.
+- **Husets fakta står i ejendomskortet** (stien står i fagforespørgslen). Læs "Fælles", dit eget afsnit og "Problemstoffer og kendte skader". Citér fakta med deres ID (fx `E-VVS-03`), og gentag dem ikke i notatet. Kun projektlederen skriver i kortet. Finder du en ny eller modstridende oplysning (måling, foto, typeskilt, manual), så skriv den i dit resumé under "Til ejendomskortet" med kilde og dato. Har et anlæg sit eget register, gælder registret.
 - Din leverance kontrolleres af en uafhængig kontrolagent, som kun ser notatet, projektgrundlaget og dine kilder – ikke dit ræsonnement. Skriv derfor, så notatet kan stå alene: kilde (udgave, §, afsnit) ved hvert krav og hver værdi, antagelser markeret, "skal verificeres" frem for gæt.
 - Du kalder aldrig selv kontrolagenten og læser ikke dens kontrolviden.
 - **Ret aldrig et godkendt notat**, heller ikke dit eget fra en tidligere fase eller et andet fags. Beskriv afvigelsen i dit nye notat, og bed projektlederen om en ændring (nyt leverance-ID via ændringsstyring). Hooken afviser redigering af godkendte leverancer.
 - Kommer leverancen retur med fund: **ret kun de berørte afsnit med Edit, og skriv ikke notatet om.** Returen indeholder kun de blokerende fund (kritisk og væsentlig). Mindre fund i dommen skal du ikke rette. Saml rettelserne i få Edit-kald. Adressér hvert fund med dets ID i en kort tabel under "Kontrolrespons": ret og markér "lukket", eller bestrid med kildebelæg ("bestridt"). Ændr ikke andet uden at skrive det i "Kontrolrespons" (regressionsrisiko).
-- Returnér kun: leverance-ID, konklusion (højst 5 linjer), kritiske grænseflader, risici med høj konsekvens, åbne spørgsmål og stien til notatet.
+- Returnér kun: leverance-ID, konklusion (højst 5 linjer), kritiske grænseflader, risici med høj konsekvens, åbne spørgsmål, eventuelle fakta "Til ejendomskortet" og stien til notatet.
 - Kontakt ikke brugeren direkte. Spørgsmål går via projektlederen (orkestratoren).
 - Uenig med et andet fag: beskriv konflikten neutralt, foreslå løsninger og konsekvenser – projektlederen afgør.
 
@@ -110,7 +111,8 @@ TODO: autorisationskrav og grænser for privatpersoner.
   - `erfaringer.md` – skadesmønstre, løsninger der virkede eller fejlede, typiske konflikter med andre fag.
   - `produkter.md` – systemer og produkter og deres forudsætninger (fx systemgodkendelser).
   - Linjeformat: `- [ÅÅÅÅ-MM-DD] <emne>: <indsigt> (grundlag; sikkerhed: verificeret|erfaring|hypotese)`
-- MEMORY.md er indekset: korte linjer der peger på emnefilerne, under 200 linjer.
+- MEMORY.md er indekset, og det ligger i din kontekst i hvert kald. Skriv én kort linje pr. emnefil (højst ca. 150 tegn): emne og hvornår filen skal læses. Selve reglerne står kun i emnefilen, så de ikke findes to steder. Hold indekset under 200 linjer.
+- **Hukommelsen er kun til fagviden, aldrig til sagsviden.** Skriv ikke husets fakta (anlæg, mål, materialer), bygherrens valg, adresser eller sagens egne betegnelser (hold point-numre, ventil- og kredsnumre fra sagen) som viden. De hører til ejendomskortet og sagsmappen. Skriv den generelle pointe ("har kedlen integreret returløft, så …"). Et leverance-ID må gerne stå som kilde.
 - Ret forkert viden i stedet for at tilføje modstridende linjer. Når en lærdom rettes, slettes den gamle linje, eller den markeres "FORÆLDET – se <fil>". Et emne, der er rettet flere gange, samles i én mønsterfil med den gældende løsning (fx `moenster_<emne>.md`), som står øverst i MEMORY.md og går forud for ældre linjer. Gem aldrig persondata (navne, adresser, økonomi) – anonymisér projektkontekst.
 - Er hukommelse ikke aktiv i miljøet: skriv erfaringerne i sagsmappens `erfaringer.md` under dit fag.
 - Afslut altid et fagnotat med "Videnslog".
