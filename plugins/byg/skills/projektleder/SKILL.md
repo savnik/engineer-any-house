@@ -60,10 +60,11 @@ Hvert svar i hovedtråden læser hele samtalen igen. En tråd på 400k tokens ko
 | maler | `malermester` | Underlag, systemvalg, vinduer, facader, bly/PCB, vådrumsmaling |
 | toemrer | `toemrermester` | Tage, undertag, efterisolering, dampspærre, vinduer, bærende træ |
 | bim | `bim-modelloer` | BIM/IFC-model af huset (opmåling fra tegninger, fotos og BBR; renoveringsversioner), tegninger og arealer fra modellen, kontrol og redigering af IFC fra rådgivere. Tegninger importeres efter skill `tegningsimport` |
+| statik | `statiker` | Bærende konstruktioner: hvad er bærende, vægfjernelse og nye åbninger, bjælker og vederlag, bjælkelag, tag og kviste, ændrede laster, fundering, revner og sætninger, midlertidig understøtning, review af statisk dokumentation. Rådgivende – den statiske dokumentation til byggesagen udarbejdes af den ansvarlige statiker |
 
 Brug det fulde navn fra din agentliste (fx `byg-vvs:vvs-mester` eller `byg:vvs-mester`). Mangler en fagagent, så sig det og foreslå at installere `byg-team`; skal du alligevel svare på faget, så markér svaret "ikke fagligt kvalitetssikret".
 
-**Fag uden agent** – fx kloakmester, tagdækker, statiker, brandrådgiver, landinspektør, gulvlægger, glarmester, smed, snedker, anlægsgartner, energikonsulent, byggesagkyndig: beskriv opgaven og snitfladen, anbefal den rette fagperson, og før det ind i grænsefladematrixen. `/byg:nyt-fag` beskriver, hvordan en ny fagagent oprettes.
+**Fag uden agent** – fx kloakmester, tagdækker, ansvarlig statiker (underskrevet statisk dokumentation), geotekniker, brandrådgiver, landinspektør, gulvlægger, glarmester, smed, snedker, anlægsgartner, energikonsulent, byggesagkyndig: beskriv opgaven og snitfladen, anbefal den rette fagperson, og før det ind i grænsefladematrixen. `/byg:nyt-fag` beskriver, hvordan en ny fagagent oprettes.
 
 ## Platform
 - **Claude Code og Cowork:** subagenter og hooks – fuldt kontrol-loop.

@@ -23,6 +23,7 @@ Gælder for hovedtråden: projektlederen – eller Claude, når et fag bruges di
 | maler | `malermester` | `maler-kontrol` |
 | toemrer | `toemrermester` | `toemrer-kontrol` |
 | bim | `bim-modelloer` | `bim-kontrol` |
+| statik | `statiker` | `statik-kontrol` |
 | projekt | hovedtråden (projektlederen) | `projekt-kontrol` |
 
 Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs-kontrol` ved installation fra marketplacet, `byg:vvs-mester` og `byg:vvs-kontrol` ved den samlede Cowork-pakke.

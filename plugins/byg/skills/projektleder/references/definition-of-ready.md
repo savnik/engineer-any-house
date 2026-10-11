@@ -45,6 +45,14 @@ Før første fagkald indsamler projektlederen disse fakta fra brugeren. Det sker
 - Vinduer og døre (type, år), overliggere i træ
 - Bærende eller ikke-bærende elementer, statiske ændringer
 
+## Statik
+- Hvad ændres: væg, åbning, bjælkelag, tag, last (fx tagdækning, bad, tagetage), fundament eller udgravning
+- Bjælkelagets og spærenes retning, dimension og afstand; tagtype (hanebånd, åse, gitterspær) – fotos fra loft og kælder
+- Vægge over og under indgrebet; hvad vederlagene vil stå på (mur, pille, fundament, strøgulv)
+- Gamle tegninger og evt. tidligere statiske beregninger; BIM-model, hvis den findes
+- Revner og sætninger: placering, bredde, udvikling, fotos med målestok
+- Hvem udarbejder den statiske dokumentation, og er der byggetilladelse
+
 ## Maler
 - Underlag og eksisterende behandling (lag, alder), bly- og PCB-mistanke (før 1977/1978)
 - Fugtforhold i underlaget, vådzoner

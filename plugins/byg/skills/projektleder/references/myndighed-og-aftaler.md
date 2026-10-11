@@ -8,7 +8,7 @@ Sidst gennemgået: 2026-09-26. **V** = verificeret (kilde), **T** = skal verific
 | § 5 – undtagelser | Uden ansøgning (men BR18 skal overholdes): garager, carporte, udhuse, drivhuse, overdækkede terrasser o.l., der ikke er integreret i den primære bebyggelse og tilsammen højst 50 m²; ombygning og forandring af enfamiliehuse, dobbelthuse, rækkehuse og sommerhuse uden væsentlig anvendelsesændring eller udvidelse af etagearealet. Udvendig efterisolering på højst 25 cm tæller ikke som udvidelse | V 2026-09 |
 | Lokalplan og servitutter | Har forrang for undtagelserne – tjek altid | V |
 | § 6 – småbygninger | Småbygninger ≤ 50 m² kan opføres uden, at styrke og stabilitet eftervises ved beregning; indberettes til BBR | V 2026-09 |
-| Konstruktionsklasser | KK1–KK4 (kap. 26). Ved byggetilladelse i KK2–KK4 kræves certificeret statiker. Ombygning uden tilladelse skal stadig opfylde kap. 15 – statisk dokumentation ved bærende indgreb | V (tolkning af sidste punkt: bekræft med kommunen) |
+| Konstruktionsklasser | KK1–KK4 (kap. 26). Enfamiliehuse m.fl. med højst 2 etager over og 1 under terræn er KK1 (§ 489 stk. 1). Certificeret statiker kræves i KK2–KK4, ikke i KK1. Ombygning af enfamiliehuse m.fl. uden udvidelse af etageareal eller væsentlig anvendelsesændring er undtaget fra klasseindplacering (§ 489 stk. 3 nr. 3), men kap. 15 skal stadig opfyldes – statisk dokumentation ved bærende indgreb (statiker-agenten rådgiver) | V 2026-10-11 (bygningsreglementet.dk) |
 | BR18-version | Den version, der gælder på ansøgningstidspunktet; aktuel version gælder fra 1/1-2026 | V |
 
 ## Farlige stoffer og affald

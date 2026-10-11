@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Danske byggefaglige ekspertagenter: projektleder, fagagenter på mesterniveau og uafhængig kvalitetskontrol af hver leverance.",
-    "version": "0.7.0"
+    "version": "0.8.0"
   },
   "plugins": [
     {
@@ -62,6 +62,11 @@
       "name": "byg-bim",
       "source": "./plugins/byg-bim",
       "description": "BIM-modellør: IFC-model af huset ud fra tegninger, opmåling og BBR – tegningsimport med uafhængig sammenligning, kontrol, tegninger og redigering af IFC-filer."
+    },
+    {
+      "name": "byg-statik",
+      "source": "./plugins/byg-statik",
+      "description": "Statiker: hvad er bærende, vægfjernelse, bjælker og vederlag, tag og bjælkelag, fundering, revner og sætninger – overslag og review af statisk dokumentation (rådgivende)."
     }
   ]
 }

@@ -1,0 +1,29 @@
+# Kontrol – statiker
+
+**rubric_version:** `kontrol-statik@1.0` (2026-10-11)
+
+## Kontrolpunkter (typisk klasse ved afvigelse)
+1. **Mandat:** leverancen fremstår ikke som statisk dokumentation til byggesagen. Hvert beregnet tal er mærket "OVERSLAG – skal eftervises af den ansvarlige statiker", og det er angivet, hvem der skal udarbejde dokumentationen (statiker, certificeret statiker efter konstruktionsklassen, geotekniker) (kritisk).
+2. **Myndighed:** tilladelse eller undtagelse, konstruktionsklasse og krav til statisk dokumentation korrekt efter aktuel BR18 – også at kravene til bærende konstruktioner gælder ved ombygning uden tilladelse (væsentlig–kritisk).
+3. **Lastvej til jord:** vederlag, pille/søjle, punktlast på underlag og fundament er vurderet – ikke kun bjælken (kritisk).
+4. **Stabilitet:** afstivende vægge, hanebånd og spærfod er vurderet, når de ændres eller fjernes (kritisk).
+5. **Midlertidig understøtning og rækkefølge** er beskrevet for ethvert indgreb i bærende dele (kritisk).
+6. **Laster og koefficienter:** nyttelast, sne, egenlast, KFI og partialkoefficienter svarer til DK NA og er kildebelagt; egenlaster af eksisterende konstruktioner er undersøgt eller markeret som antagelse (væsentlig).
+7. **Al regning med værktøjet:** hvert beregnet tal (også summer, opland og omregninger) stammer fra en `statik.py`-kørsel, hvis kommando og resultat står i bilaget. Kontrollen genkører de afgørende kommandoer og regner med egne input, hvor de er uenige – aldrig i hovedet. Et tal uden kørsel er væsentligt; en afvigelse over ca. 5 % i et afgørende resultat er væsentlig–kritisk.
+8. **Deformation:** nedbøjningskrav er valgt, så de efterfølgende overflader tåler det (fliser, gips, døre) (væsentlig).
+9. **Eksisterende forhold:** antagelser om dimensioner, materialer, råd og fundament er markeret og knyttet til et hold point for afdækning (HP-STAT-1), før endelig dimensionering (væsentlig).
+10. **Skader:** revner og sætninger er klassificeret, og der er plan for overvågning, før der udbedres; aktive sætninger henvises til geotekniker (væsentlig).
+11. **Grænseflader:** brand (bærende dele med brandkrav), føringsveje gennem bærende dele, murer- og tømrerudførelse, geoteknik (væsentlig).
+
+## Fejlkatalog
+- Bjælken eftervist, men vederlag, pille og fundament ikke – punktlast på strøgulv eller smalt gammelt fundament.
+- "Ikke-bærende" væg, der var stabiliserende; fjernede hanebånd uden ny trækforbindelse.
+- Overslag uden mærkning, brugt som udførelsesgrundlag.
+- Tal regnet i hovedet (summer, opland, omregning) i stedet for med værktøjet – regnefejl i lastopgørelsen slår igennem i alt efterfølgende.
+- Forkert lastniveau: nyttelast eller sne fra en anden norm eller et andet land; KFI glemt; egenlast af gammelt bjælkelag med lerindskud undervurderet.
+- Kipning af slanke træbjælker og stålbjælker uden afstivet trykflange ikke nævnt.
+- Udgravning under fundamentets underkant uden etapeplan og underfundering.
+- Tømrerens eller leverandørens dimension accepteret uden egen vurdering.
+
+## Primærkilder
+bygningsreglementet.dk (BR18 kap. 15 og 26, vejledninger om konstruktioner og statisk dokumentation, nationale annekser), retsinformation.dk, ds.dk (udgaver og metadata for Eurocodes), at.dk (nedrivning og midlertidig afstivning), build.dk, byg-erfa.dk, traeinfo.dk (træ og limtræ – sekundær).

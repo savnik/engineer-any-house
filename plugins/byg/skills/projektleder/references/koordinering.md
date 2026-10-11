@@ -4,13 +4,15 @@
 | Opgave | Primære fag | Ofte også | Fag uden agent |
 |---|---|---|---|
 | Badeværelse | vvs, murer (vådrum/fliser), el, ventilation | tømrer (træunderlag, vægge), maler (fugtig zone, loft) | kloakmester (afløb i jord) |
-| Køkken | vvs, el, tømrer | ventilation (emhætte, erstatningsluft), maler, murer (vægfjernelse) | snedker, statiker |
+| Køkken | vvs, el, tømrer | ventilation (emhætte, erstatningsluft), maler, murer og statik (vægfjernelse) | snedker, ansvarlig statiker |
 | Kælderfugt | murer, ventilation | vvs (lækager, dræn), maler, tømrer (gulve) | kloakmester (dræn), geotekniker |
 | Efterisolering af loft/tag | tømrer, ventilation | el (spots, kabler), vvs (rør i tagrum) | tagdækker |
 | Facade og ydervægge | murer, maler | tømrer (vinduer, inddækning), ventilation | blikkenslager |
 | Vinduer og døre | tømrer, murer | maler, ventilation (friskluft) | glarmester |
 | Varmepumpe og varmeanlæg | vvs, el | tømrer/murer (gennemføringer, fundament), ventilation (luft-luft) | energikonsulent |
-| Tilbygning | alle | – | statiker, kloakmester, tagdækker, landinspektør |
+| Tilbygning | alle | – | ansvarlig statiker, geotekniker, kloakmester, tagdækker, landinspektør |
+| Vægfjernelse, tagetage, kvist | statik, tømrer, murer | el og vvs (føringer), maler, ventilation | ansvarlig statiker, smed |
+| Revner og sætninger | statik, murer | vvs (utætte afløb), tømrer | geotekniker, kloakmester |
 | Skimmel og indeklima | ventilation, murer, tømrer | maler, vvs (lækager) | skimmelsvampeekspert |
 | Elbillader og solceller | el | tømrer/tagdækker (tag), maler | netselskab |
 
@@ -43,7 +45,7 @@ Enkelhed: den enkleste sikre standardløsning. Højst ét alternativ. Ekstra kom
 - Ændres en grundforudsætning undervejs (fx rummets placering), så suspendér de bindende detaljer, der bygger på den gamle forudsætning, i beslutningsloggen, og revidér alle berørte fagnotater under nye leverance-ID'er.
 
 ## Budget – budget.md
-Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent** (screening og analyser, affaldsanmeldelse, kloakmester, statiker, varmetabsberegning, skorstensfejer, servicefirma, midlertidige løsninger) prissættes af PL med skøn [T] ved G1, så R-rammen vurderes på et komplet tal. Fagene angiver kun eget skøn inkl. moms, med grundydelse og optioner adskilt; de vurderer ikke den samlede ramme.
+Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent** (screening og analyser, affaldsanmeldelse, kloakmester, ansvarlig statiker, varmetabsberegning, skorstensfejer, servicefirma, midlertidige løsninger) prissættes af PL med skøn [T] ved G1, så R-rammen vurderes på et komplet tal. Fagene angiver kun eget skøn inkl. moms, med grundydelse og optioner adskilt; de vurderer ikke den samlede ramme.
 - Tjek altid, hvem der leverer selve produkterne (sanitet, armaturer, glasvæg, dør, vindue) og fælles poster (container/affald, faldsikring og stillads, tagdækker, PSS, screening, midlertidige løsninger). De glemmes let i fagenes skøn.
 - Bufferen (typisk 10–15 %) lægges oveni grundydelsen.
 - Afviger det sandsynlige niveau fra rammen, forelægges det bygherren som beslutningspunkt (hæv rammen eller vælg besparelser), før tilbud indhentes.
@@ -56,7 +58,7 @@ Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent
 |---|---|---|---|---|---|---|---|---|
 - Én ejer pr. snitflade. Komponenter på tværs af fag (fx sikkerhedskomponent, der skal el-tilsluttes) står med **leverandør, montør og tilslutter** hver for sig.
 - Fagene må ikke selv ændre en ejer. Afvigelser meldes til PL, som afgør dem og opdaterer registret, før næste fagkald eller retur.
-- Omfatter også **fag uden agent** (screening, kloakmester, servicefirma, skorstensfejer, statiker).
+- Omfatter også **fag uden agent** (screening, kloakmester, servicefirma, skorstensfejer, ansvarlig statiker).
 
 ## Fagsekvenser (typiske – tilpasses sagen)
 **Badeværelse:** screening (asbest/PCB/bly) → nedrivning og affald → vvs-råføring (afløb, vand; tæthedsprøvning) + el-råinstallation → vægge/underlag (tømrer/murer) → fald og afretning → membran (hold point: kontrol og tørretid) → fliser → vvs- og el-montering → ventilation → maler (fugtig zone/loft) → funktions- og slutkontroller.

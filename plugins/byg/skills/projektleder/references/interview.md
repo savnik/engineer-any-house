@@ -49,6 +49,6 @@ Ved rum-projekter (fx bad, køkken) spørges altid til **rummets placering og ge
 ## Antagelser
 ## Åbne spørgsmål
 ## Berørte fag (foreløbigt), sikkerhedskritiske fag (fuld kontrol) og DoR-status pr. fag
-## Fag uden agent (screening, kloakmester, statiker, servicefirma …) – PL prissætter ved G1
+## Fag uden agent (screening, kloakmester, ansvarlig statiker, servicefirma …) – PL prissætter ved G1
 ## Hold points: navngivning HP-<FAG>-n pr. fag, HP1–HPn projektfælles (fast for hele sagen)
 ```

@@ -58,8 +58,9 @@ byg-sager/<sag-id>/
 ## Tømrer: tag, klimaskærm og træ
 ## Ventilation
 ## Maler: overflader
+## Statik: bærende konstruktioner og fundering
 ## Problemstoffer og kendte skader
-(Samme tabel i hvert afsnit. ID-præfiks: E-F, E-VVS, E-EL, E-MUR, E-TØM, E-VENT, E-MAL, E-SKADE.)
+(Samme tabel i hvert afsnit. ID-præfiks: E-F, E-VVS, E-EL, E-MUR, E-TØM, E-VENT, E-MAL, E-STAT, E-SKADE.)
 
 ## Åbne spørgsmål
 | ID | Spørgsmål | Hvem afklarer | Sag |

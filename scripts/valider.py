@@ -101,8 +101,12 @@ def main() -> int:
             agenter[a.stem] = p.name
             tools = {t.strip() for t in fm.get("tools", "").split(",")}
             if p.name == "byg-kontrol":
-                if tools & {"Write", "Edit", "MultiEdit", "Bash", "Agent", "NotebookEdit"}:
-                    FEJL.append(f"{rel}: kontrolagenter må kun have læse- og søgeværktøjer")
+                regne = {v["kontrol"] for v in (laes_json(PLUGINS / "byg-kontrol" / "hooks" / "fagregister.json")
+                                                or {"fag": {}})["fag"].values() if v.get("regnevaerktoej")}
+                forbudt = {"Write", "Edit", "MultiEdit", "Agent", "NotebookEdit"} | (set() if a.stem in regne else {"Bash"})
+                if tools & forbudt:
+                    FEJL.append(f"{rel}: kontrolagenter må kun have læse- og søgeværktøjer"
+                                " (Bash kun i fag med regneværktøj, låst af hooks/regne_vagt.py)")
                 if "memory" in fm:
                     FEJL.append(f"{rel}: kontrolagenter må ikke have memory (giver Write/Edit)")
                 if fm.get("model") != "opus":
@@ -191,6 +195,13 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROD / "tests" / "test_kontrol_gate.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Hook-tests fejlede:\n" + r.stdout[-2000:])
+    r = subprocess.run([sys.executable, str(ROD / "tests" / "test_regne_vagt.py")], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Tests af regnevagten fejlede:\n" + r.stdout[-2000:])
+    for v in sorted(PLUGINS.glob("*/skills/*-viden/scripts/statik.py")):
+        r = subprocess.run([sys.executable, str(v), "test"], capture_output=True, text=True)
+        if r.returncode:
+            FEJL.append(f"Selvtest af {v.relative_to(ROD)} fejlede:\n" + r.stdout[-2000:])
     r = subprocess.run([sys.executable, str(ROD / "scripts" / "tjek_data.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Dataseparation – sagsdata eller hemmeligheder i repoet:\n" + r.stdout[-2000:])

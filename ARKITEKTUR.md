@@ -16,14 +16,14 @@
 
 ## Komponenter
 ```
-byg-team ──(dependencies)──► byg, byg-kontrol, byg-vvs, byg-el, byg-murer, byg-ventilation, byg-maler, byg-toemrer
+byg-team ──(dependencies)──► byg, byg-kontrol, byg-data, byg-vvs, byg-el, byg-murer, byg-ventilation, byg-maler, byg-toemrer, byg-statik, byg-bim
 byg ─────────────────────────► byg-kontrol
 byg-<fag> ───────────────────► byg-kontrol
 ```
 - **Hovedtråden** (projektlederen eller Claude ved direkte brug) orkestrerer. Fagagenter har ikke Agent-værktøjet og kalder aldrig kontrollen selv.
-- **Fagagenter:** `model: opus`, `effort: high`, `memory: user`, værktøjer Read/Write/Edit/Glob/Grep/WebSearch/WebFetch. Fælles protokol indsættes fra `faelles/protokol.md`.
+- **Fagagenter:** `model: opus`, `effort: high`, `memory: user`, værktøjer Read/Write/Edit/Glob/Grep/WebSearch/WebFetch (`bim-modelloer` og `statiker` har desuden Bash til deres værktøj). Fælles protokol indsættes fra `faelles/protokol.md`.
 - **Modelvalg (2026-09-26):** Fagagenterne kører på Opus med `effort: high`, fordi et afvist første forsøg koster en hel ekstra fag- og kontrolrunde (målt i en rigtig sag: Sonnet-fagagent 10 min, afvist med 8 væsentlige fund, rettelse 21 min). Kontrolagenterne har eksplicit `effort: high`, fordi Opus 5.5 ellers kører på `medium` som standard. Uafhængigheden sikres af adskilt kontekst, kontrolviden og værktøjer – ikke af modelforskel.
-- **Kontrolagenter:** `model: opus`, `effort: high`, `color: red`, værktøjer Read/Glob/Grep/WebSearch/WebFetch, ingen `memory` (som ellers giver Write/Edit). Fælles kontrolprotokol indsættes fra `faelles/kontrolprotokol.md`.
+- **Kontrolagenter:** `model: opus`, `effort: high`, `color: red`, værktøjer Read/Glob/Grep/WebSearch/WebFetch (`statik-kontrol` desuden Bash, låst til regneværktøjet), ingen `memory` (som ellers giver Write/Edit). Fælles kontrolprotokol indsættes fra `faelles/kontrolprotokol.md`.
 
 ## Kvalitetskontrol-laget
 **Leverance-ID** `<sag-id>/<fag-id>/<nr>` binder fagkald, kontrolkald, domme og RCA sammen. Godkendte leverancer ændres kun under nyt ID (`-r2`). `ekstern/<emne>` bruges til rådgivende review af eksternt materiale uden loop.
@@ -75,6 +75,17 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 **Uafhængighed:** sammenligneren ser kun filerne (original, afkodning, IFC), ikke modellørens ræsonnement, og tegner selv modellen fra IFC-filen. Afkodningsfejl er en egen kategori, fordi en model, der svarer til en fejllæst afkodning, ellers ville bestå.
 
 **Miljø:** værktøjet kører i sit eget venv (`~/.local/share/byg-bim/venv`, fastlåste versioner i `requirements.txt`). `bim.py` skifter selv til det. Kendte fejl i IfcOpenShell 0.9.0 er omgået og dokumenteret i `erfaringsblade.md` (EB-BIM-02).
+
+## Statik (2026-10-11)
+**Rolle:** `statiker` er en **rådgivende** fagagent. Den screener (er væggen bærende?), laver overslag, skriver konstruktionsgrundlag og opgavebeskrivelser og reviewer statisk dokumentation fra rådgivere. Den udarbejder ikke statisk dokumentation til byggesagen og underskriver ikke – BR18 lægger ansvaret hos den ansvarlige statiker, i de højere konstruktionsklasser en certificeret statiker. Derfor er "ansvarlig statiker" stadig et fag uden agent i projektlederens fagvalg.
+
+| Komponent | Design |
+|---|---|
+| `statik.py` | Overslag som kode (Python-stdlib): simpelt understøttet bjælke i stål, træ og limtræ (moment, forskydning, nedbøjning, reaktioner, lastkombinationer efter DK NA) og kontakttryk. Tværsnitsværdier for IPE/HEA/HEB regnes fra geometrien og selvtestes mod tabelværdier. Partialkoefficienter står samlet med kilde og kan overskrives |
+| Al regning i Python | Krav fra brugeren (2026-10-11): ingen tal regnes i hovedet. `statik.py` har `regn` (sikker aritmetik via ast) og `last` (lastopgørelse og opland) ud over `bjaelke` og `tryk`, og hvert output indeholder sin kommando med absolut sti, så bilaget kan genkøres |
+| Bash, låst | `statiker` og `statik-kontrol` har Bash, men `byg-kontrol/hooks/regne_vagt.py` tillader kun én kørsel af fagets registrerede regneværktøj (`"regnevaerktoej"` i fagregistret). Kontrolagenten kan derfor regne uden at kunne skrive; validatoren tillader kun Bash for kontrolagenter i fag med regneværktøj |
+| Mærkning | Hvert beregnet tal mærkes "OVERSLAG – skal eftervises af den ansvarlige statiker"; kontrollen afviser umærkede overslag (kritisk) |
+| `statik-kontrol` | Læse- og søgeværktøjer plus låst Bash. Genkører bilagets kommandoer og regner med egne input, hvor den er uenig; tjekker lastvejen til jord, stabilitet og midlertidig understøtning |
 
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
@@ -130,4 +141,4 @@ De lokale kilder findes ikke i CI. Der kører kun strukturtjek og nøglemønstre
 2. Kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
 3. Test hooks i Cowork med den samlede pakke.
 4. Kalibrér kontrollen: mål afvisningsrate, antal runder og kontrolsvigt pr. fag; justér rubric-versioner.
-5. Nye fag via `scripts/nyt_fag.py` (fx kloak, tag, gulv, statik-rådgivning) – altid med kontrolagent.
+5. Nye fag via `scripts/nyt_fag.py` (fx kloak, tag, gulv) – altid med kontrolagent.
