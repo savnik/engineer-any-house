@@ -1,6 +1,6 @@
 # byg-eksperter
 
-Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projektleder**, der interviewer, planlægger og koordinerer, **fagagenter på mesterniveau** (vvs, el, murer, ventilation, maler, tømrer) og en **uafhængig kvalitetskontrol** med én kontrolagent pr. fag. Hver leverance kontrolleres hårdt og kildebaseret. Afviste leverancer sendes retur med fund, og efter 3 afviste forsøg stoppes der med root cause-analyse.
+Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projektleder**, der interviewer, planlægger og koordinerer, **fagagenter på mesterniveau** (vvs, el, murer, ventilation, maler, tømrer, BIM) og en **uafhængig kvalitetskontrol** med én kontrolagent pr. fag. Hver leverance kontrolleres hårdt og kildebaseret. Afviste leverancer sendes retur med fund, og efter 3 afviste forsøg stoppes der med root cause-analyse.
 
 > Agenterne rådgiver og planlægger. De erstatter ikke autoriserede håndværkere, certificerede rådgivere, lovpligtige kontroller eller kommunens byggesagsbehandling. Viden markeret **T** skal verificeres, før den bruges som krav.
 
@@ -12,6 +12,7 @@ Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projek
 | `byg-kontrol` | 7 kontrolagenter (6 fag + projekt), kontrolviden, hooks der håndhæver loopet |
 | `byg-data` | Skill `ejendomsdata`: henter BBR, matrikel, lokalplan, fredning, jordforurening, grundvand, klima, energimærke og vurdering ud fra en adresse (Python-stdlib-script, ingen persondata). Valgfri gratis Datafordeler-nøgle i `DATAFORDELER_API_KEY` eller `~/.config/byg-data/datafordeler_api_key` – aldrig i repoet |
 | `byg-vvs` · `byg-el` · `byg-murer` · `byg-ventilation` · `byg-maler` · `byg-toemrer` | Fagagent, videnbase (normgrundlag, faglig praksis, tjeklister, erfaringsblade), hukommelse og evals |
+| `byg-bim` | BIM-modellør (`bim-modelloer`) og uafhængig sammenligner (`bim-sammenligner`), værktøjet `bim.py` (modelspec i YAML → IFC4 med IfcOpenShell, kontrol mod buildingSMART-regler/IDS/BBR, planer, snit, facader og 3D som PNG, afkodning af PDF-tegninger og sammenligning af tegning og model) og skill `tegningsimport`. Værktøjet opretter selv sit Python-miljø i `~/.local/share/byg-bim/venv` (`bim.py opsaet`, kræver netværk første gang) |
 
 Fag-plugins og `byg` afhænger af `byg-kontrol`, så kontrollen altid følger med.
 
@@ -52,6 +53,7 @@ Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 4. Afvist → de blokerende fund (kritisk og væsentlig) sendes ordret retur til fagagenten, som kun retter de berørte afsnit. Mindre fund sendes ikke retur. Højst 3 forsøg pr. runde. Forsøg 1 er det fulde review. Forsøg 2–3 tjekker kun lukning og regressioner (fund-fastlåsning). Kontrolniveauet (`let` eller `fuld`) følger opgavens risiko.
 5. 3. afvisning → root cause-analyse med 5 Why-metoden i `kvalitet/RCA-….md` af, hvorfor fagagenten ikke ramte rigtigt første gang. Læringen implementeres i fagagenten (hukommelse og repo), og en ny runde med 3 forsøg starter under samme leverance-ID. Efter 3 runder eskaleres der til brugeren.
 6. Projektlederens egne leverancer (projektgrundlag, samlet plan) kontrolleres af `projekt-kontrol`.
+7. **BIM og tegningsimport:** en tegning afkodes først grundigt (`afkodning.yaml`, kontrolleret mod tegningen selv), derefter bygges modellen. Hjælpeagenten `bim-sammenligner` holder originalen op mod samme visning tegnet fra modellen og sender afvigelser retur til `bim-modelloer` (højst 3 sammenligninger, rettelser bruger ikke af kontrolforsøgene). Til sidst den formelle kontrol med `bim-kontrol`. Se skill `tegningsimport`.
 
 Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
 

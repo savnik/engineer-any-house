@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ids xmlns="http://standards.buildingsmart.org/IDS" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://standards.buildingsmart.org/IDS http://standards.buildingsmart.org/IDS/1.0/ids.xsd">
+  <info>
+    <title>byg-bolig – minimumskrav til en husmodel (eksisterende forhold og renovering)</title>
+    <version>1.0</version>
+    <date>2026-10-10</date>
+    <purpose>Sikrer, at en husmodel kan bruges af fagfolk: klassificerede elementer, materialer, rum med areal, etager med navn og status på konstruktioner.</purpose>
+  </info>
+  <specifications>
+    <specification name="Vægge: IsExternal, Status og materiale" ifcVersion="IFC4 IFC4X3_ADD2">
+      <applicability minOccurs="1" maxOccurs="unbounded">
+        <entity><name><simpleValue>IFCWALL</simpleValue></name></entity>
+      </applicability>
+      <requirements>
+        <property dataType="IFCBOOLEAN">
+          <propertySet><simpleValue>Pset_WallCommon</simpleValue></propertySet>
+          <baseName><simpleValue>IsExternal</simpleValue></baseName>
+        </property>
+        <property dataType="IFCLABEL">
+          <propertySet><simpleValue>Pset_WallCommon</simpleValue></propertySet>
+          <baseName><simpleValue>Status</simpleValue></baseName>
+          <value>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="NEW"/><xs:enumeration value="EXISTING"/><xs:enumeration value="DEMOLISH"/>
+              <xs:enumeration value="TEMPORARY"/>
+            </xs:restriction>
+          </value>
+        </property>
+        <material/>
+      </requirements>
+    </specification>
+    <specification name="Dæk: materiale" ifcVersion="IFC4 IFC4X3_ADD2">
+      <applicability minOccurs="0" maxOccurs="unbounded">
+        <entity><name><simpleValue>IFCSLAB</simpleValue></name></entity>
+      </applicability>
+      <requirements>
+        <material/>
+      </requirements>
+    </specification>
+    <specification name="Rum: navn og nettoareal" ifcVersion="IFC4 IFC4X3_ADD2">
+      <applicability minOccurs="1" maxOccurs="unbounded">
+        <entity><name><simpleValue>IFCSPACE</simpleValue></name></entity>
+      </applicability>
+      <requirements>
+        <attribute><name><simpleValue>LongName</simpleValue></name></attribute>
+        <property dataType="IFCAREAMEASURE">
+          <propertySet><simpleValue>Qto_SpaceBaseQuantities</simpleValue></propertySet>
+          <baseName><simpleValue>NetFloorArea</simpleValue></baseName>
+        </property>
+      </requirements>
+    </specification>
+    <specification name="Etager: navn" ifcVersion="IFC4 IFC4X3_ADD2">
+      <applicability minOccurs="1" maxOccurs="unbounded">
+        <entity><name><simpleValue>IFCBUILDINGSTOREY</simpleValue></name></entity>
+      </applicability>
+      <requirements>
+        <attribute><name><simpleValue>Name</simpleValue></name></attribute>
+      </requirements>
+    </specification>
+    <specification name="Døre og vinduer: mål" ifcVersion="IFC4 IFC4X3_ADD2">
+      <applicability minOccurs="0" maxOccurs="unbounded">
+        <entity>
+          <name>
+            <xs:restriction base="xs:string"><xs:enumeration value="IFCDOOR"/><xs:enumeration value="IFCWINDOW"/></xs:restriction>
+          </name>
+        </entity>
+      </applicability>
+      <requirements>
+        <attribute><name><simpleValue>OverallWidth</simpleValue></name></attribute>
+        <attribute><name><simpleValue>OverallHeight</simpleValue></name></attribute>
+      </requirements>
+    </specification>
+    <specification name="Ingen udefinerede proxy-elementer" ifcVersion="IFC4 IFC4X3_ADD2">
+      <applicability minOccurs="0" maxOccurs="unbounded">
+        <entity><name><simpleValue>IFCBUILDINGELEMENTPROXY</simpleValue></name></entity>
+      </applicability>
+      <requirements>
+        <attribute><name><simpleValue>ObjectType</simpleValue></name></attribute>
+      </requirements>
+    </specification>
+  </specifications>
+</ids>

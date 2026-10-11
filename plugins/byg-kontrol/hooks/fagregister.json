@@ -5,11 +5,13 @@
     "murer": {"agent": "murermester", "kontrol": "murer-kontrol"},
     "ventilation": {"agent": "ventilationsekspert", "kontrol": "ventilation-kontrol"},
     "maler": {"agent": "malermester", "kontrol": "maler-kontrol"},
-    "toemrer": {"agent": "toemrermester", "kontrol": "toemrer-kontrol"}
+    "toemrer": {"agent": "toemrermester", "kontrol": "toemrer-kontrol"},
+    "bim": {"agent": "bim-modelloer", "kontrol": "bim-kontrol", "hjaelpere": ["bim-sammenligner"]}
   },
   "projekt_kontrol": "projekt-kontrol",
   "kontrol_plugin": "byg-kontrol",
   "samlet_plugin": "byg",
   "maks_forsoeg": 3,
-  "maks_runder": 3
+  "maks_runder": 3,
+  "maks_sammenligninger": 3
 }

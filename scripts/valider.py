@@ -110,7 +110,9 @@ def main() -> int:
             elif p.name != "byg":
                 if "Agent" in tools:
                     FEJL.append(f"{rel}: fagagenter må ikke have Agent-værktøjet (de kalder ikke selv kontrollen)")
-                if "FÆLLES-PROTOKOL:START" not in a.read_text(encoding="utf-8"):
+                hj = {h for v in (laes_json(PLUGINS / "byg-kontrol" / "hooks" / "fagregister.json") or {"fag": {}})["fag"].values()
+                      for h in v.get("hjaelpere", [])}
+                if a.stem not in hj and "FÆLLES-PROTOKOL:START" not in a.read_text(encoding="utf-8"):
                     FEJL.append(f"{rel}: mangler FÆLLES-PROTOKOL-markører")
         for s in sorted(p.glob("skills/*/SKILL.md")):
             fm = frontmatter(s) or {}
@@ -135,9 +137,18 @@ def main() -> int:
             FEJL.append(f"kontrol-viden mangler fagfil for '{fag}'")
     for k in kontrol_agenter - registrerede:
         FEJL.append(f"Kontrolagent '{k}' er ikke registreret i fagregister.json")
+    hjaelpere = {h for v in reg["fag"].values() for h in v.get("hjaelpere", [])}
+    for h in sorted(hjaelpere - set(agenter)):
+        FEJL.append(f"fagregister: hjælpeagent '{h}' findes ikke")
     for n, pl in agenter.items():
-        if pl.startswith("byg-") and pl not in ("byg-kontrol", "byg-team") and n not in {v["agent"] for v in reg["fag"].values()}:
+        if pl.startswith("byg-") and pl not in ("byg-kontrol", "byg-team") and n not in {v["agent"] for v in reg["fag"].values()} \
+                and n not in hjaelpere:
             FEJL.append(f"Fagagent '{n}' ({pl}) har ingen modsvarende kontrolagent i fagregister.json")
+        if n in hjaelpere and agenter[n] not in ("byg-kontrol",):
+            fm = frontmatter(next(PLUGINS.glob(f"*/agents/{n}.md"))) or {}
+            if {t.strip() for t in fm.get("tools", "").split(",")} & {"Write", "Edit", "MultiEdit", "Agent", "NotebookEdit"} \
+                    or "memory" in fm:
+                FEJL.append(f"Hjælpeagent '{n}' må ikke kunne skrive (ingen Write/Edit/Agent/memory) – den retter aldrig selv")
 
     sti_re = re.compile(r"\$\{CLAUDE_PLUGIN_ROOT\}/([^\s`'\"()]+)")
     for p in plugin_dirs:

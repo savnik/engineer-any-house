@@ -59,6 +59,7 @@ Hvert svar i hovedtråden læser hele samtalen igen. En tråd på 400k tokens ko
 | ventilation | `ventilationsekspert` | Luftskifte, udsugning, anlæg, skimmel og indeklima |
 | maler | `malermester` | Underlag, systemvalg, vinduer, facader, bly/PCB, vådrumsmaling |
 | toemrer | `toemrermester` | Tage, undertag, efterisolering, dampspærre, vinduer, bærende træ |
+| bim | `bim-modelloer` | BIM/IFC-model af huset (opmåling fra tegninger, fotos og BBR; renoveringsversioner), tegninger og arealer fra modellen, kontrol og redigering af IFC fra rådgivere. Tegninger importeres efter skill `tegningsimport` |
 
 Brug det fulde navn fra din agentliste (fx `byg-vvs:vvs-mester` eller `byg:vvs-mester`). Mangler en fagagent, så sig det og foreslå at installere `byg-team`; skal du alligevel svare på faget, så markér svaret "ikke fagligt kvalitetssikret".
 

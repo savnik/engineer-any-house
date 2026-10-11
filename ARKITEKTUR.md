@@ -10,6 +10,8 @@
 | Modsvarende kvalitetskontrolagent pr. fag | `byg-kontrol`: én kontrolagent pr. fag + `projekt-kontrol` |
 | Hårdt og kritisk review, adskilt fra den udførende | Egen agent, egen kontrolviden, kun læse-/søgeværktøjer, ingen hukommelse, ingen adgang til fagagentens ræsonnement; efterprøvning mod primærkilder |
 | Projektlederen sikrer kontrol af hver leverance og looper til godkendelse | Skill `kvalitetskontrol` + hooks (PreToolUse, SubagentStop, Stop) |
+| BIM-model af huset (IFC), effektiv og af høj kvalitet | `byg-bim`: deterministisk værktøjskæde (spec → IFC4), kontrol og tegninger som kode; agenten redigerer kun spec'en |
+| Tegninger afkodes grundigt før modellen bygges; separat agent sammenligner original og model; fejl retur, indtil de er rettet | Skill `tegningsimport`: afkodning med deterministisk kontrol, hjælpeagent `bim-sammenligner` (skrivebeskyttet), hook-understøttet sammenligningsloop (højst 3) før den formelle kontrol |
 | Maks. 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde (maks. 3 runder) | Hook-tilstand pr. leverance-ID med runde og forsøg; 4. forsøg afvises; Stop blokeres, indtil RCA-filen for runden findes; ny runde kræver en 5 Why-kæde (≥ 5 hvorfor-niveauer og en grundårsag) og 'Forbedring implementeret: ja' i RCA'en; 4. runde afvises og eskaleres; RCA-skabelonen fokuserer på, hvorfor forsøg 1 ikke var korrekt |
 
 ## Komponenter
@@ -57,6 +59,22 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 | Kontrol i baggrunden gav status-polling i hovedtråden | **Forgrund:** fag- og kontrolkald køres parallelt i forgrunden (flere Agent-kald i samme besked) |
 
 `scripts/forbrug.py` måler effekten: vægtet forbrug pr. del, hovedtrådens kontekst, retur-andel, gentagne opslag og statuskald.
+
+## BIM og tegningsimport (2026-10-11)
+**Valg af arkitektur (research 2026-10-10):** fri IfcOpenShell-kodegenerering har høj fejlrate (BIM-Edit 2026: 3,4 % fuldt løste redigeringsopgaver; API-misbrug er den største fejlkilde), og MCP-værktøjskataloger koster mange tokens (MCP4IFC ca. 40k). Derfor er BIM-faget bygget som **spec → deterministisk generator → automatisk kontrol → tegninger**. Agenten skriver en kort YAML-spec. `bim.py` (IfcOpenShell 0.9) bygger IFC4 efter buildingSMART-reglerne (rumlig struktur, IfcSpace aggregeret, typer med lag, enumereret Status, Qto_ med BaseQuantities, georeference med Scale 0,001, stabile GlobalId'er) og kontrollerer modellen (skema/EXPRESS, udvalgte normative regler, geometri, snitbaseret kollisionstjek, arealer mod BBR, IDS). Plan, snit, facade og 3D tegnes fra selve IFC-filen. Fremmede filer redigeres med `ifcedit`/scripts efter `rediger.md`.
+
+| Komponent | Design |
+|---|---|
+| `bim-modelloer` | Fagagent med **Bash** (undtagelse fra de øvrige fag: værktøjet skal køres). Afkoder, bygger og retter. Skriver modelnotat |
+| `bim-sammenligner` | **Hjælpeagent** (fagregister `hjaelpere`): Read/Glob/Grep/Bash, ingen hukommelse. Hooken `byg-bim/hooks/sammenligner_vagt.py` tillader kun læsende `bim.py`-kommandoer |
+| `bim.py afkod tjek` | Afkodningen kontrolleres mod tegningen selv: kalibreringsrest, skala mod målestok, hvert aflæst mål mod afstanden mellem dets endepunkter og målkædernes sum. Fanger fejllæste tal |
+| `bim.py sammenlign` | Modellen tegnes i originalens pixelramme (kalibreret). Original, model og overlay pr. visning og i fliser, plus automatisk sammenligning af alle afkodede mål (mod modelfladerne ud for hjælpelinjernes fod), rum, åbninger, vægtykkelser og koter |
+| Hook (`kontrol_gate.py`) | Hjælpekald kræver en afleveret fagversion og sætter `under_sammenligning` → `sammenlignet`. Et fagkald efter en sammenligning er en **rettelse**, som ikke bruger kontrolforsøg. Højst `maks_sammenligninger` (3). Kontrollen kan kaldes efter sammenligningen, og Stop minder om uafsluttede sammenligninger |
+| `bim-kontrol` | Kun læse- og søgeværktøjer som de øvrige kontrolagenter. Hovedtråden kører `bim.py tjek` (deterministisk) før kontrolkaldet, og kontrollen efterprøver IFC-filen med Grep og PNG'erne |
+
+**Uafhængighed:** sammenligneren ser kun filerne (original, afkodning, IFC), ikke modellørens ræsonnement, og tegner selv modellen fra IFC-filen. Afkodningsfejl er en egen kategori, fordi en model, der svarer til en fejllæst afkodning, ellers ville bestå.
+
+**Miljø:** værktøjet kører i sit eget venv (`~/.local/share/byg-bim/venv`, fastlåste versioner i `requirements.txt`). `bim.py` skifter selv til det. Kendte fejl i IfcOpenShell 0.9.0 er omgået og dokumenteret i `erfaringsblade.md` (EB-BIM-02).
 
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.

@@ -1,0 +1,13 @@
+{
+  "description": "byg-bim: bim-sammenligner er skrivebeskyttet – den må kun køre læsende bim.py-kommandoer.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/sammenligner_vagt.py\"", "timeout": 10}
+        ]
+      }
+    ]
+  }
+}

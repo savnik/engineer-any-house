@@ -323,6 +323,48 @@ def main() -> int:
         if not ok:
             FEJL.append(f"manuel status: {r.stdout or r.stderr}")
 
+        # Hjælpeagent (tegningsimport): fag → sammenligning → rettelse → sammenligning → kontrol
+        B = {"session_id": "s4", "cwd": str(cwd)}
+        LB = "2026-09-25-bad/bim/01"
+        BF, BS, BK = "byg-bim:bim-modelloer", "byg-bim:bim-sammenligner", "byg-kontrol:bim-kontrol"
+
+        def bim_fag(navn, forventet):
+            r = kald_raa("pretool", {**B, "tool_input": {"subagent_type": BF, "prompt": f"LEVERANCE: {LB}\nByg"}}, env)
+            forvent(navn, r, forventet)
+            if r is None:
+                kald_raa("subagentstop", {**B, "agent_type": BF, "agent_transcript_path": transkript(f"LEVERANCE: {LB}")}, env)
+
+        def bim_sammen(navn, forventet, resultat="ret"):
+            r = kald_raa("pretool", {**B, "tool_input": {"subagent_type": BS, "prompt": f"LEVERANCE: {LB}\nSammenlign"}}, env)
+            forvent(navn, r, forventet)
+            if r is None:
+                svar = '```json\n{"resultat": "%s", "afvigelser": []}\n```' % resultat
+                kald_raa("subagentstop", {**B, "agent_type": BS, "last_assistant_message": svar,
+                                          "agent_transcript_path": transkript(f"LEVERANCE: {LB}", svar)}, env)
+
+        forvent("sammenligning uden leverance-ID afvises",
+                kald_raa("pretool", {**B, "tool_input": {"subagent_type": BS, "prompt": "Sammenlign"}}, env), "afvist")
+        forvent("sammenligning før fagleverance afvises",
+                kald_raa("pretool", {**B, "tool_input": {"subagent_type": BS, "prompt": f"LEVERANCE: {LB}"}}, env), "afvist")
+        bim_fag("bim-fagkald tilladt", "tilladt")
+        bim_fag("nyt bim-fagkald uden sammenligning afvises", "afvist")
+        bim_sammen("sammenligning 1 tilladt", "tilladt")
+        forvent("stop blokeres efter sammenligning med afvigelser", kald_raa("stop", B, env), "blokeret")
+        bim_fag("rettelse efter sammenligning tilladt", "tilladt")
+        bim_sammen("sammenligning 2 tilladt", "tilladt")
+        bim_fag("rettelse 2 tilladt", "tilladt")
+        bim_sammen("sammenligning 3 tilladt", "tilladt", resultat="ok")
+        bim_fag("rettelse 3 tilladt", "tilladt")
+        bim_sammen("4. sammenligning afvises (maks. 3)", "afvist")
+        forvent("kontrol efter sammenligninger tilladt",
+                kald_raa("pretool", {**B, "tool_input": {"subagent_type": BK, "prompt": f"LEVERANCE: {LB}"}}, env), "tilladt")
+        tilst = json.loads((pathlib.Path(env["CLAUDE_PLUGIN_DATA"]) / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+        eb = tilst["leverancer"][LB]
+        ok = eb.get("forsoeg") == 1 and eb.get("sammenligninger") == 3 and eb.get("rettelser") == 3
+        print(("OK   " if ok else "FEJL ") + "rettelser efter sammenligning bruger ikke kontrolforsøg")
+        if not ok:
+            FEJL.append(f"hjælpertilstand: {eb}")
+
     print(f"\n{'ALLE TESTS BESTÅET' if not FEJL else f'{len(FEJL)} FEJL'}")
     return 1 if FEJL else 0
 

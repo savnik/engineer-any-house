@@ -1,0 +1,108 @@
+# Eksempelmodel (fiktiv): murermesterhus 1930'erne, kælder + stue + udnyttet tagetage under sadeltag.
+# Bruges som skabelon og som test af værktøjet. Alle længder i mm. Lokale akser: x langs facaden mod vej.
+model:
+  navn: Eksempelhus
+  schema: IFC4
+  adresse: {vej: Eksempelvej 1, postnr: "9999", by: Eksempelby}
+  bygning: {navn: Hus, opfoerelsesaar: 1937, anvendelse: Fritliggende enfamiliehus}
+  geo: {oest: 720000.0, nord: 6180000.0, kote: 35.80, x_retning: 100}   # x peger mod ØSØ
+  kontrol:
+    areal: {K: 85.0, S: 85.0}        # BBR-arealer (brutto, m²) til sammenligning
+    tolerance: 0.06
+
+standard: {kilde: A, status: eksisterende}
+
+typer:
+  YV-beton:   {klasse: vaeg, navn: Kælderydervæg beton 300, lag: [[beton, 300]], ude: true, baerende: true}
+  YV-hulmur:  {klasse: vaeg, navn: Ydervæg hulmur 300, lag: [[tegl, 108], [mineraluld, 84], [tegl, 108]],
+               ude: true, baerende: true, u: 0.55}
+  IV-mur:     {klasse: vaeg, navn: Indervæg ½-sten pudset, lag: [[puds, 10], [tegl, 108], [puds, 10]], baerende: true}
+  IV-let:     {klasse: vaeg, navn: Let skillevæg, lag: [[gips, 13], [træ, 70], [gips, 13]]}
+  GAVL:       {klasse: vaeg, navn: Gavl hulmur 300, lag: [[tegl, 108], [mineraluld, 84], [tegl, 108]], ude: true, baerende: true}
+  KG:         {klasse: daek, navn: Kældergulv beton, lag: [[beton, 100], [grus, 150]]}
+  BJL:        {klasse: daek, navn: Træbjælkelag, lag: [[træ gulv, 25], [træbjælker, 200], [puds på rør, 25]], baerende: true}
+  TAG:        {klasse: tag, navn: Tegltag på lægter, lag: [[tagsten, 50], [lægter, 50], [spær, 150]]}
+  V1:         {klasse: vindue, navn: Vindue 2-fag, bredde: 1180, hoejde: 1300, felter: 2}
+  V2:         {klasse: vindue, navn: Kældervindue, bredde: 800, hoejde: 500}
+  D1:         {klasse: doer, navn: Indvendig dør, bredde: 825, hoejde: 2040}
+  D2:         {klasse: doer, navn: Hoveddør, bredde: 925, hoejde: 2100}
+
+etager:
+  - {id: K, navn: Kælder, kote: -2400, fri_hoejde: 2100}
+  - {id: S, navn: Stueetage, kote: 0, fri_hoejde: 2600}
+  - {id: "1", navn: Tagetage, kote: 2900}
+
+vaegge:
+  - {id: K-YV, etage: K, type: YV-beton, punkter: [[0, 0], [10000, 0], [10000, 8500], [0, 8500]], lukket: true,
+     justering: yderside, kilde: D, ref: "Kældertegning 1937, mål 10,00 × 8,50"}
+  - {id: K-IV1, etage: K, type: IV-mur, punkter: [[5000, 300], [5000, 8200]], kilde: D}
+  - {id: S-YV, etage: S, type: YV-hulmur, punkter: [[0, 0], [10000, 0], [10000, 8500], [0, 8500]], lukket: true,
+     justering: yderside, kilde: D, ref: "Stueplan 1937"}
+  - {id: S-IV1, etage: S, type: IV-mur, punkter: [[5000, 300], [5000, 8200]], kilde: D}
+  - {id: S-IV2, etage: S, type: IV-let, punkter: [[300, 4200], [5000, 4200]], kilde: M, usikkerhed: 20}
+  # tagetage: murkrone og gavle i én løkke, klippet af tagets underside; skunkvægge 1,3 m
+  - {id: T-YV, etage: "1", type: GAVL, punkter: [[0, 0], [10000, 0], [10000, 8500], [0, 8500]], lukket: true,
+     justering: yderside, hoejde: 6000, til_tag: TAG1}
+  - {id: T-SKUNK-S, etage: "1", type: IV-let, punkter: [[300, 1500], [9700, 1500]], hoejde: 1300, justering: hoejre}
+  - {id: T-SKUNK-N, etage: "1", type: IV-let, punkter: [[300, 7000], [9700, 7000]], hoejde: 1300, justering: venstre}
+
+aabninger:
+  - {id: K-V1, vaeg: K-YV.1, type: V2, afstand: 1500, brystning: 1500}
+  - {id: K-V2, vaeg: K-YV.1, type: V2, afstand: 7000, brystning: 1500}
+  - {id: K-D1, vaeg: K-IV1, type: D1, afstand: 3000, slaar_mod: hoejre}
+  - {id: S-D0, vaeg: S-YV.1, type: D2, afstand: 4000, slaar_mod: inde, haengsel: slut, kilde: F, ref: "foto facade"}
+  - {id: S-V1, vaeg: S-YV.1, type: V1, afstand: 1200, brystning: 850}
+  - {id: S-V2, vaeg: S-YV.1, type: V1, afstand: 6900, brystning: 850}
+  - {id: S-V3, vaeg: S-YV.3, type: V1, afstand: 2000, brystning: 850}
+  - {id: S-V4, vaeg: S-YV.3, type: V1, afstand: 6500, brystning: 850}
+  - {id: S-D1, vaeg: S-IV1, type: D1, afstand: 1500, slaar_mod: venstre}
+  - {id: S-D2, vaeg: S-IV2, type: D1, afstand: 2000, slaar_mod: venstre, haengsel: slut}
+  - {id: T-V1, vaeg: T-YV.4, type: V1, afstand: 3660, brystning: 900}
+
+daek:
+  - {id: K-GULV, etage: K, type: KG, omrids: {fra_vaegge: K-YV, kant: inderside}, art: bund}
+  - {id: S-GULV, etage: S, type: BJL, omrids: {fra_vaegge: K-YV, kant: inderside}, huller: [[[5100, 5600], [6000, 5600], [6000, 8200], [5100, 8200]],
+                  [[4300, 3400], [4800, 3400], [4800, 3900], [4300, 3900]]]}
+  - {id: T-GULV, etage: "1", type: BJL, omrids: {fra_vaegge: S-YV, kant: inderside},
+     huller: [[[4300, 3400], [4800, 3400], [4800, 3900], [4300, 3900]]]}
+
+tage:
+  - {id: TAG1, etage: "1", navn: Sadeltag, form: sadeltag, omrids: [0, 0, 10000, 8500], rygning: x, haeldning: 45,
+     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG}
+
+trapper:
+  - {id: TR-K, etage: K, start: [5550, 5300], retning: 90, bredde: 800, stigninger: 13, grund: 220}
+
+soejler:
+  - {id: K-S1, etage: K, punkt: [2500, 4250], profil: {form: rhs, b: 100, h: 60, t: 5}, materiale: stål, kilde: D,
+     ref: "Statik 1977"}
+
+bjaelker:
+  - {id: K-B1, etage: K, fra: [300, 4250, 2150], til: [5000, 4250, 2150], profil: {form: i, h: 160, b: 74, tw: 6.3, tf: 9.5},
+     materiale: stål, kilde: D}
+
+rum:
+  - {id: K.01, etage: K, navn: Fyrrum, punkt: [2500, 2000]}
+  - {id: K.02, etage: K, navn: Grovkøkken, punkt: [7500, 2000]}
+  - {id: S.01, etage: S, navn: Stue, punkt: [2500, 2000]}
+  - {id: S.02, etage: S, navn: Køkken, punkt: [2500, 6000]}
+  - {id: S.03, etage: S, navn: Spisestue, punkt: [7500, 4000]}
+  - {id: T.01, etage: "1", navn: Værelse, punkt: [5000, 4250], til_tag: TAG1}
+
+systemer:
+  - {id: CV-F, navn: Centralvarme fremløb, art: varme}
+  - {id: BV-K, navn: Brugsvand koldt, art: brugsvand_koldt}
+
+installationer:
+  - {id: KEDEL, etage: K, art: pillefyr, navn: Pillefyr 12 kW, punkt: [1500, 1200, 0], geometri: {kasse: [600, 700, 1300]},
+     system: CV-F, producent: Eksempel, kilde: F}
+  - {id: VVB, etage: K, art: beholder, navn: Varmtvandsbeholder 100 l, punkt: [8500, 1000, 0], geometri: {cylinder: [520, 900]}}
+  - {id: RAD1, etage: S, art: radiator, punkt: [1790, 380, 150], geometri: {kasse: [800, 100, 500]}, system: CV-F}
+
+roer:
+  - {id: R-CV1, etage: K, system: CV-F, punkter: [[1500, 850, 1400], [1500, 400, 1400], [1500, 400, 2300], [1790, 400, 2300]],
+     diameter: 22, materiale: kobber}
+
+generisk:
+  - {id: SKORSTEN, etage: K, klasse: IfcChimney, profil: [[4300, 3400], [4800, 3400], [4800, 3900], [4300, 3900]],
+     bund: 0, hoejde: 10500, materiale: tegl}

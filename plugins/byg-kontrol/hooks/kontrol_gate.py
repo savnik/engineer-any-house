@@ -25,6 +25,10 @@ Regler
 - Stop-hooken forhindrer (én gang pr. stop) afslutning, mens sessionens leverancer mangler kontrol,
   er afvist eller mangler RCA.
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
+- Hjælpeagenter (fagregister: "hjaelpere", fx bim-sammenligner): et hjælpekald kræver LEVERANCE og en afleveret
+  fagversion ("afventer_kontrol" eller "sammenlignet") og sætter "under_sammenligning"; ved aflevering bliver den
+  "sammenlignet". Et fagkald efter en sammenligning er en rettelse: det bruger ikke af kontrolforsøgene. Højst
+  "maks_sammenligninger" (standard 3) sammenligninger pr. leverance. Kontrollen kan kaldes efter sammenligningen.
 - Fase-gate: projektkontrol af en planleverance i fase 3 eller senere ("FASE: 3" i prompten) kræver
   "DESIGNGRUNDLAG: <id>, <id> …" med fagleverancer, der alle er godkendt (design freeze).
 - Manuel gate G2 (løsningsgodkendelse): kun brugeren kan åbne den ved selv at skrive
@@ -50,6 +54,8 @@ HER = pathlib.Path(__file__).resolve().parent
 REG = json.loads((HER / "fagregister.json").read_text(encoding="utf-8"))
 MAKS = int(REG.get("maks_forsoeg", 3))
 MAKS_RUNDER = int(REG.get("maks_runder", 3))
+MAKS_SAMMEN = int(REG.get("maks_sammenligninger", 3))
+RESULTAT_RE = re.compile(r'"resultat"\s*:\s*"(ok|ret)"', re.IGNORECASE)
 FORBEDRING_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECASE)
 HVORFOR_RE = re.compile(r"^\s*\d+\.\s.*\bhvorfor\b", re.IGNORECASE | re.MULTILINE)
 GRUNDAARSAG_RE = re.compile(r"grundårsag", re.IGNORECASE)
@@ -150,6 +156,8 @@ def klassificer(base: str) -> tuple:
             return "fag", fag
         if base == v["kontrol"]:
             return "kontrol", fag
+        if base in v.get("hjaelpere", []):
+            return "hjaelper", fag
     if base == REG["projekt_kontrol"]:
         return "kontrol", "projekt"
     return None, None
@@ -229,6 +237,9 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
     if not art:
         return
     m = LEV_RE.search(str(ti.get("prompt") or ""))
+    if not m and art == "hjaelper":
+        return afvis_kald(f"byg-kvalitetskontrol: {base} kræver 'LEVERANCE: <id>' for den fagleverance, der skal "
+                          "sammenlignes – se skill 'tegningsimport'.")
     if not m:
         if art == "fag":
             afvis_kald(f"byg-kvalitetskontrol: fagkald uden leverance-ID. Tilføj linjen 'LEVERANCE: <sag-id>/{fag}/<nr>' "
@@ -244,6 +255,8 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
         s = indlaes(d)
         L = s["leverancer"]
         e = L.get(lev)
+        if art == "hjaelper":
+            return hjaelperkald(d, s, e, lev, fag, st, sid)
         if art == "fag":
             fm = FASE_RE.search(str(ti.get("prompt") or ""))
             if fm and int(fm.group(1)) >= 3:
@@ -259,9 +272,22 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                     gem(d, s)
                     log(d, haendelse="fagkald_gentaget", leverance=lev, forsoeg=e.get("forsoeg"), agent=st)
                     return
+                if status == "under_sammenligning":
+                    return afvis_kald(f"Leverance {lev} er ved at blive sammenlignet. Vent på sammenligningens resultat, "
+                                      f"og send afvigelserne retur med 'LEVERANCE: {lev}'.")
                 if status in ("afventer_kontrol", "under_kontrol"):
+                    hj = REG["fag"].get(fag, {}).get("hjaelpere")
+                    ekstra = (f" (Eller sammenlign først med {', '.join(hj)} – se skill 'tegningsimport'.)"
+                              if hj and status == "afventer_kontrol" else "")
                     return afvis_kald(f"Leverance {lev} (forsøg {e.get('forsoeg')}/{MAKS}) er ikke kontrolleret endnu. "
-                                      f"Kald {e.get('kontrol_agent')} med 'LEVERANCE: {lev}' og stien til fagnotatet først.")
+                                      f"Kald {e.get('kontrol_agent')} med 'LEVERANCE: {lev}' og stien til fagnotatet først."
+                                      + ekstra)
+                if status == "sammenlignet":
+                    e["rettelser"] = int(e.get("rettelser", 0)) + 1
+                    e.update(status="fagkald_igang", session_id=sid, opdateret=nu())
+                    gem(d, s)
+                    log(d, haendelse="rettelse_efter_sammenligning", leverance=lev, rettelse=e["rettelser"], agent=st)
+                    return
                 if status == "godkendt":
                     return afvis_kald(naeste_skridt(lev, e))
                 if status in ("stoppet", "rca_udfoert"):
@@ -333,7 +359,7 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             if e.get("type") == "ekstern":
                 if e.get("status") != "under_kontrol":
                     e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
-            elif e.get("status") not in ("fagkald_igang", "afventer_kontrol", "under_kontrol"):
+            elif e.get("status") not in ("fagkald_igang", "afventer_kontrol", "under_kontrol", "sammenlignet"):
                 return afvis_kald(f"Leverance {lev} har status '{e.get('status')}' – der er ingen ny fagversion at "
                                   f"kontrollere. {naeste_skridt(lev, e)}")
         sm = STI_RE.search(str(ti.get("prompt") or ""))
@@ -498,12 +524,54 @@ def fagaflevering(inp: dict, d: pathlib.Path, fag: str, at: str) -> None:
                 log(d, haendelse="fagaflevering", leverance=lev, forsoeg=e.get("forsoeg"), agent=at)
 
 
+def hjaelperkald(d, s, e, lev, fag, st, sid) -> None:
+    """Sammenligning (eller anden hjælper) af en afleveret fagversion – før den formelle kontrol."""
+    if not e or e.get("fag") != fag:
+        return afvis_kald(f"Leverance {lev} findes ikke for faget '{fag}'. Kald først fagagenten med 'LEVERANCE: {lev}'.")
+    status = e.get("status")
+    if status == "under_sammenligning":
+        e.update(session_id=sid, opdateret=nu())
+        gem(d, s)
+        log(d, haendelse="sammenligning_gentaget", leverance=lev, agent=st)
+        return
+    if status not in ("afventer_kontrol", "sammenlignet"):
+        return afvis_kald(f"Leverance {lev} har status '{status}'. Sammenligning kræver en afleveret fagversion "
+                          f"(fagagenten skal have afleveret, og kontrollen må ikke være gået i gang).")
+    if int(e.get("sammenligninger", 0)) >= MAKS_SAMMEN:
+        return afvis_kald(f"Højst {MAKS_SAMMEN} sammenligninger pr. leverance ({lev}). Send leverancen til "
+                          f"{e.get('kontrol_agent')} med de resterende afvigelser beskrevet i notatet, eller eskalér til brugeren.")
+    e["sammenligninger"] = int(e.get("sammenligninger", 0)) + 1
+    e.update(status="under_sammenligning", session_id=sid, opdateret=nu(), hjaelper_agent=st)
+    gem(d, s)
+    log(d, haendelse="sammenligning", leverance=lev, nr=e["sammenligninger"], agent=st)
+
+
+def hjaelperaflevering(inp: dict, d: pathlib.Path, fag: str, at: str) -> None:
+    m = LEV_RE.search(foerste_prompt(inp.get("agent_transcript_path")) or "")
+    if not m:
+        log(d, haendelse="hjaelperaflevering_uden_leverance", agent=at)
+        return
+    lev = m.group(1).rstrip(".,;:)")
+    tekst = (inp.get("last_assistant_message") or "") + "\n" + laes_transkript(inp.get("agent_transcript_path"), 1)
+    r = RESULTAT_RE.findall(tekst)
+    with Laas(d):
+        s = indlaes(d)
+        e = s["leverancer"].get(lev)
+        if e and e.get("fag") == fag and e.get("status") == "under_sammenligning":
+            e.update(status="sammenlignet", opdateret=nu(), sammenligning_resultat=(r[-1].lower() if r else None))
+            gem(d, s)
+            log(d, haendelse="sammenligning_afleveret", leverance=lev, nr=e.get("sammenligninger"),
+                resultat=e.get("sammenligning_resultat"), agent=at)
+
+
 def subagentstop(inp: dict, d: pathlib.Path) -> None:
     at = str(inp.get("agent_type") or "")
     _, base = del_navn(at)
     art, fag = klassificer(base)
     if art == "fag":
         return fagaflevering(inp, d, fag, at)
+    if art == "hjaelper":
+        return hjaelperaflevering(inp, d, fag, at)
     if art != "kontrol":
         return
     msg = inp.get("last_assistant_message") or ""
@@ -752,6 +820,11 @@ def stop(inp: dict, d: pathlib.Path) -> None:
                 continue
             if status == "afventer_kontrol":
                 punkter.append(f"{lev}: afventer kontrol → kald {e.get('kontrol_agent')} med 'LEVERANCE: {lev}'.")
+            elif status == "under_sammenligning":
+                punkter.append(f"{lev}: sammenligningens resultat mangler → kald {e.get('hjaelper_agent')} igen.")
+            elif status == "sammenlignet":
+                punkter.append(f"{lev}: sammenlignet ({e.get('sammenligning_resultat') or '?'}) → send afvigelserne retur til "
+                               f"{e.get('fag_agent')}, eller kald {e.get('kontrol_agent')}, hvis der ikke er flere at rette.")
             elif status == "under_kontrol":
                 punkter.append(f"{lev}: gyldig kontroldom mangler → kald {e.get('kontrol_agent')} igen.")
             elif status == "afvist":

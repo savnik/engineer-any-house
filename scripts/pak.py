@@ -32,6 +32,15 @@ def zip_mappe(mappe: pathlib.Path, zipfil: pathlib.Path, prefix: str = "", udela
     return n
 
 
+def flet_hooks(maal_fil: pathlib.Path, ny_fil: pathlib.Path) -> None:
+    a = json.loads(maal_fil.read_text(encoding="utf-8"))
+    b = json.loads(ny_fil.read_text(encoding="utf-8"))
+    for haendelse, lst in b.get("hooks", {}).items():
+        a.setdefault("hooks", {}).setdefault(haendelse, []).extend(lst)
+    a["description"] = (a.get("description", "") + " · " + b.get("description", "")).strip(" ·")
+    maal_fil.write_text(json.dumps(a, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
 def saml(maal: pathlib.Path) -> None:
     plugins = [p for p in sorted((ROD / "plugins").iterdir())
                if (p / ".claude-plugin" / "plugin.json").exists() and p.name != "byg-team"]
@@ -43,6 +52,9 @@ def saml(maal: pathlib.Path) -> None:
                     continue
                 rel = f.relative_to(p)
                 ud = maal / rel
+                if rel.as_posix() == "hooks/hooks.json" and ud.exists():
+                    flet_hooks(ud, f)  # flere plugins med hooks: flet hændelserne
+                    continue
                 if ud.exists():
                     sys.exit(f"Navnekonflikt i samlet pakke: {rel} ({p.name})")
                 ud.parent.mkdir(parents=True, exist_ok=True)
@@ -52,7 +64,7 @@ def saml(maal: pathlib.Path) -> None:
         "name": "byg",
         "displayName": "Byg – projektleder, fagagenter og kvalitetskontrol",
         "version": version,
-        "description": "Samlet pakke: projektleder, fagagenter på mesterniveau (vvs, el, murer, ventilation, maler, tømrer) "
+        "description": "Samlet pakke: projektleder, fagagenter på mesterniveau (vvs, el, murer, ventilation, maler, tømrer, BIM) "
                        "og uafhængig kvalitetskontrol af hver leverance (højst 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde).",
         "author": {"name": "Peter Savnik"},
         "keywords": ["byggeri", "renovering", "projektledelse", "kvalitetskontrol", "danmark"],

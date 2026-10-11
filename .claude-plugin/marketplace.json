@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Danske byggefaglige ekspertagenter: projektleder, fagagenter på mesterniveau og uafhængig kvalitetskontrol af hver leverance.",
-    "version": "0.6.0"
+    "version": "0.7.0"
   },
   "plugins": [
     {
@@ -57,6 +57,11 @@
       "name": "byg-toemrer",
       "source": "./plugins/byg-toemrer",
       "description": "Tømrermester: tage, undertag, efterisolering, dampspærre, vinduer og bærende træ."
+    },
+    {
+      "name": "byg-bim",
+      "source": "./plugins/byg-bim",
+      "description": "BIM-modellør: IFC-model af huset ud fra tegninger, opmåling og BBR – tegningsimport med uafhængig sammenligning, kontrol, tegninger og redigering af IFC-filer."
     }
   ]
 }

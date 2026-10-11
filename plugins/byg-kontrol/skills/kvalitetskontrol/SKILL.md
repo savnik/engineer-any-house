@@ -22,9 +22,12 @@ Gælder for hovedtråden: projektlederen – eller Claude, når et fag bruges di
 | ventilation | `ventilationsekspert` | `ventilation-kontrol` |
 | maler | `malermester` | `maler-kontrol` |
 | toemrer | `toemrermester` | `toemrer-kontrol` |
+| bim | `bim-modelloer` | `bim-kontrol` |
 | projekt | hovedtråden (projektlederen) | `projekt-kontrol` |
 
 Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs-kontrol` ved installation fra marketplacet, `byg:vvs-mester` og `byg:vvs-kontrol` ved den samlede Cowork-pakke.
+
+**BIM:** før kontrolkaldet kører hovedtråden selv den deterministiske kontrol (`bim.py tjek <ifc> --tegn --ud <sagsmappe>/kvalitet/bim-<nr>-tjek`) og giver rapporten til `bim-kontrol`. Ved import af tegninger kommer først sammenligningsloopet med hjælpeagenten `bim-sammenligner` (skill `tegningsimport`, højst 3 sammenligninger), derefter kontrollen. Rettelser efter en sammenligning bruger ikke af kontrolforsøgene.
 
 ## 1. Leverance-ID
 - Format `<sag-id>/<fag-id>/<nr>`: sag-id = sagsmappens navn (fx `2025-03-14-bad-1970`), nr = 01, 02 … pr. opgave til faget.
