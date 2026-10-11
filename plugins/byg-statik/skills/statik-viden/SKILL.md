@@ -6,8 +6,9 @@ description: >-
   stål- og limtræsbjælker, vederlag og punktlaster, bjælkelag, tag, hanebånd og kviste,
   ændrede laster, stabilitet, fundering, sætninger og revner, midlertidig understøtning
   og review af statisk dokumentation – med normgrundlag (BR18 kap. 15 og 26,
-  Eurocodes med danske nationale annekser), faglig praksis, tjeklister, erfaringsblade
-  og et overslagsværktøj (statik.py). Bruges af statiker-agenten og direkte ved
+  Eurocodes med danske nationale annekser), faglig praksis,
+  betonskader i fundamenter og kældervægge (diagnose, prøver og reparation efter
+  DS/EN 1504), tjeklister, erfaringsblade og et overslagsværktøj (statik.py). Bruges af statiker-agenten og direkte ved
   statikspørgsmål, hvor subagenter ikke er tilgængelige.
 ---
 
@@ -17,6 +18,7 @@ description: >-
 |---|---|---|
 | `references/normgrundlag.md` | BR18, konstruktionsklasser, Eurocodes og NA, laster, partialkoefficienter – med status | Krav, myndighed, laster |
 | `references/faglig-praksis.md` | Er væggen bærende, egenlaster, typiske indgreb, revner og sætninger, understøtning, review | Vurdering, projektering, second opinion |
+| `references/betonskader.md` | Betonskader i fundament, sokkel og kældervæg: mekanismer, revner og overvågning, undersøgelse, tre udfald, reparation efter DS/EN 1504 | Smuldrende beton, revner i fundament eller kælder |
 | `references/regnevaerktoej.md` | `statik.py`: kommandoer, forudsætninger, grænser | Før hvert overslag |
 | `references/tjeklister.md` | Forundersøgelse, hold points HP-STAT, aflevering | KS, tilbud, aflevering |
 | `references/erfaringsblade.md` | Reviewede, forankrede erfaringer | Altid – hurtigt skim |

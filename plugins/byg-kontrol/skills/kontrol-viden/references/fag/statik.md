@@ -1,6 +1,6 @@
 # Kontrol – statiker
 
-**rubric_version:** `kontrol-statik@1.0` (2026-10-11)
+**rubric_version:** `kontrol-statik@1.1` (2026-10-11)
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
 1. **Mandat:** leverancen fremstår ikke som statisk dokumentation til byggesagen. Hvert beregnet tal er mærket "OVERSLAG – skal eftervises af den ansvarlige statiker", og det er angivet, hvem der skal udarbejde dokumentationen (statiker, certificeret statiker efter konstruktionsklassen, geotekniker) (kritisk).
@@ -14,6 +14,7 @@
 9. **Eksisterende forhold:** antagelser om dimensioner, materialer, råd og fundament er markeret og knyttet til et hold point for afdækning (HP-STAT-1), før endelig dimensionering (væsentlig).
 10. **Skader:** revner og sætninger er klassificeret, og der er plan for overvågning, før der udbedres; aktive sætninger henvises til geotekniker (væsentlig).
 11. **Grænseflader:** brand (bærende dele med brandkrav), føringsveje gennem bærende dele, murer- og tømrerudførelse, geoteknik (væsentlig).
+12. **Betonskader:** det er afgjort, om den skadede del er bærende, og hvad der ligger på den; dybden er vurderet mod tværsnittet; mekanismen er sandsynliggjort eller sat på prøve; vandkilden er adresseret før reparation; udfaldet (overfladisk / lokal konstruktiv / sætning) og den udførende er angivet; reparationsmaterialets klasse (DS/EN 1504-3) passer til udfaldet; aktive revner lukkes ikke (væsentlig – kritisk, når en bærende del under åbning eller vederlag behandles som overfladisk).
 
 ## Fejlkatalog
 - Bjælken eftervist, men vederlag, pille og fundament ikke – punktlast på strøgulv eller smalt gammelt fundament.
@@ -22,6 +23,10 @@
 - Tal regnet i hovedet (summer, opland, omregning) i stedet for med værktøjet – regnefejl i lastopgørelsen slår igennem i alt efterfølgende.
 - Forkert lastniveau: nyttelast eller sne fra en anden norm eller et andet land; KFI glemt; egenlast af gammelt bjælkelag med lerindskud undervurderet.
 - Kipning af slanke træbjælker og stålbjælker uden afstivet trykflange ikke nævnt.
+- Smuldrende beton under vindue eller vederlag behandlet som en pudsreparation; ikke-bærende reparationsmørtel i et bærende tværsnit.
+- Revne lukket med injektion eller puds, før det er vist, at den er hvilende.
+- Reparation uden at fjerne vandkilden (nedløb, terræn, dræn).
+- Rebound-hammer brugt som trykstyrke i gammel, inhomogen beton.
 - Udgravning under fundamentets underkant uden etapeplan og underfundering.
 - Tømrerens eller leverandørens dimension accepteret uden egen vurdering.
 

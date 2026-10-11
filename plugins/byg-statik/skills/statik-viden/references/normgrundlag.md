@@ -74,10 +74,27 @@ DK NA kan hentes gratis på NA-siden; selve EN-standarderne er betalingsstandard
 | Geoteknisk kategori 2–3 | GK2 ved risiko for naboer; GK3 bl.a. fede, sprækkede lerarter, kridt med kaviteter, dyb grundvandssænkning | V 2026-10-11 |
 | Geoteknisk undersøgelse for enfamiliehus | Ingen konkret BR18-regel fundet; DK NA K.1(2): normalt ned til faste senglaciale aflejringer. SBi-anvisning 231 "Fundering af mindre bygninger" (2011) | T |
 
+## Beton – diagnose og reparation
+| Emne | Indhold | Status |
+|---|---|---|
+| DS/EN 1504-serien – reparation af beton | Del 1 definitioner (DS/EN 1504-1:2005), del 3 reparationsmørtel (DS/EN 1504-3:2006 = EN 1504-3:2005), del 4 limning (DS/EN 1504-4:2007), del 10 udførelse og kvalitetskontrol (DS/EN 1504-10:2017). EN 1504-3 er under revision, men ikke erstattet. ISO 16311-1…4 findes ved siden af og erstatter ikke EN 1504 | V 2026-10-11 (webshop.ds.dk; DIN/NABau) |
+| EN 1504-3 mørtelklasser | Ikke-bærende: R1 ≥ 10 MPa, R2 ≥ 15 MPa (intet krav til E-modul). Bærende: R3 ≥ 25 MPa og E ≥ 15 GPa, R4 ≥ 45 MPa og E ≥ 20 GPa | V 2026-10-11 (producentguides fra Mapei og Sika, der gengiver tabel 3 – ikke selve standarden) |
+| EN 1504-5:2013 injektion | Kategori F kraftoverførende, D duktil, S opsvulmende fyldning af revner og hulrum. DS-udgave ikke tjekket | V (EN) / T (DS-udgave) |
+| EN 1504-9 principper | 11 principper: 1 beskyttelse mod indtrængning, 2 fugtkontrol, 3 genopretning af beton, 4 konstruktiv forstærkning, 5 fysisk modstand, 6 kemisk modstand, 7–11 armering og korrosion. I uarmeret, gammel beton er 1–4 de relevante | V 2026-10-11 (EN 1504-9:2008); DS-udgave (2009/2010) T |
+| Prøvningsmetoder | Borekerner EN 12504-1:2019 · rebound-hammer EN 12504-2:2021 · vurdering af trykstyrke på stedet EN 13791:2019 · karbonatiseringsdybde EN 14630:2006 · kloridindhold EN 14629:2007 | V (EN-udgaver) / T (DS-udgaver) |
+| Miljøklasser | DS 2426 er trukket tilbage. Gældende: DS/EN 206 med DK NA:2023. Tabel DK NA-1 oversætter eksponeringsklasser til de gamle miljøklasser (fx XA1 moderat, XA2 aggressiv, XA3 ekstra aggressiv) | V 2026-10-11 (ds.dk, DK NA:2023) |
+| Nedbrydningsmekanismer | Alkalikiselreaktion (porøs flint; netrevner, gelperler), frost (revner, afskalning, smuldring), udludning af kalk (kalkudfældninger, drypsten) | V 2026-10-11 (Dansk Betonforening; lex.dk "betonskader") |
+| Sulfatangreb | Ingen dansk primærkilde fundet med visuelle tegn; jordens kemiske angreb er dækket af XA-klasserne | T |
+| Revnebreddeklasser | Ingen offentlig dansk klassifikation verificeret – brug målte bredder og udvikling, ikke klassenavne | T (Byg-Erfa 071227 bag betalingsmur) |
+| BYG-ERFA beton | Revner i bygninger – udbedring i beton og murværk 080428 · Betonreparationer – vedhæftningssvigt 920831 · Reparation af chloridholdig beton 921104 | V (indeks 2017); gyldighed T |
+| Autorisation | Ingen autorisations- eller certificeringskrav til rådgivende ingeniører eller til udførelse af betonreparation i et enfamiliehus; FRI-medlemskab er frivilligt. Certificeret statiker kun i KK2–KK4 (se ovenfor) | V (rådgiver, sekundær kilde) / T (udførelse – ingen regel fundet) |
+| Laboratorium | Teknologisk Institut, Beton: borekerner, tyndslib, karbonatisering, klorid og styrke (akkrediteret) | V (ydelser); T (privatkunder) |
+
 ## Arbejdsmiljø
 | Emne | Krav | Status |
 |---|---|---|
 | BEK nr. 2107 af 24/11/2021 om bygge- og anlægsarbejde | § 27: midlertidige understøtninger og afstivninger monteres og demonteres kun under tilsyn af en særligt udpeget, instrueret person. § 36: nedrivning planlægges og udføres af særligt udpegede personer. § 40: sikring mod midlertidig ustabilitet (afstivning, afspærring) | V 2026-10-11 (retsinformation.dk) |
+| Kvartsstøv (respirabel krystallinsk silica) | Grænseværdi 0,1 mg/m³ (EK); cristobalit 0,05 mg/m³. Gælder hugning, boring og skæring i beton og mørtel | V 2026-10-11 (BEK nr. 613 af 29/06/2026, bilag 2, i kraft 1/7-2026) |
 
 ## Anvisninger
 | Kilde | Indhold | Status |

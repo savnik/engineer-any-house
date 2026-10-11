@@ -65,7 +65,7 @@ Normværdier (nyttelast, sne, vind, partialkoefficienter) står i `normgrundlag.
 - **Eksisterende fundamenter** i ældre huse er ofte uarmerede, smalle og kan være lavt funderede. Undersøg ved prøvegravning (dybde, bredde, materiale, jord).
 - **Udgravning ved fundament** (dræn, kloak, kældersænkning): grav aldrig under fundamentets underkant på længere strækninger uden projekt. Udfør etapevis og underfundér efter statikerens eller geoteknikerens projekt.
 - **Tilbygning:** frostfri fundering (`normgrundlag.md`), jordbundsundersøgelse ved tvivl om bæredygtig jord og en sætningsfuge mod det eksisterende hus – eller sammenbygning, hvor forskellige sætninger er vurderet.
-- **Smuldrende beton eller sokkel:** afgør, om delen er bærende (fundament eller sokkel under ydervæg) eller kun en beklædning. Vurder nedbrydningens dybde, armering og korrosion. Udskift etapevis med understøtning (sammen med murer).
+- **Smuldrende beton eller sokkel:** afgør, om delen er bærende (fundament eller sokkel under ydervæg) eller kun en beklædning. Vurder nedbrydningens dybde, armering og korrosion. Udskift etapevis med understøtning (sammen med murer). Diagnose, prøver og reparation: `betonskader.md`.
 
 ## 4. Skader: revner og sætninger
 | Mønster | Sandsynlig årsag | Næste skridt |
