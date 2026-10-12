@@ -1020,6 +1020,10 @@ class Bygger:
                 M = self._T(O, x=g["x_akse"], z=g["z_akse"])
                 self.indsaet(ent, g, M, None, {}, "generisk")
                 solid = self._ekstruder(g["profil"], g["dybde"])
+                if ent.is_a("IfcWindow") or ent.is_a("IfcDoor"):
+                    # fx ovenlys i tagfladen: profilens udstrækning er karmens ydre mål
+                    xs, ys = zip(*g["profil"])
+                    ent.OverallWidth, ent.OverallHeight = float(max(xs) - min(xs)), float(max(ys) - min(ys))
                 if g.get("til_tag"):
                     R = M[:3, :3]
                     solid = self._klip(solid, [((p - O) @ R, n @ R) for p, n in self.tagplaner[g["til_tag"]]])
