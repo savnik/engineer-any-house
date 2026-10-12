@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """byg-kontrol: håndhæver det uafhængige kvalitetskontrol-loop (plugin-hook til Claude Code/Cowork).
 
-Fra hooks/hooks.json:  python3 kontrol_gate.py pretool | beskyt | subagentstop | prompt | stop   (hook-input på stdin)
+Fra hooks/hooks.json:  python3 kontrol_gate.py pretool | beskyt | subagentstop | prompt | stop | precompact | efter_compact
+                       (hook-input på stdin)
 Manuelt:               python3 kontrol_gate.py status
                        python3 kontrol_gate.py nulstil <leverance-id>
                        (uden CLAUDE_PLUGIN_DATA findes pluginets datamappe under ~/.claude/plugins/data/)
@@ -40,6 +41,10 @@ Regler
 - Kontekstbudget (UserPromptSubmit): har sessionen byg-leverancer, og er hovedtrådens kontekst over
   KONTEKST_GRAENSE tokens, får brugeren og projektlederen én påmindelse pr. KONTEKST_TRIN om at afslutte
   opgaven og fortsætte i en ny session med /byg:status <sag-id>. Hvert svar læser hele tråden igen.
+- Sikker compact: PreCompact giver resuméet instruktioner om, hvad der skal bevares ordret (leverance-ID'er,
+  blokerende fund, ulogførte brugerbeslutninger, næste skridt). SessionStart med source "compact" genindlæser
+  sagens status.md (højst STATUS_MAKS_TEGN tegn) og sessionens åbne leverancer fra tilstanden, så tråden
+  fortsætter som efter /byg:status. Sagen findes via sessionens leverancer, ellers sagsmappen i cwd.
 Fail-safe: uventede fejl blokerer aldrig – de logges i <data>/kontrol/log.jsonl.
 """
 import json
@@ -70,6 +75,7 @@ BLOKERENDE = {"kritisk", "væsentlig"}
 STATUSSER = {"nyt", "aabent", "åbent", "lukket", "bestridt"}
 KONTEKST_GRAENSE = 200_000
 KONTEKST_TRIN = 100_000
+STATUS_MAKS_TEGN = 12_000
 
 
 # ---------- hjælpere ----------
@@ -768,6 +774,86 @@ def kontekst_paamindelse(inp: dict, s: dict) -> tuple[str, str] | None:
     return til_bruger, til_model
 
 
+# ---------- compact (PreCompact og SessionStart "compact") ----------
+def sessionens_sager(inp: dict, s: dict) -> dict:
+    """{sag-id: sagsmappe eller None} for sager med leverancer i sessionen. Uden leverancer: sagsmappen i cwd."""
+    sid = str(inp.get("session_id") or "")
+    cwd = pathlib.Path(str(inp.get("cwd") or os.getcwd()))
+    sager = {}
+    for lev, e in s["leverancer"].items():
+        if not sid or e.get("session_id") != sid or "/" not in lev:
+            continue
+        sag = sag_af(lev)
+        if sager.get(sag) is None:
+            p = sagsmappe_sti(inp, e)
+            if p is None:
+                for kand in (cwd / "byg-sager" / sag, cwd / sag, cwd):
+                    if kand.name == sag and (kand / "status.md").is_file():
+                        p = kand
+                        break
+            sager[sag] = p
+    if not sager and (cwd / "status.md").is_file() and cwd.parent.name == "byg-sager":
+        sager[cwd.name] = cwd
+    return sager
+
+
+def aabne_leverancer(inp: dict, s: dict) -> list:
+    sid = str(inp.get("session_id") or "")
+    linjer = []
+    for lev, e in sorted(s["leverancer"].items()):
+        if not sid or e.get("session_id") != sid or e.get("status") in ("godkendt", "vurderet_ekstern", "rca_udfoert"):
+            continue
+        trin = naeste_skridt(lev, e)
+        linjer.append(f"- {lev}: {e.get('status')} (runde {runde(e)}/{MAKS_RUNDER}, forsøg {e.get('forsoeg')}/{MAKS})"
+                      + (f" – {trin}" if trin else ""))
+    return linjer
+
+
+def precompact(inp: dict, d: pathlib.Path) -> None:
+    """PreCompact: stdout bliver ekstra instruktioner til resuméet."""
+    with Laas(d):
+        s = indlaes(d)
+    sager = sessionens_sager(inp, s)
+    if not sager:
+        return
+    log(d, haendelse="precompact", session_id=str(inp.get("session_id") or ""), trigger=inp.get("trigger"))
+    print("Dette er en byg-sag (" + ", ".join(sorted(sager)) + "). Sagsmappen er hukommelsen og genindlæses efter "
+          "compact, så gengiv ikke filindhold, fagnotater eller agentrapporter. Bevar i stedet præcist: sag-id og "
+          "sagsmappe; den igangværende opgave og næste konkrete skridt; alle leverance-ID'er fra samtalen med status, "
+          "runde/forsøg og blokerende fund ordret (fund-ID og krav); brugerens beslutninger og svar, som endnu ikke "
+          "står i beslutningslog.md eller status.md, ordret; åbne spørgsmål til brugeren; aftalte afgrænsninger og "
+          "brugerens præferencer for denne opgave; stier til filer, der er ændret, men ikke kontrolleret.")
+
+
+def efter_compact(inp: dict, d: pathlib.Path) -> None:
+    """SessionStart (source 'compact'): genindlæs sagens status og kontrol-tilstand i den compactede tråd."""
+    with Laas(d):
+        s = indlaes(d)
+    sager = sessionens_sager(inp, s)
+    if not sager:
+        return
+    dele = ["byg: Samtalen er netop compactet. Resuméet er ikke sagens hukommelse; det er sagsmappen. Før du "
+            "fortsætter: følg projektlederens regler (skill 'projektleder' og 'kvalitetskontrol' – indlæs dem igen, "
+            "hvis reglerne ikke står i konteksten), læs kvalitet/kontrollog.md og de seneste ca. 15 linjer af "
+            "beslutningslog.md og aendringer.md for sagen, og skriv brugerbeslutninger fra resuméet, der mangler i "
+            "beslutningsloggen, ind dér nu."]
+    aabne = aabne_leverancer(inp, s)
+    if aabne:
+        dele.append("Åbne leverancer i denne session (byg-kontrols tilstand – den gælder frem for resuméet):\n" + "\n".join(aabne))
+    for sag, p in sorted(sager.items()):
+        f = p / "status.md" if p else None
+        if f and f.is_file():
+            tekst = f.read_text(encoding="utf-8", errors="replace")
+            if len(tekst) > STATUS_MAKS_TEGN:
+                tekst = tekst[:STATUS_MAKS_TEGN] + f"\n[… afkortet – læs resten af {f} målrettet]"
+            dele.append(f"status.md for {sag} ({f}):\n{tekst}")
+        else:
+            dele.append(f"Sagen {sag}: status.md blev ikke fundet – find sagsmappen under byg-sager/ og læs den.")
+    log(d, haendelse="efter_compact", session_id=str(inp.get("session_id") or ""), sager=sorted(sager))
+    print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext": "\n\n".join(dele)}},
+                     ensure_ascii=False))
+
+
 def brugerprompt(inp: dict, d: pathlib.Path) -> None:
     """UserPromptSubmit: brugerens egen godkendelse af G2 ('Godkend G2 <sag-id>') og påmindelse om kontekstbudget."""
     tekst = str(inp.get("prompt") or "")
@@ -874,7 +960,7 @@ def main() -> int:
         raw = sys.stdin.read()
         inp = json.loads(raw) if raw.strip() else {}
         handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "beskyt": beskyt,
-                   "prompt": brugerprompt}.get(cmd)
+                   "prompt": brugerprompt, "precompact": precompact, "efter_compact": efter_compact}.get(cmd)
         if handler:
             handler(inp, datamappe())
     except Exception:

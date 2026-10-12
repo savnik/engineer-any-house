@@ -258,6 +258,38 @@ def main() -> int:
             if not ok:
                 FEJL.append(f"{navn}: {r}")
 
+        # Sikker compact: PreCompact giver resumé-instruktioner, SessionStart(compact) genindlæser sagen
+        (sag / "status.md").write_text("# Status\nFase: 2\nNæste skridt: tæthedsprøvning\n" + "x" * 20_000, encoding="utf-8")
+
+        def compact_kald(hændelse: str, data: dict) -> str:
+            r = subprocess.run([sys.executable, str(GATE), hændelse], input=json.dumps(data), text=True,
+                               capture_output=True, env=env, timeout=30)
+            assert r.returncode == 0, r.stderr
+            return r.stdout
+
+        for navn, ok in [
+                ("precompact i byg-session beder om at bevare leverance-ID'er",
+                 "leverance-ID" in compact_kald("precompact", {**S, "trigger": "auto"})),
+                ("precompact uden byg-sag giver intet", compact_kald("precompact", {"session_id": "s9", "cwd": str(cwd)}) == "")]:
+            print(("OK   " if ok else "FEJL ") + navn)
+            if not ok:
+                FEJL.append(navn)
+        C = {"session_id": "s5", "cwd": str(cwd)}
+        kald_raa("pretool", {**C, "tool_input": {"subagent_type": FAG, "prompt": "LEVERANCE: 2026-09-25-bad/vvs/09"}}, env)
+        ud = compact_kald("efter_compact", {**C, "source": "compact"})
+        ctx = json.loads(ud)["hookSpecificOutput"]["additionalContext"] if ud.strip() else ""
+        for navn, ok in [
+                ("efter compact genindlæses status.md", "Næste skridt: tæthedsprøvning" in ctx),
+                ("efter compact afkortes en lang status.md", "afkortet" in ctx and len(ctx) < 16_000),
+                ("efter compact vises åbne leverancer fra tilstanden", "2026-09-25-bad/vvs/09: fagkald_igang" in ctx),
+                ("efter compact uden byg-sag giver intet",
+                 compact_kald("efter_compact", {"session_id": "s9", "cwd": str(cwd), "source": "compact"}) == ""),
+                ("efter compact i sagsmappen uden leverancer genindlæses status.md",
+                 "tæthedsprøvning" in compact_kald("efter_compact", {"session_id": "s9", "cwd": str(sag), "source": "compact"}))]:
+            print(("OK   " if ok else "FEJL ") + navn)
+            if not ok:
+                FEJL.append(f"{navn}: {ctx[:300]}")
+
         # Fund-fastlåsning: nyt blokerende fund i forsøg 2 kræver nyt_grundlag
         L4 = "2026-09-25-bad/vvs/04"
         kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L4}"}}, env)

@@ -41,6 +41,21 @@
           {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" stop", "timeout": 30}
         ]
       }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" precompact", "timeout": 15}
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "compact",
+        "hooks": [
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py\" efter_compact", "timeout": 15}
+        ]
+      }
     ]
   }
 }
