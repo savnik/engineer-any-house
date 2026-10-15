@@ -17,7 +17,7 @@ Modellér ikke spær, lægter, armering, møbler, fliser, lister eller terræn u
 ## Koordinater, origo og koter
 - Origo: et veldefineret ydre hjørne (yderside af murværk), som kan genfindes på tegninger og på stedet. +x langs gadefacaden.
 - ±0 = færdigt gulv i stueetagen. Etagekoter relativt til ±0. Etagehøjde = gulv til gulv.
-- Georeference (`model.geo`): EPSG:25832 (ETRS89/UTM32N) for origo og DVR90-koten for ±0. Koordinater kan tages fra matrikelkort, bygningens adgangspunkt eller landmåler. Er de omtrentlige, så kilde A i modelnotatet.
+- Georeference (`model.geo`): EPSG:25832 (ETRS89/UTM32N) for origo og DVR90-koten for ±0. Koordinater kan tages fra matrikelkort, bygningens adgangspunkt eller landmåler. Er de omtrentlige, så kilde A i modelnotatet. Er koten ikke i DVR90 (fx en gammel tegnings DNN- eller lokale kote), så sæt `geo.hoejdesystem` (fx "DNN"); så skrives ingen VerticalDatum, og IFC-filen påstår ikke DVR90.
 - `x_retning`: kompasretningen af +x (fx 100° = mod ØSØ). Kan aflæses af nordpilen på tegningen eller af et ortofoto.
 
 ## Mål og tolerancer

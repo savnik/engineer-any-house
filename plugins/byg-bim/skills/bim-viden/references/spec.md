@@ -19,6 +19,8 @@ model:
   bygning: {navn: Hus, opfoerelsesaar: 1938, anvendelse: Fritliggende enfamiliehus, fredet: false}
   geo: {oest: 721234.5, nord: 6187654.3, kote: 35.73, x_retning: 100}   # EPSG:25832 for origo, DVR90-kote for ±0,
                                  # x_retning = kompasretning af lokal +x (grader fra nord med uret)
+                                 # hoejdesystem (valgfri, standard "DVR90"): angiv fx "DNN" eller "lokalt, datum ukendt",
+                                 # når kote ikke er DVR90 → VerticalDatum $ og systemet står i IfcProjectedCRS.Description
   kontrol: {areal: {K: 110, S: 110}, tolerance: 0.05}   # BBR-arealer (brutto m² pr. etage-id) til tjek
 standard: {kilde: A, status: eksisterende}
 materialer: {tegl: {kategori: brick, farve: [0.70, 0.36, 0.26]}}   # valgfrit – kendte ord får farve og kategori selv

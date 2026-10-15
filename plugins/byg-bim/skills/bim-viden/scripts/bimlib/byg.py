@@ -7,6 +7,7 @@ Regler, der håndhæves her (buildingSMART Validation Service / Implementer Agre
 - Pset_*: kun egenskaber fra standardskabelonen; enumererede egenskaber (fx Status) som IfcPropertyEnumeratedValue.
 - Qto_*: MethodOfMeasurement = BaseQuantities. Egne sæt hedder Byg_* (aldrig Pset_).
 - Georeference: IfcMapConversion + IfcProjectedCRS (EPSG:25832, DVR90 = EPSG:5799), Scale 0.001 ved mm.
+  geo.hoejdesystem (standard DVR90): andet end DVR90 → VerticalDatum $ og højdesystemet i Description.
 - Stabile GlobalId'er: uuid5 af modelnavn + element-id, så id'er overlever en genbygning.
 """
 import datetime as dt
@@ -178,14 +179,17 @@ class Bygger:
     def _georef(self, g, mm):
         f = self.f
         b = math.radians(float(g.get("x_retning", 90)))  # kompasretning (grader fra nord, med uret) af lokal +x
+        hs = str(g.get("hoejdesystem", "DVR90")).strip()  # højdesystem for kote; kun DVR90 giver VerticalDatum EPSG:5799
+        dvr = hs.upper() == "DVR90"
         api.georeference.add_georeferencing(f, ifc_class="IfcMapConversion", name="EPSG:25832")
         meter = f.createIfcSIUnit(UnitType="LENGTHUNIT", Name="METRE")
         api.georeference.edit_georeferencing(
             f, coordinate_operation={"Eastings": float(g["oest"]), "Northings": float(g["nord"]),
                                      "OrthogonalHeight": float(g.get("kote", 0.0)), "XAxisAbscissa": math.sin(b),
                                      "XAxisOrdinate": math.cos(b), "Scale": 0.001},
-            projected_crs={"Name": "EPSG:25832", "Description": "ETRS89 / UTM zone 32N, højder DVR90",
-                           "GeodeticDatum": "ETRS89", "VerticalDatum": "EPSG:5799", "MapUnit": meter})
+            projected_crs={"Name": "EPSG:25832", "Description": f"ETRS89 / UTM zone 32N, højder {hs}" if not dvr
+                           else "ETRS89 / UTM zone 32N, højder DVR90",
+                           "GeodeticDatum": "ETRS89", "VerticalDatum": "EPSG:5799" if dvr else None, "MapUnit": meter})
         try:
             api.georeference.edit_true_north(f, true_north=(math.cos(b), math.sin(b)))
         except Exception as e:  # true north er pæn at have, ikke kritisk
