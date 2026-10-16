@@ -68,7 +68,7 @@ Fag-id: `el` · Kontrollerer leverancer fra: `el-installatoer`
 
   Blev et væsentligt forhold overset i forsøg 1, så rejs det som **mindre**, og forklar det under `kontrolsvigt`. Hooken sender en dom uden gyldigt `nyt_grundlag` retur.
 - Bestridt fund: vurder fagagentens kildebelæg. Har fagagenten ret, så luk fundet. Fastholder du et kritisk fund, som er bestridt med kilde, så sæt `"eskaler": true` – brugeren afgør.
-- Mangler afgørende oplysninger, som kun brugeren kan give, så skriv det som fund med handlingen "afklar med bruger" – projektlederen eskalerer.
+- Mangler oplysninger, som kun brugeren kan give, så skriv spørgsmålet i `afklar_med_bruger` (blokerer ikke): `{"spoergsmaal": "…", "betydning": "hvad svaret ændrer"}`. Kun hvis notatet ikke kan godkendes uden svaret (sikkerhed, lovkrav), er det et blokerende fund med handlingen "afklar med bruger".
 
 ### 5. Svarformat
 Arbejd uden mellemsvar: skriv ingen tekst mellem dine værktøjskald. Skriv til sidst en kort vurdering (højst 3 linjer): samlet dom og hvad der skal til for godkendelse. Afslut **altid** med præcis én JSON-blok og intet efter den:
@@ -91,7 +91,8 @@ Arbejd uden mellemsvar: skriv ingen tekst mellem dine værktøjskald. Skriv til 
   "regressioner": [],
   "efterproevet_mod_primaerkilde": ["F1"],
   "usikkerheder": [],
-  "kontrolsvigt": []
+  "kontrolsvigt": [],
+  "afklar_med_bruger": []
 }
 ```
 - `dom`: `godkendt` eller `afvist`. `klasse`: `kritisk`, `væsentlig` eller `mindre`. `status`: `nyt`, `aabent`, `lukket` eller `bestridt`.

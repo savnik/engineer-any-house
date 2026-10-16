@@ -16,6 +16,8 @@ Regler
   afvises for subagenter og giver en advarsel i hovedtråden (brug nyt leverance-ID).
 - Domme findes også i hand-back-rapporter (tool_use-input i agentens transkript).
 - Kontrolagentens slutbesked skal indeholde en gyldig JSON-dom (faelles/kontrolprotokol.md, afsnit 5).
+  "afklar_med_bruger" (valgfri) er en liste af spørgsmål til brugeren; den blokerer ikke og tælles i dommen.
+- Kontrolkaldets "Leverance: <sti>" skal findes på disken (relativ sti regnes fra cwd), ellers afvises kaldet.
   Ugyldig dom → kontrolagenten sendes tilbage én gang for at rette den.
 - Højst 3 forsøg pr. runde. Tredje afviste dom → "stoppet": root cause-analyse af, hvorfor fagagenten
   ikke leverede korrekt i første forsøg, og implementeret forbedring af fagagenten.
@@ -370,7 +372,13 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                                   f"kontrollere. {naeste_skridt(lev, e)}")
         sm = STI_RE.search(str(ti.get("prompt") or ""))
         if sm and e.get("type") != "ekstern":
-            e["sti"] = str(pathlib.Path(sm.group(1)).expanduser())
+            sti = pathlib.Path(sm.group(1)).expanduser()
+            if not sti.is_absolute() and inp.get("cwd"):
+                sti = pathlib.Path(str(inp["cwd"])) / sti
+            if not sti.is_file():
+                return afvis_kald(f"Leverancen findes ikke på disken: {sti}. Fagagenten skal skrive notatet, før det kan "
+                                  "kontrolleres – tjek stien, eller send leverancen retur til fagagenten.")
+            e["sti"] = str(sti)
         e.update(status="under_kontrol", session_id=sid, opdateret=nu())
         gem(d, s)
         log(d, haendelse="kontrolkald", leverance=lev, runde=runde(e), forsoeg=e.get("forsoeg"), agent=st, type=e.get("type"))
@@ -431,6 +439,9 @@ def valider(dom: dict) -> list:
             if mangler:
                 fejl.append(f"{fid} ({kl}): mangler {', '.join(mangler)} – blokerende fund kræver krav, kilde og evidens.")
             aabne.append(fid)
+    afk = dom.get("afklar_med_bruger", [])
+    if not isinstance(afk, list) or any(not isinstance(a, dict) or not str(a.get("spoergsmaal") or "").strip() for a in afk):
+        fejl.append("afklar_med_bruger skal være en liste af objekter med 'spoergsmaal' (tom liste er tilladt).")
     if dv == "godkendt" and aabne:
         fejl.append(f"dom 'godkendt' er ikke tilladt med åbne blokerende fund: {', '.join(aabne)}.")
     if dv == "afvist" and not aabne:
@@ -626,7 +637,8 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
                        "\nAfslut med præcis én JSON-blok efter skemaet i kontrolprotokollen (afsnit 5).")
             return
         e.setdefault("domme", []).append({"runde": runde(e), "forsoeg": e.get("forsoeg"), "dom": dom["dom"],
-                                          "aabne_fund": taelling(dom), "tid": nu()})
+                                          "aabne_fund": taelling(dom), "tid": nu(),
+                                          "afklar_med_bruger": len(dom.get("afklar_med_bruger") or [])})
         if e.get("type") == "ekstern":
             e["status"] = "vurderet_ekstern"
         elif dom["dom"] == "godkendt":

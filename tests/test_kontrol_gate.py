@@ -319,6 +319,10 @@ def main() -> int:
         forvent("efter aflevering blokerer stop (afventer kontrol)", kald("stop", G, env), "blokeret")
 
         # Dom i hand-back (tool_use-input) registreres uden retur
+        forvent("kontrolkald med sti til manglende notat afvises", kald("pretool", {**G, "tool_input": {"subagent_type": KON, "prompt":
+                f"LEVERANCE: {LG}\nLeverance: {sag}/fagnotater/vvs-07.md"}}, env), "afvist")
+        (sag / "fagnotater").mkdir(exist_ok=True)
+        (sag / "fagnotater" / "vvs-07.md").write_text("# Fagnotat\n", encoding="utf-8")
         forvent("kontrolkald med sti", kald("pretool", {**G, "tool_input": {"subagent_type": KON, "prompt":
                 f"LEVERANCE: {LG}\nLeverance: {sag}/fagnotater/vvs-07.md"}}, env), "tilladt")
         hb = dom(LG, "godkendt", [], "byg-sager/2026-09-25-bad")
@@ -396,6 +400,26 @@ def main() -> int:
         print(("OK   " if ok else "FEJL ") + "rettelser efter sammenligning bruger ikke kontrolforsøg")
         if not ok:
             FEJL.append(f"hjælpertilstand: {eb}")
+
+        # afklar_med_bruger: valideres, blokerer ikke
+        LA = "2026-09-25-bad/vvs/20"
+        A = {"session_id": "s-afk", "cwd": str(cwd)}
+        kald("pretool", {**A, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {LA}"}}, env)
+        kald_raa("pretool", {**A, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {LA}"}}, env)
+        def afk_dom(liste):
+            blok = {"leverance_id": LA, "fag": "vvs", "dom": "godkendt", "fund": [], "afklar_med_bruger": liste}
+            return "OK.\n```json\n" + json.dumps(blok, ensure_ascii=False) + "\n```"
+        forvent("afklar_med_bruger uden spoergsmaal sendes retur", kald_raa("subagentstop", {**A, "agent_type": KON,
+                "last_assistant_message": afk_dom([{"betydning": "x"}])}, env), "blokeret")
+        forvent("godkendt dom med afklar_med_bruger registreres", kald_raa("subagentstop", {**A, "agent_type": KON,
+                "stop_hook_active": True, "last_assistant_message": afk_dom([{"spoergsmaal": "Bliver radiatoren?",
+                "betydning": "shuntens størrelse"}])}, env), "tilladt")
+        tilst = json.loads((pathlib.Path(env["CLAUDE_PLUGIN_DATA"]) / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+        ea = tilst["leverancer"][LA]
+        ok = ea["status"] == "godkendt" and ea["domme"][-1].get("afklar_med_bruger") == 1
+        print(("OK   " if ok else "FEJL ") + "afklar_med_bruger blokerer ikke og tælles i dommen")
+        if not ok:
+            FEJL.append(f"afklar: {ea}")
 
     print(f"\n{'ALLE TESTS BESTÅET' if not FEJL else f'{len(FEJL)} FEJL'}")
     return 1 if FEJL else 0

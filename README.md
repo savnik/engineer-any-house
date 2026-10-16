@@ -86,7 +86,8 @@ scripts/valider.py           strukturtjek, navne, stier, protokoller, evals og h
 scripts/tjek_data.py         dataseparation: ingen sager, brugerdata eller nøgler i repoet
 scripts/hooks/pre-commit     kører tjek_data.py før hvert commit (git config core.hooksPath scripts/hooks)
 scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
-scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur)
+scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde)
+scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
 tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py)
