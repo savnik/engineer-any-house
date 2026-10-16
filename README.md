@@ -56,7 +56,9 @@ Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 6. Projektlederens egne leverancer (projektgrundlag, samlet plan) kontrolleres af `projekt-kontrol`.
 7. **BIM og tegningsimport:** en tegning afkodes først grundigt (`afkodning.yaml`, kontrolleret mod tegningen selv), derefter bygges modellen. Hjælpeagenten `bim-sammenligner` holder originalen op mod samme visning tegnet fra modellen og sender afvigelser retur til `bim-modelloer` (højst 3 sammenligninger, rettelser bruger ikke af kontrolforsøgene). Til sidst den formelle kontrol med `bim-kontrol`. Se skill `tegningsimport`.
 
-Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
+Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe.
+
+**Parallelle fag uden skrivekonflikter:** hver fil i sagen har én ejer. Et fag skriver kun sit eget notat, bilag og sine egne mapper. Ændringer i grænseflader, risici, kontrolplan og ejendomskort lægger faget som forslag i `forslag/`, og hooken fletter dem ind på rækkeniveau, når leverancen godkendes (med konfliktstop, hvis projektlederen har ændret de samme rækker imens). `byg-sager/` er et lokalt git-repo, som hooken committer til ved hver aflevering, dom og fletning. Kontrollens forsøg 2–3 får diffen siden sidste kontrollerede version. Repoet pushes aldrig; slå det fra med `BYG_GIT=0`. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
 
 I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar som "IKKE UAFHÆNGIGT KVALITETSKONTROLLERET".
 
@@ -86,15 +88,24 @@ scripts/valider.py           strukturtjek, navne, stier, protokoller, evals og h
 scripts/tjek_data.py         dataseparation: ingen sager, brugerdata eller nøgler i repoet
 scripts/hooks/pre-commit     kører tjek_data.py før hvert commit (git config core.hooksPath scripts/hooks)
 scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
+scripts/udgiv.py             udgivelse på main: hæver versioner ud fra versionsnoter/ og skriver CHANGELOG.md
+versionsnoter/               én note pr. gren: hvilke plugins der ændres (patch/minor/major) og hvorfor
 scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde)
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
 scripts/eval_fag.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
+tests/test_sagsflet.py       tests af skriveret pr. fag, forslag og fletning og git i byg-sager/
 tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session
 ```
 Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`.
+
+**Parallelle sessioner** (flere Claude-sessioner i hver sin worktree):
+- Én opgave = én worktree = én kortlivet gren. Rebase på `origin/main` før PR, og merge PR'erne én ad gangen.
+- **Hæv aldrig versioner i en gren.** Læg en note i `versionsnoter/<gren>.md` (se `versionsnoter/README.md`). Efter merge kører du `python3 scripts/udgiv.py` på main. Pre-commit-hooken afviser versionsændringer uden for main (`BYG_UDGIV=1` tilsidesætter).
+- `faelles/` og agentfilernes protokolblokke: konflikter i de genererede blokke løses ikke i hånden. Løs konflikten i `faelles/`, og kør `python3 scripts/sync_protokol.py`.
+- Opgaver, der begge ændrer `faelles/`, `fagregister.json` eller `kontrol_gate.py`, køres efter hinanden, ikke parallelt.
 
 Evals (kræver login og koster tokens): `python3 scripts/eval_fag.py byg-vvs`. Kør ikke `claude plugin eval ./plugins/byg-vvs` direkte: fag-plugins afhænger af `byg-kontrol`, som ikke findes i eval-sandkassen, og så indlæses pluginet slet ikke (evalen tester kun den bare model). Effort-sammenligning: `python3 scripts/effort_ab.py byg-vvs --effort medium`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
 

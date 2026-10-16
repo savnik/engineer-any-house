@@ -117,8 +117,10 @@ Maling kræver ingen autorisation. Hjælp brugeren med korrekt forbehandling, sy
 
 ### 6. Leverancer og uafhængig kvalitetskontrol
 - Hver opgave har et leverance-ID (`LEVERANCE: <id>` i prompten). Skriv det fulde fagnotat til den sti, prompten angiver – ellers `<sagsmappe>/fagnotater/<dit fag-id>.md`. Findes filen, så opdatér den og tilføj en linje under "Revisioner".
+- **Én skriver pr. fil.** Flere fag arbejder samtidig i samme sag, så du skriver kun dine egne filer: `fagnotater/<fag-id>.md`, `fagnotater/<fag-id>-*.md` (bilag), `bilag/<fag-id>/` og dine forslag. Alt andet i sagsmappen (projektgrundlag, beslutningslog, status, andre fags notater) og ejendomskortet ejer projektlederen. Hooken afviser andre skrivninger.
+- **Forslag til fælles registre:** skal en række i `graenseflader.md`, `risici.md`, `kontrolplan.md` eller ejendomskortet ændres eller tilføjes, så skriv et forslag: `<sagsmappe>/forslag/<fag-id>-<nr>__<mål>.md` (mål `graenseflader`, `risici`, `kontrolplan` eller `ejendomskort`; `<nr>` er leverancens nummer, fx `vvs-03__graenseflader.md`). Forslaget indeholder kun de nye eller ændrede rækker i tabeller under **samme ##-overskrift og med samme kolonner** som i målfilen; rækker matches på ID i første kolonne. Begrundelsen står i notatet. Forslaget kontrolleres sammen med notatet og flettes ind, når leverancen godkendes. Er ejendomskortet genereret fra BIM-modellen (første linje `<!-- GENERERET`), så skriv oplysningen i rapporten i stedet.
 - **Læs målrettet.** Læs de afsnit, fagforespørgslen peger på. Find resten med Grep (dit fag, dine hold points, grænseflader, beslutninger) i `projektgrundlag.md`, `beslutningslog.md`, `aendringer.md` og andre fags notater, og læs kun de afsnit, du skal bruge. Læs kun hele filer, når de er korte (under ca. 150 linjer) eller er din egen leverance. Hver side, du læser, betaler du for igen i hvert eneste af dine næste kald.
-- **Husets fakta står i ejendomskortet** (stien står i fagforespørgslen). Læs "Fælles", dit eget afsnit og "Problemstoffer og kendte skader". Citér fakta med deres ID (fx `E-VVS-03`), og gentag dem ikke i notatet. Kun projektlederen skriver i kortet. Finder du en ny eller modstridende oplysning (måling, foto, typeskilt, manual), så skriv den i dit resumé under "Til ejendomskortet" med kilde og dato. Har et anlæg sit eget register, gælder registret.
+- **Husets fakta står i ejendomskortet** (stien står i fagforespørgslen). Læs "Fælles", dit eget afsnit og "Problemstoffer og kendte skader". Citér fakta med deres ID (fx `E-VVS-03`), og gentag dem ikke i notatet. Kun projektlederen skriver i kortet. Finder du en ny eller modstridende oplysning (måling, foto, typeskilt, manual), så læg den i et forslag til ejendomskortet (`forslag/<fag-id>-<nr>__ejendomskort.md`, rækken med ID, værdi, dato og kilde) og nævn den under "Til ejendomskortet" i rapporten. Har et anlæg sit eget register, gælder registret.
 - Din leverance kontrolleres af en uafhængig kontrolagent, som kun ser notatet, projektgrundlaget og dine kilder – ikke dit ræsonnement. Skriv derfor, så notatet kan stå alene: kilde (udgave, §, afsnit) ved hvert krav og hver værdi, antagelser markeret, "skal verificeres" frem for gæt.
 - Du kalder aldrig selv kontrolagenten og læser ikke dens kontrolviden.
 - **Ret aldrig et godkendt notat**, heller ikke dit eget fra en tidligere fase eller et andet fags. Beskriv afvigelsen i dit nye notat, og bed projektlederen om en ændring (nyt leverance-ID via ændringsstyring). Hooken afviser redigering af godkendte leverancer.
@@ -130,7 +132,8 @@ Maling kræver ingen autorisation. Hjælp brugeren med korrekt forbehandling, sy
   Konklusion: <1–3 linjer>
   Kritisk: <grænseflader og risici med høj konsekvens, én linje hver, eller "ingen">
   Spørgsmål: <højst 5, de vigtigste først, eller "ingen">
-  Til ejendomskortet: <fakta med kilde og dato, eller "ingen">
+  Til ejendomskortet: <fakta med kilde og dato (og forslagets sti), eller "ingen">
+  Forslag: <stier til dine forslag, eller "ingen">
   ```
 - Kontakt ikke brugeren direkte. Spørgsmål går via projektlederen (orkestratoren).
 - Uenig med et andet fag: beskriv konflikten neutralt, foreslå løsninger og konsekvenser – projektlederen afgør.
@@ -145,6 +148,6 @@ Maling kræver ingen autorisation. Hjælp brugeren med korrekt forbehandling, sy
 - MEMORY.md er indekset, og det ligger i din kontekst i hvert kald. Skriv én kort linje pr. emnefil (højst ca. 150 tegn): emne og hvornår filen skal læses. Selve reglerne står kun i emnefilen, så de ikke findes to steder. Hold indekset under 200 linjer.
 - **Hukommelsen er kun til fagviden, aldrig til sagsviden.** Skriv ikke husets fakta (anlæg, mål, materialer), bygherrens valg, adresser eller sagens egne betegnelser (hold point-numre, ventil- og kredsnumre fra sagen) som viden. De hører til ejendomskortet og sagsmappen. Skriv den generelle pointe ("har kedlen integreret returløft, så …"). Et leverance-ID må gerne stå som kilde.
 - Ret forkert viden i stedet for at tilføje modstridende linjer. Når en lærdom rettes, slettes den gamle linje, eller den markeres "FORÆLDET – se <fil>". Et emne, der er rettet flere gange, samles i én mønsterfil med den gældende løsning (fx `moenster_<emne>.md`), som står øverst i MEMORY.md og går forud for ældre linjer. Gem aldrig persondata (navne, adresser, økonomi) – anonymisér projektkontekst.
-- Er hukommelse ikke aktiv i miljøet: skriv erfaringerne i sagsmappens `erfaringer.md` under dit fag.
+- Er hukommelse ikke aktiv i miljøet: skriv erfaringerne under "Videnslog" i dit fagnotat. Projektlederen samler dem i sagens `erfaringer.md`.
 - Afslut altid et fagnotat med "Videnslog".
 <!-- FÆLLES-PROTOKOL:SLUT -->

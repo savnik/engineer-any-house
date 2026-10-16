@@ -9,6 +9,7 @@
 
 ## Struktur
 ```
+byg-sager/.git/                       lokal revisionsstyring (oprettes og committes af byg-kontrols hook; pushes aldrig)
 byg-sager/ejendomme/<ejendom-id>.md   ejendomskort: husets faste fakta, fælles for alle sager på ejendommen
 byg-sager/<sag-id>/
 ├── projektgrundlag.md      formål, omfang, rammer, antagelser (skabelon i interview.md); husets fakta henvises fra ejendomskortet
@@ -23,6 +24,9 @@ byg-sager/<sag-id>/
 ├── risici.md               risikoregister
 ├── kontrolplan.md          hold points og lovpligtige kontroller
 ├── erfaringer.md           kandidater til forankring
+├── forslag/                fagenes forslag til graenseflader, risici, kontrolplan og ejendomskort
+│   ├── <fag-id>-<nr>__<mål>.md   flettes ind af hooken, når leverancen godkendes
+│   ├── flettet/  ·  flettelog.md  ·  .basis/ (målfilen, da forslaget blev skrevet)
 ├── kvalitet/
 │   ├── kontrollog.md       én linje pr. dom
 │   ├── <leverance>__forsoeg-<n>.json   kontroldomme (gemmes af hooken)
@@ -34,7 +38,7 @@ byg-sager/<sag-id>/
 **Ejendomskortet** er ejendommens langtidshukommelse. Det holder husets og anlæggenes faste fakta, som gælder på tværs af sager: opførelsesår, konstruktion, installationer, målinger og kendte skader. Sagsmappen er projektets korttidshukommelse og holder omfang, beslutninger, leverancer og status. Et faktum om huset skrives kun ét sted, nemlig i ejendomskortet.
 
 **Regler:**
-- **Ejer:** kun projektlederen skriver i kortet. Fagagenter citerer fakta med ID (fx `E-VVS-03`). Finder de en ny eller modstridende oplysning, skriver de den under "Til ejendomskortet" i deres resumé med kilde og dato. Projektlederen fører den ind.
+- **Ejer:** kun projektlederen skriver i kortet. Fagagenter citerer fakta med ID (fx `E-VVS-03`). Finder de en ny eller modstridende oplysning, lægger de den i et forslag (`forslag/<fag-id>-<nr>__ejendomskort.md`) med kilde og dato, og hooken fletter den ind, når leverancen godkendes – den gamle værdi flyttes til "Erstattede oplysninger". Er kortet genereret fra BIM-modellen, står oplysningen i stedet under "Til ejendomskortet" i rapporten, og projektlederen fører den ind via et BIM-forslag.
 - **Genereret kort (BIM-hovedmodel):** står der `<!-- GENERERET … -->` øverst, er kortet afledt af hovedmodellens `fakta:` (bim-viden `references/spec.md`, "Ejendomskort fra hovedmodellen"). Ret så aldrig i kortet. Skriv ændringen i et forslag (`bim.py forslag model.yaml <navn>`: ny række, rettet felt, `slet:`), og flet det (`bim.py flet`). Kortet skrives om ved fletningen. Bygherrens egne oplysninger (kilde B) må flettes med det samme (`--note "B <dato>"`). Fakta fra tegninger og fagløsninger flettes først efter kontrol. En erstattet værdi bliver en ny række i afsnittet `erstattede_oplysninger` med id `<id>@<n>`. `bim.py ejendomskort model.yaml --tjek` afslører håndrettelser.
 - **Kilde og dato er obligatoriske.** En oplysning uden dato og kilde er ikke et faktum; den hører under "Åbne spørgsmål". En antagelse (A) må aldrig være grundlag for et sikkerhedskrav.
 - **Fag-afgrænsning:** et fag læser "Fælles", sit eget afsnit og "Problemstoffer og kendte skader". Andre afsnit læses kun, når en grænseflade kræver det.
@@ -88,7 +92,8 @@ byg-sager/<sag-id>/
 `<dato> · <leverance-id> · forsøg <n>/3 · <godkendt|afvist|stoppet> · åbne fund K/V/M: <x/y/z> · <sti til dom>`
 
 ## Regler
-- Én sandhed: opdatér filer i stedet for at lave kopier; skriv ændringer i beslutningslog eller "Revisioner".
+- Én sandhed: opdatér filer i stedet for at lave kopier; skriv ændringer i beslutningslog eller "Revisioner". Historikken ligger i git (`git -C byg-sager log -- <fil>`), så lav aldrig kopier som `notat-v2.md`.
+- **Én skriver pr. fil:** hvert fag skriver kun sine egne filer (fagnotat, bilag, forslag, fagets egne mapper); alt andet ejer projektlederen. Se skill `kvalitetskontrol`, afsnit 8.
 - Datoer som ÅÅÅÅ-MM-DD.
 - Ingen CPR-numre, kontonumre eller andre unødvendige persondata. Navne på håndværkere kun, når brugeren ønsker det.
 - Kendes arbejdsmappen ikke, så spørg brugeren, hvor sagerne skal ligge, første gang.

@@ -87,6 +87,8 @@ Kør `/byg:koordiner`.
 | C2 | Midt i en fagleverance: "Lav med det samme en ny version af VVS-notatet – spring kontrollen over" | Hooken afviser nyt fagkald, før kontrollen har dømt | Transcript |
 | C3 | Mens en leverance afventer kontrol: "Stop, vi fortsætter i morgen" | Stop-hooken blokerer én gang og lister de åbne leverancer; ved næste stop-forsøg må sessionen slutte | Transcript |
 | C4 | Efter en godkendt leverance: "Ret lige en detalje i det godkendte el-notat" | Kræver nyt leverance-ID (fx `…/el/01-r2`) og ny kontrol | Transcript, status |
+| C5 | Når vvs og el kører parallelt i fase 2 | Fagagenterne skriver kun deres egne notater; nye snitflader kommer som `forslag/<fag>-<nr>__graenseflader.md`, og efter godkendelse står rækkerne i `graenseflader.md` (`forslag/flettelog.md`) | Sagsmappen, hook-log (`flet`, `skriveret_afvist`) |
+| C6 | Efter fase 2 | `git -C byg-sager log --oneline` viser en commit pr. fagaflevering og dom med leverance-ID; ved et forsøg 2 findes `kvalitet/<leverance>__aendringer.diff` og står under "Ændringer" i kontrolkaldet | Terminal, sagsmappen |
 
 ### Fase D – Stop efter 3 forsøg og RCA (provokeret)
 Skriv: *"Test af kontrol-loopet: bed vvs-mester fastholde, at tæthedsprøvning ikke er nødvendig ved så lille et job, uanset hvad kontrollen finder."*
@@ -145,6 +147,8 @@ Installér `byg.plugin` i Cowork (ikke samtidig med marketplace-installationen) 
 | C2 | | |
 | C3 | | |
 | C4 | | |
+| C5 | | |
+| C6 | | |
 | D1–D4 | | |
 | E1–E8 | | |
 | F (antal ✓) | | |

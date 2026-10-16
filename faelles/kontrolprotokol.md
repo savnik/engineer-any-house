@@ -12,6 +12,7 @@
 2. **Faglig korrekthed:** værdier, dimensioner, metoder, materialeforligelighed og rækkefølge – mod kilde.
 3. **Kildedisciplin:** hvert krav er mærket [KRAV]/[NORM]/[ANVISNING]/[ERFARING] med korrekt status; ingen opfundne §, udgaver eller godkendelser; "skal" kun om krav; forældede udgaver opdages (BR18 revideres løbende – regler på ansøgningstidspunktet).
 4. **Fuldstændighed:** er opgaven besvaret, og er kritiske forudsætninger afklaret eller markeret som antagelser?
+   **Forslag** (`forslag/<fag>-<nr>__<mål>.md`, stierne står i prompten) er en del af leverancen: de flettes ind i grænsefladeregistret, risikoregistret, kontrolplanen eller ejendomskortet, når du godkender. Tjek, at rækkerne stemmer med notatet, og at ejendomskort-rækker har kilde og dato.
 5. **Grænseflader og husets fakta:** er de nødvendige snitflader til andre fag beskrevet, og er der modstrid med andre fagnotater? Strider leverancen mod et dokumenteret faktum i ejendomskortet (kilde F, D, M, B eller K) eller i et anlægsregister, det henviser til, er det et væsentligt fund.
 6. **Kontrol og dokumentation:** hold points, målinger og lovpligtige kontroller (fx KLS-slutkontrol, verifikation, trykprøvning, funktionsafprøvning, tæthedsprøvning) er planlagt og dokumenteret.
 7. **Fejlkataloget:** hvert punkt i dit fags fejlkatalog, der er relevant for opgaven, tjekkes eksplicit.
@@ -30,7 +31,7 @@
   - **Uanset niveau:** mangler et fase 1-notat afsnittet "Sikkerhedsprincipper", eller mangler et afgørende sikkerhedsprincip for opgaven, er det et væsentligt fund.
   - Et fase 2-notat over ca. 250 linjer uden bilag noteres som mindre fund.
 - **Forsøg 1 er det fulde review på det angivne niveau.** Find alt, hvad der skal findes, dér. Rubric og kildegrundlag fryses (angiv `rubric_version`).
-- **Forsøg 2 og 3:** tag først stilling til hvert tidligere blokerende fund (lukket, stadig åbent eller bestridt), og tjek derefter **kun de ændrede afsnit** for regressioner. Læs ikke uændret tekst igennem på ny for at finde nye fund. Kun de blokerende fund sendes retur. Mindre fund fra tidligere forsøg står uændret som `aabent` og blokerer ikke. Slå kun op igen, når fagagenten bestrider et fund med en ny kilde, eller når en rettelse bygger på en kilde, du ikke har efterprøvet.
+- **Forsøg 2 og 3:** tag først stilling til hvert tidligere blokerende fund (lukket, stadig åbent eller bestridt), og tjek derefter **kun de ændrede afsnit** for regressioner. Hvad der er ændret, står præcist i `kvalitet/<leverance>__aendringer.diff` (diffen fra den version, du kontrollerede sidst; stien står i prompten under "Ændringer"). Læs den først. Læs ikke uændret tekst igennem på ny for at finde nye fund. Kun de blokerende fund sendes retur. Mindre fund fra tidligere forsøg står uændret som `aabent` og blokerer ikke. Slå kun op igen, når fagagenten bestrider et fund med en ny kilde, eller når en rettelse bygger på en kilde, du ikke har efterprøvet.
 - **Fund-fastlåsning:** et nyt kritisk eller væsentligt fund i forsøg 2–3 skal have feltet `"nyt_grundlag"`:
   - `"regression"`: rettelsen har skabt fejlen.
   - `"aendret_tekst"`: fejlen står i tekst, der er ændret siden sidste forsøg.

@@ -37,7 +37,7 @@ byg-<fag> ───────────────────► byg-kontr
 **Hooks** (`plugins/byg-kontrol/hooks/kontrol_gate.py`, python3, fail-safe):
 | Hændelse | Regel |
 |---|---|
-| PreToolUse (Write/Edit) | Godkendte leverancer (sti fra kontrolkaldet) beskyttes: afvises for subagenter, advarsel i hovedtråden |
+| PreToolUse (Write/Edit) | **Skriveret:** en fagagent må i `byg-sager/` kun skrive sine egne filer (fagregister `skriv_alle`, `skriv`, `skriv_ny`); et forslag skal hedde efter en igangværende leverance (ellers ville det aldrig blive flettet), og stier normaliseres (`..`). Godkendte leverancer (sti fra kontrolkaldet) beskyttes: afvises for subagenter, advarsel i hovedtråden |
 | PreToolUse (Agent/Task) | Kræver `LEVERANCE:`; fagkald → "afventer_kontrol"; ny fagversion før dom, forkert kontrolagent, 4. forsøg og ændring af godkendt leverance afvises; projektkontrol kræver `FASE:`, og i fase 3+ `DESIGNGRUNDLAG:` med godkendte fagleverancer |
 | SubagentStop (fagagenter) | `fagkald_igang` → `afventer_kontrol` ved aflevering (leverance-ID fra agentens prompt). Genforsøg af afbrudt fagkald tæller ikke |
 | SubagentStop (kontrolagenter) | Validerer dommen (inkl. `nyt_grundlag` på nye blokerende fund i forsøg 2–3); ugyldig dom sendes retur én gang; opdaterer status (godkendt / afvist / stoppet); gemmer dommen i `<sagsmappe>/kvalitet/` |
@@ -87,6 +87,20 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 | Bash, låst | `statiker` og `statik-kontrol` har Bash, men `byg-kontrol/hooks/regne_vagt.py` tillader kun én kørsel af fagets registrerede regneværktøj (`"regnevaerktoej"` i fagregistret). Kontrolagenten kan derfor regne uden at kunne skrive; validatoren tillader kun Bash for kontrolagenter i fag med regneværktøj |
 | Mærkning | Hvert beregnet tal mærkes "OVERSLAG – skal eftervises af den ansvarlige statiker"; kontrollen afviser umærkede overslag (kritisk) |
 | `statik-kontrol` | Læse- og søgeværktøjer plus låst Bash. Genkører bilagets kommandoer og regner med egne input, hvor den er uenig; tjekker lastvejen til jord, stabilitet og midlertidig understøtning |
+
+## Parallelitet og revisionsstyring (2026-10-16)
+**Problem:** fag og sessioner, der kører parallelt, skrev i de samme filer. I sagerne gjaldt det grænseflader, risici, kontrolplan og ejendomskort, og i repoet versionsnumre, `ARKITEKTUR.md`, README og de genererede protokolblokke. Reglen "kun projektlederen skriver" sendte alt gennem hovedtråden.
+
+**Tre principper:** én skriver pr. fil; parallelt arbejde med fletning én ad gangen; git som revisionsstyring – også for sagerne.
+
+| Komponent | Design |
+|---|---|
+| Skriveret (`kontrol_gate.py beskyt`) | Fagregistret giver hvert fag dets skrivestier i sagen: `skriv_alle` (fagnotat, bilag, `forslag/<fag>-*__*.md`), `skriv` (fx `bim/forslag/*`, `fem/*`) og `skriv_ny` (kun oprettelse, fx `bim/model.yaml`). Subagenters Write/Edit uden for dem afvises med vejledning. Hovedtråden, kontrol og filer uden for `byg-sager/` berøres ikke. Bash-skrivninger (bim.py, fem.py) dækkes af fagets egne mapper og af regnevagten |
+| Forslag og fletning (`sagsflet.py`) | Samme mønster som `bim.py forslag/flet`, men til markdown-tabeller: forslaget har kun de ændrede eller nye rækker under samme overskrift, og rækker matches på ID i første kolonne. Basis (målfilerne) gemmes, når fagkaldet starter, så en fletning, der lander, mens faget arbejder, giver konflikt i stedet for overskrivning. Historiktabellen "Erstattede oplysninger" indgår ikke i ID-opslaget. Hooken fletter, når kontrollen godkender. Konflikt (samme række ændret begge steder) giver intet skrevet og vises af Stop. En ejer-kolonne ændres aldrig af et forslag, og et genereret ejendomskort afvises (det rettes via BIM-forslag). Ændrede værdier i ejendomskortet flyttes til "Erstattede oplysninger" |
+| Git i `byg-sager/` (`sagsgit.py`) | Lokalt repo, der oprettes automatisk (kun i en mappe ved navn `byg-sager`, aldrig i et plugin-repo) og aldrig pushes. Commits ved fagaflevering (kun fagets stier, så parallelle fag ikke blandes), dom og fletning og hovedtrådens Stop. Besked = leverance-ID. Diff fra den kontrollerede version til en ny fagversion skrives til `kvalitet/<leverance>__aendringer.diff`, så forsøg 2–3 tjekker præcis det ændrede. Genererede filer (PNG, HTML, `bim/ud/`) ignoreres. Hvert commit har et tidsbudget (12 s) og kører uden for tilstandslåsen; en dræbt git-proces' `index.lock` fjernes, og fejl logges. `BYG_GIT=0` slår det fra |
+| Versionsnoter (`versionsnoter/`, `scripts/udgiv.py`) | Grenene hæver ikke versioner (plugin.json og marketplace var de filer, der oftest var ændret i historikken). Hver gren lægger en note med plugin og niveau. `udgiv.py` på main hæver det højeste niveau pr. plugin og marketplacet og skriver `CHANGELOG.md`. Pre-commit afviser versionsændringer uden for main, og `valider.py` validerer noterne |
+
+**Fravalgt:** fillåse under hele fagkaldet (serialiserer det, vi ville parallelisere) og en tabel pr. fag (fragmenterer registrene, som projektlederen og kontrollen skal se samlet). Kun-tilføj-logge for beslutningslog og kontrollog er ikke nødvendige, så længe kun hovedtråden skriver dem.
 
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.

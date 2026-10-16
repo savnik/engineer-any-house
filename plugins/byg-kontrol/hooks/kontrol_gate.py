@@ -5,6 +5,7 @@ Fra hooks/hooks.json:  python3 kontrol_gate.py pretool | beskyt | subagentstop |
                        (hook-input på stdin)
 Manuelt:               python3 kontrol_gate.py status
                        python3 kontrol_gate.py nulstil <leverance-id>
+                       python3 kontrol_gate.py flet <sagsmappe>/forslag/<fag>-<nr>__<mål>.md [--proev] [--tving]
                        (uden CLAUDE_PLUGIN_DATA findes pluginets datamappe under ~/.claude/plugins/data/)
 
 Regler
@@ -47,6 +48,14 @@ Regler
   blokerende fund, ulogførte brugerbeslutninger, næste skridt). SessionStart med source "compact" genindlæser
   sagens status.md (højst STATUS_MAKS_TEGN tegn) og sessionens åbne leverancer fra tilstanden, så tråden
   fortsætter som efter /byg:status. Sagen findes via sessionens leverancer, ellers sagsmappen i cwd.
+- Én skriver pr. fil (fagregister: "skriv_alle", "skriv", "skriv_ny"): i byg-sager/ må en fagagent kun skrive
+  sine egne filer – fagnotater/<fag>*.md, bilag/<fag>/, forslag/<fag>-<nr>__<mål>.md og fagets egne mapper (bim/forslag,
+  fem/ …). Alt andet i sagsmappen og ejendomskortet ejes af projektlederen; Write/Edit afvises for subagenter.
+- Forslag (sagsflet.py): fagagentens rækker til graenseflader/risici/kontrolplan/ejendomskort. Basis (målfilerne) gemmes, når
+  fagkaldet starter; forslaget skal hedde efter en igangværende leverance og flettes ind, når leverancen godkendes. Konflikter vises af Stop-hooken.
+- Revisionsstyring (sagsgit.py): byg-sager/ er et lokalt git-repo. Hooken committer fagaflevering (fagets stier),
+  dom og fletning (kvalitet/, forslag/ og målfiler) og hovedtrådens ændringer ved Stop. Ved en ny fagversion efter en
+  dom skrives diffen siden den kontrollerede version til kvalitet/<leverance>__aendringer.diff (forsøg 2–3 og rettelser).
 Fail-safe: uventede fejl blokerer aldrig – de logges i <data>/kontrol/log.jsonl.
 """
 import json
@@ -56,8 +65,13 @@ import re
 import sys
 import time
 import traceback
+from fnmatch import fnmatch
 
 HER = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(HER))
+import sagsflet  # noqa: E402
+import sagsgit  # noqa: E402
+
 REG = json.loads((HER / "fagregister.json").read_text(encoding="utf-8"))
 MAKS = int(REG.get("maks_forsoeg", 3))
 MAKS_RUNDER = int(REG.get("maks_runder", 3))
@@ -201,6 +215,37 @@ def sag_af(lev: str) -> str:
     return lev.split("/", 1)[0]
 
 
+def skrivemoenstre(fag: str) -> list:
+    v = REG["fag"].get(fag, {})
+    return [m.format(fag=fag) for m in REG.get("skriv_alle", [])] + list(v.get("skriv", []))
+
+
+def git_moenstre(sag: str, fag: str) -> list:
+    """Fagets filer i sagen som git-glob (fnmatch' '*' dækker også undermapper, git-globs '**' gør): skrivestierne
+    plus det, faget ændrer med sit værktøj via Bash ("skriv_ny", "git_ekstra", fx BIM-hovedmodellen)."""
+    v = REG["fag"].get(fag, {})
+    alle = skrivemoenstre(fag) + list(v.get("skriv_ny", [])) + list(v.get("git_ekstra", []))
+    return [f"{sag}/" + (m[:-1] + "**" if m.endswith("/*") else m) for m in alle]
+
+
+def find_sagsmappe(inp: dict, e: dict, lev: str):
+    sm = sagsmappe_sti(inp, e or {})
+    if sm:
+        return sm
+    p = pathlib.Path(str(inp.get("cwd") or os.getcwd())) / "byg-sager" / sag_af(lev)
+    return p if p.is_dir() else None
+
+
+def git_commit(d: pathlib.Path, sm, besked: str, stier=None):
+    """Commit i sagens byg-sager-repo; stier er relative til byg-sager/. Fejl logges og blokerer aldrig."""
+    try:
+        rod = sagsgit.rod_for(sm) if sm else None
+        return sagsgit.commit(rod, besked, stier) if rod else None
+    except Exception:
+        log(d, haendelse="git_fejl", fejl=traceback.format_exc()[-400:])
+        return None
+
+
 def g2_mangler(s: dict, sag: str, ids: list) -> str | None:
     g2 = (s.get("gates") or {}).get(sag, {}).get("G2")
     if not g2:
@@ -315,6 +360,12 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             e.update(status="fagkald_igang", session_id=sid, opdateret=nu())
             gem(d, s)
             log(d, haendelse="fagkald", leverance=lev, runde=runde(e), forsoeg=e["forsoeg"], agent=st)
+            try:
+                sm = find_sagsmappe(inp, e, lev)
+                if sm:
+                    sagsflet.gem_basis_for_leverance(sm, lev)
+            except Exception:
+                log(d, haendelse="basis_fejl", leverance=lev, fejl=traceback.format_exc()[-400:])
             return
         # kontrolkald
         if fag == "projekt":
@@ -378,7 +429,7 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             if not sti.is_file():
                 return afvis_kald(f"Leverancen findes ikke på disken: {sti}. Fagagenten skal skrive notatet, før det kan "
                                   "kontrolleres – tjek stien, eller send leverancen retur til fagagenten.")
-            e["sti"] = str(sti)
+            e["sti"] = os.path.normpath(str(sti))
         e.update(status="under_kontrol", session_id=sid, opdateret=nu())
         gem(d, s)
         log(d, haendelse="kontrolkald", leverance=lev, runde=runde(e), forsoeg=e.get("forsoeg"), agent=st, type=e.get("type"))
@@ -533,12 +584,66 @@ def fagaflevering(inp: dict, d: pathlib.Path, fag: str, at: str) -> None:
             if len(kandidater) != 1:
                 log(d, haendelse="fagaflevering_uklar", agent=at, kandidater=kandidater)
                 return
+        afleveret = []
         for lev in kandidater:
             e = s["leverancer"].get(lev)
             if e and e.get("fag") == fag and e.get("status") == "fagkald_igang":
                 e.update(status="afventer_kontrol", opdateret=nu())
                 gem(d, s)
                 log(d, haendelse="fagaflevering", leverance=lev, forsoeg=e.get("forsoeg"), agent=at)
+                afleveret.append((lev, find_sagsmappe(inp, e, lev), f"runde {runde(e)}, forsøg {e.get('forsoeg')}"))
+    # git uden for tilstandslåsen, så parallelle hooks ikke venter på den
+    for lev, sm, hvad in afleveret:
+        sha = git_commit(d, sm, f"{lev}: fagaflevering ({hvad})", git_moenstre(sm.name, fag)) if sm else None
+        if not sha:
+            continue
+        with Laas(d):
+            s = indlaes(d)
+            e = s["leverancer"].get(lev)
+            if not e:
+                continue
+            e["fag_sha"] = sha
+            if e.get("kontrolleret_sha"):
+                skriv_aendringer(d, sm, lev, e, fag)
+            gem(d, s)
+
+
+def skriv_aendringer(d: pathlib.Path, sm: pathlib.Path, lev: str, e: dict, fag: str) -> None:
+    """Diff fra den senest kontrollerede fagversion til den nye – grundlaget for kontrollens forsøg 2–3."""
+    try:
+        tekst = sagsgit.diff(sagsgit.rod_for(sm), e["kontrolleret_sha"], e["fag_sha"], git_moenstre(sm.name, fag))
+        f = sm / "kvalitet" / f"{sikkert(lev)}__aendringer.diff"
+        if tekst:
+            f.parent.mkdir(exist_ok=True)
+            f.write_text(tekst, encoding="utf-8")
+            e["aendringer"] = str(f)
+        elif f.exists():
+            f.unlink()
+            e.pop("aendringer", None)
+    except Exception:
+        log(d, haendelse="diff_fejl", leverance=lev, fejl=traceback.format_exc()[-400:])
+
+
+def flet_forslag(inp: dict, d: pathlib.Path, e: dict, lev: str) -> list:
+    """Godkendt fagleverance: flet dens forslag ind i de fælles sagsfiler. Returnerer de ændrede målfiler."""
+    sm = find_sagsmappe(inp, e, lev)
+    if not sm:
+        return []
+    maal = []
+    for f in sagsflet.leverancens_forslag(sm, lev):
+        try:
+            r = sagsflet.flet(f, sm, lev)
+        except Exception:
+            log(d, haendelse="flet_fejl", leverance=lev, forslag=f.name, fejl=traceback.format_exc()[-400:])
+            continue
+        log(d, haendelse="flet", leverance=lev, forslag=f.name, ok=r["ok"], besked=r["besked"])
+        if r["ok"]:
+            maal.append(r["maal"])
+        else:
+            e.setdefault("flet_konflikter", {})[str(f)] = r["besked"]
+    if not e.get("flet_konflikter"):
+        sagsflet.ryd_basis(sm, lev)
+    return maal
 
 
 def hjaelperkald(d, s, e, lev, fag, st, sid) -> None:
@@ -647,6 +752,9 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
             e["status"] = "stoppet" if int(e.get("forsoeg", 1)) >= MAKS else "afvist"
         if dom.get("sagsmappe"):
             e["sagsmappe"] = dom.get("sagsmappe")
+        if e.get("fag_sha"):
+            e["kontrolleret_sha"] = e["fag_sha"]
+        flettede = flet_forslag(inp, d, e, lev) if e["status"] == "godkendt" and e.get("type") == "fag" else []
         e["opdateret"] = nu()
         gem(d, s)
     log(d, haendelse="dom", leverance=lev, dom=dom["dom"], status=e["status"], runde=runde(e), forsoeg=e.get("forsoeg"))
@@ -660,6 +768,17 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
                 json.dumps(dom, ensure_ascii=False, indent=2), encoding="utf-8")
     except Exception:
         log(d, haendelse="domfil_fejl", fejl=traceback.format_exc()[-400:])
+    sm = find_sagsmappe(inp, e, lev)
+    rod = sagsgit.rod_for(sm) if sm else None
+    if rod:
+        stier = [f"{sm.name}/kvalitet/**", f"{sm.name}/forslag/**"]
+        for m in flettede:
+            try:
+                stier.append(pathlib.Path(m).resolve().relative_to(rod.resolve()).as_posix())
+            except ValueError:
+                pass
+        git_commit(d, sm, f"{lev}: dom {dom['dom']} (runde {runde(e)}, forsøg {e.get('forsoeg')})"
+                   + (f", {len(flettede)} forslag flettet" if flettede else ""), stier)
 
 
 # ---------- Stop ----------
@@ -711,14 +830,61 @@ def alder_sek(e: dict) -> float:
         return 0
 
 
+def skriveret(inp: dict, fil: str, s: dict):
+    """Én skriver pr. fil: en fagagent må i byg-sager/ kun skrive sine egne filer. Grund til afvisning eller None."""
+    _, base = del_navn(str(inp.get("agent_type") or ""))
+    art, fag = klassificer(base)
+    if art != "fag":
+        return None
+    dele = pathlib.Path(fil).parts
+    if "byg-sager" not in dele:
+        return None
+    i = len(dele) - 1 - dele[::-1].index("byg-sager")
+    rest = dele[i + 1:]
+    tilladt = skrivemoenstre(fag)
+    vejledning = (f"Du må kun skrive dine egne filer i sagsmappen: {', '.join(tilladt)}. Skal en fælles fil ændres "
+                  f"(graenseflader.md, risici.md, kontrolplan.md, ejendomskortet), så skriv et forslag: "
+                  f"forslag/{fag}-<nr>__<mål>.md med de nye eller ændrede tabelrækker under samme ##-overskrift som i "
+                  f"målfilen (rækker matches på ID i første kolonne). Det flettes ind, når leverancen er godkendt. Andet "
+                  f"(projektgrundlag, beslutninger, status) beskriver du i notatet og rapporten – projektlederen skriver det.")
+    if len(rest) < 2 or rest[0] == "ejendomme":
+        return f"{fil} ejes af projektlederen (én skriver pr. fil). " + vejledning
+    rel = "/".join(rest[1:])
+    sm = pathlib.Path(*dele[:i + 2])
+    if ".." in rest:
+        return f"{fil}: stier med '..' er ikke tilladt i sagsmappen. " + vejledning
+    if any(fnmatch(rel, m) for m in tilladt):
+        if rel.startswith("forslag/"):
+            if sagsflet.maal_for(pathlib.Path(fil), sm) is None:
+                return (f"{rel}: ukendt mål. Forslag hedder forslag/{fag}-<nr>__<mål>.md med mål "
+                        f"{', '.join(sagsflet.MAAL)} (ejendomskortet kræver '**Ejendom:** <sti>' i projektgrundlaget).")
+            # Forslaget skal høre til en igangværende leverance, ellers bliver det aldrig flettet
+            aabne = [lev for lev, e in s["leverancer"].items() if e.get("fag") == fag and sag_af(lev) == sm.name
+                     and e.get("status") in ("fagkald_igang", "afventer_kontrol", "sammenlignet")]
+            praefiks = pathlib.Path(fil).name.split("__", 1)[0]
+            if praefiks not in {sagsflet.forslag_praefiks(lev) for lev in aabne}:
+                navne = ", ".join(f"forslag/{sagsflet.forslag_praefiks(lev)}__<mål>.md" for lev in aabne) or "ingen"
+                return (f"{rel} hører ikke til en igangværende {fag}-leverance i sagen, så det ville aldrig blive "
+                        f"flettet. Brug leverancens navn: {navne}.")
+            sagsflet.gem_basis(pathlib.Path(fil), sm)
+        return None
+    if any(fnmatch(rel, m) for m in REG["fag"][fag].get("skriv_ny", [])) and not pathlib.Path(fil).exists():
+        return None
+    return f"{rel} i sagen ejes ikke af {fag} (én skriver pr. fil). " + vejledning
+
+
 def beskyt(inp: dict, d: pathlib.Path) -> None:
-    """PreToolUse Write/Edit: beskyt filer, der hører til godkendte leverancer."""
+    """PreToolUse Write/Edit: skriveret pr. fag, og beskyt filer, der hører til godkendte leverancer."""
     ti = inp.get("tool_input") or {}
     fil = ti.get("file_path") or ti.get("notebook_path")
     if not fil:
         return
-    fil = str(pathlib.Path(str(fil)).expanduser())
+    fil = os.path.normpath(str(pathlib.Path(str(fil)).expanduser()))  # 'a/../b' må ikke snyde skriveretten
     s = indlaes(d)
+    grund = skriveret(inp, fil, s)
+    if grund:
+        log(d, haendelse="skriveret_afvist", fil=fil, agent=inp.get("agent_type"))
+        return afvis_kald(grund)
     for lev, e in s["leverancer"].items():
         if e.get("status") == "godkendt" and e.get("sti") and e["sti"] == fil:
             grund = (f"{fil} er leverancen {lev}, som er godkendt af kvalitetskontrollen. Ret den ikke direkte: "
@@ -896,7 +1062,21 @@ def brugerprompt(inp: dict, d: pathlib.Path) -> None:
     print(json.dumps(ud, ensure_ascii=False))
 
 
+def commit_hovedtraad(inp: dict, d: pathlib.Path, s: dict) -> None:
+    """Hovedtrådens (projektlederens) ændringer i sessionens sager committes ved hver Stop."""
+    roedder = {}
+    for p in sessionens_sager(inp, s).values():
+        rod = sagsgit.rod_for(p) if p else None
+        if rod:
+            roedder[str(rod)] = p
+    for p in roedder.values():
+        git_commit(d, p, f"hovedtråd: ændringer (session {str(inp.get('session_id') or '')[:8]})")
+
+
 def stop(inp: dict, d: pathlib.Path) -> None:
+    with Laas(d):
+        s = indlaes(d)
+    commit_hovedtraad(inp, d, s)  # uden for tilstandslåsen; sagsgit har sit eget tidsbudget
     if inp.get("stop_hook_active"):
         return
     sid = str(inp.get("session_id") or "")
@@ -906,6 +1086,14 @@ def stop(inp: dict, d: pathlib.Path) -> None:
         for lev, e in s["leverancer"].items():
             if e.get("session_id") != sid:
                 continue
+            for sti, besked in list((e.get("flet_konflikter") or {}).items()):
+                if not pathlib.Path(sti).exists():
+                    del e["flet_konflikter"][sti]
+                    aendret = True
+                    continue
+                punkter.append(f"{lev}: {besked}. Du ejer målfilen: afgør konflikten (ret målfilen eller forslaget), og "
+                               f"flet med 'python3 {HER / 'kontrol_gate.py'} flet {sti}' (--tving tilsidesætter konflikten) "
+                               f"eller i hånden – flyt så forslaget til forslag/flettet/, eller slet det, hvis det ikke skal bruges.")
             status, typ = e.get("status"), e.get("type")
             if typ == "ekstern":
                 if status == "under_kontrol":
@@ -964,8 +1152,25 @@ def manuel(cmd: str, args: list) -> int:
     return 1
 
 
+def manuel_flet(f: pathlib.Path, args: list) -> int:
+    """Projektlederen (eller brugeren) fletter et forslag i hånden, fx efter en konflikt."""
+    if not f.is_file() or f.parent.name != "forslag":
+        print(f"Ikke et forslag: {f} (forventet <sagsmappe>/forslag/<fag>-<nr>__<mål>.md)")
+        return 1
+    sm = f.parent.parent
+    r = sagsflet.flet(f, sm, proev="--proev" in args, tving="--tving" in args)
+    print(r["besked"])
+    if r["ok"] and "--proev" not in args:
+        rod = sagsgit.rod_for(sm)
+        if rod:
+            sagsgit.commit(rod, f"flet {f.name} (manuelt)")
+    return 0 if r["ok"] else 1
+
+
 def main() -> int:
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
+    if cmd == "flet" and len(sys.argv) > 2:
+        return manuel_flet(pathlib.Path(sys.argv[2]).expanduser().resolve(), sys.argv[3:])
     if cmd in ("status", "nulstil", "hjaelp"):
         return manuel(cmd, sys.argv[2:])
     try:

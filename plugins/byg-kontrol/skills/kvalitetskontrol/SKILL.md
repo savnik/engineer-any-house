@@ -38,9 +38,9 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 - Review af eksternt materiale: `LEVERANCE: ekstern/<emne>` (ingen loop – dommen er rådgivende).
 
 ## 2. Loopet
-1. **Fagkald (forsøg n):** LEVERANCE, opgaven, sagsmappen og stien til notatet (`<sagsmappe>/fagnotater/<fag-id>.md`).
+1. **Fagkald (forsøg n):** LEVERANCE, opgaven, sagsmappen og stien til notatet (`<sagsmappe>/fagnotater/<fag-id>.md`). Fagagenten skriver kun sine egne filer; ændringer i grænseflader, risici, kontrolplan og ejendomskort kommer som forslag (`<sagsmappe>/forslag/<fag-id>-<nr>__<mål>.md`) og står under "Forslag" i rapporten.
 2. **Kontrolkald:** brug skabelonen i afsnit 3. Giv kun leverancen, projektgrundlaget, ejendomskortet, relevante andre fagnotater og tidligere domme – aldrig fagagentens ræsonnement eller dit eget forsvar for løsningen.
-3. **Dom:** hooken gemmer JSON-dommen i `<sagsmappe>/kvalitet/`. Tilføj en linje i `<sagsmappe>/kvalitet/kontrollog.md`: dato · leverance · forsøg · dom · åbne fund (kritisk/væsentlig/mindre).
+3. **Dom:** hooken gemmer JSON-dommen i `<sagsmappe>/kvalitet/`, og ved **godkendt** fletter den leverancens forslag ind i målfilerne (afsnit 8). Tilføj en linje i `<sagsmappe>/kvalitet/kontrollog.md`: dato · leverance · forsøg · dom · åbne fund (kritisk/væsentlig/mindre).
 4. **Godkendt:** leverancen må bruges. **Afvist:** send **kun de blokerende fund** (kritisk og væsentlig) ordret retur til fagagenten (afsnit 4) som forsøg n+1. Mindre fund sendes ikke retur. De står i dommen og tages kun med, hvis notatet alligevel revideres senere. En retur må ikke indeholde nye ønsker eller opgaver; de bliver en ny leverance med nyt ID.
 5. **Fund der kræver brugeren** ("afklar med bruger" eller `eskaler: true`): stop loopet og spørg brugeren (AskUserQuestion, hvis tilgængelig). Svaret skrives ind i projektgrundlaget, derefter fortsætter loopet.
    **Spørgsmål i `afklar_med_bruger`** blokerer ikke: loopet fortsætter. Saml dem fra sagens domme, og stil dem samlet til brugeren ved næste naturlige stop (fx ved gaten), de vigtigste først. Svarene skrives ind i projektgrundlaget.
@@ -49,7 +49,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
    2. **Root cause-analyse:** skriv RCA'en efter `${CLAUDE_PLUGIN_ROOT}/skills/kontrol-viden/references/rca-skabelon.md` til `<sagsmappe>/kvalitet/RCA-<leverance-id med / erstattet af __>.md`. Fra runde 2 får filnavnet `__runde-<n>`. Analysen undersøger, **hvorfor fagagenten ikke kunne levere korrekt i første forsøg**, med **5 Why-metoden**: mindst én kæde med fem hvorfor-niveauer, evidens til hvert svar og en handlingsbar grundårsag (skabelonens afsnit 3).
    3. **Forbedr fagagenten:**
       - Skriv læringen i agentens egen hukommelse (`~/.claude/agent-memory/<plugin>-<agent>/`, med en linje i dens `MEMORY.md`), så den virker i næste runde.
-      - Skriv den samtidig generaliseret i byg-eksperter-repoet (agentprompt eller videnbase), med commit og versionsløft.
+      - Skriv den samtidig generaliseret i byg-eksperter-repoet (agentprompt eller videnbase), med commit og en versionsnote (`versionsnoter/`, se README).
       - Skriv `Forbedring implementeret: ja` i RCA'en.
    4. **Ny runde:** send et nyt fagkald under **samme leverance-ID**. Hooken starter runde n+1 med forsøg 1. Prompten indeholder RCA-stien, den oprindelige opgave og de seneste fund, og fagagenten løser opgaven forfra.
    5. **Efter runde 3:** eskalér til brugeren med et konkret beslutningsbehov. Fortsæt kun efter brugerens beslutning og under et nyt leverance-ID.
@@ -70,6 +70,8 @@ FASE: <0-4> · KONTROLNIVEAU: <let|fuld>
 DESIGNGRUNDLAG: <kun for projektleverancer i fase 3+: godkendte fagleverance-ID'er>
 Opgave: <den oprindelige opgave til fagagenten, ordret>
 Leverance: <sti til fagnotat>
+Forslag: <stier fra fagagentens rapport, eller "ingen">
+Ændringer: <forsøg 2–3 og rettelser: <sagsmappe>/kvalitet/<leverance-id med / erstattet af __>__aendringer.diff, ellers "ingen">
 Projektgrundlag: <sti>
 Ejendomskort: <sti eller "ingen">
 Relevante andre fagnotater: <stier eller "ingen">
@@ -120,4 +122,22 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 - En ny runde afvises, indtil RCA-filen for runden findes med en 5 Why-kæde (mindst fem nummererede "Hvorfor"-linjer og en "Grundårsag") og linjen `Forbedring implementeret: ja`. En 4. runde afvises altid.
 - Ugyldig dom (fx blokerende fund uden kilde eller "godkendt" med åbne fund) sendes retur til kontrolagenten.
 - Hovedtråden kan ikke afslutte, mens sessionens leverancer afventer kontrol, er afvist eller mangler RCA (én påmindelse pr. stop).
+- **Én skriver pr. fil:** en fagagents Write/Edit i `byg-sager/` uden for dens egne filer afvises (afsnit 8).
+- Hovedtråden kan heller ikke afslutte, mens et godkendt forslag ikke kunne flettes (konflikt), før konflikten er løst.
 - Status for alle leverancer: `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py" status`.
+
+## 8. Én skriver pr. fil, forslag og revisionsstyring
+Fag- og kontrolkald kører parallelt (afsnit 2, punkt 7). For at de ikke skriver oven i hinanden, har hver fil i sagen én ejer:
+
+| Fil | Ejer | Andre bidrager med |
+|---|---|---|
+| `fagnotater/<fag-id>.md`, `fagnotater/<fag-id>-*.md`, `bilag/<fag-id>/`, fagets egne mapper (`bim/forslag/`, `bim/kilder/`, `fem/`) | faget | rapporten |
+| `graenseflader.md`, `risici.md`, `kontrolplan.md`, ejendomskortet | projektlederen | forslag `forslag/<fag-id>-<nr>__<mål>.md` |
+| alt andet (projektgrundlag, beslutningslog, ændringer, status, budget, tidsplan, `kvalitet/kontrollog.md`) | projektlederen | rapporten |
+| `bim/model.yaml` (BIM-hovedmodellen) | `bim.py flet` | BIM-forslag (skill `tegningsimport`) |
+
+- **Forslag flettes ved godkendelse.** Hooken gemmer målfilerne som basis, når fagkaldet starter, og fletter det ind, når kontrollen godkender leverancen: rækker med samme ID erstattes, nye ID'er tilføjes sidst i afsnittets tabel, og en ændret værdi i ejendomskortet flyttes til "Erstattede oplysninger". Forslaget flyttes til `forslag/flettet/` og logges i `forslag/flettelog.md`. Et afvist forslag bliver liggende.
+- **Konflikt:** har du ændret de samme rækker, siden forslaget blev skrevet, flettes intet, og Stop-hooken viser konflikten. Du ejer målfilen: ret den selv (eller forslaget), og flet med `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py" flet <forslag> [--proev] [--tving]` eller i hånden. Flyt så forslaget til `forslag/flettet/`, eller slet det.
+- **Parallelle returer:** returer til fag, der berører samme rækker, sendes stadig i rækkefølge (afsnit 2, punkt 9b). Forslag gør det kun sikkert at køre fag parallelt, der skriver forskellige rækker.
+- **Revisionsstyring:** `byg-sager/` er et lokalt git-repo, som hooken opretter og committer til: hver fagaflevering (kun fagets egne filer), hver dom og fletning og dine egne ændringer, når din tur slutter. Beskeden starter med leverance-ID'et, så `git -C byg-sager log --oneline -- <fil>` viser, hvem der ændrede hvad. Repoet pushes aldrig (sagerne er brugerdata). Slå det fra med miljøvariablen `BYG_GIT=0`.
+- **Ændringer til kontrollen:** når fagagenten afleverer en ny version efter en dom, skriver hooken diffen fra den kontrollerede version til `kvalitet/<leverance-id med / erstattet af __>__aendringer.diff`. Giv stien under "Ændringer" i kontrolkaldet, så forsøg 2–3 kun ser på det, der faktisk er ændret.

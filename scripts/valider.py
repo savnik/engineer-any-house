@@ -3,7 +3,8 @@
 
 Brug: python3 scripts/valider.py [--claude]   (--claude kører også `claude plugin validate` på alle plugins og marketplacet)
 Tjekker: JSON, marketplace og afhængigheder, frontmatter og unikke navne (også til den samlede pakke), værktøjer for
-fag- og kontrolagenter, fagregister, ${CLAUDE_PLUGIN_ROOT}-stier, evals, protokoller i synk, ingen bin/, hook-tests og dataseparation.
+fag- og kontrolagenter, fagregister, ${CLAUDE_PLUGIN_ROOT}-stier, evals, protokoller i synk, versionsnoter, ingen bin/,
+hook-tests og dataseparation.
 """
 import json
 import pathlib
@@ -192,9 +193,15 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROD / "scripts" / "sync_protokol.py"), "--check"], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Protokoller ude af synk – kør scripts/sync_protokol.py\n" + r.stdout)
+    r = subprocess.run([sys.executable, str(ROD / "scripts" / "udgiv.py"), "--check"], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Versionsnoter er ugyldige (versionsnoter/README.md):\n" + r.stdout)
     r = subprocess.run([sys.executable, str(ROD / "tests" / "test_kontrol_gate.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Hook-tests fejlede:\n" + r.stdout[-2000:])
+    r = subprocess.run([sys.executable, str(ROD / "tests" / "test_sagsflet.py")], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Tests af skriveret, forslag og sagernes git fejlede:\n" + r.stdout[-2000:])
     r = subprocess.run([sys.executable, str(ROD / "tests" / "test_regne_vagt.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Tests af regnevagten fejlede:\n" + r.stdout[-2000:])
