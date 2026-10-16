@@ -1,0 +1,42 @@
+# fem.yaml – eksempel: stålbjælke over ny åbning i bærende væg (plan model i x-z-planen)
+# Enheder: m, kN, kNm; profiler og tværsnit i mm. z er lodret op. Alle y = 0 → plan ramme.
+navn: bjaelke-aabning-stue
+beskrivelse: HEB 160 over 4,2 m åbning, vederlag på murværk i begge ender. Bjælkelag og tagstolpe hviler på bjælken.
+
+knuder:                     # navn: [x, z]  (eller [x, y, z] for en 3D-model)
+  A: [0.0, 0.0]
+  B: [4.2, 0.0]
+
+elementer:
+  B1:
+    fra: A
+    til: B
+    profil: HEB160          # IPE/HEA/HEB fra overslagsværktøjets tabel, 'rekt 45x195' (b x h, mm) eller eget tværsnit
+    materiale: S235         # C18, C24, GL24h, GL30c, GL32h, S235, S355, C20/25, C25/30, C30/37 eller eget
+    # led: [start, slut]    # momentfrit led i elementets ender (fx spær, stolper)
+    # udkragning: true      # nedbøjning måles absolut (ikke i forhold til korden), L/δ regnes med 2L
+    # graense: 400          # eget nedbøjningskrav L/400 for elementet (ellers kombinationens)
+
+understoetninger:           # indspaendt, charnier, rulle (kun lodret), rulle-x, rulle-y eller fx [x, z, ry]
+  A: charnier
+  B: rulle
+
+lasttilfaelde:
+  G:                        # egenlast
+    egenvaegt: true         # elementernes egen vægt (A · rho)
+    laster:
+      - {element: B1, linjelast: 6.4, retning: ned}          # bjælkelag 3,2 kN/m2 x 2,0 m opland (statik.py last)
+      - {element: B1, punktlast: 8.5, x: 1.6, retning: ned}  # tagstolpe, x m fra elementets start
+  Q:                        # nyttelast, kategori A
+    laster:
+      - {element: B1, linjelast: 3.0, retning: ned}          # 1,5 kN/m2 x 2,0 m
+  # Øvrige lasttyper: trapezlast linjelast: [2.0, 4.0] med fra/til (m fra start), knudelast
+  # {knude: A, punktlast: 5, retning: x} og knudemoment {knude: A, moment: 3, akse: y}.
+  # retning: ned (tyngde, positiv nedad) eller x, y, z (globalt, med fortegn). Linjelast er pr. m element.
+
+kombinationer:              # EN 1990 DK NA:2024 tabel A1.2(B+C), KFI = 1,0 (CC2) – se regnevaerktoej.md
+  STR-6.10a: {type: brud, faktorer: {G: 1.2}}
+  STR-6.10b: {type: brud, faktorer: {G: 1.0, Q: 1.5}}
+  SLS-karakteristisk: {type: anvendelse, faktorer: {G: 1.0, Q: 1.0}, graense: 400}
+
+# analyse: andenorden       # P-Δ for rammer og søjler med stor normalkraft (standard: førsteorden)

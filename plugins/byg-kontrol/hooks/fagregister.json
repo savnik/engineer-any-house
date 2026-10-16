@@ -7,7 +7,8 @@
     "maler": {"agent": "malermester", "kontrol": "maler-kontrol"},
     "toemrer": {"agent": "toemrermester", "kontrol": "toemrer-kontrol"},
     "bim": {"agent": "bim-modelloer", "kontrol": "bim-kontrol", "hjaelpere": ["bim-sammenligner"]},
-    "statik": {"agent": "statiker", "kontrol": "statik-kontrol", "regnevaerktoej": "statik.py"}
+    "statik": {"agent": "statiker", "kontrol": "statik-kontrol", "regnevaerktoej": ["statik.py", "fem.py"],
+               "kontrol_skrivefri": {"fem.py": {"regn": "--ingen-filer", "test": "", "skabelon": ""}}}
   },
   "projekt_kontrol": "projekt-kontrol",
   "kontrol_plugin": "byg-kontrol",

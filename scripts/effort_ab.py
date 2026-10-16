@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """A/B-test af agenternes effort: kører et plugins evals med agenternes nuværende effort (A) og med en anden (B).
 
-Brug:  python3 scripts/effort_ab.py <plugin> [<plugin> …] [--effort medium] [--runs 3] [--max-cost-usd 20] [--ud <mappe>]
+Brug:  python3 scripts/effort_ab.py <plugin> [<plugin> …] [--effort medium] [--runs 3] [--max-cost-usd 20] [-j 3] [--ud <mappe>]
        plugin: sti eller navn under plugins/ (fx byg-vvs). Standard for --ud: en ny midlertidig mappe.
 
-B-armen er en kopi af pluginet, hvor `effort:` i agents/*.md er skiftet. Begge arme køres med
+Begge arme er kopier af pluginet. Casenes prompt får en linje, der beder om fagagenten, så det er agenten,
+der svarer (ellers svarer hovedmodellen ofte selv, og effort måles ikke). I B-armen er `effort:` i agents/*.md skiftet. Begge arme køres med
 `claude plugin eval --ablation none`, og resultatet gemmes som <ud>/<plugin>-A.json og -B.json.
 Til sidst vises score og forbrug side om side. Beslutningsregel: B (lavere effort) vælges kun, hvis scoren
 holder (højst 0,05 lavere pr. case), og fagagenternes afvisningsrate i rigtige sager ikke stiger
@@ -52,10 +53,10 @@ def resume(sti: pathlib.Path) -> dict:
             "tokens": max(tokens) if tokens else None}
 
 
-def koer(plugin: pathlib.Path, ud: pathlib.Path, navn: str, runs: int, loft: float) -> pathlib.Path:
+def koer(plugin: pathlib.Path, ud: pathlib.Path, navn: str, runs: int, loft: float, j: int) -> pathlib.Path:
     res = ud / f"{navn}.json"
     cmd = ["claude", "plugin", "eval", str(plugin), "--ablation", "none", "--runs", str(runs), "--no-publish",
-           "--trust-plugin", "--json", str(res), "--report", str(ud / f"{navn}.html"), "--max-cost-usd", str(loft)]
+           "--trust-plugin", "--json", str(res), "--report", str(ud / f"{navn}.html"), "--max-cost-usd", str(loft), "-j", str(j)]
     print("→", " ".join(cmd), flush=True)
     subprocess.run(cmd, check=False)
     return res
@@ -73,6 +74,7 @@ def main() -> int:
     effort = opt("--effort", "medium")
     runs = int(opt("--runs", "3"))
     loft = float(opt("--max-cost-usd", "20"))
+    j = int(opt("-j", "3"))
     ud = pathlib.Path(opt("--ud", "") or tempfile.mkdtemp(prefix="effort-ab-"))
     ud.mkdir(parents=True, exist_ok=True)
     if not args:
@@ -84,13 +86,28 @@ def main() -> int:
         if not (plugin / "agents").is_dir():
             print(f"Ingen agents/ i {plugin}")
             return 1
-        kopi = ud / f"{plugin.name}-effort-{effort}"
-        shutil.rmtree(kopi, ignore_errors=True)
-        shutil.copytree(plugin, kopi)
-        for f in (kopi / "agents").glob("*.md"):
-            f.write_text(EFFORT_RE.sub(f"effort: {effort}", f.read_text(encoding="utf-8"), count=1), encoding="utf-8")
-        a_res = koer(plugin, ud, f"{plugin.name}-A", runs, loft)
-        b_res = koer(kopi, ud, f"{plugin.name}-B", runs, loft)
+        agent = f"{plugin.name}:{sorted((plugin / 'agents').glob('*.md'))[0].stem}"
+        arme = {}
+        for arm, eff in (("A", None), ("B", effort)):
+            kopi = arme[arm] = ud / f"{plugin.name}-{arm}"
+            shutil.rmtree(kopi, ignore_errors=True)
+            shutil.copytree(plugin, kopi)
+            # Afhængigheder (byg-kontrol) findes ikke i eval-sandkassen, og så indlæses pluginet slet ikke
+            mf = kopi / ".claude-plugin" / "plugin.json"
+            m = json.loads(mf.read_text(encoding="utf-8"))
+            m.pop("dependencies", None)
+            mf.write_text(json.dumps(m, ensure_ascii=False, indent=2), encoding="utf-8")
+            for f in (kopi / "evals").glob("*/prompt.md"):
+                t = f.read_text(encoding="utf-8")
+                hoved, _, krop = t.partition("\n---\n") if t.startswith("---") else ("", "", t)
+                linje = f"Brug fagagenten {agent} til at besvare dette.\n\n"
+                f.write_text((hoved + "\n---\n" if hoved else "") + linje + krop.lstrip("\n"), encoding="utf-8")
+            if eff:
+                for f in (kopi / "agents").glob("*.md"):
+                    f.write_text(EFFORT_RE.sub(f"effort: {eff}", f.read_text(encoding="utf-8"), count=1), encoding="utf-8")
+        kopi = arme["B"]
+        a_res = koer(arme["A"], ud, f"{plugin.name}-A", runs, loft, j)
+        b_res = koer(kopi, ud, f"{plugin.name}-B", runs, loft, j)
         raekker.append((plugin.name, resume(a_res), resume(b_res)))
     print(f"\nResultater i {ud}  (A = nuværende effort, B = {effort})")
     print(f"{'plugin':18} {'score A':>8} {'score B':>8} {'$ A':>8} {'$ B':>8} {'tokens A':>10} {'tokens B':>10}")

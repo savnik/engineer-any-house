@@ -1,6 +1,6 @@
 # Kontrol – statiker
 
-**rubric_version:** `kontrol-statik@1.1` (2026-10-11)
+**rubric_version:** `kontrol-statik@1.2` (2026-10-16)
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
 1. **Mandat:** leverancen fremstår ikke som statisk dokumentation til byggesagen. Hvert beregnet tal er mærket "OVERSLAG – skal eftervises af den ansvarlige statiker", og det er angivet, hvem der skal udarbejde dokumentationen (statiker, certificeret statiker efter konstruktionsklassen, geotekniker) (kritisk).
@@ -9,7 +9,7 @@
 4. **Stabilitet:** afstivende vægge, hanebånd og spærfod er vurderet, når de ændres eller fjernes (kritisk).
 5. **Midlertidig understøtning og rækkefølge** er beskrevet for ethvert indgreb i bærende dele (kritisk).
 6. **Laster og koefficienter:** nyttelast, sne, egenlast, KFI og partialkoefficienter svarer til DK NA og er kildebelagt; egenlaster af eksisterende konstruktioner er undersøgt eller markeret som antagelse (væsentlig).
-7. **Al regning med værktøjet:** hvert beregnet tal (også summer, opland og omregninger) stammer fra en `statik.py`-kørsel, hvis kommando og resultat står i bilaget. Kontrollen genkører de afgørende kommandoer og regner med egne input, hvor de er uenige – aldrig i hovedet. Et tal uden kørsel er væsentligt; en afvigelse over ca. 5 % i et afgørende resultat er væsentlig–kritisk.
+7. **Al regning med værktøjerne:** hvert beregnet tal (også summer, opland og omregninger) stammer fra en kørsel af `fem.py` eller `statik.py`, hvis kommando og resultat står i bilaget. **Snitkræfter, reaktioner og nedbøjninger kommer fra FEM-modellen** (`<sagsmappe>/fem/fem.yaml`, spec-sha i bilaget, ligevægt OK), og mindst ét afgørende resultat er håndkontrolleret med `statik.py` (afvigelse over 2 % forklaret). Kontrollen genkører de afgørende kommandoer og regner med egne input, hvor de er uenige – aldrig i hovedet. Et tal uden kørsel er væsentligt; en afvigelse over ca. 5 % i et afgørende resultat er væsentlig–kritisk.
 8. **Deformation:** nedbøjningskrav er valgt, så de efterfølgende overflader tåler det (fliser, gips, døre) (væsentlig).
 9. **Eksisterende forhold:** antagelser om dimensioner, materialer, råd og fundament er markeret og knyttet til et hold point for afdækning (HP-STAT-1), før endelig dimensionering (væsentlig).
 10. **Skader:** revner og sætninger er klassificeret, og der er plan for overvågning, før der udbedres; aktive sætninger henvises til geotekniker (væsentlig).
@@ -21,6 +21,7 @@
 - "Ikke-bærende" væg, der var stabiliserende; fjernede hanebånd uden ny trækforbindelse.
 - Overslag uden mærkning, brugt som udførelsesgrundlag.
 - Tal regnet i hovedet (summer, opland, omregning) i stedet for med værktøjet – regnefejl i lastopgørelsen slår igennem i alt efterfølgende.
+- FEM-model med forkert understøtning (rulle i begge ender, indspænding hvor der kun er vederlag), lasten på det forkerte element eller i forkert retning, eller linjelast angivet som vandret projektion på et skråt element – tjek `fem.yaml` og `model`-billedet, ikke kun tallene.
 - Forkert lastniveau: nyttelast eller sne fra en anden norm eller et andet land; KFI glemt; egenlast af gammelt bjælkelag med lerindskud undervurderet.
 - Kipning af slanke træbjælker og stålbjælker uden afstivet trykflange ikke nævnt.
 - Smuldrende beton under vindue eller vederlag behandlet som en pudsreparation; ikke-bærende reparationsmørtel i et bærende tværsnit.

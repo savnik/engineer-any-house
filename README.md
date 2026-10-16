@@ -12,7 +12,7 @@ Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projek
 | `byg-kontrol` | 9 kontrolagenter (8 fag + projekt), kontrolviden, hooks der håndhæver loopet |
 | `byg-data` | Skill `ejendomsdata`: henter BBR, matrikel, lokalplan, fredning, jordforurening, grundvand, klima, energimærke og vurdering ud fra en adresse (Python-stdlib-script, ingen persondata). Valgfri gratis Datafordeler-nøgle i `DATAFORDELER_API_KEY` eller `~/.config/byg-data/datafordeler_api_key` – aldrig i repoet |
 | `byg-vvs` · `byg-el` · `byg-murer` · `byg-ventilation` · `byg-maler` · `byg-toemrer` | Fagagent, videnbase (normgrundlag, faglig praksis, tjeklister, erfaringsblade), hukommelse og evals |
-| `byg-statik` | Statiker (`statiker`): rådgivende om bærende konstruktioner – hvad er bærende, vægfjernelse, bjælker og vederlag, bjælkelag, tag, fundering, revner og sætninger, midlertidig understøtning og review af statisk dokumentation. Overslag med `statik.py` (Python-stdlib) mærkes altid som overslag; den statiske dokumentation til byggesagen udarbejdes af den ansvarlige statiker |
+| `byg-statik` | Statiker (`statiker`): rådgivende om bærende konstruktioner – hvad er bærende, vægfjernelse, bjælker og vederlag, bjælkelag, tag, fundering, revner og sætninger, midlertidig understøtning og review af statisk dokumentation. Alle konkrete beregninger i en FEM-model med `fem.py` (PyNite: PNG-tegninger og interaktiv HTML, eget Python-miljø), lastopgørelse og håndkontrol med `statik.py` (Python-stdlib). Overslag mærkes altid som overslag; den statiske dokumentation til byggesagen udarbejdes af den ansvarlige statiker |
 | `byg-bim` | BIM-modellør (`bim-modelloer`) og uafhængig sammenligner (`bim-sammenligner`), værktøjet `bim.py` (modelspec i YAML → IFC4 med IfcOpenShell, kontrol mod buildingSMART-regler/IDS/BBR, planer, snit, facader og 3D som PNG, afkodning af PDF-tegninger og sammenligning af tegning og model) og skill `tegningsimport`. Værktøjet opretter selv sit Python-miljø i `~/.local/share/byg-bim/venv` (`bim.py opsaet`, kræver netværk første gang) |
 
 Fag-plugins og `byg` afhænger af `byg-kontrol`, så kontrollen altid følger med.
@@ -88,13 +88,14 @@ scripts/hooks/pre-commit     kører tjek_data.py før hvert commit (git config c
 scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
 scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde)
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
+scripts/eval_fag.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
-tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py)
+tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session
 ```
 Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`.
 
-Evals (kræver login og koster tokens): `claude plugin eval ./plugins/byg-vvs`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
+Evals (kræver login og koster tokens): `python3 scripts/eval_fag.py byg-vvs`. Kør ikke `claude plugin eval ./plugins/byg-vvs` direkte: fag-plugins afhænger af `byg-kontrol`, som ikke findes i eval-sandkassen, og så indlæses pluginet slet ikke (evalen tester kun den bare model). Effort-sammenligning: `python3 scripts/effort_ab.py byg-vvs --effort medium`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
 
 Se `ARKITEKTUR.md` for designbeslutninger, platformnoter og roadmap.

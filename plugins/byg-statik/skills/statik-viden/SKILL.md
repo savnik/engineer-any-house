@@ -8,7 +8,8 @@ description: >-
   og review af statisk dokumentation – med normgrundlag (BR18 kap. 15 og 26,
   Eurocodes med danske nationale annekser), faglig praksis,
   betonskader i fundamenter og kældervægge (diagnose, prøver og reparation efter
-  DS/EN 1504), tjeklister, erfaringsblade og et overslagsværktøj (statik.py). Bruges af statiker-agenten og direkte ved
+  DS/EN 1504), tjeklister, erfaringsblade, en FEM-model (fem.py: bjælker, søjler, rammer og spær med
+  PNG-tegninger og interaktiv HTML) og et overslagsværktøj (statik.py). Bruges af statiker-agenten og direkte ved
   statikspørgsmål, hvor subagenter ikke er tilgængelige.
 ---
 
@@ -19,12 +20,13 @@ description: >-
 | `references/normgrundlag.md` | BR18, konstruktionsklasser, Eurocodes og NA, laster, partialkoefficienter – med status | Krav, myndighed, laster |
 | `references/faglig-praksis.md` | Er væggen bærende, egenlaster, typiske indgreb, revner og sætninger, understøtning, review | Vurdering, projektering, second opinion |
 | `references/betonskader.md` | Betonskader i fundament, sokkel og kældervæg: mekanismer, revner og overvågning, undersøgelse, tre udfald, reparation efter DS/EN 1504 | Smuldrende beton, revner i fundament eller kælder |
-| `references/regnevaerktoej.md` | `statik.py`: kommandoer, forudsætninger, grænser | Før hvert overslag |
+| `references/fem.md` | `fem.py`: FEM-model (spec, kommandoer, fortegn, grænser, bilag) – bruges til **alle** konkrete beregninger | Før hver beregning |
+| `references/regnevaerktoej.md` | `statik.py`: lastopgørelse, udnyttelse, håndkontrol – kommandoer, forudsætninger, grænser | Før hvert overslag |
 | `references/tjeklister.md` | Forundersøgelse, hold points HP-STAT, aflevering | KS, tilbud, aflevering |
 | `references/erfaringsblade.md` | Reviewede, forankrede erfaringer | Altid – hurtigt skim |
 
 ## Brug uden subagent
-Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. **Al regning sker med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn ikke selv; opstil lastopgørelsen som input og overlad tallene til værktøjet eller statikeren.
+Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. **Snitkræfter, reaktioner og nedbøjninger regnes i FEM-modellen (`scripts/fem.py`), al anden regning med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn ikke selv; opstil lastopgørelsen som input og overlad tallene til værktøjet eller statikeren.
 
 ## Statusmærker
 **V** = verificeret mod kilde (dato). **T** = skal verificeres før brug som krav.

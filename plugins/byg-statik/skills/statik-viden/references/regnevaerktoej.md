@@ -1,6 +1,8 @@
 # Statiker – regneværktøj (`statik.py`)
 
-**Al regning sker med værktøjet** – også summer, opland, enhedsomregning og håndformler. Et tal i en leverance, der hverken er aflæst i en kilde eller kommer fra en kørsel, er en fejl. Værktøjet er rent Python-standardbibliotek og skriver ingen filer.
+**Snitkræfter, reaktioner og nedbøjninger regnes altid i FEM-modellen (`fem.py`, se `fem.md`)** – også for en simpel bjælke. `statik.py` bruges til lastopgørelse, tværsnitsværdier, udnyttelse efter Eurocode, anden aritmetik og som uafhængig håndkontrol af FEM-resultatet.
+
+**Al regning sker med værktøjerne** – også summer, opland, enhedsomregning og håndformler. Et tal i en leverance, der hverken er aflæst i en kilde eller kommer fra en kørsel, er en fejl. Værktøjet er rent Python-standardbibliotek og skriver ingen filer.
 
 Kør: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/statik-viden/scripts/statik.py <kommando> …`. Hvert output er JSON og starter med `kommando` (med absolut sti), så bilaget kan genkøres. Udtryk skrives med decimalpunktum (`3.6`); rene tal må have decimalkomma (`3,6`).
 
@@ -33,7 +35,7 @@ Kør: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/statik-viden/scripts/statik.py <komm
 | IPE/HEA/HEB | geometri h, b, t_w, t_f, r | Selvtest mod tabel-I_y (afvigelse < 1,5 %) |
 
 ## Grænser – det regner værktøjet IKKE
-Kipning og sideafstivning (advarsel ved træ med h/b > 4) · kontinuerlige bjælker, udkragninger og rammer · søjler og stabilitet · samlinger, beslag og bjælkesko · brand · svingninger · murværkets og jordens styrke (skal komme fra kilde eller statiker) · snesække og formfaktorer (input via `last --faktor`). Står opgaven her, så regn det ikke på anden vis: beskriv den, og overlad den til den ansvarlige statiker.
+Kipning og sideafstivning (advarsel ved træ med h/b > 4) · udnyttelse af kontinuerlige bjælker, udkragninger og rammer (snitkræfterne kommer fra `fem.py`; udnyttelsen regnes med `regn` og formel med kilde) · søjler og stabilitet · samlinger, beslag og bjælkesko · brand · svingninger · murværkets og jordens styrke (skal komme fra kilde eller statiker) · snesække og formfaktorer (input via `last --faktor`). Står opgaven her, så regn det ikke på anden vis: beskriv den, og overlad den til den ansvarlige statiker.
 
 ## Bilaget (`fagnotater/statik-bilag.md`)
 For hver kørsel: formål (én linje) · kommandoen præcis som udskrevet · de relevante resultatlinjer · kilde til hvert input (måling, tegning, antagelse med HP-STAT-1). Afslut med en tabel over de afgørende resultater og deres udnyttelse.
