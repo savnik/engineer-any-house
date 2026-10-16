@@ -8,7 +8,7 @@ Kør altid med:  python3 fem.py <kommando> ...   (scriptet skifter selv til sit 
   skabelon [flader]                         Komplet eksempel på fem.yaml (flader: hus med vægge, dæk og bjælke)
   regn  <fem.yaml> [--ud <mappe>] [--ingen-filer] [--saet <sti>=<værdi> …]
                                             Analyse: reaktioner, snitkræfter, nedbøjninger og ligevægt pr. kombination
-                                            → <ud>/<navn>.fem.json (+ resumé på skærmen). Standard-ud: <specmappe>/fem/
+                                            → <ud>/<navn>.fem.json (+ resumé på skærmen). Standard-ud: <specmappe>/fem/ (eller specmappen selv, hvis den hedder fem)
                                             --saet ændrer ét input uden at røre filen (kontrollens egne input),
                                             fx --saet lasttilfaelde.Q.laster.0.linjelast=4.0
   tegn  <fem.yaml> [model|deformation|M|V|N|spaending|n_u|n_v|pladmoment|flytning|alle] [--kombi <navn>] [--ud <mappe>]
