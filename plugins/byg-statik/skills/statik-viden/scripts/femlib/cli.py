@@ -9,6 +9,7 @@ from . import model
 from .model import SpecFejl
 
 EKSEMPEL = pathlib.Path(__file__).resolve().parent.parent.parent / "assets" / "fem-eksempel.yaml"
+EKSEMPEL_FLADER = EKSEMPEL.with_name("fem-eksempel-flader.yaml")
 
 
 def _fmt(v, d=1):
@@ -61,6 +62,19 @@ def _resume(res: dict) -> str:
                 linje += f" (L/{e['L_over_delta']}" + (f", krav {e['graense']}: {'OK' if e['nedboejning_ok'] else 'OVERSKREDET'}"
                                                        if e.get("graense") else "") + ")"
             ud.append(linje)
+        for fn, f in k.get("flader", {}).items():
+            st = f["steder_med_stoerst_spaending"][0]["xyz"]
+            ud.append(f"  flade {fn} ({f['tykkelse_mm']} mm {f['materiale']}): σ_vM maks {_fmt(f['sigma_vM_max_MPa'], 2)} MPa "
+                      f"ved ({', '.join(_fmt(c, 2) for c in st)}), n_u {_fmt(f['n_u_min_kN_m'])}…{_fmt(f['n_u_max_kN_m'])}, "
+                      f"n_v {_fmt(f['n_v_min_kN_m'])}…{_fmt(f['n_v_max_kN_m'])} kN/m, |m| {_fmt(f['m_abs_max_kNm_m'], 2)} kNm/m, "
+                      f"flytning {_fmt(f['flytning_max_mm'], 2)} mm")
+        for un, u in k.get("udtraek", {}).items():
+            if "fejl" in u:
+                ud.append(f"  udtræk {un}: {u['fejl']}")
+                continue
+            ud.append(f"  udtræk {un} ({u['flade']}, x {u['x']}, y {u['y']}): σ_vM maks {_fmt(u['sigma_vM_max_MPa'], 2)} MPa, "
+                      f"n_u {_fmt(u['n_u_min_kN_m'])}…{_fmt(u['n_u_max_kN_m'])}, n_v {_fmt(u['n_v_min_kN_m'])}…"
+                      f"{_fmt(u['n_v_max_kN_m'])} kN/m, |m| {_fmt(u['m_abs_max_kNm_m'], 2)} kNm/m")
     return "\n".join(ud)
 
 
@@ -101,17 +115,27 @@ def tegn(args, argv) -> int:
     if kombi and kombi not in s["kombinationer"]:
         raise SpecFejl(f"ukendt kombination '{kombi}' (kendte: {', '.join(s['kombinationer'])})")
     opgaver = []
-    vis = ["model", "d", "M", "V", "N"] if visning == "alle" else [
-        {"model": "model", "deformation": "d", "M": "M", "V": "V", "N": "N"}.get(visning)]
+    navne = {"model": "model", "deformation": "d", "M": "M", "V": "V", "N": "N", "spaending": "S", "n_u": "nu",
+             "n_v": "nv", "pladmoment": "m", "flytning": "u"}
+    if visning == "alle":
+        vis = ["model"] + (["d", "M", "V", "N"] if s["elementer"] else []) + (["S", "nv", "m", "u"] if s["flader"] else [])
+    else:
+        vis = [navne.get(visning)]
     if None in vis:
-        raise SpecFejl(f"ukendt visning '{visning}' – brug model, deformation, M, V, N eller alle")
+        raise SpecFejl(f"ukendt visning '{visning}' – brug {', '.join(navne)} eller alle")
+    if any(v in t.FLADE_ST for v in vis) and not s["flader"]:
+        raise SpecFejl(f"visningen '{visning}' kræver flader i modellen")
+    if any(v in ("d", "M", "V", "N") for v in vis) and not s["elementer"]:
+        raise SpecFejl(f"visningen '{visning}' kræver elementer i modellen")
     for v in vis:
         if v == "model":
             opgaver.append((v, None))
         elif kombi:
             opgaver.append((v, kombi))
-        elif v == "d":
+        elif v in ("d", "u"):
             opgaver += [(v, k) for k in (anv or brud)[:1]]
+        elif v in t.FLADE_ST:
+            opgaver += [(v, k) for k in (brud or anv)[:1]]
         else:
             opgaver += [(v, k) for k in brud[:2] or anv[:1]]
     for v, k in opgaver:
@@ -148,6 +172,51 @@ elementer: {B1: {fra: A, til: B, profil: rekt 100x200, materiale: C24, udkragnin
 understoetninger: {A: indspaendt}
 lasttilfaelde: {Q: {laster: [{knude: B, punktlast: 10, retning: ned}]}}
 kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}}}
+""",
+    "delt": """navn: t-delt
+knuder: {A: [0, 0], C: [2, 0], B: [5, 0]}
+elementer:
+  B1: {fra: A, til: C, profil: IPE200, materiale: S235}
+  B2: {fra: B, til: C, profil: IPE200, materiale: S235}
+understoetninger: {A: charnier, B: rulle}
+lasttilfaelde: {Q: {laster: [{element: B1, linjelast: 10, retning: ned}, {element: B2, linjelast: 10, retning: ned}]}}
+kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}, graense: 400}}
+""",
+    "kontinuert": """navn: t-kontinuert
+knuder: {A: [0, 0], B: [4, 0], C: [8, 0]}
+elementer:
+  B1: {fra: A, til: B, profil: IPE200, materiale: S235}
+  B2: {fra: B, til: C, profil: IPE200, materiale: S235}
+understoetninger: {A: charnier, B: rulle, C: rulle}
+lasttilfaelde: {Q: {laster: [{element: B1, linjelast: 10, retning: ned}, {element: B2, linjelast: 10, retning: ned}]}}
+kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}}}
+""",
+    "plade": """navn: t-plade
+mesh: 0.1
+knuder: {A: [0, 0, 0], B: [2, 0, 0], C: [2, 2, 0], D: [0, 2, 0], M: [1, 1, 0]}
+flader: {P: {hjoerner: [A, B, C, D], tykkelse: 20, materiale: C25/30}}  # tynd: a/t = 100 (Kirchhoff)
+understoetninger: {A: charnier, B: rulle-x}
+understoetninger_linje: [{fra: A, til: B, type: rulle}, {fra: B, til: C, type: rulle},
+                         {fra: C, til: D, type: rulle}, {fra: D, til: A, type: rulle}]
+lasttilfaelde: {Q: {laster: [{flade: P, tryk: 10}]}}
+kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}}}
+""",
+    "skive": """navn: t-skive
+knuder: {A: [0, 0, 0], B: [2, 0, 0], C: [2, 0, 2.5], D: [0, 0, 2.5]}
+flader: {V: {hjoerner: [A, B, C, D], tykkelse: 100, materiale: gasbeton}}
+understoetninger_linje: [{fra: A, til: B, type: indspaendt}]
+udtraek: {midt: {flade: V, x: [0.5, 1.5], y: [1.0, 1.5]}}
+lasttilfaelde: {Q: {laster: [{linje: [D, C], linjelast: 20}]}, W: {laster: [{flade: V, tryk: 1.0, retning: y}]}}
+kombinationer: {K: {type: brud, faktorer: {Q: 1.0}}, KW: {type: brud, faktorer: {W: 1.0}}}
+""",
+    "bjaelke-paa-vaeg": """navn: t-bjaelke-paa-vaeg
+knuder: {A: [0, 0, 0], B: [3, 0, 0], C: [3, 0, 2.5], D: [0, 0, 2.5]}
+flader: {V: {hjoerner: [A, B, C, D], tykkelse: 100, materiale: gasbeton}}
+elementer: {J: {fra: D, til: C, profil: rekt 100x200, materiale: C24}}
+understoetninger_linje: [{fra: A, til: B, type: indspaendt}]
+udtraek: {midt: {flade: V, x: [1.0, 2.0], y: [1.0, 1.5]}}
+lasttilfaelde: {Q: {laster: [{element: J, linjelast: 10}]}}
+kombinationer: {K: {type: brud, faktorer: {Q: 1.0}}}
 """,
     "ramme": """navn: t-ramme
 knuder: {A: [0, 0], B: [0, 2.5], C: [4.2, 2.5], D: [4.2, 0]}
@@ -190,6 +259,43 @@ def test(args, argv) -> int:
         tjek("udkraget M = PL", abs(k["elementer"]["B1"]["M_min"]), 20)
         tjek("udkraget δ = PL³/3EI [mm] (bøjning, uden forskydning)", abs(k["elementer"]["B1"]["delta_mm"]),
              10 * 2 ** 3 / (3 * EI) * 1000, tol=0.02)
+        s, r = res["delt"]
+        k = r["kombinationer"]["K"]
+        EI = 210e6 * s["elementer"]["B1"]["_t"]["I_staerk"] * 1e-12
+        d5 = 5 * 10 * 5 ** 4 / (384 * EI) * 1000
+        dmax = max(abs(k["elementer"][n]["delta_mm"]) for n in ("B1", "B2"))
+        tjek("delt bjælke (2 + 3 m, B2 tegnet baglæns): δ over hele spændet = 5qL⁴/384EI [mm]", dmax, d5)
+        tjek("delt bjælke: L/δ regnes med spændets længde 5 m", k["elementer"]["B2"]["L_over_delta"], round(5000 / d5))
+        s, r = res["kontinuert"]
+        k = r["kombinationer"]["K"]
+        ok = "spaend" not in k["elementer"]["B1"] and "spaend" not in k["elementer"]["B2"]
+        print(("OK   " if ok else "FEJL ") + "kontinuert bjælke: spænd deles ved den midterste understøtning")
+        if not ok:
+            fejl.append("kontinuert spænd")
+        tjek("kontinuert bjælke: δ = qL⁴/185EI [mm]", abs(k["elementer"]["B1"]["delta_mm"]), 10 * 4 ** 4 / (184.6 * EI) * 1000, tol=0.02)
+        s, r = res["plade"]
+        k = r["kombinationer"]["K"]
+        D = 31000e3 * 0.02 ** 3 / (12 * (1 - 0.2 ** 2))
+        tjek("plade (Navier, simpelt understøttet 2×2 m): w = 0,00406·qa⁴/D [mm]",
+             k["flader"]["P"]["flytning_max_mm"], 0.00406 * 10 * 2 ** 4 / D * 1000, tol=0.03)
+        tjek("plade: m = 0,0368·(1 + ν)·qa² [kNm/m]", k["flader"]["P"]["m_abs_max_kNm_m"], 0.0368 * 1.2 * 10 * 4, tol=0.03)
+        tjek("plade: ΣR = q·a² (lodret ligevægt)", k["ligevaegt"]["z"]["reaktioner"], 40)
+        s, r = res["skive"]
+        k = r["kombinationer"]["K"]
+        tjek("skive: n_v midt i væggen = −linjelast [kN/m]", k["udtraek"]["midt"]["n_v_min_kN_m"], -20, tol=0.02)
+        tjek("skive: σ = n/t [MPa]", k["udtraek"]["midt"]["sigma_vM_max_MPa"], 0.2, tol=0.03)
+        tjek("skive: ΣR = linjelast · længde", k["ligevaegt"]["z"]["reaktioner"], 40)
+        kw = r["kombinationer"]["KW"]
+        tjek("skive: vindtryk i +y giver reaktion i −y", kw["ligevaegt"]["y"]["reaktioner"], -5.0)
+        tjek("skive: udkraget væg, m i y = 1,125 m = q·(h − y)²/2 [kNm/m]", kw["udtraek"]["midt"]["m_abs_max_kNm_m"],
+             1.0 * (2.5 - 1.125) ** 2 / 2, tol=0.03)
+        s, r = res["bjaelke-paa-vaeg"]
+        k = r["kombinationer"]["K"]
+        tjek("bjælke på væg: lasten går gennem væggen, n_v = −q [kN/m]", k["udtraek"]["midt"]["n_v_min_kN_m"], -10, tol=0.05)
+        ok = max(abs(k["elementer"]["J"]["M_max"]), abs(k["elementer"]["J"]["M_min"])) < 0.05 * 10 * 3 ** 2 / 8
+        print(("OK   " if ok else "FEJL ") + "bjælke på væg: bjælken er forbundet med væggen i hele længden (M < 5 % af qL²/8)")
+        if not ok:
+            fejl.append("bjælke på væg")
         s, r = res["ramme"]
         k = r["kombinationer"]["K"]
         q = 1.2 * (12 + 78.5 * s["elementer"]["B1"]["_t"]["A"] * 1e-6)
@@ -211,7 +317,7 @@ def main(args) -> int:
     cmd, rest = args[0], args[1:]
     try:
         if cmd == "skabelon":
-            print(EKSEMPEL.read_text(encoding="utf-8"))
+            print((EKSEMPEL_FLADER if rest[:1] == ["flader"] else EKSEMPEL).read_text(encoding="utf-8"))
             return 0
         if cmd == "test":
             return test(rest, argv)

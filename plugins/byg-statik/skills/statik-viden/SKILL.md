@@ -8,8 +8,8 @@ description: >-
   og review af statisk dokumentation – med normgrundlag (BR18 kap. 15 og 26,
   Eurocodes med danske nationale annekser), faglig praksis,
   betonskader i fundamenter og kældervægge (diagnose, prøver og reparation efter
-  DS/EN 1504), tjeklister, erfaringsblade, en FEM-model (fem.py: bjælker, søjler, rammer og spær med
-  PNG-tegninger og interaktiv HTML) og et overslagsværktøj (statik.py). Bruges af statiker-agenten og direkte ved
+  DS/EN 1504), tjeklister, erfaringsblade, en FEM-model (fem.py: bjælker, søjler, rammer, spær og
+  vægge/dæk som skalelementer med PNG-tegninger, farvekort og interaktiv 3D-HTML) og et overslagsværktøj (statik.py). Bruges af statiker-agenten og direkte ved
   statikspørgsmål, hvor subagenter ikke er tilgængelige.
 ---
 

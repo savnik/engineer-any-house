@@ -1,4 +1,5 @@
-"""PNG-tegninger af FEM-modellen: model med understøtninger og laster, deformation og M-, V- og N-kurver."""
+"""PNG-tegninger af FEM-modellen: model med understøtninger og laster, deformation, M-, V- og N-kurver og
+farvekort på flader (spænding, membrankræfter, pladmomenter, flytning)."""
 import math
 import pathlib
 import re
@@ -9,8 +10,11 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 FARVE = {"M": "#c0392b", "V": "#2471a3", "N": "#7d3c98", "d": "#d35400", "last": "#1e8449"}
-ENHED = {"M": "kNm", "V": "kN", "N": "kN", "d": "mm"}
-NAVN = {"M": "Moment", "V": "Forskydning", "N": "Normalkraft", "d": "Deformation"}
+ENHED = {"M": "kNm", "V": "kN", "N": "kN", "d": "mm", "S": "MPa", "nu": "kN/m", "nv": "kN/m", "m": "kNm/m", "u": "mm"}
+NAVN = {"M": "Moment", "V": "Forskydning", "N": "Normalkraft", "d": "Deformation", "S": "Spænding σ_vM",
+        "nu": "Membrankraft n_u", "nv": "Membrankraft n_v", "m": "Pladmoment", "u": "Flytning"}
+FLADE_ST = ("S", "nu", "nv", "m", "u")
+FIL = {"S": "spaending", "nu": "n_u", "nv": "n_v", "m": "pladmoment", "u": "flytning"}  # størrelser på flader (vægge, dæk)
 
 
 def filnavn(s: str) -> str:
@@ -23,10 +27,8 @@ def _fmt(v: float, d: int = 1) -> str:
 
 
 def _span(s: dict) -> float:
-    xs = [v[0] for v in s["knuder"].values()]
-    ys = [v[1] for v in s["knuder"].values()]
-    zs = [v[2] for v in s["knuder"].values()]
-    return max(max(xs) - min(xs), max(ys) - min(ys), max(zs) - min(zs), 1.0)
+    from .laster import span
+    return max(span(s), 1.0)
 
 
 def _punkt(s, e, t):
@@ -136,8 +138,8 @@ def tegn(s: dict, kurver: dict, visning: str, kombi: str, ud: pathlib.Path) -> p
                 ax.plot(xs, zs, color=FARVE["d"], lw=2, zorder=5)
             ft = max(kv["flytning"].items(), key=lambda kv_: math.hypot(*kv_[1]))
             titel += f" (forstørret ×{_fmt(fak, 0)})"
-            dm = max(((en, max(c["d"], key=abs)) for en, c in kv["elementer"].items()), key=lambda t: abs(t[1]))
-            ax.text(0.0, -0.02, f"Største nedbøjning i forhold til korden: {_fmt(dm[1])} mm ({dm[0]}) · "
+            dm = max(kv["delta"].items(), key=lambda t: abs(t[1]))
+            ax.text(0.0, -0.02, f"Største nedbøjning i forhold til spændets korde: {_fmt(dm[1])} mm ({dm[0]}) · "
                     f"største knudeflytning: {_fmt(math.hypot(*ft[1]))} mm ({ft[0]})", transform=ax.transAxes, fontsize=8.5,
                     va="top")
         else:
@@ -173,42 +175,130 @@ def tegn(s: dict, kurver: dict, visning: str, kombi: str, ud: pathlib.Path) -> p
     return sti
 
 
+def _fladefelt(s, kv, st):
+    """Værdi pr. quad for en fladestørrelse."""
+    q = kv["flader"]["quads"]
+    if st == "S":
+        return [q[qn]["svm"] for qn, _, _, _ in s["_quads"]]
+    if st == "m":
+        return [max(abs(q[qn]["mu"]), abs(q[qn]["mv"])) for qn, _, _, _ in s["_quads"]]
+    if st == "u":
+        fl = kv["flader"]["flytning"]
+        return [sum(math.hypot(*fl[k]) for k in kn) / 4 for _, _, kn, _ in s["_quads"]]
+    return [q[qn][st] for qn, _, _, _ in s["_quads"]]
+
+
+def farveskala(s, kv, st):
+    """(værdier, vmin, vmax, cmap, note) – fortegnsløse størrelser klippes ved 99,5 %-fraktilen, så enkelte
+    spændingskoncentrationer (fx i åbningshjørner) ikke gør resten ensfarvet."""
+    v = _fladefelt(s, kv, st)
+    if st in ("nu", "nv"):
+        srt = sorted(abs(x) for x in v)
+        a = srt[min(len(srt) - 1, int(0.995 * len(srt)))] or (srt[-1] or 1.0)
+        note = "rød = tryk, blå = træk" + (f" · farveskala klippet ved ±{_fmt(a, 0)} (99,5 %-fraktilen); "
+                                           f"min {_fmt(min(v), 0)}, maks {_fmt(max(v), 0)}" if srt[-1] > a * 1.05 else "")
+        return v, -a, a, "RdBu", note
+    srt = sorted(v)
+    top = srt[min(len(srt) - 1, int(0.995 * len(srt)))] or (srt[-1] or 1.0)
+    note = f"farveskala klippet ved 99,5 %-fraktilen ({_fmt(top, 2)}); maks {_fmt(srt[-1], 2)}" if srt[-1] > top * 1.05 else ""
+    return v, 0.0, top, "turbo", note
+
+
 def _tegn_3d(s, kurver, visning, kombi, ud):
-    fig = plt.figure(figsize=(11, 7.5), dpi=130)
+    from matplotlib.lines import Line2D
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+    from . import flader as fl
+    from . import laster as la
+    fig = plt.figure(figsize=(12, 8), dpi=130)
     ax = fig.add_subplot(projection="3d")
-    span = _span(s)
+    span = la.span(s)
+    pts = fl.alle_knuder(s)
+    flade_st = visning in FLADE_ST
     titel = f"{s['navn']} · model"
-    if visning == "model":
-        for en, e in s["elementer"].items():
-            a, b = (s["knuder"][e[k]] for k in ("fra", "til"))
-            ax.plot(*zip(a, b), color="k", lw=2)
-            m = _punkt(s, e, 0.5)
-            ax.text(*m, f" {en}", fontsize=7, color="#555")
-        for k in s["understoetninger"]:
-            ax.scatter(*s["knuder"][k], marker="^", s=60, color="#1a5276")
-    else:
-        kv = kurver[kombi]
-        titel = f"{s['navn']} · {NAVN[visning]} · {kombi}"
-        storrelse = "d" if visning == "d" else visning
-        vmax = max(max(abs(x) for x in c[storrelse]) for c in kv["elementer"].values()) or 1.0
-        cmap = plt.get_cmap("plasma")
-        for en, e in s["elementer"].items():
-            a, b = (s["knuder"][e[k]] for k in ("fra", "til"))
+    kv = kurver[kombi] if kombi else None
+    fak = 1.0
+    if visning == "u":
+        fmax = max(math.hypot(*f) for f in kv["flader"]["flytning"].values()) or 1.0
+        fak = 0.08 * span / (fmax / 1000)
+
+    def P(k):
+        p = pts[k]
+        if visning == "u":
+            f = kv["flader"]["flytning"][k]
+            return [p[i] + fak * f[i] / 1000 for i in range(3)]
+        return p
+
+    if s["_quads"]:
+        polys = [[P(k) for k in kn] for _, _, kn, _ in s["_quads"]]
+        if flade_st:
+            v, vmin, vmax, cm, note = farveskala(s, kv, visning)
+            cmap = plt.get_cmap(cm)
+            norm = plt.Normalize(vmin, vmax)
+            ax.add_collection3d(Poly3DCollection(polys, facecolors=[cmap(norm(min(max(x, vmin), vmax))) for x in v],
+                                                 edgecolors="k", linewidths=0.15))
+            sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+            fig.colorbar(sm, ax=ax, shrink=0.55, pad=0.1, label=f"{NAVN[visning]} [{ENHED[visning]}]")
+            i = max(range(len(v)), key=lambda j: abs(v[j]))
+            c = fl.midtpunkt(s, s["_quads"][i][2])
+            ax.scatter(*c, marker="*", s=160, color="k", depthshade=False, zorder=10)
+            ax.text(*c, f"  maks {_fmt(v[i], 2)} ({s['_quads'][i][1]})", fontsize=8, zorder=10)
+            titel = f"{s['navn']} · {NAVN[visning]} · {kombi}" + (f" (forstørret ×{_fmt(fak, 0)})" if visning == "u" else "")
+            if note:
+                ax.text2D(0.0, 0.0, note, transform=ax.transAxes, fontsize=8, color="#555")
+        else:
+            ax.add_collection3d(Poly3DCollection(polys, facecolors=(0.8, 0.8, 0.8, 0.35), edgecolors=(0.5, 0.5, 0.5, 0.4),
+                                                 linewidths=0.15))
+    for en, e in s["elementer"].items():
+        a, b = (s["knuder"][e[k]] for k in ("fra", "til"))
+        if visning in ("M", "V", "N", "d"):
             c = kv["elementer"][en]
-            v = max(c[storrelse], key=abs)
-            ax.plot(*zip(a, b), color=cmap(abs(v) / vmax), lw=3)
-            m = _punkt(s, e, 0.5)
-            ax.text(*m, f" {_fmt(v)}", fontsize=7)
-        sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(0, vmax))
-        fig.colorbar(sm, ax=ax, shrink=0.6, label=f"|{NAVN[visning]}| [{ENHED[visning]}]")
-    ax.set_box_aspect([max(1e-3, (max(v[i] for v in s["knuder"].values()) - min(v[i] for v in s["knuder"].values())) / span)
-                       for i in range(3)])
+            st = "d" if visning == "d" else visning
+            vmax_e = max(max(abs(x) for x in cc[st]) for cc in kv["elementer"].values()) or 1.0
+            v = max(c[st], key=abs)
+            ax.plot(*zip(a, b), color=plt.get_cmap("plasma")(abs(v) / vmax_e), lw=3)
+            ax.text(*_punkt(s, e, 0.5), f" {_fmt(v)}", fontsize=7)
+        else:
+            ax.plot(*zip(a, b), color="k", lw=2)
+            if visning == "model":
+                ax.text(*_punkt(s, e, 0.5), f" {en}", fontsize=7, color="#555")
+    if visning in ("M", "V", "N", "d"):
+        vmax_e = max(max(abs(x) for x in cc["d" if visning == "d" else visning]) for cc in kv["elementer"].values()) or 1.0
+        sm = plt.cm.ScalarMappable(cmap=plt.get_cmap("plasma"), norm=plt.Normalize(0, vmax_e))
+        fig.colorbar(sm, ax=ax, shrink=0.55, pad=0.1, label=f"|{NAVN[visning]}| [{ENHED[visning]}]")
+        titel = f"{s['navn']} · {NAVN[visning]} · {kombi}"
+    for k in s["understoetninger"]:
+        ax.scatter(*s["knuder"][k], marker="^", s=60, color="#1a5276")
+    for ls in s["understoetninger_linje"]:
+        ax.plot(*zip(s["knuder"][ls["fra"]], s["knuder"][ls["til"]]), color="#1a5276", lw=4, alpha=0.8)
+    if visning == "model":
+        haand = []
+        for lt, g in la.pile(s).items():
+            f = la.farve(s, lt)
+            for p in g["pile"]:
+                d = [p["spids"][i] - p["start"][i] for i in range(3)]
+                ax.quiver(*p["start"], *d, color=f, arrow_length_ratio=0.3, linewidth=1.0)
+            for li in g.get("linjer", []):
+                ax.plot(*zip(*li), color=f, lw=1)
+            for pos, tekst in g["tekster"]:
+                if pos is not None:
+                    ax.text(*pos, tekst, fontsize=7.5, color=f)
+            haand.append(Line2D([0], [0], color=f, lw=2, label=" · ".join(t for _, t in g["tekster"]) or lt))
+        if haand:
+            ax.legend(handles=haand, loc="upper left", fontsize=8, frameon=False)
+    lo = [min(p[i] for p in pts.values()) for i in range(3)]
+    hi = [max(p[i] for p in pts.values()) for i in range(3)]
+    for i, f in enumerate((ax.set_xlim, ax.set_ylim, ax.set_zlim)):
+        f(lo[i] - 0.05 * span, hi[i] + 0.05 * span)
+    ax.set_box_aspect([max(0.05, (hi[i] - lo[i] + 0.1 * span) / span) for i in range(3)])
+    ax.view_init(elev=24, azim=-60)
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
     ax.set_title(titel, fontsize=11, loc="left")
+    ax.text2D(1.0, 0.0, f"OVERSLAG · fem.py · spec {s['_sha']}", transform=ax.transAxes, fontsize=7, color="#888", ha="right")
     ud.mkdir(parents=True, exist_ok=True)
-    sti = ud / filnavn(f"{s['navn']}-{'model' if visning == 'model' else NAVN[visning].lower()}"
+    sti = ud / filnavn(f"{s['navn']}-{'model' if visning == 'model' else FIL.get(visning, NAVN[visning].lower())}"
                        + ("" if visning == "model" else f"-{kombi}") + ".png")
     fig.savefig(sti, bbox_inches="tight")
     plt.close(fig)
