@@ -142,6 +142,25 @@ bim.py flet bim/forslag/bim-14.yaml --note "bim/14 godkendt"
 ```
 Forslaget indeholder kun det, der ændres – samme regler som projektversionen nedenfor, plus `slet: [id, …]` (fjern et element helt, fx en modelfejl) og `felt: null` (fjern et felt). `flet` skriver kun de berørte elementer om (kommentarer og alle andre linjer står urørt), kontrollerer, at resultatet giver præcis den model, forslaget gav, og at den validerer, gemmer versionen før og efter i `bim/historik/`, flytter forslaget til `bim/historik/forslag/` og logger i `bim/historik/flettelog.md`. Er hovedmodellen ændret, siden forslaget blev oprettet, stopper `flet`, hvis de samme elementer er ændret begge steder (konflikt) – opdatér forslaget, og lad kontrollen se det igen. Lav aldrig kopier eller snapshots af hovedmodellen ved siden af den.
 
+## Ejendomskort fra hovedmodellen (husets fakta)
+Husets fakta (ejendomskortets E-id'er, åbne spørgsmål og erstattede oplysninger) kan ligge i hovedmodellen, så de også står ét sted. Ejendomskortet `byg-sager/ejendomme/<id>.md` er så **afledt** og rettes aldrig i hånden.
+```yaml
+ejendomskort:
+  fil: ../../ejendomme/<ejendom-id>.md   # relativ til model.yaml
+  titel: Ejendomskort – <ejendom-id>
+  indledning: ['**Opdateret:** …', …]        # linjerne mellem titel og første afsnit
+  afsnit:
+    - {id: faelles, titel: Fælles (alle fag), kolonner: [[ID, id], [Emne, emne], [Værdi, vaerdi], [Dato, dato], [Kilde, kilde]]}
+fakta:
+  - {id: E-F-01, afsnit: faelles, emne: Opført, vaerdi: '1934', dato: '2026-09-01', kilde: BBR}
+  - {id: E-F-08@2, afsnit: erstattede_oplysninger, tidligere: …, erstattet: '2026-10-14', grund: …}
+```
+- Én række pr. linje, ét unikt `id`. Står samme id flere gange i kortet (typisk under "Erstattede oplysninger"), får de ekstra rækker `<id>@2`, `<id>@3` …. Kortet viser kun delen før `@`.
+- `fakta` flettes på id som de andre lister (ret felter, tilføj, `slet:`). `ejendomskort.afsnit` erstattes samlet.
+- `flet` skriver kortet om, når `ejendomskort.fil` er sat. `bim.py ejendomskort model.yaml --tjek` giver 1, hvis kortet er rettet i hånden.
+- Første gang: `bim.py ejendomskort model.yaml --importer <kort.md>` → `forslag/ejendomskort-import.yaml`. Den stopper, hvis kortet ikke kan gengives 1:1. Flet derefter forslaget.
+- Elementfeltet `fakta: [E-…]` henviser fra et bygningselement til rækkerne.
+
 ## Renovering (projektversion oven på mastermodellen)
 ```yaml
 basis: ../../2026-10-11-bim-eksempelvej-1/bim/model.yaml

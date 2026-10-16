@@ -12,6 +12,7 @@ import yaml
 SEKTIONER = ("vaegge", "aabninger", "daek", "tage", "trapper", "soejler", "bjaelker", "rum",
              "systemer", "installationer", "roer", "generisk")
 FORSLAGSFELTER = ("basis", "basis_sha256", "nedrives", "slet")
+IDLISTER = (*SEKTIONER, "etager", "fakta")   # lister, hvor elementer flettes på id
 FAELLES = {"id", "navn", "etage", "status", "kilde", "ref", "usikkerhed", "fakta", "note", "egenskaber",
            "klassifikation", "beskrivelse"}
 FELTER = {
@@ -71,7 +72,7 @@ def _flet(basis: dict, over: dict) -> dict:
     for k, v in over.items():
         if k in FORSLAGSFELTER:
             continue
-        if k in SEKTIONER or k == "etager":
+        if k in IDLISTER:
             liste = ud.setdefault(k, [])
             idx = {str(e.get("id")): i for i, e in enumerate(liste)}
             for e in v or []:
@@ -100,7 +101,7 @@ def _flet(basis: dict, over: dict) -> dict:
     slet = {str(x) for x in over.get("slet") or []}
     if slet:
         fundet = set()
-        for s in (*SEKTIONER, "etager"):
+        for s in IDLISTER:
             if ud.get(s):
                 fundet |= {str(e.get("id")) for e in ud[s] if str(e.get("id")) in slet}
                 ud[s] = [e for e in ud[s] if str(e.get("id")) not in slet]
@@ -263,6 +264,8 @@ def normaliser(d: dict) -> dict:
         for el in d[s]:
             if el.get("system") is not None and str(el["system"]) not in sys_ids:
                 fejl.append(f"{s}.{el['id']}.system '{el['system']}' findes ikke")
+    from .ejendomskort import tjek_fakta
+    fejl += tjek_fakta(d)
     if fejl:
         raise SpecFejl(fejl)
     return d

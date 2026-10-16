@@ -14,7 +14,7 @@ Kun indekset (agentens `MEMORY.md`, skill-indgangen) ligger altid i konteksten. 
 ## Erfaringshøst (`/byg:erfaring`)
 **Hvornår:** altid, når en sag eller et delprojekt afsluttes (sidste leverance godkendt og besvaret, eller sagen parkeres), og efter hver RCA. Et spørgsmål via `/byg:spoerg` høstes, når svaret er givet. Skriv datoen i linjen `**Erfaringshøst:**` i `status.md`. `/byg:status` viser sager, der ikke er høstet.
 1. Læs `erfaringer.md`, beslutningsloggen, domme og RCA'er i sagen.
-2. **Husets fakta → ejendomskortet:** nye eller ændrede fakta fra sagen (målinger, fotos, typeskilte, godkendte fagnotater) føres ind med kilde og dato. Gamle værdier flyttes til "Erstattede oplysninger".
+2. **Husets fakta → ejendomskortet:** nye eller ændrede fakta fra sagen (målinger, fotos, typeskilte, godkendte fagnotater) føres ind med kilde og dato. Gamle værdier flyttes til "Erstattede oplysninger". Er kortet genereret fra en BIM-hovedmodel, sker det via forslag + `bim.py flet` (se `sagsmappe.md`).
 3. Formulér erfaringerne som erfaringsblade: Situation/Problem/Løsning, Grundlag, Gyldighed, Status.
 4. Sortér: sagsspecifikt (bliver i sagen) · generaliserbart (→ videnbank) · kanon-kandidat (→ forankringskø med målfil og forslag til ny tekst).
 5. Vis kandidaterne for brugeren; gem kun det accepterede.

@@ -125,6 +125,11 @@ def _flet(a):
     return flet(a.forslag, proev=a.proev, tving=a.tving, note=a.note)
 
 
+def _ejendomskort(a):
+    from .ejendomskort import generer, importer
+    return importer(a.model, a.importer) if a.importer else generer(a.model, tjek=a.tjek)
+
+
 def main(argv):
     p = argparse.ArgumentParser(prog="bim.py")
     sp = p.add_subparsers(dest="cmd", required=True)
@@ -157,5 +162,7 @@ def main(argv):
     x.set_defaults(fn=_forslag)
     x = sp.add_parser("flet"); x.add_argument("forslag"); x.add_argument("--proev", action="store_true")
     x.add_argument("--tving", action="store_true"); x.add_argument("--note"); x.set_defaults(fn=_flet)
+    x = sp.add_parser("ejendomskort"); x.add_argument("model"); x.add_argument("--tjek", action="store_true")
+    x.add_argument("--importer"); x.set_defaults(fn=_ejendomskort)
     a = p.parse_args(argv)
     return a.fn(a)

@@ -19,9 +19,9 @@ import shutil
 
 import yaml
 
-from .spec import FORSLAGSFELTER, SEKTIONER, SpecFejl, _flet, _laes, indlaes
+from .spec import FORSLAGSFELTER, IDLISTER, SpecFejl, _flet, _laes, indlaes
 
-LISTER = (*SEKTIONER, "etager")
+LISTER = IDLISTER
 
 
 def _sha(sti: pathlib.Path) -> str:
@@ -42,7 +42,7 @@ def _gem_version(hoved: pathlib.Path) -> pathlib.Path:
 
 
 def _flow(v) -> str:
-    return yaml.safe_dump(v, default_flow_style=True, allow_unicode=True, sort_keys=False, width=10**9).strip()
+    return yaml.safe_dump(v, default_flow_style=True, allow_unicode=True, sort_keys=False, width=10**9).removesuffix("\n...\n").strip()
 
 
 # ------------------------------------------------------------------ tekstblokke i hovedmodellen
@@ -302,5 +302,8 @@ def flet(forslag, proev=False, tving=False, note=None) -> int:
         f.write(f"| {dato} | {fsti.name} | {sha_nu[:12]} | {efter.stem.split('.')[-1]} | {', '.join(rettet)} | "
                 f"{', '.join(nye)} | {', '.join(slettet)} | {note or ''} |\n")
     print(f"  før/efter gemt i historik/, forslaget flyttet til {arkiv.relative_to(hoved.parent)}")
+    if (yaml.safe_load(ny_tekst).get("ejendomskort") or {}).get("fil"):
+        from .ejendomskort import generer
+        generer(hoved)
     print(f"  næste: bim.py byg {hoved.name} og tjek – IFC'en er ikke bygget om")
     return 0

@@ -75,7 +75,7 @@ Send ikke de mindre afvigelser retur, medmindre de er trivielle at lukke. Kald d
 ## 6. Efter godkendelse
 - Vis brugeren `overlay.png` fra sidste sammenligning, en plan og 3D-visningen. Fortæl andelen af elementer med kilde A og opmålingslisten.
 - **Flet ind:** `python3 "$BIM" flet byg-sager/<sag-id>/bim/forslag/bim-<nr>.yaml --note "bim/<nr> godkendt"`. Fletningen stopper, hvis hovedmodellen siden er ændret i de samme elementer – så opdaterer modelløren forslaget, og kontrollen ser ændringen igen. Byg og `tjek` derefter hovedmodellen (0 FEJL).
-- Projektlederen opdaterer ejendomskortet: `BIM-model: <sti til model.yaml og IFC>, version/dato, LOIN, kilder K1–Kn`.
+- Projektlederen opdaterer ejendomskortet (er det genereret fra hovedmodellen: i samme forslag som leverancen, under `fakta:`): `BIM-model: <sti til model.yaml og IFC>, version/dato, LOIN, kilder K1–Kn`.
 - Næste tegning bliver næste leverance (`<nr>+1`) i samme model.
 
 ## Effektivitet

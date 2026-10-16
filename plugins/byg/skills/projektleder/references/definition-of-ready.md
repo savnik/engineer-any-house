@@ -2,7 +2,7 @@
 
 Før første fagkald indsamler projektlederen disse fakta fra brugeren. Det sker med fotos, typeskilte, manualer, registreringer og aflæsninger. Det der ikke kan skaffes, markeres som **antagelse** i projektgrundlaget og accepteres af brugeren. Spørg altid, om der findes eksisterende registreringer, servicerapporter, tegninger, tilstandsrapport eller energimærke. De sparer ofte en hel revisionsrunde.
 
-**Fakta om huset skrives i ejendomskortet** (`byg-sager/ejendomme/<ejendom-id>.md`, se `sagsmappe.md`) med kilde og dato, under "Fælles" eller fagets afsnit. De gentages ikke i projektgrundlaget, som kun henviser til dem. Findes kortet allerede fra en tidligere sag, indsamles kun det, der mangler eller er for gammelt til opgaven. Har et anlæg sit eget register (fx et installationsregister for et pillefyr), så læs det, og henvis til det fra kortet.
+**Fakta om huset skrives i ejendomskortet** (`byg-sager/ejendomme/<ejendom-id>.md`, se `sagsmappe.md`) med kilde og dato, under "Fælles" eller fagets afsnit. Er kortet genereret fra en BIM-hovedmodel, skrives de via forslag + `bim.py flet` (se `sagsmappe.md`). De gentages ikke i projektgrundlaget, som kun henviser til dem. Findes kortet allerede fra en tidligere sag, indsamles kun det, der mangler eller er for gammelt til opgaven. Har et anlæg sit eget register (fx et installationsregister for et pillefyr), så læs det, og henvis til det fra kortet.
 
 ## Alle fag
 - Bygningstype, opførelsesår, konstruktion, rummets placering og mål (fotos med målestok)

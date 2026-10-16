@@ -27,6 +27,7 @@ Er `${CLAUDE_PLUGIN_ROOT}` ikke udfoldet, så find scriptet med Glob `**/bim-vid
 | `skala --kal "x1,y1,x2,y2=mm;…" [--maal …]` | Målestok fra kendte mål (X og Y hver for sig) | < 1 s |
 | `afkod skabelon` · `afkod tjek <afkodning.yaml>` | Skabelon med alle nøgler · kontrol af afkodningen: format, kalibrering (rest, skala mod målestok), hvert aflæst mål mod afstanden på tegningen, målkæders sum | < 1 s |
 | `forslag <model.yaml> <navn>` · `flet <forslag.yaml> [--proev] [--note …]` | Ny forslagsfil oven på hovedmodellen · godkendt forslag ind i hovedmodellen (kun berørte elementer, historik, konfliktstop) | < 2 s |
+| `ejendomskort <model.yaml> [--tjek] [--importer <kort.md>]` | Ejendomskortet genereret fra hovedmodellens `fakta:` (`references/spec.md`, "Ejendomskort fra hovedmodellen") | < 1 s |
 | `byg <model.yaml> [--ud fil.ifc]` | Spec → IFC + `<navn>.byg.json`. SPEC-FEJL vises samlet med sti til feltet | < 1 s |
 | `tjek <fil.ifc> [--tegn]` | Skema/EXPRESS, buildingSMART-regler, geometri, kollisioner, Status/materialer, kildefordeling, arealer mod BBR, IDS. Skriver `<navn>.tjek.md` | 1–3 s |
 | `sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>]` | Modellen tegnet i tegningens pixelramme: original · model · overlay (hele visningen og fliser) + automatisk sammenligning af alle afkodede mål, rum, åbninger og vægtykkelser med modellen | 3–10 s |

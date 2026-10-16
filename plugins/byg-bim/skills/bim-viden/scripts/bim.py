@@ -18,6 +18,9 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
   flet  <forslag.yaml> [--proev] [--note …] [--tving]
                                            Godkendt forslag → hovedmodellen (kun berørte elementer skrives om;
                                            historik/ + flettelog; stopper ved konflikt)
+  ejendomskort <model.yaml> [--tjek] [--importer <kort.md>]
+                                           Ejendomskortet genereres fra hovedmodellens fakta: (ret aldrig i kortet);
+                                           --tjek: afviger kortet?  --importer: kort → forslag/ejendomskort-import.yaml
   info  <fil.ifc>                          Overblik over en (fremmed) model
   vis   <fil.ifc> <id|GlobalId|#step>       Ét element: attributter, egenskaber, materiale, placering
   find  <fil.ifc> "<selector>"             Fx "IfcWall, /Status=EXISTING/" (ifcopenshell-selector)

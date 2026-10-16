@@ -35,6 +35,7 @@ byg-sager/<sag-id>/
 
 **Regler:**
 - **Ejer:** kun projektlederen skriver i kortet. Fagagenter citerer fakta med ID (fx `E-VVS-03`). Finder de en ny eller modstridende oplysning, skriver de den under "Til ejendomskortet" i deres resumé med kilde og dato. Projektlederen fører den ind.
+- **Genereret kort (BIM-hovedmodel):** står der `<!-- GENERERET … -->` øverst, er kortet afledt af hovedmodellens `fakta:` (bim-viden `references/spec.md`, "Ejendomskort fra hovedmodellen"). Ret så aldrig i kortet. Skriv ændringen i et forslag (`bim.py forslag model.yaml <navn>`: ny række, rettet felt, `slet:`), og flet det (`bim.py flet`). Kortet skrives om ved fletningen. Bygherrens egne oplysninger (kilde B) må flettes med det samme (`--note "B <dato>"`). Fakta fra tegninger og fagløsninger flettes først efter kontrol. En erstattet værdi bliver en ny række i afsnittet `erstattede_oplysninger` med id `<id>@<n>`. `bim.py ejendomskort model.yaml --tjek` afslører håndrettelser.
 - **Kilde og dato er obligatoriske.** En oplysning uden dato og kilde er ikke et faktum; den hører under "Åbne spørgsmål". En antagelse (A) må aldrig være grundlag for et sikkerhedskrav.
 - **Fag-afgrænsning:** et fag læser "Fælles", sit eget afsnit og "Problemstoffer og kendte skader". Andre afsnit læses kun, når en grænseflade kræver det.
 - **Anlægsregistre er master.** Har et anlæg sit eget register (fx et installationsregister for et pillefyr), står der højst én linje i kortet med de afgørende fakta og en henvisning. Ved modstrid gælder registret.
