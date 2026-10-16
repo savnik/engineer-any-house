@@ -11,6 +11,7 @@ import yaml
 
 SEKTIONER = ("vaegge", "aabninger", "daek", "tage", "trapper", "soejler", "bjaelker", "rum",
              "systemer", "installationer", "roer", "generisk")
+FORSLAGSFELTER = ("basis", "basis_sha256", "nedrives", "slet")
 FAELLES = {"id", "navn", "etage", "status", "kilde", "ref", "usikkerhed", "fakta", "note", "egenskaber",
            "klassifikation", "beskrivelse"}
 FELTER = {
@@ -62,22 +63,28 @@ def _laes(sti: pathlib.Path) -> dict:
 
 
 def _flet(basis: dict, over: dict) -> dict:
-    """Projektspec oven på basismodel: elementer med samme id erstatter felterne, nye tilføjes."""
+    """Projektspec/forslag oven på basismodel: elementer med samme id erstatter felterne, nye tilføjes.
+
+    Et felt sat til null i forslaget fjernes fra elementet. `slet:` fjerner elementer helt (modelrettelse);
+    `nedrives:` beholder dem med status nedrives (renovering). `bim.py flet` bruger samme regler."""
     ud = copy.deepcopy(basis)
     for k, v in over.items():
-        if k in ("basis", "nedrives"):
+        if k in FORSLAGSFELTER:
             continue
         if k in SEKTIONER or k == "etager":
             liste = ud.setdefault(k, [])
             idx = {str(e.get("id")): i for i, e in enumerate(liste)}
             for e in v or []:
                 i = idx.get(str(e.get("id")))
+                ny = copy.deepcopy(e) if i is None else {**liste[i], **copy.deepcopy(e)}
+                ny = {f: x for f, x in ny.items() if x is not None}
                 if i is None:
-                    liste.append(copy.deepcopy(e))
+                    idx[str(e.get("id"))] = len(liste)
+                    liste.append(ny)
                 else:
-                    liste[i] = {**liste[i], **copy.deepcopy(e)}
+                    liste[i] = ny
         elif isinstance(v, dict) and isinstance(ud.get(k), dict):
-            ud[k] = {**ud[k], **copy.deepcopy(v)}
+            ud[k] = {f: x for f, x in {**ud[k], **copy.deepcopy(v)}.items() if x is not None}
         else:
             ud[k] = copy.deepcopy(v)
     alle = {str(e.get("id")): e for s in SEKTIONER for e in ud.get(s) or []}
@@ -90,6 +97,15 @@ def _flet(basis: dict, over: dict) -> dict:
                 f"nedrives: '{eid}' er et vægsegment – opdel vægløkken i basismodellen, så segmentet er sin egen væg")
         else:
             ud.setdefault("_fejl", []).append(f"nedrives: id '{eid}' findes ikke i basismodellen")
+    slet = {str(x) for x in over.get("slet") or []}
+    if slet:
+        fundet = set()
+        for s in (*SEKTIONER, "etager"):
+            if ud.get(s):
+                fundet |= {str(e.get("id")) for e in ud[s] if str(e.get("id")) in slet}
+                ud[s] = [e for e in ud[s] if str(e.get("id")) not in slet]
+        for eid in sorted(slet - fundet):
+            ud.setdefault("_fejl", []).append(f"slet: id '{eid}' findes ikke i basismodellen")
     return ud
 
 

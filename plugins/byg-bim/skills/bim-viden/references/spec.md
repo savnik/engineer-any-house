@@ -132,6 +132,16 @@ roer:
 ```
 Et profil i et lokalt plan (`origo`, `x_akse`, `z_akse` = ekstruderingsretning) ekstruderes `dybde`. Standard er lodret ekstrudering fra z = `bund`. Alternativt `mesh: {punkter: [[x,y,z]…], flader: [[0,1,2,3]…]}`. Brug altid den rigtige IFC-klasse. Proxy kun, når ingen klasse passer, og så med `navn`/ObjectType.
 
+## Hovedmodel og forslag (én source of truth)
+`bim/model.yaml` er **hovedmodellen** – det eneste sted, husets data står. Den rettes aldrig direkte. Hver ændring (en leverance, en ny radiator, en renoveringsvariant) laves i en **forslagsfil** oven på den og flettes først ind, når den er godkendt:
+```
+bim.py forslag bim/model.yaml bim-14          → bim/forslag/bim-14.yaml (basis + basis_sha256)
+bim.py byg bim/forslag/bim-14.yaml            → byg, tjek, tegn og sammenlign forslaget
+bim.py flet bim/forslag/bim-14.yaml --proev   → hvad ændres i hovedmodellen
+bim.py flet bim/forslag/bim-14.yaml --note "bim/14 godkendt"
+```
+Forslaget indeholder kun det, der ændres – samme regler som projektversionen nedenfor, plus `slet: [id, …]` (fjern et element helt, fx en modelfejl) og `felt: null` (fjern et felt). `flet` skriver kun de berørte elementer om (kommentarer og alle andre linjer står urørt), kontrollerer, at resultatet giver præcis den model, forslaget gav, og at den validerer, gemmer versionen før og efter i `bim/historik/`, flytter forslaget til `bim/historik/forslag/` og logger i `bim/historik/flettelog.md`. Er hovedmodellen ændret, siden forslaget blev oprettet, stopper `flet`, hvis de samme elementer er ændret begge steder (konflikt) – opdatér forslaget, og lad kontrollen se det igen. Lav aldrig kopier eller snapshots af hovedmodellen ved siden af den.
+
 ## Renovering (projektversion oven på mastermodellen)
 ```yaml
 basis: ../../2026-10-11-bim-eksempelvej-1/bim/model.yaml

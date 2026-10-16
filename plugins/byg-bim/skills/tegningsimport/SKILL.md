@@ -34,10 +34,10 @@ OPGAVE: Tegningsimport af K<m> – trin 1 afkodning, trin 2 modelbygning (se "Te
 Sagsmappe: byg-sager/<sag-id>/ · Ejendomskort: byg-sager/ejendomme/<ejendom-id>.md
 Kilde: <sti til pdf> side <n> → byg-sager/<sag-id>/bim/kilder/K<m>/
 Visning(er): <fx stueplan 1:100>
-Model: byg-sager/<sag-id>/bim/model.yaml (<findes – udvid | oprettes>)
+Model: byg-sager/<sag-id>/bim/model.yaml (<findes → arbejd i forslag/bim-<nr>.yaml | oprettes>)
 Leverance: byg-sager/<sag-id>/fagnotater/bim-<nr>.md
 ```
-Modelløren afleverer: `afkodning.yaml` med `afkod tjek` = 0 fejl, en opdateret model med `tjek` = 0 FEJL og modelnotatet.
+Modelløren afleverer: `afkodning.yaml` med `afkod tjek` = 0 fejl, forslagsfilen `bim/forslag/bim-<nr>.yaml` (hovedmodellen er urørt) med `tjek` = 0 FEJL og modelnotatet. Sammenligning og kontrol kører på forslagets IFC.
 
 ## 2. Sammenligning (forgrund)
 ```
@@ -69,11 +69,12 @@ Send ikke de mindre afvigelser retur, medmindre de er trivielle at lukke. Kald d
 
 ## 5. Formel kontrol
 1. Kør selv den deterministiske kontrol i hovedtråden: `python3 "$BIM" tjek <ifc> --tegn --ud byg-sager/<sag-id>/kvalitet/bim-<nr>-tjek`.
-2. Kald `bim-kontrol` efter skill `kvalitetskontrol`: `LEVERANCE: <id>`, modelnotatet, tjek-rapporten, sammenligningernes JSON, afkodningen og `model.yaml`. `KONTROLNIVEAU: let`, medmindre modellen fastlægger en sikkerhedsfunktion.
+2. Kald `bim-kontrol` efter skill `kvalitetskontrol`: `LEVERANCE: <id>`, modelnotatet, tjek-rapporten, sammenligningernes JSON, afkodningen og forslagsfilen (`bim/forslag/bim-<nr>.yaml`, bygget oven på `model.yaml`). `KONTROLNIVEAU: let`, medmindre modellen fastlægger en sikkerhedsfunktion.
 3. Afvisning følger kvalitetskontrollens loop. Kør kun en ny sammenligning, hvis rettelsen ændrer geometri eller afkodede mål. Rene egenskabsrettelser (kilde, IsExternal, typenavne, notat) kræver ingen ny sammenligning. Kontrollen ser dem i `tjek` og modelnotatet.
 
 ## 6. Efter godkendelse
 - Vis brugeren `overlay.png` fra sidste sammenligning, en plan og 3D-visningen. Fortæl andelen af elementer med kilde A og opmålingslisten.
+- **Flet ind:** `python3 "$BIM" flet byg-sager/<sag-id>/bim/forslag/bim-<nr>.yaml --note "bim/<nr> godkendt"`. Fletningen stopper, hvis hovedmodellen siden er ændret i de samme elementer – så opdaterer modelløren forslaget, og kontrollen ser ændringen igen. Byg og `tjek` derefter hovedmodellen (0 FEJL).
 - Projektlederen opdaterer ejendomskortet: `BIM-model: <sti til model.yaml og IFC>, version/dato, LOIN, kilder K1–Kn`.
 - Næste tegning bliver næste leverance (`<nr>+1`) i samme model.
 

@@ -26,6 +26,7 @@ Er `${CLAUDE_PLUGIN_ROOT}` ikke udfoldet, så find scriptet med Glob `**/bim-vid
 | `linjer <png> --beskaer x0,y0,x1,y1 [--andel 0.5]` | Præcise pixelpositioner af lodrette og vandrette streger i et smalt udsnit (vægflader, lysninger, hjælpelinjer) – til kalibreringspunkter og målenes fod | < 1 s |
 | `skala --kal "x1,y1,x2,y2=mm;…" [--maal …]` | Målestok fra kendte mål (X og Y hver for sig) | < 1 s |
 | `afkod skabelon` · `afkod tjek <afkodning.yaml>` | Skabelon med alle nøgler · kontrol af afkodningen: format, kalibrering (rest, skala mod målestok), hvert aflæst mål mod afstanden på tegningen, målkæders sum | < 1 s |
+| `forslag <model.yaml> <navn>` · `flet <forslag.yaml> [--proev] [--note …]` | Ny forslagsfil oven på hovedmodellen · godkendt forslag ind i hovedmodellen (kun berørte elementer, historik, konfliktstop) | < 2 s |
 | `byg <model.yaml> [--ud fil.ifc]` | Spec → IFC + `<navn>.byg.json`. SPEC-FEJL vises samlet med sti til feltet | < 1 s |
 | `tjek <fil.ifc> [--tegn]` | Skema/EXPRESS, buildingSMART-regler, geometri, kollisioner, Status/materialer, kildefordeling, arealer mod BBR, IDS. Skriver `<navn>.tjek.md` | 1–3 s |
 | `sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>]` | Modellen tegnet i tegningens pixelramme: original · model · overlay (hele visningen og fliser) + automatisk sammenligning af alle afkodede mål, rum, åbninger og vægtykkelser med modellen | 3–10 s |
@@ -37,12 +38,15 @@ Udskrifterne er korte med vilje. Detaljer står i filerne – læs dem kun, når
 ## Metoder
 - **Tegningsimport** (PDF → afkodning → model → uafhængig sammenligning → rettelse, højst 3 runder): skill `tegningsimport`. Hovedtråden orkestrerer; `bim-modelloer` afkoder og bygger; `bim-sammenligner` sammenligner. Afkodningens format: `references/afkodning.md`.
 - **Ny model uden tegninger** (opmåling, fotos, BBR): spec direkte efter `references/spec.md`.
-- **Renovering:** projektspec med `basis:` (`references/spec.md`, "Renovering").
+- **Ændringer i en eksisterende model:** altid som forslag oven på hovedmodellen – `forslag` → byg/kontrol → `flet` efter godkendelse (`references/spec.md`, "Hovedmodel og forslag"). Hovedmodellen rettes aldrig direkte.
+- **Renovering:** projektspec med `basis:` (`references/spec.md`, "Renovering") – også et forslag; den valgte variant flettes ind.
 - **Fremmed IFC:** kopi → `info`/`tjek` → ret efter `references/rediger.md` → `diff` → `tjek`.
 
 ## Filer i sagen
 ```
-<sagsmappe>/bim/model.yaml                     kilden (ændres kun her)
+<sagsmappe>/bim/model.yaml                     hovedmodellen – eneste source of truth (ændres kun med `flet`)
+<sagsmappe>/bim/forslag/<navn>.yaml            forslag/varianter oven på hovedmodellen (her arbejdes der)
+<sagsmappe>/bim/historik/                      versioner før/efter hver fletning, flettede forslag, flettelog.md
 <sagsmappe>/bim/kilder/<K-id>/                 sider som PNG, gitter, beskæringer og afkodning.yaml
 <sagsmappe>/bim/ud/<ejendom-id>.ifc            genereret – aldrig håndredigeret (+ .byg.json, .tjek.md)
 <sagsmappe>/bim/ud/tegninger/                  planer, snit, facader, 3D

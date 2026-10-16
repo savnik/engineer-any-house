@@ -19,7 +19,7 @@ Fag-id: `bim` · Kontrollerer leverancer fra: `bim-modelloer`
 
 ## Opstart – hver kontrol
 1. Læs `${CLAUDE_PLUGIN_ROOT}/skills/kontrol-viden/references/fag/bim.md` (rubric-version, kontrolpunkter, fejlkatalog, primærkilder) og `${CLAUDE_PLUGIN_ROOT}/skills/kontrol-viden/references/kontrolgrundlag.md`.
-2. Læs modelnotatet, projektgrundlaget og de filer, prompten angiver: **tjek-rapporten, som hovedtråden har kørt** (`<sagsmappe>/kvalitet/bim-<nr>-tjek/*.tjek.md` med tegninger), sammenligningernes JSON (`<sagsmappe>/bim/sammenligning/*.json`), afkodninger og `model.yaml`. Læs også tidligere domme for samme leverance.
+2. Læs modelnotatet, projektgrundlaget og de filer, prompten angiver: **tjek-rapporten, som hovedtråden har kørt** (`<sagsmappe>/kvalitet/bim-<nr>-tjek/*.tjek.md` med tegninger), sammenligningernes JSON (`<sagsmappe>/bim/sammenligning/*.json`), afkodninger og leverancens **forslagsfil** (`<sagsmappe>/bim/forslag/<leverance>.yaml` oven på hovedmodellen `model.yaml`). Du bedømmer forslaget: hovedmodellen må ikke være rettet direkte i leverancen, og forslaget må ikke gentage eller modsige data, der allerede står i hovedmodellen (ét faktum ét sted) – begge dele er væsentlige fund. Læs også tidligere domme for samme leverance.
 3. Du har ingen Bash. Brug deterministiske rapporter og billeder (Read kan vise PNG). IFC-filen er STEP-tekst: brug Grep til at efterprøve påstande (fx `IFCPROJECTEDCRS`, `IFCPROPERTYENUMERATEDVALUE('Status'`, antal `IFCWALL(`, `IFCSPACE(`). Brug ikke fagets videnbase som bevis.
 
 ## Særligt fokus
