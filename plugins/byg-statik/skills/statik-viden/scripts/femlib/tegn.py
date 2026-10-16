@@ -136,8 +136,8 @@ def tegn(s: dict, kurver: dict, visning: str, kombi: str, ud: pathlib.Path) -> p
                 ax.plot(xs, zs, color=FARVE["d"], lw=2, zorder=5)
             ft = max(kv["flytning"].items(), key=lambda kv_: math.hypot(*kv_[1]))
             titel += f" (forstørret ×{_fmt(fak, 0)})"
-            dm = max(((en, max(c["d"], key=abs)) for en, c in kv["elementer"].items()), key=lambda t: abs(t[1]))
-            ax.text(0.0, -0.02, f"Største nedbøjning i forhold til korden: {_fmt(dm[1])} mm ({dm[0]}) · "
+            dm = max(kv["delta"].items(), key=lambda t: abs(t[1]))
+            ax.text(0.0, -0.02, f"Største nedbøjning i forhold til spændets korde: {_fmt(dm[1])} mm ({dm[0]}) · "
                     f"største knudeflytning: {_fmt(math.hypot(*ft[1]))} mm ({ft[0]})", transform=ax.transAxes, fontsize=8.5,
                     va="top")
         else:

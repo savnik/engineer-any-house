@@ -37,7 +37,7 @@ Kør: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/statik-viden/scripts/fem.py <kommand
 
 ## Fortegn og resultater
 - **N > 0 er træk.** **M > 0 giver træk i elementets underside** (lokal −y; for et vandret element tegnet fra venstre mod højre: undersiden). Momentkurven tegnes på trækssiden.
-- **δ** er nedbøjning i forhold til elementets korde (mm, negativ = nedad); for `udkragning: true` absolut, og L/δ regnes med 2L.
+- **δ** er nedbøjning i forhold til **spændets** korde (mm, negativ = nedad): linjen mellem spændets endeknuder. Et spænd kan bestå af flere elementer på linje – en knude uden understøtning, hvor præcis to elementer mødes på linje (fx ved en punktlast), deler ikke spændet, og L i L/δ er så hele spændets længde (`L_spaend` i JSON). Spændet deles ved understøtninger, samlinger med flere elementer, knæk og `udkragning: true`. For `udkragning: true` er δ absolut, og L/δ regnes med 2L.
 - I 3D vises også `M_svag` og `δ_svag` (bøjning om den svage akse). Tjek i 3D tværsnittets orientering (`drej`), især for søjler.
 
 ## Grænser – det regner `fem.py` IKKE

@@ -149,6 +149,24 @@ understoetninger: {A: indspaendt}
 lasttilfaelde: {Q: {laster: [{knude: B, punktlast: 10, retning: ned}]}}
 kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}}}
 """,
+    "delt": """navn: t-delt
+knuder: {A: [0, 0], C: [2, 0], B: [5, 0]}
+elementer:
+  B1: {fra: A, til: C, profil: IPE200, materiale: S235}
+  B2: {fra: B, til: C, profil: IPE200, materiale: S235}
+understoetninger: {A: charnier, B: rulle}
+lasttilfaelde: {Q: {laster: [{element: B1, linjelast: 10, retning: ned}, {element: B2, linjelast: 10, retning: ned}]}}
+kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}, graense: 400}}
+""",
+    "kontinuert": """navn: t-kontinuert
+knuder: {A: [0, 0], B: [4, 0], C: [8, 0]}
+elementer:
+  B1: {fra: A, til: B, profil: IPE200, materiale: S235}
+  B2: {fra: B, til: C, profil: IPE200, materiale: S235}
+understoetninger: {A: charnier, B: rulle, C: rulle}
+lasttilfaelde: {Q: {laster: [{element: B1, linjelast: 10, retning: ned}, {element: B2, linjelast: 10, retning: ned}]}}
+kombinationer: {K: {type: anvendelse, faktorer: {Q: 1.0}}}
+""",
     "ramme": """navn: t-ramme
 knuder: {A: [0, 0], B: [0, 2.5], C: [4.2, 2.5], D: [4.2, 0]}
 elementer:
@@ -190,6 +208,20 @@ def test(args, argv) -> int:
         tjek("udkraget M = PL", abs(k["elementer"]["B1"]["M_min"]), 20)
         tjek("udkraget δ = PL³/3EI [mm] (bøjning, uden forskydning)", abs(k["elementer"]["B1"]["delta_mm"]),
              10 * 2 ** 3 / (3 * EI) * 1000, tol=0.02)
+        s, r = res["delt"]
+        k = r["kombinationer"]["K"]
+        EI = 210e6 * s["elementer"]["B1"]["_t"]["I_staerk"] * 1e-12
+        d5 = 5 * 10 * 5 ** 4 / (384 * EI) * 1000
+        dmax = max(abs(k["elementer"][n]["delta_mm"]) for n in ("B1", "B2"))
+        tjek("delt bjælke (2 + 3 m, B2 tegnet baglæns): δ over hele spændet = 5qL⁴/384EI [mm]", dmax, d5)
+        tjek("delt bjælke: L/δ regnes med spændets længde 5 m", k["elementer"]["B2"]["L_over_delta"], round(5000 / d5))
+        s, r = res["kontinuert"]
+        k = r["kombinationer"]["K"]
+        ok = "spaend" not in k["elementer"]["B1"] and "spaend" not in k["elementer"]["B2"]
+        print(("OK   " if ok else "FEJL ") + "kontinuert bjælke: spænd deles ved den midterste understøtning")
+        if not ok:
+            fejl.append("kontinuert spænd")
+        tjek("kontinuert bjælke: δ = qL⁴/185EI [mm]", abs(k["elementer"]["B1"]["delta_mm"]), 10 * 4 ** 4 / (184.6 * EI) * 1000, tol=0.02)
         s, r = res["ramme"]
         k = r["kombinationer"]["K"]
         q = 1.2 * (12 + 78.5 * s["elementer"]["B1"]["_t"]["A"] * 1e-6)

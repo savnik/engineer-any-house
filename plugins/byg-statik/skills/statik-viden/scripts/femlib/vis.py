@@ -14,7 +14,7 @@ STORRELSER = ("M", "V", "N", "d")
 def _hover(en, e, c, i):
     return (f"<b>{en}</b> · {e['profil']} · {e['materiale']}<br>x = {_fmt(c['x'][i], 2)} m af {_fmt(e['_L'], 2)} m<br>"
             f"M = {_fmt(c['M'][i], 2)} kNm<br>V = {_fmt(c['V'][i], 2)} kN<br>N = {_fmt(c['N'][i], 2)} kN<br>"
-            f"δ = {_fmt(c['d'][i], 2)} mm")
+            f"δ = {_fmt(c.get('d_spaend', c['d'])[i], 2)} mm" + (" (over hele spændet)" if "d_spaend" in c else ""))
 
 
 def _xyz(p, plan):
