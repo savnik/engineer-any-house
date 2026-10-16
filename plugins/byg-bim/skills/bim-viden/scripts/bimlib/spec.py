@@ -63,10 +63,24 @@ def _laes(sti: pathlib.Path) -> dict:
     return d
 
 
+def _flet_dict(a: dict, b: dict) -> dict:
+    """Mapping oven på mapping, rekursivt: kun de nævnte nøgler ændres, null fjerner, lister erstattes."""
+    ud = dict(a)
+    for f, x in b.items():
+        if x is None:
+            ud.pop(f, None)
+        elif isinstance(x, dict) and isinstance(a.get(f), dict):
+            ud[f] = _flet_dict(a[f], x)
+        else:
+            ud[f] = copy.deepcopy(x)
+    return ud
+
+
 def _flet(basis: dict, over: dict) -> dict:
     """Projektspec/forslag oven på basismodel: elementer med samme id erstatter felterne, nye tilføjes.
 
-    Et felt sat til null i forslaget fjernes fra elementet. `slet:` fjerner elementer helt (modelrettelse);
+    Et felt sat til null i forslaget fjernes fra elementet. Topsektioner, der er mappinger (typer, vvs, model …),
+    flettes rekursivt: skriv kun de nøgler, der ændres. `slet:` fjerner elementer helt (modelrettelse);
     `nedrives:` beholder dem med status nedrives (renovering). `bim.py flet` bruger samme regler."""
     ud = copy.deepcopy(basis)
     for k, v in over.items():
@@ -85,7 +99,7 @@ def _flet(basis: dict, over: dict) -> dict:
                 else:
                     liste[i] = ny
         elif isinstance(v, dict) and isinstance(ud.get(k), dict):
-            ud[k] = {f: x for f, x in {**ud[k], **copy.deepcopy(v)}.items() if x is not None}
+            ud[k] = _flet_dict(ud[k], v)
         else:
             ud[k] = copy.deepcopy(v)
     alle = {str(e.get("id")): e for s in SEKTIONER for e in ud.get(s) or []}

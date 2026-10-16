@@ -69,3 +69,31 @@ def test_slet_med_haengende_henvisning_stopper(tmp_path):
     foer = h.read_bytes()
     f = _forslag(h, "s", "slet: [S-IV2]\n")      # S-D2 sidder i S-IV2
     assert flet(f) == 1 and h.read_bytes() == foer
+
+
+def test_ny_sektion_og_rettet_underafsnit_beholder_forslagets_kommentarer(tmp_path):
+    h = _hoved(tmp_path)
+    f = _forslag(h, "vvs", "vvs:\n  # produktdata (kilde V)\n  produkter:\n    vvb: {navn: VVB 160, vaegt: 60}\n\n"
+                           "    # pumpe – skøn\n    pumpe: {navn: P1}\n  valg: {ror: pex}\n")
+    assert flet(f) == 0
+    t = h.read_text(encoding="utf-8")
+    assert "  # produktdata (kilde V)" in t and "    # pumpe – skøn" in t
+    g = _forslag(h, "pumpe", "vvs:\n  produkter:\n    vvb: {navn: VVB 160, vaegt: 60}\n\n"
+                             "    # pumpe – målt\n    pumpe: {navn: P2}\n")
+    assert flet(g) == 0
+    t = h.read_text(encoding="utf-8")
+    assert "    # pumpe – målt" in t and "  valg: {ror: pex}" in t and "skøn" not in t
+    assert yaml.safe_load(t)["vvs"]["produkter"]["pumpe"] == {"navn": "P2"}
+
+
+def test_dyb_mapping_aendrer_kun_den_naevnte_noegle(tmp_path):
+    h = _hoved(tmp_path)
+    f = _forslag(h, "vvs", "vvs:\n  produkter:\n    # VVB (kilde V)\n    vvb: {navn: VVB 160, vaegt: 60}\n"
+                           "    pumpe: {navn: P1}\n  valg: {ror: pex}\n")
+    assert flet(f) == 0
+    g = _forslag(h, "vaegt", "vvs:\n  produkter:\n    vvb: {vaegt: 65}\n")
+    assert flet(g) == 0
+    t = h.read_text(encoding="utf-8")
+    d = yaml.safe_load(t)["vvs"]
+    assert d == {"produkter": {"vvb": {"navn": "VVB 160", "vaegt": 65}, "pumpe": {"navn": "P1"}}, "valg": {"ror": "pex"}}
+    assert "    # VVB (kilde V)\n    vvb: {navn: VVB 160, vaegt: 65}" in t

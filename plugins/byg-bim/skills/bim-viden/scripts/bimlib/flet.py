@@ -55,22 +55,65 @@ def _sektion(linjer, navn):
     return start, slut
 
 
-def _blokke(linjer, start, slut, liste: bool):
-    """Elementblokke i en sektion: [(fra, til)] i filens rækkefølge. Et element er en linje på indrykning 2
-    ('  - ' eller '  nøgle:') plus fortsættelseslinjer med større indrykning."""
-    mønster = re.compile(r"  - " if liste else r"  [^\s#-][^:]*:")
+def _blokke(linjer, start, slut, liste: bool, ind: int = 2):
+    """Elementblokke i en sektion: [(fra, til)] i filens rækkefølge. Et element er en linje på indrykning `ind`
+    ('- ' eller 'nøgle:') plus fortsættelseslinjer med større indrykning. Tomme linjer og kommentarer inde i
+    et element hører med; tomme linjer og kommentarer lige før næste element gør ikke."""
+    mønster = re.compile(" " * ind + (r"- " if liste else r"[^\s#-][^:]*:"))
     ud, i = [], start + 1
     while i < slut:
         if mønster.match(linjer[i]):
             j = i + 1
-            while j < slut and linjer[j].strip() and len(linjer[j]) - len(linjer[j].lstrip()) > 2 \
-                    and not linjer[j].lstrip().startswith("#"):
+            while j < slut and (not linjer[j].strip() or linjer[j].lstrip().startswith("#")
+                                or len(linjer[j]) - len(linjer[j].lstrip()) > ind):
                 j += 1
+            while j > i + 1 and (not linjer[j - 1].strip() or linjer[j - 1].lstrip().startswith("#")):
+                j -= 1
             ud.append((i, j))
             i = j
         else:
             i += 1
     return ud
+
+
+def _dict_tekst(linjer, fra, til, ind, g, n, erstat, indsæt, sti, fx):
+    """Skriv kun de ændrede nøgler i en mapping om. En undermapping i blokform skrives om nøgle for nøgle.
+    Står nøglen i forslaget med samme værdi, bruges forslagets tekst ordret – og har den kommentarer lige over sig,
+    erstatter de hovedmodellens kommentarer over nøglen. Ellers skrives værdien på én linje, og kommentarerne står."""
+    bl = _blokke(linjer, fra, til, False, ind)
+    if len(bl) != len(g):
+        raise SpecFejl([f"flet: kan ikke afgrænse nøglerne i '{'.'.join(sti)}' ({len(bl)} blokke, {len(g)} nøgler)"
+                        f" – skriv hver nøgle på sin egen linje med {ind} mellemrums indrykning"])
+
+    def ny_tekst(nøgle, værdi):
+        f = fx.nøgle([*sti, nøgle], værdi)
+        if f:
+            return f[0] and [" " * ind + x for x in f[0]], [" " * ind + x if x.strip() else x for x in f[1]]
+        return None, [" " * ind + f"{nøgle}: {_flow(værdi)}"]
+
+    forrige = fra + 1
+    for nøgle, (a, b) in zip(list(g), bl):
+        lead = a
+        while lead > forrige and linjer[lead - 1].lstrip().startswith("#"):
+            lead -= 1
+        forrige = b
+        if nøgle not in n:
+            erstat[lead] = (b, [])
+        elif n[nøgle] != g[nøgle]:
+            blokform = re.match(rf"\s*{re.escape(str(nøgle))}:\s*(#.*)?$", linjer[a])
+            barn = next((len(x) - len(x.lstrip()) for x in linjer[a + 1:b] if x.strip() and not x.lstrip().startswith("#")),
+                        None)
+            if isinstance(g[nøgle], dict) and isinstance(n[nøgle], dict) and blokform and barn and barn > ind:
+                _dict_tekst(linjer, a, b, barn, g[nøgle], n[nøgle], erstat, indsæt, [*sti, nøgle], fx)
+            else:
+                kom, tekst = ny_tekst(nøgle, n[nøgle])
+                erstat[lead if kom else a] = (b, (kom or []) + tekst)
+    nye = [x for x in n if x not in g]
+    if nye:
+        sidste = bl[-1][1] if bl else fra + 1
+        for x in nye:
+            kom, tekst = ny_tekst(x, n[x])
+            indsæt.setdefault(sidste, []).extend((kom or []) + tekst)
 
 
 def _ændringer(gammel: dict, ny: dict) -> set:
@@ -102,8 +145,74 @@ def _berørt(forslag: dict) -> set:
     return ud
 
 
-def _skriv_tekst(tekst: str, gammel: dict, ny: dict) -> str:
+class _Forslagstekst:
+    """Forslagets egen tekst for en sektion eller et element – bruges ordret (med kommentarer), når den giver
+    præcis den flettede værdi; ellers skrives elementet på én linje."""
+
+    def __init__(self, tekst):
+        self.linjer = (tekst or "").split("\n")
+
+    def sektion(self, k, værdi):
+        sek = _sektion(self.linjer, k)
+        if sek is None:
+            return None
+        bid = self.linjer[sek[0]:sek[1]]
+        while bid and (not bid[-1].strip() or bid[-1].startswith("#")):
+            bid.pop()
+        return bid if _læs_tekst(bid) == {k: værdi} else None
+
+    def nøgle(self, sti, værdi):
+        """(ledende kommentarer, linjer) for nøglen sti[-1] i mappingen sti[:-1] – kun hvis de giver `værdi`."""
+        sek = _sektion(self.linjer, sti[0])
+        if sek is None:
+            return None
+        fra, til, ind = sek[0], sek[1], 2
+        for i, k in enumerate(sti[1:]):
+            bl = [(a, b) for a, b in _blokke(self.linjer, fra, til, False, ind)
+                  if re.match(rf"\s*{re.escape(str(k))}:(\s|$)", self.linjer[a])]
+            if not bl:
+                return None
+            a, b = bl[0]
+            if i == len(sti) - 2:
+                bid = [x[ind:] for x in self.linjer[a:b]]
+                if _læs_tekst(bid) != {k: værdi}:
+                    return None
+                lead = a
+                while lead > fra + 1 and self.linjer[lead - 1].lstrip().startswith("#"):
+                    lead -= 1
+                return [x[ind:] for x in self.linjer[lead:a]], bid
+            ind = next((len(x) - len(x.lstrip()) for x in self.linjer[a + 1:b]
+                        if x.strip() and not x.lstrip().startswith("#")), None)
+            if ind is None:
+                return None
+            fra, til = a, b
+        return None
+
+    def element(self, k, nøgle, værdi, liste):
+        sek = _sektion(self.linjer, k)
+        if sek is None:
+            return None
+        for fra, til in _blokke(self.linjer, *sek, liste):
+            bid = self.linjer[fra:til]
+            v = _læs_tekst([f"{k}:"] + bid)
+            v = (v or {}).get(k)
+            if liste and isinstance(v, list) and len(v) == 1 and v[0] == værdi:
+                return bid
+            if not liste and isinstance(v, dict) and v == {nøgle: værdi}:
+                return bid
+        return None
+
+
+def _læs_tekst(linjer):
+    try:
+        return yaml.safe_load("\n".join(linjer))
+    except yaml.YAMLError:
+        return None
+
+
+def _skriv_tekst(tekst: str, gammel: dict, ny: dict, ftekst: str = None) -> str:
     """Skriv kun de ændrede elementer om i hovedmodellens tekst."""
+    fx = _Forslagstekst(ftekst)
     linjer = tekst.split("\n")
     erstat = {}   # linjeindeks (fra) -> (til, nye linjer)
     indsæt = {}   # linjeindeks -> nye linjer (indsættes før)
@@ -122,7 +231,12 @@ def _skriv_tekst(tekst: str, gammel: dict, ny: dict) -> str:
                 erstat[sek[0]] = (sek[1], [f"{k}: {_flow(n)}" if not isinstance(n, (list, dict))
                                            else f"{k}:"] + _render(n, liste))
             else:
-                nye_sektioner += [f"{k}:"] + _render(n, liste) if isinstance(n, (list, dict)) else [f"{k}: {_flow(n)}"]
+                nye_sektioner += fx.sektion(k, n) or ([f"{k}:"] + _render(n, liste) if isinstance(n, (list, dict))
+                                                     else [f"{k}: {_flow(n)}"])
+                nye_sektioner.append("")
+            continue
+        if not liste:
+            _dict_tekst(linjer, *sek, 2, g, n, erstat, indsæt, [k], fx)
             continue
         bl = _blokke(linjer, *sek, liste)
         nøgler = [str(e.get("id")) for e in g] if liste else list(g)
@@ -136,12 +250,14 @@ def _skriv_tekst(tekst: str, gammel: dict, ny: dict) -> str:
             if nøgle not in nmap:
                 erstat[fra] = (til, [])
             elif nmap[nøgle] != gmap[nøgle]:
-                erstat[fra] = (til, _render({nøgle: nmap[nøgle]} if not liste else [nmap[nøgle]], liste))
-        nye = [nmap[x] for x in nmap if x not in gpos]
+                erstat[fra] = (til, fx.element(k, nøgle, nmap[nøgle], liste)
+                               or _render({nøgle: nmap[nøgle]} if not liste else [nmap[nøgle]], liste))
+        nye = [x for x in nmap if x not in gpos]
         if nye:
             sidste = bl[-1][1] if bl else sek[0] + 1
-            indsæt.setdefault(sidste, []).extend(_render(nye if liste else {x: nmap[x] for x in nmap if x not in gpos},
-                                                         liste))
+            for x in nye:
+                indsæt.setdefault(sidste, []).extend(fx.element(k, x, nmap[x], liste)
+                                                     or _render([nmap[x]] if liste else {x: nmap[x]}, liste))
     ud = []
     i = 0
     while i < len(linjer):
@@ -159,7 +275,7 @@ def _skriv_tekst(tekst: str, gammel: dict, ny: dict) -> str:
     if nye_sektioner:
         while ud and ud[-1] == "":
             ud.pop()
-        ud += [""] + nye_sektioner + [""]
+        ud += [""] + nye_sektioner
     return "\n".join(ud)
 
 
@@ -245,7 +361,7 @@ def flet(forslag, proev=False, tving=False, note=None) -> int:
         for x in fejl:
             print("  - " + x)
         return 1
-    ny_tekst = _skriv_tekst(tekst, gammel, ny)
+    ny_tekst = _skriv_tekst(tekst, gammel, ny, fsti.read_text(encoding="utf-8"))
     ændret = _ændringer(gammel, ny)
     if not ændret:
         print("Forslaget ændrer intet i hovedmodellen.")
