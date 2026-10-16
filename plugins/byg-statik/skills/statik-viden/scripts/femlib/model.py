@@ -15,6 +15,7 @@ import yaml
 HER = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(HER))
 import statik  # noqa: E402  (profiltabeller og materialer deles med overslagsværktøjet)
+from femlib import flader  # noqa: E402
 
 N_PKT = 41  # punkter pr. element i resultatkurver
 
@@ -32,6 +33,10 @@ MATERIALER = {
     "C20/25": {"E": 30000, "G": 30000 / 2.4, "rho": 25.0},
     "C25/30": {"E": 31000, "G": 31000 / 2.4, "rho": 25.0},
     "C30/37": {"E": 33000, "G": 33000 / 2.4, "rho": 25.0},
+    # murværk til flader: typiske overslagsværdier, E = K_E·f_k med K_E = 1000 (EN 1996-1-1, 3.7.2), ν = 0,2.
+    # gasbeton f_k ≈ 2,5 MPa, densitet ca. 535 kg/m3 + fugt; tegl f_k ≈ 6 MPa, 1800 kg/m3. Kendes f_k, så angiv eget.
+    "gasbeton": {"E": 2500, "G": 2500 / 2.4, "rho": 6.0},
+    "tegl": {"E": 6000, "G": 6000 / 2.4, "rho": 18.0},
 }
 for _n, _m in MATERIALER.items():  # E skal være den samme som i overslagsværktøjet
     if _n in statik.MATERIALER:
@@ -114,9 +119,15 @@ def laes_spec(sti: pathlib.Path, aendringer: list | None = None) -> dict:
     s["_aendringer"] = list(aendringer or [])
     s["_sha"] = hashlib.sha256(tekst.encode("utf-8")).hexdigest()[:12]
     s["_sti"] = str(sti)
-    for k in ("knuder", "elementer", "understoetninger", "lasttilfaelde", "kombinationer"):
+    for k in ("knuder", "lasttilfaelde", "kombinationer"):
         if not s.get(k):
             raise SpecFejl(f"'{k}' mangler eller er tom (se: fem.py skabelon)")
+    if not s.get("elementer") and not s.get("flader"):
+        raise SpecFejl("modellen skal have 'elementer' (stænger) og/eller 'flader' (vægge, dæk)")
+    if not s.get("understoetninger") and not s.get("understoetninger_linje"):
+        raise SpecFejl("'understoetninger' (knuder) og/eller 'understoetninger_linje' mangler")
+    s.setdefault("elementer", {})
+    s.setdefault("understoetninger", {})
     s.setdefault("navn", sti.stem)
     s.setdefault("materialer", {})
     s.setdefault("tvaersnit", {})
@@ -124,7 +135,7 @@ def laes_spec(sti: pathlib.Path, aendringer: list | None = None) -> dict:
         if not (isinstance(v, (list, tuple)) and len(v) in (2, 3)):
             raise SpecFejl(f"knude {k}: skriv [x, z] (plan) eller [x, y, z] i m")
         s["knuder"][k] = [float(v[0]), 0.0, float(v[1])] if len(v) == 2 else [float(c) for c in v]
-    s["_plan"] = all(abs(v[1]) < 1e-9 for v in s["knuder"].values())
+    s["_plan"] = all(abs(v[1]) < 1e-9 for v in s["knuder"].values()) and not s.get("flader")
     for n, e in s["elementer"].items():
         for k in ("fra", "til", "profil", "materiale"):
             if k not in e:
@@ -157,10 +168,28 @@ def laes_spec(sti: pathlib.Path, aendringer: list | None = None) -> dict:
                 raise SpecFejl(f"{hvor}: element '{l['element']}' findes ikke")
             if "knude" in l and l["knude"] not in s["knuder"]:
                 raise SpecFejl(f"{hvor}: knude '{l['knude']}' findes ikke")
+            if "flade" in l:
+                if l["flade"] not in (s.get("flader") or {}):
+                    raise SpecFejl(f"{hvor}: flade '{l['flade']}' findes ikke")
+                if "tryk" not in l:
+                    raise SpecFejl(f"{hvor}: en fladelast angives som 'tryk' (kN/m2)")
+                if l.get("retning", "ned") not in ("ned", "x", "y", "z", "normal"):
+                    raise SpecFejl(f"{hvor}: retning skal være ned, x, y, z eller normal")
+                continue
+            if "linje" in l and not (isinstance(l["linje"], list) and len(l["linje"]) == 2
+                                     and all(k in s["knuder"] for k in l["linje"]) and "linjelast" in l):
+                raise SpecFejl(f"{hvor}: en linjelast langs en linje angives som linje: [knude, knude] og linjelast")
+            if "linjelast" in l and "element" not in l and "linje" not in l:
+                raise SpecFejl(f"{hvor}: en linjelast skal have 'element' eller 'linje'")
             if not any(k in l for k in ("linjelast", "punktlast", "moment")):
-                raise SpecFejl(f"{hvor}: angiv linjelast, punktlast eller moment")
+                raise SpecFejl(f"{hvor}: angiv linjelast, punktlast, moment eller (på en flade) tryk")
             if l.get("retning", "ned") not in ("ned", "x", "y", "z") and "moment" not in l:
                 raise SpecFejl(f"{hvor}: retning skal være ned, x, y eller z")
+    try:
+        flader.laes(s, MATERIALER | s["materialer"])
+        flader.mesh(s)
+    except flader.FladeFejl as e:
+        raise SpecFejl(str(e))
     return s
 
 
@@ -180,14 +209,22 @@ def byg(s: dict):
     from Pynite import FEModel3D
     m = FEModel3D()
     mats = MATERIALER | s["materialer"]
-    for navn in {e["materiale"] for e in s["elementer"].values()}:
+    for navn in {e["materiale"] for e in s["elementer"].values()} | {f["materiale"] for f in s["flader"].values()}:
         mt = mats[navn]
-        m.add_material(navn, float(mt["E"]) * 1e3, float(mt["G"]) * 1e3, 0.3, float(mt.get("rho", 0)))
+        nu = flader.nu(mt)
+        m.add_material(navn, float(mt["E"]) * 1e3, float(mt["G"]) * 1e3, nu if 0 <= nu < 0.5 else 0.3,
+                       float(mt.get("rho", 0)))
     for n, e in s["elementer"].items():
         t = e["_t"]
         m.add_section(f"T_{n}", t["A"] * 1e-6, t["I_svag"] * 1e-12, t["I_staerk"] * 1e-12, t["J"] * 1e-12)
-    for k, v in s["knuder"].items():
-        m.add_node(k, *P(v))
+    brugt = {e[k] for e in s["elementer"].values() for k in ("fra", "til")} | set(s["understoetninger"]) \
+        | {k for _, _, kn, _ in s["_quads"] for k in kn}
+    for k, v in flader.alle_knuder(s).items():
+        if k in brugt:
+            m.add_node(k, *P(v))
+    for qn, fn, kn, _ in s["_quads"]:
+        f = s["flader"][fn]
+        m.add_quad(qn, *kn, f["_t"], f["materiale"])
     for n, e in s["elementer"].items():
         m.add_member(n, e["fra"], e["til"], e["materiale"], f"T_{n}", rotation=float(e.get("drej", 0)),
                      tension_only=e.get("kun_traek", False), comp_only=e.get("kun_tryk", False))
@@ -199,14 +236,21 @@ def byg(s: dict):
             m.def_releases(n, Ryi=ri, Rzi=ri, Ryj=rj, Rzj=rj)
     # understøtninger (spec-frihedsgrad → PyNite)
     pyn = {"x": "DX", "y": "DZ", "z": "DY", "rx": "RX", "ry": "RZ", "rz": "RY"}
-    holdt = {k: set() for k in s["knuder"]}
+    holdt = {k: set() for k in m.nodes}
     for k, v in s["understoetninger"].items():
         holdt[k] |= {pyn[d] for d in (STOETTE[v] if isinstance(v, str) else v)}
+    for ls in s["understoetninger_linje"]:
+        v = ls.get("type", "charnier")
+        for _, k in flader.knuder_paa_linje(s, s["knuder"][ls["fra"]], s["knuder"][ls["til"]]):
+            if k in holdt:
+                holdt[k] |= {pyn[d] for d in (STOETTE[v] if isinstance(v, str) else v)}
     if s["_plan"]:  # plan ramme: hold frihedsgraderne ud af planen i alle knuder
         for k in holdt:
             holdt[k] |= {"DZ", "RX", "RY"}
         # en knude, hvor alle tilsluttede elementender er leddede, har ingen stivhed mod rotation i planet
         for k in s["knuder"]:
+            if k not in m.nodes:
+                continue
             ender = [(e, "start" if e["fra"] == k else "slut") for e in s["elementer"].values() if k in (e["fra"], e["til"])]
             if ender and all(side in (e.get("led") or []) for e, side in ender):
                 holdt[k].add("RZ")
@@ -216,9 +260,17 @@ def byg(s: dict):
     # laster
     for ltn, lt in s["lasttilfaelde"].items():
         lt = lt or {}
-        if lt.get("egenvaegt"):
+        if lt.get("egenvaegt") and s["elementer"]:
             m.add_member_self_weight("FY", -1.0, case=ltn)
+        for k, F in flader.knudelaster(s, ltn, mats).items():
+            if k not in m.nodes:
+                raise SpecFejl(f"lasttilfælde {ltn}: last i knude '{k}', som hverken ligger på en flade eller et element")
+            for d, v in zip(("FX", "FY", "FZ"), (F[0], F[2], -F[1])):
+                if abs(v) > 1e-12:
+                    m.add_node_load(k, d, float(v), case=ltn)
         for l in lt.get("laster") or []:
+            if "flade" in l or "linje" in l:
+                continue
             r = l.get("retning", "ned")
             if "element" in l and "linjelast" in l:
                 w = l["linjelast"]
@@ -229,6 +281,8 @@ def byg(s: dict):
             elif "element" in l and "punktlast" in l:
                 d, p = retning(r, float(l["punktlast"]))
                 m.add_member_pt_load(l["element"], d, p, float(l.get("x", s["elementer"][l["element"]]["_L"] / 2)), case=ltn)
+            elif "knude" in l and l["knude"] not in m.nodes:
+                raise SpecFejl(f"lasttilfælde {ltn}: knude '{l['knude']}' hverken ligger på en flade eller et element")
             elif "knude" in l and "punktlast" in l:
                 d, p = retning(r, float(l["punktlast"]))
                 m.add_node_load(l["knude"], d, p, case=ltn)
@@ -356,8 +410,11 @@ def ydre_last(s: dict, kombi: str) -> dict:
         if lt_d.get("egenvaegt"):
             for e in s["elementer"].values():
                 tot["z"] -= f * float(mats[e["materiale"]].get("rho", 0)) * e["_t"]["A"] * 1e-6 * e["_L"]
+        for F in flader.knudelaster(s, lt, mats).values():
+            for i, a in enumerate("xyz"):
+                tot[a] += f * float(F[i])
         for l in lt_d.get("laster") or []:
-            if "moment" in l:
+            if "moment" in l or "flade" in l or "linje" in l:
                 continue
             r = l.get("retning", "ned")
             akse, sgn = ("z", -1) if r == "ned" else (r, 1)
@@ -386,17 +443,31 @@ def resultater(s: dict, m, kommando: str) -> dict:
     for kn, k in s["kombinationer"].items():
         kr = {"type": k["type"], "faktorer": k.get("faktorer"), "reaktioner": {}, "elementer": {}}
         sum_r = {"x": 0.0, "y": 0.0, "z": 0.0}
-        for knude in s["understoetninger"]:
+        def rk(knude):
             n = m.nodes[knude]
-            r = {"Rx": n.RxnFX[kn], "Ry": -n.RxnFZ[kn], "Rz": n.RxnFY[kn],
-                 "Mx": n.RxnMX[kn], "My": -n.RxnMZ[kn], "Mz": n.RxnMY[kn]}
-            r = {a: round(float(v), 3) for a, v in r.items() if abs(v) > 1e-6}
-            kr["reaktioner"][knude] = r
+            return {"Rx": n.RxnFX[kn], "Ry": -n.RxnFZ[kn], "Rz": n.RxnFY[kn],
+                    "Mx": n.RxnMX[kn], "My": -n.RxnMZ[kn], "Mz": n.RxnMY[kn]}
+        talt = set()
+        grupper = [(knude, [knude]) for knude in s["understoetninger"]]
+        for ls in s["understoetninger_linje"]:
+            grupper.append((f"linje {ls['fra']}–{ls['til']}", [k for _, k in flader.knuder_paa_linje(
+                s, s["knuder"][ls["fra"]], s["knuder"][ls["til"]]) if k in m.nodes]))
+        for gnavn, kn_liste in grupper:
+            r = {}
+            for knude in kn_liste:
+                if knude in talt:
+                    continue
+                talt.add(knude)
+                for a, v in rk(knude).items():
+                    r[a] = r.get(a, 0.0) + float(v)
             for a in sum_r:
                 sum_r[a] += r.get("R" + a, 0.0)
+            r = {a: round(v, 3) for a, v in r.items() if abs(v) > 1e-6 and not (a[0] == "M" and len(kn_liste) > 1)}
+            kr["reaktioner"][gnavn] = r
         last = ydre_last(s, kn)
+        tol = 1e-3 * max(1.0, *(abs(v) for v in last.values()))  # numerisk støj skalerer med den største last
         kr["ligevaegt"] = {a: {"reaktioner": round(sum_r[a], 3), "laster": round(last[a], 3),
-                               "ok": abs(sum_r[a] + last[a]) <= 1e-3 * max(1.0, abs(last[a]))} for a in sum_r}
+                               "ok": abs(sum_r[a] + last[a]) <= tol} for a in sum_r}
         for en, e in s["elementer"].items():
             kurv = _kurver(m.members[en], kn, s["_plan"], bool(e.get("udkragning")))
             info = sp[en]
@@ -427,6 +498,8 @@ def resultater(s: dict, m, kommando: str) -> dict:
                     er["graense"] = f"L/{g}"
                     er["nedboejning_ok"] = er["L_over_delta"] >= g
             kr["elementer"][en] = er
+        if s["flader"]:
+            kr.update(flader.resume(s, flader.felter(s, m, kn)))
         res["kombinationer"][kn] = kr
     return res
 
@@ -445,9 +518,13 @@ def kurver_alle(s: dict, m) -> dict:
                 delta[en] = max(el[en]["d_spaend"], key=abs)
         fl = {}
         for k in s["knuder"]:
+            if k not in m.nodes:
+                continue
             n = m.nodes[k]
             fl[k] = (1000 * n.DX[kn], -1000 * n.DZ[kn], 1000 * n.DY[kn])
         ud[kn] = {"elementer": el, "flytning": fl, "delta": delta}
+        if s["flader"]:
+            ud[kn]["flader"] = flader.felter(s, m, kn)
     ud["_lokal_y"] = {en: lokal_y(m.members[en]) for en in s["elementer"]}
     return ud
 

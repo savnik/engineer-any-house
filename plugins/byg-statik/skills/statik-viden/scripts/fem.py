@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
-"""fem – FEM-beregning af bærende konstruktioner (bjælker, søjler, rammer, spær) ud fra en modelspec (YAML).
+"""fem – FEM-beregning af bærende konstruktioner (bjælker, søjler, rammer, spær) og flader (vægge, dæk som
+skalelementer) ud fra en modelspec (YAML).
 
 Kør altid med:  python3 fem.py <kommando> ...   (scriptet skifter selv til sit eget Python-miljø)
 
   opsaet                                    Opretter/opdaterer miljøet (~/.local/share/byg-statik/venv)
-  skabelon                                  Komplet eksempel på fem.yaml
+  skabelon [flader]                         Komplet eksempel på fem.yaml (flader: hus med vægge, dæk og bjælke)
   regn  <fem.yaml> [--ud <mappe>] [--ingen-filer] [--saet <sti>=<værdi> …]
                                             Analyse: reaktioner, snitkræfter, nedbøjninger og ligevægt pr. kombination
                                             → <ud>/<navn>.fem.json (+ resumé på skærmen). Standard-ud: <specmappe>/fem/
                                             --saet ændrer ét input uden at røre filen (kontrollens egne input),
                                             fx --saet lasttilfaelde.Q.laster.0.linjelast=4.0
-  tegn  <fem.yaml> [model|deformation|M|V|N|alle] [--kombi <navn>] [--ud <mappe>]
-                                            PNG til notatet og til din egen kontrol af modellen
-  vis   <fem.yaml> [--ud <mappe>]           Interaktiv HTML (åbnes i browseren): drej/zoom, hold musen over et
-                                            element for N, V, M og nedbøjning, vælg kombination og størrelse
-  test                                      Selvtest mod håndformler (simpel bjælke, udkraget bjælke, ramme)
+  tegn  <fem.yaml> [model|deformation|M|V|N|spaending|n_u|n_v|pladmoment|flytning|alle] [--kombi <navn>] [--ud <mappe>]
+                                            PNG til notatet og til din egen kontrol af modellen (model viser lasterne)
+  vis   <fem.yaml> [--ud <mappe>]           Interaktiv HTML (åbnes i browseren): drej/zoom, laster som pile, vælg
+                                            kombination og størrelse (M, V, N, deformation; på flader spænding,
+                                            membrankræfter, pladmoment, flytning), skjul flader, værdier ved musen
+  test                                      Selvtest mod håndformler (bjælker, ramme, plade, vægskive, bjælke på væg)
 
 Enheder: længder i m, kræfter i kN, momenter i kNm; profiler og tværsnit i mm; nedbøjning vises i mm.
 Akser: x og y vandret, z lodret op. En model med alle y = 0 regnes som plan ramme i x-z-planen.

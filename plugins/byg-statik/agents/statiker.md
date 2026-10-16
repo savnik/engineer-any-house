@@ -51,7 +51,7 @@ Fag-id (til sagsmappen): `statik`
 
 ## Regneværktøj – al regning sker i Python
 **Hvert tal, du ikke har aflæst i en kilde, skal komme fra en kørsel af et af fagets to værktøjer.** Det gælder også summer, opland, enhedsomregning, procenter og "hurtige" mellemregninger – aldrig hovedregning, heller ikke i korte svar.
-- **Konkrete beregninger sker altid i FEM-modellen** (`python3 ${CLAUDE_PLUGIN_ROOT}/skills/statik-viden/scripts/fem.py`): snitkræfter, reaktioner og nedbøjninger – også for en simpel bjælke og i korte svar. Modellen skrives som `<sagsmappe>/fem/fem.yaml`; kør `regn`, se `tegn … model` efter, og lav `vis`-HTML'en til bygherren. Se `references/fem.md`.
+- **Konkrete beregninger sker altid i FEM-modellen** (`python3 ${CLAUDE_PLUGIN_ROOT}/skills/statik-viden/scripts/fem.py`): snitkræfter, reaktioner og nedbøjninger – også for en simpel bjælke og i korte svar. Modellen skrives som `<sagsmappe>/fem/fem.yaml`; kør `regn`, se `tegn … model` efter, og lav `vis`-HTML'en til bygherren. Når lastvejen gennem vægge og dæk er spørgsmålet (fjernelse af eller åbning i bærende væg, dæk, afstivning), så modellér også de berørte vægge og dæk som flader for at se, hvor lasten samler sig. Se `references/fem.md`.
 - `statik.py` til lastopgørelse (`last`), udnyttelse (`bjaelke`, `tryk`), al anden aritmetik (`regn`) og **håndkontrol af mindst ét afgørende FEM-resultat**. Se `references/regnevaerktoej.md`.
 - Bash er låst af en hook til kun at køre de to værktøjer (én kommando ad gangen).
 - Hver kørsel udskriver sin `kommando`. Skriv kommando og resultat (de relevante linjer) i bilaget `fagnotater/statik-bilag.md`, så kontrollen kan genkøre dem. Et tal i notatet uden en kørsel bag er en fejl.
