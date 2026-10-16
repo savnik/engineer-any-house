@@ -245,7 +245,7 @@ def _tegn_3d(s, kurver, visning, kombi, ud):
             ax.text(*c, f"  maks {_fmt(v[i], 2)} ({s['_quads'][i][1]})", fontsize=8, zorder=10)
             titel = f"{s['navn']} · {NAVN[visning]} · {kombi}" + (f" (forstørret ×{_fmt(fak, 0)})" if visning == "u" else "")
             if note:
-                ax.text2D(0.0, 0.0, note, transform=ax.transAxes, fontsize=8, color="#555")
+                titel += "\n" + note
         else:
             ax.add_collection3d(Poly3DCollection(polys, facecolors=(0.8, 0.8, 0.8, 0.35), edgecolors=(0.5, 0.5, 0.5, 0.4),
                                                  linewidths=0.15))
@@ -291,11 +291,14 @@ def _tegn_3d(s, kurver, visning, kombi, ud):
     for i, f in enumerate((ax.set_xlim, ax.set_ylim, ax.set_zlim)):
         f(lo[i] - 0.05 * span, hi[i] + 0.05 * span)
     ax.set_box_aspect([max(0.05, (hi[i] - lo[i] + 0.1 * span) / span) for i in range(3)])
+    for i, akse in enumerate((ax.xaxis, ax.yaxis, ax.zaxis)):
+        if hi[i] - lo[i] < 0.05 * span:  # næsten flad model: ingen sammenklumpede tal på den korte akse
+            akse.set_ticks([round((lo[i] + hi[i]) / 2, 2)])
     ax.view_init(elev=24, azim=-60)
     ax.set_xlabel("x [m]")
     ax.set_ylabel("y [m]")
     ax.set_zlabel("z [m]")
-    ax.set_title(titel, fontsize=11, loc="left")
+    ax.set_title(titel, fontsize=11 if "\n" not in titel else 10, loc="left")
     ax.text2D(1.0, 0.0, f"OVERSLAG · fem.py · spec {s['_sha']}", transform=ax.transAxes, fontsize=7, color="#888", ha="right")
     ud.mkdir(parents=True, exist_ok=True)
     sti = ud / filnavn(f"{s['navn']}-{'model' if visning == 'model' else FIL.get(visning, NAVN[visning].lower())}"

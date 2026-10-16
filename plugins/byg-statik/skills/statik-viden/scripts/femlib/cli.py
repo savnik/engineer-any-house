@@ -40,6 +40,13 @@ def _saet(args) -> list:
     return ud
 
 
+def _uddir(spec: pathlib.Path, uddir) -> pathlib.Path:
+    """--ud, ellers <specmappe>/fem/ – men ligger spec'en allerede i en mappe ved navn fem, så den mappe."""
+    if uddir:
+        return pathlib.Path(uddir).expanduser()
+    return spec.parent if spec.parent.name == "fem" else spec.parent / "fem"
+
+
 def _kommando(argv):
     return "python3 fem.py " + " ".join(shlex.quote(a) for a in argv)
 
@@ -88,7 +95,7 @@ def regn(args, argv) -> int:
     res = model.resultater(s, m, _kommando(argv))
     print(_resume(res))
     if not ingen:
-        ud = pathlib.Path(uddir).expanduser() if uddir else spec.parent / "fem"
+        ud = _uddir(spec, uddir)
         ud.mkdir(parents=True, exist_ok=True)
         sti = ud / f"{re.sub(r'[^A-Za-z0-9æøåÆØÅ_.-]+', '_', s['navn'])}.fem.json"
         model.gem_json(res, sti)
@@ -109,7 +116,7 @@ def tegn(args, argv) -> int:
     s = model.laes_spec(spec, aendr)
     m = model.analyser(s)
     kurver = model.kurver_alle(s, m)
-    ud = pathlib.Path(uddir).expanduser() if uddir else spec.parent / "fem"
+    ud = _uddir(spec, uddir)
     brud = [k for k, v in s["kombinationer"].items() if v["type"] == "brud"]
     anv = [k for k, v in s["kombinationer"].items() if v["type"] == "anvendelse"]
     if kombi and kombi not in s["kombinationer"]:
@@ -151,7 +158,7 @@ def vis(args, argv) -> int:
     s = model.laes_spec(spec, aendr)
     m = model.analyser(s)
     res = model.resultater(s, m, _kommando(argv))
-    sti = v.vis(s, model.kurver_alle(s, m), res, pathlib.Path(uddir).expanduser() if uddir else spec.parent / "fem")
+    sti = v.vis(s, model.kurver_alle(s, m), res, _uddir(spec, uddir))
     print(sti)
     print("Åbn filen i en browser (dobbeltklik, eller: open " + shlex.quote(str(sti)) + ").")
     return 0

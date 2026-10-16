@@ -12,7 +12,7 @@ Kør: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/statik-viden/scripts/fem.py <kommand
 | `opsaet` | Opret miljøet (én gang, ca. 1 min) |
 | `test` | Selvtest mod håndformler: simpel, delt og kontinuert bjælke (qL²/8, 5qL⁴/384EI), udkraget bjælke (PL, PL³/3EI), ramme (ligevægt, fortegn), plade (Navier), vægskive (n = q, σ = n/t, vind), bjælke på væg (forbindelse) |
 | `skabelon [flader]` | Komplet eksempel på `fem.yaml` med alle muligheder; `flader`: hus med vægge, dæk og stålbjælke over en åbning |
-| `regn <fem.yaml>` | Analyse → resumé på skærmen og `<sagsmappe>/fem/<navn>.fem.json` (reaktioner, N/V/M, δ og L/δ pr. element og kombination, ligevægtskontrol, spec-sha) |
+| `regn <fem.yaml>` | Analyse → resumé på skærmen og `<navn>.fem.json` i `fem/`-mappen (ligger spec'en i `<sagsmappe>/fem/`, så dér; ellers `<specmappe>/fem/`) (reaktioner, N/V/M, δ og L/δ pr. element og kombination, ligevægtskontrol, spec-sha) |
 | `tegn <fem.yaml> [model\|deformation\|M\|V\|N\|spaending\|n_u\|n_v\|pladmoment\|flytning\|alle] [--kombi K]` | PNG til notatet. **Se altid `model`-billedet efter, før du bruger tallene**: geometri, understøtninger, led og laster (pile pr. lasttilfælde). Fladevisningerne er farvekort med maks. markeret |
 | `vis <fem.yaml>` | Én HTML-fil til bygherren og fagfolk: drej/zoom, laster som pile (klik i forklaringen for at skjule et lasttilfælde), menu med kombination og størrelse, flader der kan skjules (fx dækket, så væggene ses), værdier ved musen, tabeller |
 
