@@ -101,11 +101,11 @@ Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver
 **Lagdeling uden ekstra mekanik (vurderet 2026-10-04):** kun indekset (agentens `MEMORY.md`, skill-indgangen) ligger i konteksten; resten læses afsnitsvis. Platformen giver hver fagagent sin egen hukommelsesmappe, og et fag læser kun sit eget afsnit af ejendomskortet. En fuld lagmodel med budgetter, forfremmelse og hook-håndhævelse blev fravalgt: hukommelse er 3–5k tokens pr. fagkørsel, og der var ingen krydslæsninger mellem fag. Den bygges først, hvis `scripts/forbrug.py` viser et reelt problem. Gevinsten ligger i korrekthed: husets fakta ét sted og fast erfaringshøst, når en sag afsluttes.
 
 ## Dataseparation
-Repoet er offentligt. Konkrete sager, brugerens data og hemmeligheder må aldrig komme i det.
+Repoet er privat indtil videre (GitHub: `savnik/byg-eksperter`), men det skal offentliggøres på sigt, og hele historikken følger med. Reglerne gælder derfor allerede nu, som var det offentligt. Konkrete sager, brugerens data og hemmeligheder må aldrig komme i det.
 
 | Zone | Hvor | Må indeholde | Må aldrig |
 |---|---|---|---|
-| **Repo (offentligt)** | Dette repo | Generisk faglig viden, skabeloner, kode og testdata (evals, testadresser, fixtures) | Sager, sag-id'er, tekst fra sagsmapper, ejeroplysninger, hemmeligheder |
+| **Repo (privat, offentliggøres)** | Dette repo | Generisk faglig viden, skabeloner, kode og testdata (evals, testadresser, fixtures) | Sager, sag-id'er, tekst fra sagsmapper, ejeroplysninger, hemmeligheder |
 | **Brugerdata (lokalt)** | Sagsmapper: `byg-sager/` i brugerens arbejdsmappe · Videnbank: `${CLAUDE_PLUGIN_DATA}/videnbank/` · Agenthukommelse: `~/.claude/agent-memory/` · Kontroltilstand: `${CLAUDE_PLUGIN_DATA}/kontrol/` | Alt om de konkrete sager | Ligge i repoet eller i `${CLAUDE_PLUGIN_ROOT}` |
 | **Hemmeligheder (lokalt)** | `~/.config/<plugin>/` (chmod 600) eller miljøvariabler | API-nøgler | Stå i kode, logs, output, sagsmapper, commits eller PR'er |
 
