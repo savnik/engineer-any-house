@@ -9,6 +9,7 @@ Viser:
 - hovedtrådens kontekst pr. kald (median og maks.)
 - andel af fag- og kontroltokens i forsøg 2–3 (retur)
 - gentagne sidehentninger og statuskald i hovedtråden
+- svarlængde: slutsvar (hovedtrådens svar til brugeren, subagenternes rapport) og tekst mellem værktøjskald
 
 Vægtning i forhold til almindelige input-tokens: cache-læsning 0,1 ×, cache-skrivning 1,25 × og output 5 ×.
 Scriptet læser kun lokale filer og skriver ingenting. Output kan indeholde sag-id'er; læg det ikke i repoet.
@@ -25,11 +26,14 @@ VAEGT = {"input_tokens": 1.0, "cache_read_input_tokens": 0.1, "cache_creation_in
 KONTEKST = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
 FORSOEG_RE = re.compile(r"Fors(?:ø|o)g:\s*(\d)")
 LEV_RE = re.compile(r"LEVERANCE:\s*(\S+)")
+MAAL_TXT = "hovedtråd og fagagenter under ca. 800, kontrolagenter under ca. 1.500"
 
 
 def laes(sti: pathlib.Path) -> dict:
     """Usage pr. API-kald (max pr. besked-id, fordi streaming gentager beskeden), første prompt og værktøjskald."""
     pr_besked, foerste, vaerktoej, start = {}, "", [], None
+    tekst = {}                        # besked-id -> [tegn, har værktøjskald]; streaming deler en besked i flere linjer
+    slutsvar, sidste = [], None       # sidste besked-id uden værktøjskald før en brugerbesked eller slut
     for linje in sti.open(encoding="utf-8"):
         try:
             o = json.loads(linje)
@@ -40,15 +44,30 @@ def laes(sti: pathlib.Path) -> dict:
         if not foerste and o.get("type") == "user":
             c = msg.get("content")
             foerste = c if isinstance(c, str) else " ".join(x.get("text", "") for x in c or [] if isinstance(x, dict))
+        if o.get("type") == "user" and not o.get("isMeta"):
+            c = msg.get("content")
+            if isinstance(c, str) or any(isinstance(x, dict) and x.get("type") == "text" for x in c or []):
+                if sidste and tekst[sidste][0]:
+                    slutsvar.append(tekst[sidste][0])
+                sidste = None
         if o.get("type") != "assistant":
             continue
+        t = tekst.setdefault(msg.get("id"), [0, False])
         for c in msg.get("content") or []:
             if isinstance(c, dict) and c.get("type") == "tool_use":
                 vaerktoej.append((c.get("name"), c.get("input") or {}))
+                t[1] = True
+            elif isinstance(c, dict) and c.get("type") == "text":
+                t[0] += len(c.get("text", ""))
+        sidste = None if t[1] else msg.get("id")
         u = pr_besked.setdefault(msg.get("id"), collections.Counter())
         for k in VAEGT:
             u[k] = max(u[k], int((msg.get("usage") or {}).get(k) or 0))
-    return {"kald": list(pr_besked.values()), "foerste": foerste, "vaerktoej": vaerktoej, "start": start or ""}
+    if sidste and tekst[sidste][0]:
+        slutsvar.append(tekst[sidste][0])
+    mellem = sum(n for n, _ in tekst.values()) - sum(slutsvar)   # al anden tekst: mellemsvar undervejs
+    return {"kald": list(pr_besked.values()), "foerste": foerste, "vaerktoej": vaerktoej, "start": start or "",
+            "slutsvar": slutsvar, "mellemtekst": mellem}
 
 
 def vaegtet(kald) -> float:
@@ -118,6 +137,13 @@ def main() -> int:
     if hentninger:
         n = sum(hentninger.values())
         print(f"Sidehentninger: {n}, heraf gentagne: {100 * (n - len(hentninger)) / n:.0f} %")
+    print(f"\nSvarlængde i tegn (mål for median: {MAAL_TXT})")
+    print(f"{'Del':16} {'slutsvar':>8} {'median':>7} {'p90':>7} {'mellemtekst/kørsel':>19}")
+    for del_ in ("hovedtråd", "fagagenter", "kontrolagenter", "øvrige"):
+        svar = sorted(n for r in dele[del_] for n in r["slutsvar"])
+        if svar:
+            mellem = sum(r["mellemtekst"] for r in dele[del_]) / len(dele[del_])
+            print(f"{del_:16} {len(svar):8} {statistics.median(svar):7.0f} {svar[int(0.9 * (len(svar) - 1))]:7} {mellem:19.0f}")
     if leverancer:
         print(f"Leverancer: {len(leverancer)} · median vægtet forbrug pr. leverance: "
               f"{statistics.median(leverancer.values()) / 1e6:.2f}M")

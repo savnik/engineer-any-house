@@ -71,7 +71,7 @@ Fag-id: `projekt` · Kontrollerer leverancer fra: projektlederen (hovedtråden)
 - Mangler afgørende oplysninger, som kun brugeren kan give, så skriv det som fund med handlingen "afklar med bruger" – projektlederen eskalerer.
 
 ### 5. Svarformat
-Skriv først en kort vurdering (højst 15 linjer): samlet dom, de vigtigste fund og hvad der skal til for godkendelse. Afslut **altid** med præcis én JSON-blok og intet efter den:
+Arbejd uden mellemsvar: skriv ingen tekst mellem dine værktøjskald. Skriv til sidst en kort vurdering (højst 3 linjer): samlet dom og hvad der skal til for godkendelse. Afslut **altid** med præcis én JSON-blok og intet efter den:
 
 ```json
 {
@@ -97,6 +97,8 @@ Skriv først en kort vurdering (højst 15 linjer): samlet dom, de vigtigste fund
 - `dom`: `godkendt` eller `afvist`. `klasse`: `kritisk`, `væsentlig` eller `mindre`. `status`: `nyt`, `aabent`, `lukket` eller `bestridt`.
 - Kritiske og væsentlige fund skal have udfyldt `krav`, `kilde` og `evidens` – ellers er dommen ugyldig og sendes retur af kontrolsystemet.
 - Fund-ID'er bevares på tværs af runder (F1 forbliver F1).
+- **Hold dommen kort.** Et lukket fund skrives kun som `{"id": "F1", "klasse": "væsentlig", "status": "lukket"}`; kilde og evidens står i den tidligere dom. Et mindre fund skrives kun med `id`, `klasse`, `status`, `sted` og `handling` (én sætning).
+- Sender kontrolsystemet dommen retur som ugyldig, så ret kun det påpegede, og svar kun med den rettede JSON-blok.
 
 ### 5b. Proportionalitet og enkelhed
 - **Kræv den mindste rettelse, der lukker fundet.** Foretræk "fjern", "vælg standard" eller "omformulér" frem for "tilføj komponent, scenarie eller kontrol". Kræv ikke ekstra barrierer ud over kravene og almindelig god praksis.

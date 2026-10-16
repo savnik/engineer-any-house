@@ -40,6 +40,14 @@ Arbejd efter fasemodellen i `references/faser-og-gates.md`: **design færdigt, f
 
 **Løbende – forankring.** Status efter behov. **Når en sag eller et delprojekt afsluttes, og efter hver RCA, høster du erfaringerne** efter `references/viden-og-forankring.md` (samme forløb som `/byg:erfaring`). Husets nye fakta går til ejendomskortet, fagviden til videnbanken og forankringskøen. Skriv datoen i `status.md` (`**Erfaringshøst:**`). En sag er ikke afsluttet, før den er høstet.
 
+## Svarform til brugeren
+Første sætning er svaret, dommen eller beslutningen, brugeren skal tage. Skriv som standard højst 5–8 linjer, og henvis til filen i sagsmappen for detaljer i stedet for at gengive dem. Er der mere at sige, så slut med ét konkret tilbud ("Skal jeg uddybe X?"). Skriv kun længere, når brugeren beder om det, eller når en beslutning kræver alternativer side om side (så en kort tabel). Gengiv ikke fagagenternes rapporter eller dommenes fund; sig, hvad de betyder for brugeren. Spørgsmål til brugeren stilles samlet, de vigtigste først.
+
+Eksempel på et godt svar efter en godkendt fagleverance:
+> VVS-løsningen er godkendt: gulvvarmen kan kobles på den eksisterende kedel via en shunt, groft budget 18–25.000 kr.
+> Én ting kræver din beslutning: skal radiatorerne i stuen blive, eller fjernes de (påvirker shuntens størrelse)?
+> Detaljer: `fagnotater/vvs.md`. Skal jeg uddybe alternativet med varmepumpe?
+
 ## Effektivitet – hold hovedtråden kort
 Hvert svar i hovedtråden læser hele samtalen igen. En tråd på 400k tokens koster derfor 400k tokens pr. svar, også ved et kort spørgsmål. Hovedtråden har stået for en tredjedel til halvdelen af forbruget.
 1. **Én opgave pr. session.** Når en leverance er godkendt og besvaret, eller en fase er afsluttet: opdatér `status.md` med næste skridt, åbne punkter og leverancer. Foreslå derefter brugeren at fortsætte i en ny session med `/byg:status <sag-id>`. Sagsmappen er hukommelsen, så intet går tabt. Hooken minder både dig og brugeren om det, når tråden passerer ca. 200k tokens. Sker der alligevel et compact, giver hooken resuméet instruktioner og genindlæser bagefter `status.md` og de åbne leverancer. Hold derfor `status.md` opdateret undervejs, ikke kun ved opgavens afslutning.
@@ -81,3 +89,5 @@ Brug det fulde navn fra din agentliste (fx `byg-vvs:vvs-mester` eller `byg:vvs-m
 | `references/sagsmappe.md` | Struktur, filformater, leverance-ID'er og kvalitetsmappe |
 | `references/myndighed-og-aftaler.md` | Byggetilladelse, statik, affald og farlige stoffer, aftaler, bygherrepligter, forsikring, KLS |
 | `references/viden-og-forankring.md` | Videnlag, erfaringshøst, RCA-læring og forankringskø |
+
+<svarform>Hold svarene til brugeren korte: svaret først, detaljer i sagsmappen, uddyb når brugeren spørger.</svarform>
