@@ -257,7 +257,7 @@ def analyser(s: dict):
 
 
 def _kurver(mem, kombi: str, plan: bool, udkragning: bool = False) -> dict:
-    """Resultatkurver langs elementet (x i m). δ i forhold til korden, men absolut for udkragninger."""
+    """Resultatkurver langs elementet (x i m). δ i forhold til elementets korde, men absolut for udkragninger (spændet: _delta_spaend)."""
     dfun = mem.deflection_array if udkragning else mem.rel_deflection_array
     x = [float(v) for v in mem.moment_array("Mz", N_PKT, kombi)[0]]
     k = {"x": x,
@@ -270,6 +270,81 @@ def _kurver(mem, kombi: str, plan: bool, udkragning: bool = False) -> dict:
         k["V_svag"] = [float(v) for v in mem.shear_array("Fz", N_PKT, kombi)[1]]
         k["d_svag"] = [1000 * float(v) for v in dfun("dz", N_PKT, kombi)[1]]
     return k
+
+
+def spaend(s: dict) -> dict:
+    """Spænd: kæder af elementer på linje, der er delt i knuder uden understøtning (fx ved en punktlast).
+    En knude deler kun et spænd, hvis præcis to elementer mødes dér på linje med samme drej, og ingen af dem
+    er udkragning. Returnerer {element: {"elementer": [...] i rækkefølge, "start": knude, "slut": knude, "L": m}}."""
+    ender = {k: [] for k in s["knuder"]}
+    for n, e in s["elementer"].items():
+        ender[e["fra"]].append(n)
+        ender[e["til"]].append(n)
+
+    def retn(n):
+        e = s["elementer"][n]
+        a, b = P(s["knuder"][e["fra"]]), P(s["knuder"][e["til"]])
+        return [(b[i] - a[i]) / e["_L"] for i in range(3)]
+
+    def deler(k):
+        el = ender[k]
+        if k in s["understoetninger"] or len(el) != 2:
+            return False
+        e1, e2 = (s["elementer"][n] for n in el)
+        if e1.get("udkragning") or e2.get("udkragning") or float(e1.get("drej", 0)) != float(e2.get("drej", 0)):
+            return False
+        r1, r2 = retn(el[0]), retn(el[1])
+        kryds = [r1[1] * r2[2] - r1[2] * r2[1], r1[2] * r2[0] - r1[0] * r2[2], r1[0] * r2[1] - r1[1] * r2[0]]
+        return max(abs(v) for v in kryds) < 1e-6
+
+    ud, set_ = {}, set()
+    for n in s["elementer"]:
+        if n in set_:
+            continue
+        # gå til den ene ende af kæden, saml derefter elementerne i rækkefølge
+        k, cur = s["elementer"][n]["fra"], n
+        while deler(k):
+            cur = next(x for x in ender[k] if x != cur)
+            e = s["elementer"][cur]
+            k = e["til"] if e["fra"] == k else e["fra"]
+        start, kaede = k, []
+        while True:
+            kaede.append(cur)
+            e = s["elementer"][cur]
+            k = e["til"] if e["fra"] == k else e["fra"]
+            if not deler(k):
+                break
+            cur = next(x for x in ender[k] if x != cur)
+        info = {"elementer": kaede, "start": start, "slut": k, "L": sum(s["elementer"][x]["_L"] for x in kaede)}
+        for x in kaede:
+            ud[x] = info
+            set_.add(x)
+    return ud
+
+
+def _delta_spaend(s: dict, m, kombi: str, info: dict, akse: str = "dy") -> dict:
+    """δ (mm) langs hvert element i et delt spænd, i forhold til linjen mellem spændets endeknuder."""
+    import numpy as np
+    raekke = 1 if akse == "dy" else 2
+    ref = np.array(m.members[info["elementer"][0]].T()[raekke, 0:3], dtype=float)
+    a0 = np.array(P(s["knuder"][info["start"]]), dtype=float)
+    a1 = np.array(P(s["knuder"][info["slut"]]), dtype=float)
+    akse_v = (a1 - a0) / np.linalg.norm(a1 - a0)
+
+    def u(k):
+        n = m.nodes[k]
+        return float(np.dot([n.DX[kombi], n.DY[kombi], n.DZ[kombi]], ref))
+    u0, u1 = u(info["start"]), u(info["slut"])
+    ud = {}
+    for en in info["elementer"]:
+        mem, e = m.members[en], s["elementer"][en]
+        fortegn = float(np.dot(np.array(mem.T()[raekke, 0:3], dtype=float), ref))
+        x, d = mem.deflection_array(akse, N_PKT, kombi)
+        p_fra = float(np.dot(np.array(P(s["knuder"][e["fra"]])) - a0, akse_v))
+        p_til = float(np.dot(np.array(P(s["knuder"][e["til"]])) - a0, akse_v))
+        ud[en] = [1000 * (fortegn * float(dv) - (u0 + (u1 - u0) * (p_fra + (p_til - p_fra) * float(xv) / e["_L"]) / info["L"]))
+                  for xv, dv in zip(x, d)]
+    return ud
 
 
 def ydre_last(s: dict, kombi: str) -> dict:
@@ -303,9 +378,11 @@ def resultater(s: dict, m, kommando: str) -> dict:
            "aendringer": s["_aendringer"], "pynite": version("PyNiteFEA"), "plan": s["_plan"], "analyse": s.get("analyse", "førsteorden"),
            "enheder": {"kraft": "kN", "moment": "kNm", "laengde": "m", "nedboejning": "mm"},
            "fortegn": "N > 0 træk. M > 0 giver træk i elementets lokale −y-side (vandret element tegnet fra venstre "
-                      "mod højre: træk i undersiden). δ er nedbøjning i forhold til elementets korde (absolut for "
-                      "elementer med udkragning: true).",
+                      "mod højre: træk i undersiden). δ er nedbøjning i forhold til spændets korde – linjen mellem "
+                      "spændets endeknuder; et spænd kan bestå af flere elementer på linje (absolut for elementer med "
+                      "udkragning: true). L i L/δ er spændets længde.",
            "kombinationer": {}}
+    sp = spaend(s)
     for kn, k in s["kombinationer"].items():
         kr = {"type": k["type"], "faktorer": k.get("faktorer"), "reaktioner": {}, "elementer": {}}
         sum_r = {"x": 0.0, "y": 0.0, "z": 0.0}
@@ -322,6 +399,12 @@ def resultater(s: dict, m, kommando: str) -> dict:
                                "ok": abs(sum_r[a] + last[a]) <= 1e-3 * max(1.0, abs(last[a]))} for a in sum_r}
         for en, e in s["elementer"].items():
             kurv = _kurver(m.members[en], kn, s["_plan"], bool(e.get("udkragning")))
+            info = sp[en]
+            delt = len(info["elementer"]) > 1
+            if delt:
+                kurv["d"] = _delta_spaend(s, m, kn, info)[en]
+                if not s["_plan"]:
+                    kurv["d_svag"] = _delta_spaend(s, m, kn, info, "dz")[en]
             dmax = max(kurv["d"], key=abs)
             iM = max(range(len(kurv["M"])), key=lambda i: abs(kurv["M"][i]))
             er = {"L": round(e["_L"], 3), "profil": e["profil"], "materiale": e["materiale"],
@@ -330,11 +413,14 @@ def resultater(s: dict, m, kommando: str) -> dict:
                   "M_max": round(max(kurv["M"]), 2), "M_min": round(min(kurv["M"]), 2),
                   "x_ved_M_abs_max": round(kurv["x"][iM], 3),
                   "delta_mm": round(dmax, 2)}
+            if delt:
+                er["spaend"] = info["elementer"]
+                er["L_spaend"] = round(info["L"], 3)
             if not s["_plan"]:
                 er["M_svag_abs_max"] = round(max(abs(v) for v in kurv["M_svag"]), 2)
                 er["delta_svag_mm"] = round(max(kurv["d_svag"], key=abs), 2)
             if k["type"] == "anvendelse":
-                Lref = e["_L"] * (2 if e.get("udkragning") else 1)
+                Lref = info["L"] if delt else e["_L"] * (2 if e.get("udkragning") else 1)
                 er["L_over_delta"] = round(Lref * 1000 / abs(dmax)) if abs(dmax) > 1e-6 else None
                 g = e.get("graense", k.get("graense"))
                 if g and er["L_over_delta"]:
@@ -346,15 +432,22 @@ def resultater(s: dict, m, kommando: str) -> dict:
 
 
 def kurver_alle(s: dict, m) -> dict:
-    """Kurver pr. kombination og element plus knudeflytninger (mm) – til tegn og vis."""
+    """Kurver pr. kombination og element plus knudeflytninger (mm) – til tegn og vis.
+    Kurven "d" er i forhold til elementets egen korde (til tegningen); "delta" er største δ i forhold til spændet."""
     ud = {}
+    sp = spaend(s)
     for kn in s["kombinationer"]:
         el = {en: _kurver(m.members[en], kn, s["_plan"], bool(e.get("udkragning"))) for en, e in s["elementer"].items()}
+        delta = {en: max(c["d"], key=abs) for en, c in el.items()}
+        for en, info in sp.items():
+            if len(info["elementer"]) > 1:
+                el[en]["d_spaend"] = _delta_spaend(s, m, kn, info)[en]
+                delta[en] = max(el[en]["d_spaend"], key=abs)
         fl = {}
         for k in s["knuder"]:
             n = m.nodes[k]
             fl[k] = (1000 * n.DX[kn], -1000 * n.DZ[kn], 1000 * n.DY[kn])
-        ud[kn] = {"elementer": el, "flytning": fl}
+        ud[kn] = {"elementer": el, "flytning": fl, "delta": delta}
     ud["_lokal_y"] = {en: lokal_y(m.members[en]) for en in s["elementer"]}
     return ud
 
