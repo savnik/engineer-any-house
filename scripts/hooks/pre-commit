@@ -1,7 +1,18 @@
 #!/bin/sh
-# Dataseparation: stop commits med sager, brugerdata eller hemmeligheder (se ARKITEKTUR.md).
 # Aktivér:  git config core.hooksPath scripts/hooks
+
+# Dataseparation: stop commits med sager, brugerdata eller hemmeligheder (se ARKITEKTUR.md).
 python3 "$(git rev-parse --show-toplevel)/scripts/tjek_data.py" || {
   echo "Commit afvist af dataseparationen. Fjern sagsdata/hemmeligheder, eller generalisér teksten." >&2
   exit 1
 }
+
+# Parallel udvikling: versioner hæves kun ved udgivelse på main (scripts/udgiv.py), aldrig i en feature-gren.
+gren=$(git symbolic-ref --short -q HEAD)
+if [ "$gren" != "main" ] && [ -z "$BYG_UDGIV" ] && \
+   git diff --cached -U0 --diff-filter=M -- 'plugins/*/.claude-plugin/plugin.json' .claude-plugin/marketplace.json \
+     | grep -qE '^[+-][[:space:]]*"version"'; then
+  echo "Commit afvist: versionen er ændret i grenen '$gren'. Læg i stedet en note i versionsnoter/$gren.md" >&2
+  echo "(se versionsnoter/README.md) – versionerne hæves ved udgivelse på main med scripts/udgiv.py." >&2
+  exit 1
+fi

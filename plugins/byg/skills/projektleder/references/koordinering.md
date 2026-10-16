@@ -54,10 +54,11 @@ Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent
 |---|---:|---:|---|
 
 ## Grænsefladeregister – graenseflader.md (laves ved G1, lukkes ved G2)
-| # | Snitflade | Fag A | Fag B | **Ejer** (leverer og dokumenterer) | Hvad | Fase/hvornår | Status (åben/afgjort/lukket) | Beslutning (link til beslutningslog) |
+| ID | Snitflade | Fag A | Fag B | **Ejer** (leverer og dokumenterer) | Hvad | Fase/hvornår | Status (åben/afgjort/lukket) | Beslutning (link til beslutningslog) |
 |---|---|---|---|---|---|---|---|---|
 - Én ejer pr. snitflade. Komponenter på tværs af fag (fx sikkerhedskomponent, der skal el-tilsluttes) står med **leverandør, montør og tilslutter** hver for sig.
-- Fagene må ikke selv ændre en ejer. Afvigelser meldes til PL, som afgør dem og opdaterer registret, før næste fagkald eller retur.
+- ID'et (`G-01`, `G-02` …) står i første kolonne, så fagenes forslag kan flettes på rækkeniveau. Fagene skriver ikke selv i registret; nye eller ændrede snitflader kommer som forslag (`forslag/<fag-id>-<nr>__graenseflader.md`) og flettes ind, når leverancen godkendes (skill `kvalitetskontrol`, afsnit 8). Det samme gælder `risici.md` (`R-01` …) og `kontrolplan.md` (hold point-navnet som ID).
+- Fagene må ikke selv ændre en ejer; fletningen afviser et forslag, der gør det. Afvigelser meldes til PL, som afgør dem og opdaterer registret, før næste fagkald eller retur.
 - Omfatter også **fag uden agent** (screening, kloakmester, servicefirma, skorstensfejer, ansvarlig statiker).
 
 ## Fagsekvenser (typiske – tilpasses sagen)
