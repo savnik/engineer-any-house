@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Danske byggefaglige ekspertagenter: projektleder, fagagenter på mesterniveau og uafhængig kvalitetskontrol af hver leverance.",
-    "version": "0.9.0"
+    "version": "0.10.0"
   },
   "plugins": [
     {
