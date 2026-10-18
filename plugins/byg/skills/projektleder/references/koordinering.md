@@ -5,16 +5,17 @@
 |---|---|---|---|
 | Badeværelse | vvs, murer (vådrum/fliser), el, ventilation | tømrer (træunderlag, vægge), maler (fugtig zone, loft) | kloakmester (afløb i jord) |
 | Køkken | vvs, el, tømrer | ventilation (emhætte, erstatningsluft), maler, murer og statik (vægfjernelse), arkitekt (ny planløsning) | snedker, ansvarlig statiker |
-| Kælderfugt | murer, ventilation | vvs (lækager, dræn), maler, tømrer (gulve) | kloakmester (dræn), geotekniker |
+| Kælderfugt | murer, ventilation | vvs (lækager, dræn), anlaeg (terrænfald, nedløb, regnvand, omfangsdræn), maler, tømrer (gulve) | kloakmester (dræn), geotekniker |
 | Efterisolering af loft/tag | tømrer, ventilation | el (spots, kabler), vvs (rør i tagrum) | tagdækker |
 | Facade og ydervægge | murer, maler | tømrer (vinduer, inddækning), ventilation, arkitekt (nye åbninger, udtryk, lokalplan og bevaring) | blikkenslager |
 | Vinduer og døre | tømrer, murer | maler, ventilation (friskluft) | glarmester |
 | Varmepumpe og varmeanlæg | vvs, el | tømrer/murer (gennemføringer, fundament), ventilation (luft-luft) | energikonsulent |
-| Tilbygning | alle (arkitekt først: myndighed og disposition) | – | ansvarlig arkitekt, ansvarlig statiker, geotekniker, kloakmester, tagdækker, landinspektør |
+| Tilbygning | alle (arkitekt først: myndighed og disposition) | anlaeg (terræn, regnvand og udearealer omkring tilbygningen) | ansvarlig arkitekt, ansvarlig statiker, geotekniker, kloakmester, tagdækker, landinspektør |
 | Vægfjernelse, tagetage, kvist | statik, tømrer, murer, arkitekt (tagetage, kvist: etageareal og tilladelse) | el og vvs (føringer), maler, ventilation | ansvarlig arkitekt, ansvarlig statiker, smed |
 | Ny planløsning og ombygning | arkitekt, statik | tømrer, murer, el, vvs, ventilation, bim | ansvarlig arkitekt |
-| Revner og sætninger | statik, murer | vvs (utætte afløb), tømrer | geotekniker, kloakmester |
+| Revner og sætninger | statik, murer | vvs (utætte afløb), anlaeg (træer og rødder, terrænfald), tømrer | geotekniker, kloakmester |
 | Skimmel og indeklima | ventilation, murer, tømrer | maler, vvs (lækager) | skimmelsvampeekspert |
+| Have, terrasse og regnvand | anlaeg | murer (sokkel og fugt), statik (støttemur, udgravning ved fundament), vvs (tagnedløb), tømrer (hævet eller overdækket terrasse), arkitekt (afstand til skel, lokalplan), el (havebelysning) | kloakmester (tilslutning og afkobling), landinspektør (skel) |
 | Elbillader og solceller | el | tømrer/tagdækker (tag), maler | netselskab |
 
 ## Fagforespørgsel (skabelon)

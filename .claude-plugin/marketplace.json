@@ -72,6 +72,11 @@
       "name": "byg-arkitekt",
       "source": "./plugins/byg-arkitekt",
       "description": "Arkitekt: planløsning og disposition, tilbygning, kvist og facade, myndighedsscreening (byggetilladelse, bebyggelsesprocent, afstand til skel, lokalplan, bevaring) – skitser og BIM-forslag (rådgivende)."
+    },
+    {
+      "name": "byg-anlaeg",
+      "source": "./plugins/byg-anlaeg",
+      "description": "Anlægsgartner: belægning og terrasser, regnvand og faskiner, omfangsdræn og terrænfald, terrænregulering og støttemure, hegn, træer og beplantning."
     }
   ]
 }

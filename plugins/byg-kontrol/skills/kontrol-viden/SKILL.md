@@ -18,6 +18,6 @@ Holdes adskilt fra fagenes videnbaser, så kontrollen ikke deler fagagentens bli
 | `references/fag/<fag-id>.md` | Rubric-version, kontrolpunkter, fejlkatalog og primærkilder for faget | Fagets kontrolagent |
 | `references/rca-skabelon.md` | Root cause-analyse efter 3 afviste forsøg | Orkestrator/projektleder |
 
-Fagfiler: `vvs`, `el`, `murer`, `ventilation`, `maler`, `toemrer`, `bim`, `statik`, `arkitekt`, `projekt`.
+Fagfiler: `vvs`, `el`, `murer`, `ventilation`, `maler`, `toemrer`, `bim`, `statik`, `arkitekt`, `anlaeg`, `projekt`.
 
 Rubric-versionen står øverst i hver fagfil og angives i hver dom. Ændringer i en fagfil kræver ny version (fx `kontrol-vvs@1.1`) og review – typisk efter en RCA.

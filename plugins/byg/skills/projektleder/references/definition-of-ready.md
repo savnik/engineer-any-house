@@ -60,6 +60,13 @@ Før første fagkald indsamler projektlederen disse fakta fra brugeren. Det sker
 - Bygherrens rumprogram og ønsker (rum, arealer, funktion) og budgetramme
 - Afstand til skel, sti og vej; terræn og højder; naboer og indblik
 
+## Anlægsgartner
+- Situationsplan eller matrikelkort med skel, hus, nedløb, brønde og kendte ledninger (LER-forespørgsel før gravning)
+- Fotos af haven og soklen; koter eller mål for sokkel, dørtrin og terræn, hvis de findes
+- Jordbund (ler/sand) og kendte vandproblemer (fugtig kælder, vand på terræn ved skybrud)
+- Kælder ja/nej; lokalplan og servitutter (terræn, hegn, træer) og kommunens regler for nedsivning
+- Ønsker til brug, belægning, terrasse og beplantning; trafik (bil i indkørslen); budgetramme; gør-det-selv eller håndværker
+
 ## Maler
 - Underlag og eksisterende behandling (lag, alder), bly- og PCB-mistanke (før 1977/1978)
 - Fugtforhold i underlaget, vådzoner
