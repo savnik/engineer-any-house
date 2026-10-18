@@ -7,7 +7,9 @@ Tjek:
   1. Struktur   – ingen sagsmapper (byg-sager/), sagsfiler, ejendomsrapporter, PDF'er eller kontroltilstand i repoet.
   2. Hemmeligheder – ingen API-nøgler: den lokale Datafordeler-nøgle og generiske nøglemønstre.
   3. Private termer – ingen sag-id'er fra den lokale videnbank og ingen termer fra ~/.config/byg-eksperter/private-termer.txt.
-  4. Fingeraftryk – ingen tekstlinjer (≥ 60 tegn) kopieret fra de lokale sagsmapper.
+  4. Fingeraftryk – ingen tekstlinjer (≥ 60 tegn) kopieret fra de lokale sagsmapper. Linjer, der allerede står i
+     repoet på origin/main, tæller ikke: de er offentliggjort og stammer typisk fra pluginet selv (en sag har
+     kopieret pluginets tekst, ikke omvendt).
 
 De lokale kilder (videnbank, sagsmapper, nøgle, private termer) læses kun på udviklerens maskine og findes ikke i
 repoet. Mangler de (fx i CI), springes tjek 3–4 over. Testdata (evals, testadresser, fixtures) er tilladt.
@@ -16,6 +18,7 @@ Værdier af hemmeligheder udskrives aldrig.
 import os
 import pathlib
 import re
+import subprocess
 import sys
 
 ROD = pathlib.Path(os.environ.get("BYG_REPO_ROD") or pathlib.Path(__file__).resolve().parent.parent)
@@ -127,6 +130,19 @@ def skabelonlinjer():
     return linjer
 
 
+def publicerede_linjer(aftryk):
+    """Fingeraftryk, der allerede står i en fil på origin/main. Uden git eller origin/main: ingen."""
+    def git(*a, **kw):
+        return subprocess.run(["git", "-C", str(ROD), *a], capture_output=True, **kw)
+    if not aftryk or git("rev-parse", "--verify", "-q", "origin/main").returncode:
+        return set()
+    stier = git("ls-tree", "-r", "--name-only", "origin/main", text=True).stdout.split("\n")
+    stier = [s for s in stier if s and pathlib.PurePath(s).suffix.lower() in TEKST]
+    blobs = git("cat-file", "--batch", input="\n".join(f"origin/main:{s}" for s in stier).encode()).stdout
+    tekst = norm(blobs.decode("utf-8", errors="ignore"))
+    return {l for l in aftryk if l in tekst}
+
+
 def main() -> int:
     fejl = []
     hemmeligheder = lokale_hemmeligheder()
@@ -135,6 +151,7 @@ def main() -> int:
     ejendomme = {f.stem for m in mapper if m.name == "ejendomme" for f in m.glob("*.md")}
     termer = sorted(set(private_termer()) | ejendomme, key=len, reverse=True)
     aftryk = fingeraftryk(mapper) - skabelonlinjer()
+    aftryk -= publicerede_linjer(aftryk)
 
     for f, rel in repo_filer():
         # 1. Struktur
