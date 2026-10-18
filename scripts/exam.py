@@ -6,7 +6,7 @@ Brug:
   python3 scripts/exam.py vis <fag> [--facit]       eksamenssættet og dækningskortet som markdown
   python3 scripts/exam.py koer <fag> [--arm basis|plugin|begge] [--saet udvikling|holdout|alle]
                                      [--id EL-001,...] [--parallel 4] [--model M] [--bedoemmer sonnet]
-                                     [--gentag 1] [--web] [--med-hukommelse]
+                                     [--gentag 1] [--web] [--med-hukommelse] [--plugin-rev REV]
   python3 scripts/exam.py rapport <resultatfil> [<resultatfil> ...]
   python3 scripts/exam.py rebedoem <resultatfil> [--kun-fri]   ret gemte svar igen efter nyt facit/kriterier
 
@@ -309,14 +309,22 @@ def strip_memory(agent_file: pathlib.Path) -> bool:
     return bool(n)
 
 
-def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False) -> pathlib.Path:
+def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, rev: str = "") -> pathlib.Path:
     """Copy of the plugin without dependencies, so it loads without byg-kontrol (same as eval_fag.py).
 
     By default the agents' 'memory: user' is removed: the exam then measures the plugin alone, not the
     plugin plus the local agent memory (which may hold experience from the user's own cases)."""
-    src = ROOT / "plugins" / plugin
     dst = tmp / plugin
-    shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__", "results", "evals"))
+    if rev:
+        # The plugin as it was at a git revision, so knowledge-base versions can be compared on equal terms.
+        export = tmp / f"rev-{rev}"
+        export.mkdir()
+        archive = subprocess.run(["git", "-C", str(ROOT), "archive", rev, f"plugins/{plugin}"],
+                                 capture_output=True, check=True).stdout
+        subprocess.run(["tar", "-x", "-C", str(export)], input=archive, check=True)
+        shutil.copytree(export / "plugins" / plugin, dst, ignore=shutil.ignore_patterns("__pycache__", "results", "evals"))
+    else:
+        shutil.copytree(ROOT / "plugins" / plugin, dst, ignore=shutil.ignore_patterns("__pycache__", "results", "evals"))
     manifest = dst / ".claude-plugin" / "plugin.json"
     m = json.loads(manifest.read_text(encoding="utf-8"))
     m.pop("dependencies", None)
@@ -347,15 +355,22 @@ def build_prompt(task: dict) -> str:
     return "\n".join(parts)
 
 
-def answer_task(task: dict, arm: str, args, tmp: pathlib.Path, plugin_dir: pathlib.Path | None,
-                agent: str) -> dict:
-    work = pathlib.Path(tempfile.mkdtemp(prefix="opgave-", dir=tmp))
+def arm_args(arm: str, args, plugin_dir: pathlib.Path | None, agent: str) -> list[str]:
     tools = "Read,Glob,Grep,Skill" + (",WebSearch,WebFetch" if args.web else "")
     extra = ["--tools", tools, "--max-turns", str(args.max_turns)]
     if args.model:
         extra += ["--model", args.model]
     if arm == "plugin":
-        extra += ["--plugin-dir", str(plugin_dir), "--agent", agent]
+        # --add-dir is required: in dontAsk mode Read/Grep outside the working directory are denied, so without it
+        # the agent cannot open its own knowledge base. It grants the plugin copy only, not the repo (and its keys).
+        extra += ["--plugin-dir", str(plugin_dir), "--add-dir", str(plugin_dir), "--agent", agent]
+    return extra
+
+
+def answer_task(task: dict, arm: str, args, tmp: pathlib.Path, plugin_dir: pathlib.Path | None,
+                agent: str) -> dict:
+    work = pathlib.Path(tempfile.mkdtemp(prefix="opgave-", dir=tmp))
+    extra = arm_args(arm, args, plugin_dir, agent)
     res = run_claude(build_prompt(task), work, extra, args.timeout)
     text = res.get("result", "") or ""
     entry = {"id": task["id"], "arm": arm, "type": task["type"], "saet": task["saet"], "niveau": task["niveau"],
@@ -442,7 +457,8 @@ def cmd_run(args) -> int:
     results = []
     with tempfile.TemporaryDirectory(prefix="eksamen-") as tmpname:
         tmp = pathlib.Path(tmpname)
-        plugin_dir = prepare_plugin(goals["plugin"], tmp, args.med_hukommelse) if "plugin" in arms else None
+        plugin_dir = (prepare_plugin(goals["plugin"], tmp, args.med_hukommelse, args.plugin_rev)
+                      if "plugin" in arms else None)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
             futures = [pool.submit(answer_task, t, arm, args, tmp, plugin_dir, agent) for t, arm in jobs]
             for fut in concurrent.futures.as_completed(futures):
@@ -453,9 +469,10 @@ def cmd_run(args) -> int:
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = EXAM_DIR / args.fag / "results"
     out_dir.mkdir(exist_ok=True)
-    out = out_dir / f"{stamp}-{args.arm}-{args.saet}.json"
+    out = out_dir / f"{stamp}-{args.arm}-{args.saet}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
     out.write_text(json.dumps({"fag": args.fag, "tid": stamp, "model": args.model or "agentens",
-                               "web": args.web, "hukommelse": args.med_hukommelse, "resultater": results}, ensure_ascii=False, indent=2),
+                               "web": args.web, "hukommelse": args.med_hukommelse, "plugin_rev": args.plugin_rev or "arbejdstræ",
+                               "resultater": results}, ensure_ascii=False, indent=2),
                    encoding="utf-8")
     print(f"\nGemt: {out.relative_to(ROOT)}\n")
     print(report([out]))
@@ -544,6 +561,7 @@ def main() -> int:
     p.add_argument("--max-turns", type=int, default=12)
     p.add_argument("--timeout", type=int, default=600)
     p.add_argument("--web", action="store_true")
+    p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
     p.add_argument("--med-hukommelse", action="store_true",
                    help="indlæs fagagentens lokale hukommelse (~/.claude/agent-memory) i plugin-armen")
     p = sub.add_parser("rapport")

@@ -57,4 +57,6 @@ python3 scripts/exam.py rebedoem eksamen/el/results/<fil>.json --kun-fri   # ret
 ```
 `koer` kører hver opgave headless (`claude -p`) i en tom mappe uden brugerens plugins og uden internet. `basis` er modellen alene. `plugin` er fagagenten (`--agent`) med en kopi af pluginet uden afhængigheder. Valg- og talopgaver rettes deterministisk ud fra linjen `SVAR:`. Fri opgaver bedømmes af en censor-LLM efter kriterierne. Kørslen koster tokens.
 
+Plugin-armen får læseadgang til sin plugin-kopi (`--add-dir`), men ikke til resten af filsystemet, så facit i `eksamen/` kan ikke læses. `--plugin-rev <commit>` kører pluginet, som det var i en git-revision. Det bruges til at måle en ændring af videnbasen før og efter under samme vilkår.
+
 Plugin-armen kører som standard **uden** fagagentens lokale hukommelse (`memory: user` fjernes i kopien). Eksamen måler altså pluginet alene: det, der er forankret i repoet, og ikke erfaringer fra brugerens egne sager i `~/.claude/agent-memory/`. `--med-hukommelse` måler plugin og lokal hukommelse samlet, fx for at se, hvad hukommelsen bidrager med, før den forankres. Agenten har under eksamen kun læseværktøjer, så den kan ikke skrive i hukommelsen.

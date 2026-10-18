@@ -136,6 +136,20 @@ def test_plugin_copy_without_memory():
     expect("originalen er urørt", "memory: user" in original)
 
 
+def test_plugin_arm_can_read_its_plugin():
+    class Args:
+        web = False
+        max_turns = 12
+        model = ""
+    extra = exam.arm_args("plugin", Args, pathlib.Path("/tmp/x/byg-el"), "byg-el:el-installatoer")
+    expect("plugin-armen får læseadgang til plugin-kopien (--add-dir)",
+           extra[extra.index("--add-dir") + 1] == "/tmp/x/byg-el" if "--add-dir" in extra else False)
+    expect("basis-armen har ingen plugin", "--plugin-dir" not in exam.arm_args("basis", Args, None, ""))
+    with tempfile.TemporaryDirectory() as tmp:
+        dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp), rev="HEAD")
+        expect("plugin fra git-revision", (dst / "agents" / "el-installatoer.md").is_file())
+
+
 def test_real_sets():
     for trade in exam.all_trades():
         errors, _ = exam.validate(trade)
@@ -149,6 +163,7 @@ if __name__ == "__main__":
     test_shuffle()
     test_validation()
     test_plugin_copy_without_memory()
+    test_plugin_arm_can_read_its_plugin()
     test_real_sets()
     print(f"\n{len(FAILURES)} fejl")
     sys.exit(1 if FAILURES else 0)
