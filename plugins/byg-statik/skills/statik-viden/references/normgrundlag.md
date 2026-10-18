@@ -53,6 +53,7 @@ DK NA kan hentes gratis på NA-siden; selve EN-standarderne er betalingsstandard
 | Tag, kategori H | q_k 0, Q_k 1,5 kN; 0 ved kombination med sne | V 2026-10-11 (tabel 6.10) |
 | Lette skillevægge | Mindst 0,5 kN/m² (vægge ≤ 1,5 kN/m² og ≤ 4,0 kN/m) | V 2026-10-11 (5.2.2(2)P) |
 | Sne på terræn s_k | 1,0 kN/m² | V 2026-10-11 (EN 1991-1-3 DK NA 4.1(1)) |
+| Eksponeringsfaktor C_e for sne (s = μ·C_e·C_t·s_k) | **DK NA erstatter grundstandardens tabel 5.1:** C_e = C_top·C_s. C_top: vindblæst 0,8 · normal 1,0 · afskærmet 1,25 (væsentligt lavere end omgivende terræn, høje træer eller højere bygninger). C_s (størrelse): afskærmet 1,0; vindblæst/normal 1,0, når 2h > l1; ved 2h ≤ l1: 1,0 for l2 ≤ 10h, 1 + 0,025·(l2 − 10h)/h for 10h < l2 < 20h, 1,25 for l2 ≥ 20h (h højde, l1/l2 længste/korteste side). C_s her er ikke konstruktionsfaktoren c_s c_d fra vindlast | V 2026-10-18 (EN 1991-1-3 DK NA:2024 5.2(7), tabel 5.1.a NA) |
 | Formfaktor μ for sne | Efter taghældning, snesække ved kviste og spring | T (EN 1991-1-3 tabel 5.2 – betalingsstandard) |
 | Vind v_b,0 | 24 m/s; 27 m/s inden for 25 km fra Vesterhavet/Ringkøbing Fjord, aftagende lineært | V 2026-10-11 (EN 1991-1-4 DK NA 4.2(1)P) |
 

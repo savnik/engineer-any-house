@@ -17,7 +17,7 @@ description: >-
 
 | Fil | Indhold | Læs når |
 |---|---|---|
-| `references/normgrundlag.md` | BR18, konstruktionsklasser, Eurocodes og NA, laster, partialkoefficienter – med status | Krav, myndighed, laster |
+| `references/normgrundlag.md` | BR18, konstruktionsklasser, Eurocodes og NA, laster (inkl. snelast C_e efter DK NA), partialkoefficienter – med status | Krav, myndighed, laster |
 | `references/faglig-praksis.md` | Er væggen bærende, egenlaster, typiske indgreb, revner og sætninger, understøtning, review | Vurdering, projektering, second opinion |
 | `references/betonskader.md` | Betonskader i fundament, sokkel og kældervæg: mekanismer, revner og overvågning, undersøgelse, tre udfald, reparation efter DS/EN 1504 | Smuldrende beton, revner i fundament eller kælder |
 | `references/fem.md` | `fem.py`: FEM-model (spec, kommandoer, fortegn, grænser, bilag) – bruges til **alle** konkrete beregninger | Før hver beregning |
