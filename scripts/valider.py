@@ -110,8 +110,11 @@ def main() -> int:
                                 " (Bash kun i fag med regneværktøj, låst af hooks/regne_vagt.py)")
                 if "memory" in fm:
                     FEJL.append(f"{rel}: kontrolagenter må ikke have memory (giver Write/Edit)")
-                if fm.get("model") != "opus":
-                    ADV.append(f"{rel}: kontrolagenten kører ikke på opus")
+                # Standardmodel sonnet; KONTROLNIVEAU: fuld kaldes med model "opus" (håndhæves af kontrol_gate.py)
+                if fm.get("model") not in ("sonnet", "opus"):
+                    ADV.append(f"{rel}: kontrolagenten skal køre på sonnet (let) eller opus")
+                if not str(fm.get("maxTurns") or "").isdigit():
+                    ADV.append(f"{rel}: kontrolagenten mangler maxTurns (tokenbudget)")
             elif p.name != "byg":
                 if "Agent" in tools:
                     FEJL.append(f"{rel}: fagagenter må ikke have Agent-værktøjet (de kalder ikke selv kontrollen)")

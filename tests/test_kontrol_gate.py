@@ -13,6 +13,9 @@ import tempfile
 ROD = pathlib.Path(__file__).resolve().parent.parent
 GATE = ROD / "plugins" / "byg-kontrol" / "hooks" / "kontrol_gate.py"
 FEJL = []
+REG = json.loads((GATE.parent / "fagregister.json").read_text(encoding="utf-8"))
+MAKS = int(REG.get("maks_forsoeg", 3))
+MAKS_RUNDER = int(REG.get("maks_runder", 3))
 
 
 FAGAGENTER = ("vvs-mester", "el-installatoer", "murermester", "ventilationsekspert", "malermester", "toemrermester")
@@ -88,7 +91,7 @@ def main() -> int:
         forvent("stop blokeres, mens leverance afventer kontrol", kald("stop", S, env), "blokeret")
         forvent("stop tilladt ved stop_hook_active", kald("stop", {**S, "stop_hook_active": True}, env), "tilladt")
 
-        for forsoeg in (1, 2, 3):
+        for forsoeg in range(1, MAKS + 1):
             if forsoeg > 1:
                 forvent(f"fagkald forsøg {forsoeg} tilladt efter afvisning",
                         kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "tilladt")
@@ -101,24 +104,38 @@ def main() -> int:
                     kald("subagentstop", {**S, "agent_type": KON, "stop_hook_active": forsoeg == 1,
                                           "last_assistant_message": dom(L, "afvist", blok_fund, "byg-sager/2026-09-25-bad")}, env), "tilladt")
 
-        forvent("4. fagforsøg afvises (maks. 3)", kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
-        forvent("stop blokeres uden RCA", kald("stop", S, env), "blokeret")
+        forvent(f"fagforsøg {MAKS + 1} afvises (maks. {MAKS})", kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
+        r = kald("stop", S, env)
+        forvent("stop blokeres én gang for eskalering til brugeren", r, "blokeret")
+        ok = bool(r) and "Ny runde" in r.get("reason", "") and "RCA" in r.get("reason", "")
+        print(("OK   " if ok else "FEJL ") + "eskaleringen tilbyder brugeren en ny runde")
+        if not ok:
+            FEJL.append("eskaleringstekst")
+        forvent("stop tilladt efter eskalering (ingen RCA krævet)", kald("stop", S, env), "tilladt")
+        forvent("ny runde afvises uden brugerens 'Ny runde'",
+                kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
+        r = kald_raa("prompt", {**S, "prompt": f"Ny runde {L}"}, env)
+        ok = bool(r) and "root cause" in r["hookSpecificOutput"]["additionalContext"]
+        print(("OK   " if ok else "FEJL ") + "brugerens 'Ny runde' registreres og beder om RCA")
+        if not ok:
+            FEJL.append(f"ny runde-prompt: {r}")
+        forvent("stop blokeres uden RCA, når brugeren har bedt om ny runde", kald("stop", S, env), "blokeret")
         (sag / "kvalitet" / "RCA-2026-09-25-bad__vvs__01.md").write_text("# RCA\n", encoding="utf-8")
         forvent("stop tilladt når RCA findes", kald("stop", S, env), "tilladt")
         domfiler = sorted(p.name for p in (sag / "kvalitet").glob("*.json"))
-        ok = len(domfiler) == 3
+        ok = len(domfiler) == MAKS
         print(("OK   " if ok else "FEJL ") + f"domme logget i sagsmappen ({len(domfiler)})")
         if not ok:
             FEJL.append("domfiler")
 
         forvent("gentaget dom efter stop ignoreres",
                 kald("subagentstop", {**S, "agent_type": KON, "last_assistant_message": dom(L, "afvist", blok_fund, "byg-sager/2026-09-25-bad")}, env), "tilladt")
-        ok = len(list((sag / "kvalitet").glob("*.json"))) == 3
+        ok = len(list((sag / "kvalitet").glob("*.json"))) == MAKS
         print(("OK   " if ok else "FEJL ") + "gentaget dom efter stop giver ingen ny domfil")
         if not ok:
             FEJL.append("gentaget domfil")
 
-        # Ny runde efter RCA: kræver RCA-fil med "Forbedring implementeret: ja"; højst 3 runder
+        # Ny runde efter brugerens "Ny runde" og RCA med "Forbedring implementeret: ja"; højst MAKS_RUNDER runder
         rca1 = sag / "kvalitet" / "RCA-2026-09-25-bad__vvs__01.md"
         forvent("ny runde afvises uden implementeret forbedring",
                 kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
@@ -127,28 +144,30 @@ def main() -> int:
                 kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
         HV = "".join(f"{i}. Hvorfor x{i}? → y{i}\n" for i in range(1, 6)) + "**Grundårsag:** z\n"
         rca1.write_text("# RCA\n## 3. 5 Why\n" + HV + "## 6. Forbedring af fagagenten\n**Forbedring implementeret:** ja\n", encoding="utf-8")
-        for r in (2, 3):
+        for r in range(2, MAKS_RUNDER + 1):
+            if r > 2:
+                kald_raa("prompt", {**S, "prompt": f"ny runde {L}"}, env)
             forvent(f"runde {r} starter med nyt fagkald",
                     kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "tilladt")
-            for forsoeg in (1, 2, 3):
+            for forsoeg in range(1, MAKS + 1):
                 if forsoeg > 1:
                     kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env)
                 kald("pretool", {**S, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {L}"}}, env)
                 kald("subagentstop", {**S, "agent_type": KON,
                                       "last_assistant_message": dom(L, "afvist", blok_fund, "byg-sager/2026-09-25-bad")}, env)
-            ok = (sag / "kvalitet" / f"2026-09-25-bad__vvs__01__runde-{r}__forsoeg-3.json").exists()
+            ok = (sag / "kvalitet" / f"2026-09-25-bad__vvs__01__runde-{r}__forsoeg-{MAKS}.json").exists()
             print(("OK   " if ok else "FEJL ") + f"domfil for runde {r} har rundenummer")
             if not ok:
                 FEJL.append(f"domfil runde {r}")
-            forvent(f"4. forsøg i runde {r} afvises",
+            forvent(f"forsøg {MAKS + 1} i runde {r} afvises",
                     kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env), "afvist")
-            forvent(f"stop blokeres uden RCA for runde {r}", kald("stop", S, env), "blokeret")
+            forvent(f"stop blokeres for eskalering i runde {r}", kald("stop", S, env), "blokeret")
             (sag / "kvalitet" / f"RCA-2026-09-25-bad__vvs__01__runde-{r}.md").write_text(
                 "# RCA\n" + HV + "Forbedring implementeret: ja\n", encoding="utf-8")
             forvent(f"stop tilladt med RCA for runde {r}", kald("stop", S, env), "tilladt")
         r = kald("pretool", {**S, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {L}"}}, env)
-        ok = bool(r) and "brugerens beslutning" in r["hookSpecificOutput"]["permissionDecisionReason"]
-        print(("OK   " if ok else "FEJL ") + "efter 3 runder: ny runde afvises og eskaleres til brugeren")
+        ok = bool(r) and "nyt leverance-ID" in r["hookSpecificOutput"]["permissionDecisionReason"]
+        print(("OK   " if ok else "FEJL ") + f"efter {MAKS_RUNDER} runder: ny runde afvises og eskaleres til brugeren")
         if not ok:
             FEJL.append(f"runde 4: {r}")
 
@@ -196,12 +215,15 @@ def main() -> int:
             FEJL.append("samlet navn")
 
         P = {"session_id": "s3", "cwd": str(cwd)}
-        for n in (1, 2, 3):
+        for n in range(1, MAKS + 1):
             kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env)
             kald("subagentstop", {**P, "agent_type": "byg-kontrol:projekt-kontrol",
                                   "last_assistant_message": dom("sag/projekt/01", "afvist", blok_fund).replace('"vvs"', '"projekt"')}, env)
-        forvent("projektkontrol: 4. forsøg afvises", kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env), "afvist")
+        forvent(f"projektkontrol: forsøg {MAKS + 1} afvises", kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env), "afvist")
         (sag / "kvalitet" / "RCA-sag__projekt__01.md").write_text(HV + "Forbedring implementeret: ja\n", encoding="utf-8")
+        forvent("projektkontrol: runde 2 afvises uden brugerens 'Ny runde'",
+                kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env), "afvist")
+        kald_raa("prompt", {**P, "prompt": "Ny runde sag/projekt/01"}, env)
         forvent("projektkontrol: runde 2 starter efter RCA med forbedring",
                 kald("pretool", {**P, "tool_input": {"subagent_type": "byg-kontrol:projekt-kontrol", "prompt": "LEVERANCE: sag/projekt/01\nFASE: 1"}}, env), "tilladt")
 
@@ -420,6 +442,26 @@ def main() -> int:
         print(("OK   " if ok else "FEJL ") + "afklar_med_bruger blokerer ikke og tælles i dommen")
         if not ok:
             FEJL.append(f"afklar: {ea}")
+
+        # KONTROLNIVEAU: fuld kræver Opus i kontrolkaldet
+        LF = "2026-09-25-bad/vvs/21"
+        F = {"session_id": "s-fuld", "cwd": str(cwd)}
+        kald("pretool", {**F, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {LF}"}}, env)
+        forvent("fuld kontrol uden model opus afvises", kald_raa("pretool", {**F, "tool_input": {
+            "subagent_type": KON, "prompt": f"LEVERANCE: {LF}\nKONTROLNIVEAU: fuld"}}, env), "afvist")
+        forvent("fuld kontrol med model opus tilladt", kald_raa("pretool", {**F, "tool_input": {
+            "subagent_type": KON, "model": "opus", "prompt": f"LEVERANCE: {LF}\nKONTROLNIVEAU: fuld"}}, env), "tilladt")
+
+        # Workflow i byg-sager kun, når brugerens seneste besked nævner workflow
+        W = {"session_id": "s-wf", "cwd": str(cwd / "byg-sager" / "2026-09-25-bad")}
+        kald_raa("prompt", {**W, "prompt": "Forsæt"}, env)
+        forvent("workflow afvises efter 'Forsæt'", kald_raa("workflow", {**W, "tool_input": {}}, env), "afvist")
+        kald_raa("prompt", {**W, "prompt": "Brug et workflow til at sammenligne tilbuddene"}, env)
+        forvent("workflow tilladt, når brugeren beder om det", kald_raa("workflow", {**W, "tool_input": {}}, env), "tilladt")
+        kald_raa("prompt", {**W, "prompt": "fortsæt"}, env)
+        forvent("workflow afvises igen ved næste besked uden 'workflow'", kald_raa("workflow", {**W, "tool_input": {}}, env), "afvist")
+        forvent("workflow uden for byg-sager påvirkes ikke",
+                kald_raa("workflow", {"session_id": "s-andet", "cwd": str(pathlib.Path(tmp)), "tool_input": {}}, env), "tilladt")
 
     print(f"\n{'ALLE TESTS BESTÅET' if not FEJL else f'{len(FEJL)} FEJL'}")
     return 1 if FEJL else 0

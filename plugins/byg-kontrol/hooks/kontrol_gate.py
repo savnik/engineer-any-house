@@ -20,14 +20,17 @@ Regler
   "afklar_med_bruger" (valgfri) er en liste af spørgsmål til brugeren; den blokerer ikke og tælles i dommen.
 - Kontrolkaldets "Leverance: <sti>" skal findes på disken (relativ sti regnes fra cwd), ellers afvises kaldet.
   Ugyldig dom → kontrolagenten sendes tilbage én gang for at rette den.
-- Højst 3 forsøg pr. runde. Tredje afviste dom → "stoppet": root cause-analyse af, hvorfor fagagenten
-  ikke leverede korrekt i første forsøg, og implementeret forbedring af fagagenten.
-- Ny runde (højst 3 runder): et nyt fagkald under samme leverance-ID starter runde n+1 med forsøg 1,
-  når RCA-filen for runden findes med en 5 Why-kæde (mindst fem nummererede "Hvorfor"-linjer og en
-  "Grundårsag") og linjen "Forbedring implementeret: ja".
-  Efter sidste runde: eskalering til brugeren, og leverancen kan kun genoptages under et nyt leverance-ID.
+- Højst "maks_forsoeg" (2) forsøg pr. runde. Sidste afviste dom → "stoppet": eskalering til brugeren
+  (brug med åbne fund som antagelser, ny runde eller nyt leverance-ID). Stop blokerer én gang for eskaleringen.
+- Ny runde (højst "maks_runder", 2) kræver brugerens egen besked "Ny runde <leverance-id>" (UserPromptSubmit)
+  og derefter RCA-filen for runden med en 5 Why-kæde (mindst fem nummererede "Hvorfor"-linjer og en
+  "Grundårsag") og linjen "Forbedring implementeret: ja". Efter sidste runde: kun under et nyt leverance-ID.
 - Stop-hooken forhindrer (én gang pr. stop) afslutning, mens sessionens leverancer mangler kontrol,
-  er afvist eller mangler RCA.
+  er afvist eller ikke er eskaleret til brugeren.
+- Kontrolniveau fuld: et kontrolkald med "KONTROLNIVEAU: fuld" kræver model "opus" i Agent-kaldet
+  (kontrolagenterne kører ellers på sonnet).
+- Workflows (PreToolUse Workflow): i byg-sager afvises Workflow-værktøjet, medmindre brugerens seneste besked
+  indeholder ordet "workflow".
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
 - Hjælpeagenter (fagregister: "hjaelpere", fx bim-sammenligner): et hjælpekald kræver LEVERANCE og en afleveret
   fagversion ("afventer_kontrol" eller "sammenlignet") og sætter "under_sammenligning"; ved aflevering bliver den
@@ -85,6 +88,9 @@ STI_RE = re.compile(r"^\s*Leverance\s*:\s*(\S+\.md)\b", re.IGNORECASE | re.MULTI
 IGANG_MAKS_SEK = 90 * 60
 FASE_RE = re.compile(r"^\s*FASE\s*:\s*(\d)", re.IGNORECASE | re.MULTILINE)
 DESIGN_RE = re.compile(r"^\s*DESIGNGRUNDLAG\s*:\s*(.+)$", re.IGNORECASE | re.MULTILINE)
+NY_RUNDE_RE = re.compile(r"\bny\s+runde\s+([^\s`'\"<>]+)", re.IGNORECASE)
+WORKFLOW_RE = re.compile(r"\bworkflow", re.IGNORECASE)
+NIVEAU_FULD_RE = re.compile(r"KONTROLNIVEAU\s*:\s*fuld", re.IGNORECASE)
 GODKEND_G2_RE = re.compile(r"\bgodkend(?:er|t)?\s+G2\s+([A-Za-z0-9ÆØÅæøå._-]+)", re.IGNORECASE)
 NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
 BLOKERENDE = {"kritisk", "væsentlig"}
@@ -267,15 +273,18 @@ def naeste_skridt(lev: str, e: dict) -> str:
         return (f"Afvist (runde {r}/{MAKS_RUNDER}, forsøg {e.get('forsoeg')}/{MAKS}): send de blokerende fund (ikke de mindre) "
                 f"retur til {hvem} med 'LEVERANCE: {lev}', og kald derefter {e.get('kontrol_agent')} igen i forgrunden.")
     if st in ("stoppet", "rca_udfoert"):
-        if r < MAKS_RUNDER:
-            return (f"Stoppet efter {MAKS} afviste forsøg i runde {r}/{MAKS_RUNDER}: skriv root cause-analysen til "
+        if r < MAKS_RUNDER and e.get("ny_runde_ok") == r:
+            return (f"Brugeren har bedt om runde {r + 1}: skriv root cause-analysen til "
                     f"<sagsmappe>/kvalitet/{rca_navn(lev, r)} – hvorfor kunne fagagenten ikke levere korrekt i første forsøg? "
                     f"Implementér læringen som forbedring af fagagenten (agentens hukommelse og repoet), skriv linjen "
                     f"'Forbedring implementeret: ja' i RCA'en, og start runde {r + 1} med et nyt fagkald under samme "
                     f"leverance-ID (højst {MAKS} nye forsøg) – se skill 'kvalitetskontrol'.")
-        return (f"Stoppet efter {MAKS_RUNDER} runder à {MAKS} forsøg: skriv root cause-analysen til "
-                f"<sagsmappe>/kvalitet/{rca_navn(lev, r)}, implementér læringen i fagagenten, eskalér til brugeren, "
-                f"og fortsæt kun efter brugerens beslutning under et nyt leverance-ID.")
+        valg = (f"(b) en ny runde – brugeren skriver selv 'Ny runde {lev}' – eller (c) " if r < MAKS_RUNDER
+                else "eller (c) ")
+        return (f"Stoppet efter {MAKS} afviste forsøg i runde {r}/{MAKS_RUNDER}: stop og eskalér til brugeren. Vis de "
+                f"åbne blokerende fund kort, og spørg, om leverancen skal (a) bruges med fundene som åbne antagelser eller "
+                f"hold points, " + valg + "omformuleres som en ny, mindre opgave under et nyt leverance-ID. Start ingen "
+                "ny runde, og skriv ingen RCA, før brugeren har valgt.")
     if st == "godkendt":
         return f"Godkendt: ændringer kræver et nyt leverance-ID (fx '{lev}-r2')."
     return ""
@@ -368,6 +377,10 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 log(d, haendelse="basis_fejl", leverance=lev, fejl=traceback.format_exc()[-400:])
             return
         # kontrolkald
+        if NIVEAU_FULD_RE.search(str(ti.get("prompt") or "")) and "opus" not in str(ti.get("model") or "").lower():
+            return afvis_kald("KONTROLNIVEAU: fuld kræver Opus: gentag kontrolkaldet med model: \"opus\" i Agent-kaldet "
+                              "(kontrolagenterne kører ellers på sonnet) – se skill 'kvalitetskontrol'. Er opgaven ikke "
+                              "sikkerhedskritisk, så brug KONTROLNIVEAU: let.")
         if fag == "projekt":
             if e and e.get("type") != "projekt":
                 return afvis_kald(f"Leverance {lev} er en {e.get('fag')}-leverance og kontrolleres af {e.get('kontrol_agent')}.")
@@ -433,6 +446,20 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
         e.update(status="under_kontrol", session_id=sid, opdateret=nu())
         gem(d, s)
         log(d, haendelse="kontrolkald", leverance=lev, runde=runde(e), forsoeg=e.get("forsoeg"), agent=st, type=e.get("type"))
+
+
+# ---------- Workflow ----------
+def workflow(inp: dict, d: pathlib.Path) -> None:
+    """PreToolUse (Workflow): i byg-sager kun, når brugerens seneste besked nævner "workflow"."""
+    sid = str(inp.get("session_id") or "")
+    with Laas(d):
+        s = indlaes(d)
+    byg = "byg-sager" in str(inp.get("cwd") or "") or any(
+        e.get("session_id") == sid for e in s["leverancer"].values())
+    if byg and not (s.get("workflow_ok") or {}).get(sid):
+        afvis_kald("byg: Workflow-værktøjet bruges kun, når brugeren selv beder om et workflow i sin besked. "
+                   "'Fortsæt' betyder: genoptag den aktuelle leverance med ét fagkald. Løs opgaven i hovedtråden "
+                   "eller med én agent – se projektlederens skill, afsnittet 'Tokenbudget'.")
 
 
 # ---------- SubagentStop ----------
@@ -798,7 +825,7 @@ def rca_findes(inp: dict, e: dict, lev: str) -> bool:
 def ny_runde_blokeret(inp: dict, e: dict, lev: str):
     """Grund til at en ny runde ikke må starte – eller None, hvis den må."""
     r = runde(e)
-    if r >= MAKS_RUNDER:
+    if r >= MAKS_RUNDER or e.get("ny_runde_ok") != r:
         return naeste_skridt(lev, e)
     f = rca_fil(inp, e, lev)
     if f is None:
@@ -1040,6 +1067,24 @@ def brugerprompt(inp: dict, d: pathlib.Path) -> None:
     with Laas(d):
         s = indlaes(d)
         paamindelse = kontekst_paamindelse(inp, s)
+        sid = str(inp.get("session_id") or "")
+        wf = bool(WORKFLOW_RE.search(tekst))
+        aendret = False
+        if bool((s.get("workflow_ok") or {}).get(sid)) != wf:
+            s.setdefault("workflow_ok", {})[sid] = wf
+            aendret = True
+        for m in NY_RUNDE_RE.finditer(tekst):
+            lev = m.group(1).rstrip(".,;:)")
+            e = s["leverancer"].get(lev)
+            if not e or e.get("status") not in ("stoppet", "rca_udfoert"):
+                continue
+            if runde(e) >= MAKS_RUNDER:
+                beskeder.append(f"{lev} har brugt alle {MAKS_RUNDER} runder; fortsæt under et nyt leverance-ID.")
+                continue
+            e["ny_runde_ok"] = runde(e)
+            aendret = True
+            log(d, haendelse="ny_runde_godkendt", leverance=lev, runde=runde(e))
+            beskeder.append(f"Brugeren har godkendt en ny runde for {lev}. " + naeste_skridt(lev, e))
         for sag in fundne:
             design = sorted(lev for lev, e in s["leverancer"].items()
                             if sag_af(lev) == sag and e.get("type") == "fag" and e.get("status") == "godkendt")
@@ -1049,7 +1094,7 @@ def brugerprompt(inp: dict, d: pathlib.Path) -> None:
             beskeder.append(f"G2 (løsningsgodkendelse) for {sag} er registreret som godkendt af brugeren med "
                             f"{len(design)} godkendte fagleverancer: {', '.join(design) or 'ingen'}. "
                             "Skriv godkendelsen i beslutningsloggen, og start fase 3.")
-        if fundne or paamindelse:
+        if fundne or paamindelse or aendret:
             gem(d, s)
     if paamindelse:
         log(d, haendelse="kontekst_paamindelse", session_id=str(inp.get("session_id") or ""))
@@ -1119,7 +1164,11 @@ def stop(inp: dict, d: pathlib.Path) -> None:
                 if rca_findes(inp, e, lev):
                     e["status"] = "rca_udfoert"
                     aendret = True
-                else:
+                elif e.get("ny_runde_ok") == runde(e):
+                    punkter.append(f"{lev}: {naeste_skridt(lev, e)}")
+                elif e.get("eskaleret") != runde(e):
+                    e["eskaleret"] = runde(e)
+                    aendret = True
                     punkter.append(f"{lev}: {naeste_skridt(lev, e)}")
         if aendret:
             gem(d, s)
@@ -1177,7 +1226,7 @@ def main() -> int:
         raw = sys.stdin.read()
         inp = json.loads(raw) if raw.strip() else {}
         handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "beskyt": beskyt,
-                   "prompt": brugerprompt, "precompact": precompact, "efter_compact": efter_compact}.get(cmd)
+                   "prompt": brugerprompt, "workflow": workflow, "precompact": precompact, "efter_compact": efter_compact}.get(cmd)
         if handler:
             handler(inp, datamappe())
     except Exception:
