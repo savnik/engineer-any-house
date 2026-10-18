@@ -564,6 +564,14 @@ def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
             "note": f"{sum(results.values())}/{len(task['dele'])} dele ({'; '.join(notes)})"}
 
 
+def progress_line(r: dict, task: dict, prefix: str = "") -> str:
+    """One progress line per answer; holdout lines hide ID and note, which can reveal the key."""
+    status = "OK " if r["bestaaet"] else "NEJ"
+    if task["saet"] == "holdout":
+        return f"  {prefix}{status} {r['arm']:6} {'holdout':8} (skjult)"
+    return f"  {prefix}{status} {r['arm']:6} {r['id']:8} {r['note']}"
+
+
 def cmd_regrade(args) -> int:
     """Grades stored answers again against the current tasks (new key, criteria or grader) without new answers."""
     src = pathlib.Path(args.fil)
@@ -582,7 +590,7 @@ def cmd_regrade(args) -> int:
                 r.pop("fejl", None)
                 r["pris_usd"] = (r.get("pris_usd") or 0) + g.pop("pris_bedoemmelse", 0)
                 r.update(g)
-                print(f"  {changed}{'OK ' if r['bestaaet'] else 'NEJ'} {r['arm']:6} {r['id']:8} {r['note']}")
+                print(progress_line(r, by_id[r["id"]], changed))
     d["rebedoemt"] = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out = src.with_name(src.stem + "-rebedoemt.json")
     out.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -619,6 +627,7 @@ def cmd_run(args) -> int:
         repeats = max(args.gentag, args.gentag_fri if t["type"] == "fri" else 0)
         jobs += [(t, arm) for _ in range(repeats) for arm in arms]
     print(f"{args.fag}: {len(tasks)} opgaver × {len(arms)} arm(e) = {len(jobs)} kørsler")
+    by_task = {t["id"]: t for t in tasks}
     lock = threading.Lock()
     results = []
     with tempfile.TemporaryDirectory(prefix="eksamen-") as tmpname:
@@ -632,7 +641,7 @@ def cmd_run(args) -> int:
                 r = fut.result()
                 with lock:
                     results.append(r)
-                    print(f"  {'OK ' if r['bestaaet'] else 'NEJ'} {r['arm']:6} {r['id']:8} {r['note']}")
+                    print(progress_line(r, by_task[r["id"]]))
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = EXAM_DIR / args.fag / "results"
     out_dir.mkdir(exist_ok=True)
