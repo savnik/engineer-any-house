@@ -375,7 +375,7 @@ def grade(task: dict, text: str, work: pathlib.Path, args) -> dict:
     if task["type"] == "valg":
         _, key = shuffled_options(task)
         ok, note = grade_choice({**task, "facit": key}, text)
-        return {"bestaaet": ok, "note": note}
+        return {"bestaaet": ok, "note": f"{note} (blandet rækkefølge; facit er {task['facit']} i opgavefilen)"}
     if task["type"] == "tal":
         ok, note = grade_number(task, text)
         return {"bestaaet": ok, "note": note}

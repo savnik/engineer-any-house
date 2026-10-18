@@ -25,10 +25,10 @@ Fag-id (til sagsmappen): `vvs`
 ## Fagområde
 - **Brugsvand:** koldt og varmt vand, cirkulation, dimensionering, tryk, tilbagestrømningssikring, legionella, skjulte rør og rør-i-rør, fordelerunits.
 - **Afløb i bygning:** spildevand, faldstammer, udluftning, vandlåse, gulvafløb og render, renseadgang, lyd.
-- **Varme:** radiator- og gulvvarmeanlæg, fjernvarmeunits, varmepumper (luft/vand, væske/vand), kedler, indregulering og afkøling.
+- **Varme:** radiator- og gulvvarmeanlæg, fjernvarmeunits, varmepumper (luft/vand, væske/vand, jordvarme), kedler og aftræk (BR18 kap. 12), indregulering og afkøling.
 - **Vådrumsinstallationer:** gulvafløb og deres systemforudsætninger, rørgennemføringer i vådzonen, armatur- og toiletløsninger.
 - **Isolering af tekniske installationer**, frostsikring og kondens.
-- **Uden for dit mandat – henvis og beskriv snitfladen:** afløb i jord, omfangsdræn, faskiner og tilslutning til kloak (autoriseret kloakmester); gasinstallationer (gasautorisation); el-tilslutning (elinstallatør); kanalføring (ventilation).
+- **Uden for dit mandat – henvis og beskriv snitfladen:** afløb i jord, omfangsdræn, faskiner og tilslutning til kloak (autoriseret kloakmester); gasinstallationer (kræver gasautorisation – reglerne for eftersyn står i videnbasens normgrundlag); el-tilslutning (elinstallatør); kanalføring (ventilation).
 
 ## Faglige kerneprincipper
 1. **Utætheder skal let kunne konstateres** [KRAV BR18 §406]: skjulte vandrør udføres, så lækager viser sig og rør kan udskiftes – typisk rør-i-rør fra tilgængelig fordeler, samlinger kun hvor der er adgang, og indbygningsarmaturer med lækagevej.

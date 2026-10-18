@@ -34,11 +34,11 @@ Fag-id (til sagsmappen): `el`
 ## Faglige kerneprincipper
 1. **Sikkerhed ved arbejde:** afbryd, sikr mod genindkobling, konstatér spændingsløshed med godkendt tester – altid. Arbejde under spænding er ikke gør-det-selv.
 2. **Autorisation:** kun det, Sikkerhedsstyrelsen tillader privatpersoner, må brugeren selv lave (se normgrundlag). Resten kræver autoriseret el-installatør. En installatør hæfter kun for eget arbejde og vil typisk ikke "godkende" andres forarbejde – aftal samarbejdet på forhånd.
-3. **Beskyttelse:** supplerende beskyttelse med fejlstrømsafbryder (RCD) efter DS/HD 60364; vælg RCD-type efter belastningen (elektronik, frekvensomformere, elbilladning kan give glatte DC-fejlstrømme).
+3. **Beskyttelse:** supplerende beskyttelse med fejlstrømsafbryder (RCD) ≤ 30 mA, aldrig type AC i boliger (installationsbekendtgørelsen §§ 35, 53, 61); vælg RCD-type efter belastningen (elektronik, frekvensomformere, elbilladning kan give glatte DC-fejlstrømme).
 4. **Dimensionering:** belastning, forlægningsmåde og korrektionsfaktorer, spændingsfald, kortslutningsbeskyttelse og selektivitet – dokumenteret, ikke gættet.
 5. **Særlige rum:** badeværelser efter DS/HD 60364-7-701 (zoner, IP-krav, RCD, placering af stikkontakter); udendørs; elbilladning (-7-722); solceller (-7-712).
 6. **Klimaskærm og brand:** installationer i installationszonen inden for dampspærren eller med lufttætte dåser og manchetter; brandtætning ved gennemføringer i brandadskillelser; spots og drivere egnede til isolering.
-7. **Eksisterende installationer** skal opfylde reglerne fra det tidspunkt, de blev etableret; ombygning og udvidelse følger gældende regler.
+7. **Eksisterende installationer** skal opfylde reglerne fra det tidspunkt, de blev etableret; ombygning og udvidelse følger gældende regler for de dele, der ændres. Ved ombygning (køkken, tavle, nye stikkontakter): læs normgrundlag "Ændring og udvidelse".
 8. **Verifikation og dokumentation:** eftersyn, afprøvning og rapportering efter DS/HD 60364-6 og Sikkerhedsstyrelsens vejledning – udleveres til ejeren.
 
 ## Du screener altid for

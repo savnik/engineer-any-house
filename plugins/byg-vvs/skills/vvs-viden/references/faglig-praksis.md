@@ -24,7 +24,7 @@ Værdier markeret **(T)** er typiske branche- eller erfaringsværdier. Verificé
 
 ## 3. Varmeanlæg
 - **Fjernvarme:** direkte anlæg eller veksleranlæg; brugsvand via veksler eller beholder. Fjernvarmeselskabets tekniske bestemmelser gælder. God afkøling kræver indregulering, velfungerende termostatventiler og korrekt brugsvandsopvarmning; mange selskaber har økonomisk incitament for god afkøling (T).
-- **Varmepumper:** dimensionér efter varmetabsberegning, ikke efter den gamle kedel. Lav fremløbstemperatur kræver radiatorer eller gulvvarme med tilstrækkelig kapacitet – vurdér rum for rum. Afklar afrimning og anlægsvolumen, støj og placering af udedel i forhold til naboskel (vejledende støjgrænser – T), el-forsyning og tilmelding (elinstallatør), frostfrit kondensafløb. Tilskudsordninger kan kræve særlig certificering (T).
+- **Varmepumper:** dimensionér efter varmetabsberegning, ikke efter den gamle kedel. Lav fremløbstemperatur kræver radiatorer eller gulvvarme med tilstrækkelig kapacitet – vurdér rum for rum. Afklar afrimning og anlægsvolumen, støj og placering af udedel i forhold til naboskel (vejledende støjgrænser – T), el-forsyning og tilmelding (elinstallatør), frostfrit kondensafløb. Tilskudsordninger kan kræve særlig certificering (T). Jordvarme (vandrette slanger eller boring) er reguleret af jordvarmebekendtgørelsen: anmeldelse eller tilladelse, afstand til brønde og boringer, frostmiddel og tæthed – se normgrundlag, "Jordvarme", før du rådgiver om placering.
 - **Gulvvarme:** fremløbs- og overfladetemperatur tilpasset belægningen (trægulve har producentkrav – T), rumstyring, kredslængder og rørafstand efter producent, indregulering af kredse. I vådrum: koordinér med gulvafløb og fald.
 - **Indregulering:** forindstilling af termostatventiler, flow pr. kreds, differenstryk – og en protokol.
 - **Sikkerhed:** ekspansionsbeholder, sikkerhedsventil med ført afløb, påfyldning med tilbagestrømningssikring, afluftning.
@@ -35,10 +35,11 @@ Værdier markeret **(T)** er typiske branche- eller erfaringsværdier. Verificé
   - **Ekspansion (DS/EN 12828, gengivet sekundært, T):** Vn = (Ve + Vwr) × (pe + 1)/(pe − p0). Her er pe = psv − 0,5 bar (psv ≤ 5 bar), Ve = udvidelse ved STB-temperatur × anlægsvolumen og Vwr = vandreserve. Udvidelsen er ca. 3,6 % ved 90 °C, 4,3 % ved 100 °C og 5,1 % ved 110 °C.
   - **Varmedump og brugsvand:** under dump kan beholderens ladepumpe køre uafhængigt af setpunktet. Sæt derfor en termostatisk brugsvandsblander ved afgangen.
   - **Elpatron som backup:** elpatronen sættes med en fast margin under fyrets ladestart (fx −5 K) og aldrig under 50 °C (§ 411).
+  - **Kedelskift og skorsten:** kontrollér forbrændingsluft, undertryk i forbrændingsrum og aftræk, aftrækkets temperatur- og sodbrandsklasse og lysningsareal efter effekt – krav i normgrundlag, "Fyringsanlæg og aftræk".
   - **Kilder:** At-vejledning B.4.8 er ophævet (1. juni 2025) og bruges ikke som kilde.
 
 ## 4. Vådrum – VVS-delen
-- **Vådzone** (BUILD/SBi 252): hele gulvet, de nederste 100 mm af alle vægge og væggene ved bruseniche og badekar op til loftet, inkl. 500 mm ud over brusenichens og badekarrets afgrænsning. Små vådrum (< 3,25 m² eller bredde under ca. 1,3 m): hele rummet. Over 2,3 m i høje rum må regnes som fugtig zone. Minimér rørgennemføringer i vådzonen.
+- **Vådzone** (BUILD/SBi 252): hele gulvet, de nederste 100 mm af alle vægge og væggene ved bruseniche og badekar op til loftet, inkl. 500 mm ud over brusenichens og badekarrets afgrænsning. Små vådrum (< 3,25 m² eller bredde under ca. 1,3 m): hele rummet. Over 2,3 m i høje rum må regnes som fugtig zone. Ingen rørgennemføringer i gulvet i den vandbelastede del (BR18 §339 stk. 3, se normgrundlag) – vandrør føres i væg; minimér gennemføringer i øvrigt.
 - **Gulvafløb:** VA-godkendt og godkendt til den konkrete gulvkonstruktion og belægning; tilslutning til membranen med systemets klæbeflange eller manchet. Kontrollér indbygningshøjde mod gulvopbygning og fald (normalt ca. 1 % i brusezonen – verificér i SBi 252 afsn. 3.1.2 – intet bagfald).
 - **Rørgennemføringer** med systemmanchet og placering, der tillader korrekt membranudførelse (afstande efter systemanvisning).
 - **Toilet:** indbygningscisterne kræver serviceadgang; gulvstående toilet fastgøres efter systemets anvisning uden unødig perforering af membranen.
@@ -57,6 +58,7 @@ Værdier markeret **(T)** er typiske branche- eller erfaringsværdier. Verificé
 - **Lavt tryk eller flow:** tilgroede galvaniserede rør, snavsfilter/perlator, delvist lukket ventil, defekt trykreduktionsventil, underdimensioneret stikledning.
 - **Varmt vand tager lang tid:** manglende eller defekt cirkulation, pumpe, lang stikledning.
 - **Radiator kold foroven:** luft. **Kold forneden eller helt:** manglende flow, indregulering, snavs, termostatventil.
+- **Dårlig afkøling (høj returtemperatur) i fjernvarme:** P = q · c · ΔT – lav ΔT kræver større vandstrøm for samme effekt, så fjernvarmen udnyttes dårligere (større flow, pumpeenergi og ledningstab). Tjek i rækkefølge: åbne by-pass/overstrømsventiler, radiatorer der kortslutter (varm retur), termostatventiler og forindstilling (indregulering), varmtvandsbeholderens spiral/termostat og cirkulation, for høj fremløbstemperatur (vejrkompensering).
 - **Slag og banken i rør:** vandslag, løse rørbærere, termisk udvidelse.
 - **Fugt ved bad eller vask:** tør af og mål; skeln kondens, lækage fra vand (under tryk – konstant), lækage fra afløb (kun ved brug) og membranbrud (ved brusebad/gulvvask).
 
