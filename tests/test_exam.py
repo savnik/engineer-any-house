@@ -5,6 +5,7 @@ Kør:  python3 tests/test_exam.py
 """
 import json
 import pathlib
+import subprocess
 import sys
 import tempfile
 
@@ -80,6 +81,52 @@ def test_report_skips_run_errors():
     expect("kørselsfejl tæller ikke som regression", "## Regressioner" in text and "- X-1" not in text.split("## Regressioner")[1])
     expect("kørselsfejl vises", "1 kørselsfejl er ikke talt med" in text)
     expect("grænsebesked genkendes", bool(exam.LIMIT_RE.search("You've hit your session limit · resets 2:40am")))
+
+
+def test_efficiency_helpers():
+    original = exam.EXAM_DIR
+    row = {"type": "valg", "saet": "udvikling", "niveau": "svend", "maal": ["M1"], "pris_usd": 0.1, "ture": 2}
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            exam.EXAM_DIR = pathlib.Path(tmp)
+            res = exam.EXAM_DIR / "el" / "results"
+            res.mkdir(parents=True)
+            (res / "ugyldig").mkdir()
+
+            def write(name, rows, folder=res):
+                (folder / name).write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+            write("1-basis.json", [{**row, "id": "X-1", "arm": "basis", "bestaaet": False}])
+            write("2-basis.json", [{**row, "id": "X-1", "arm": "basis", "bestaaet": True},
+                                   {**row, "id": "X-2", "arm": "basis", "bestaaet": True, "fejl": True}])
+            write("3-plugin.json", [{**row, "id": "X-1", "arm": "plugin", "bestaaet": False, "sek": 12.0},
+                                    {**row, "id": "X-3", "arm": "plugin", "bestaaet": True, "sek": 8.0}])
+            write("9-ugyldig.json", [{**row, "id": "X-3", "arm": "plugin", "bestaaet": False}], res / "ugyldig")
+            basis, sources = exam.latest_basis("el", {"X-1", "X-2"})
+            expect("nyeste basis genbruges", len(basis) == 1 and basis[0]["bestaaet"] and sources == {"2-basis.json"})
+            expect("basis med kørselsfejl genbruges ikke", all(r["id"] != "X-2" for r in basis))
+            expect("kun-fejlede finder sidste plugin-fejl", exam.latest_failed_plugin("el") == {"X-1"})
+            text = exam.report([res / "3-plugin.json"], basis, sources)
+            expect("rapport med genbrugt basis viser regression", "## Regressioner" in text and "- X-1" in text)
+            expect("rapport viser tid pr. opgave", "| Tid pr. opgave (s) |" in text and "10.0" in text)
+            expect("rapport nævner genbrugt basis", "Basis er genbrugt fra: 2-basis.json" in text)
+    finally:
+        exam.EXAM_DIR = original
+    with tempfile.TemporaryDirectory() as tmp:
+        dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp))
+        expect("videnbasens størrelse måles", exam.knowledge_base_bytes(dst) > 10_000)
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "koer", "el", "--saet", "holdout"],
+                       capture_output=True, text=True)
+    expect("holdout kræver --udgivelse", r.returncode == 1 and "--udgivelse" in r.stdout)
+
+
+def test_holdout_gaps_are_not_listed():
+    rows = [{"id": "H-1", "arm": "plugin", "type": "valg", "saet": "holdout", "niveau": "svend", "maal": ["M1"],
+             "bestaaet": False}]
+    with tempfile.TemporaryDirectory() as tmp:
+        f = pathlib.Path(tmp) / "r.json"
+        f.write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+        text = exam.report([f])
+    expect("holdout-fejl listes ikke som huller", "- H-1" not in text and "1 holdout-opgaver er ikke bestået" in text)
 
 
 def test_shuffle():
@@ -160,6 +207,8 @@ if __name__ == "__main__":
     test_parsing()
     test_grading()
     test_report_skips_run_errors()
+    test_efficiency_helpers()
+    test_holdout_gaps_are_not_listed()
     test_shuffle()
     test_validation()
     test_plugin_copy_without_memory()

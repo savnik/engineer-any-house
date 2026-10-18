@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Måler byg-agenternes token- og tidsforbrug ud fra Claude Codes lokale transskripter.
 
-Brug:  python3 scripts/forbrug.py [projektmappe] [--siden ÅÅÅÅ-MM-DD]
+Brug:  python3 scripts/forbrug.py [projektmappe] [--siden ÅÅÅÅ-MM-DD] [--til ÅÅÅÅ-MM-DD]
        projektmappe: ~/.claude/projects/<kodet arbejdsmappe> (standard: den aktuelle arbejdsmappe)
+       --til er eksklusiv: før/efter en udgivelse sammenlignes med --til <dato> og --siden <dato>.
 
 Viser:
 - vægtet forbrug pr. del (hovedtråd, fagagenter, kontrolagenter, øvrige)
@@ -77,7 +78,8 @@ def vaegtet(kald) -> float:
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     siden = sys.argv[sys.argv.index("--siden") + 1] if "--siden" in sys.argv else ""
-    args = [a for a in args if a != siden]
+    til = sys.argv[sys.argv.index("--til") + 1] if "--til" in sys.argv else ""
+    args = [a for a in args if a not in (siden, til)]
     mappe = pathlib.Path(args[0]).expanduser() if args else \
         pathlib.Path.home() / ".claude" / "projects" / re.sub(r"[^A-Za-z0-9]", "-", os.getcwd())
     if not mappe.is_dir():
@@ -90,7 +92,7 @@ def main() -> int:
     leverancer = collections.defaultdict(float)
     for hoved in sorted(mappe.glob("*.jsonl")):
         h = laes(hoved)
-        if not h["kald"] or h["start"][:10] < siden:
+        if not h["kald"] or h["start"][:10] < siden or (til and h["start"][:10] >= til):
             continue
         subs = []
         for sub in sorted((mappe / hoved.stem / "subagents").glob("*.jsonl")):
@@ -121,7 +123,7 @@ def main() -> int:
     if not total:
         print("Ingen sessioner i perioden.")
         return 0
-    print(f"Mappe: {mappe}" + (f" · siden {siden}" if siden else ""))
+    print(f"Mappe: {mappe}" + (f" · siden {siden}" if siden else "") + (f" · før {til}" if til else ""))
     print(f"Sessioner: {len(dele['hovedtråd'])} · vægtet forbrug i alt: {total / 1e6:.1f}M\n")
     print(f"{'Del':16} {'kørsler':>7} {'vægtet':>9} {'andel':>6}")
     for del_ in ("hovedtråd", "fagagenter", "kontrolagenter", "øvrige"):

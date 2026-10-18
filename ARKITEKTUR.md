@@ -111,10 +111,23 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 |---|---|
 | `eksamen/<fag>/laeringsmaal.json` | Kompetencemål ordret fra uddannelsesordningen (STIL, gældende fra 1/8-2026; målene er flyttet fra bekendtgørelsen til uddannelsesordningen), el: EVU's 11 el-teoretiske temaer, mesterniveau: autorisationsprøvens indhold (el: Sikkerhedsstyrelsens tre hovedområder; vvs: de kompetencegivende AK-fagelementer). Mål uden for rollen har en begrundelse |
 | `opgaver*.json` | `valg`, `tal` og `fri` med facit, kilde og V/T. Hvert mål i rollen har opgaver i både `udvikling` og `holdout` |
-| `scripts/exam.py` | `tjek` (format og dækning, i `valider.py`), `vis` (sæt og dækningskort som markdown), `koer` (headless `claude -p` i tom mappe, uden brugerens plugins og internet; arm `basis` mod `plugin` med `--agent`), `rapport` (gevinst, huller og regressioner) |
+| `scripts/exam.py` | `tjek` (format og dækning, i `valider.py`), `vis` (sæt og dækningskort som markdown), `koer` (headless `claude -p` i tom mappe, uden brugerens plugins og internet; arm `basis` mod `plugin` med `--agent`), `rapport` (gevinst, huller og regressioner, tid, tokens og pris pr. bestået opgave) |
 | Rettelse | `valg` og `tal` deterministisk fra linjen `SVAR:`; `fri` af en censor-LLM efter opgavens kriterier |
 | Placering | Uden for `plugins/`, så facit hverken pakkes eller kan læses af agenten |
 | Kun pluginet | Plugin-armen fjerner `memory: user` i plugin-kopien, så målingen dækker det, der er forankret i repoet, og ikke agenthukommelsen med erfaringer fra brugerens sager. `--med-hukommelse` er et tilvalg. Agenten har kun læseværktøjer under eksamen |
+
+**Målt effekt (2026-10-18, én kørsel, før `0a506d5` og efter `dce258f`):**
+
+| Fag | Bestået, hele sættet | Holdout | Pris pr. bestået opgave | Ture pr. opgave |
+|---|---|---|---|---|
+| el | 80 % → 94 % (basis 82 %) | 77 % → 87 % (basis 71 %) | 0,086 → 0,077 $ | 2,0 → 2,1 |
+| vvs | 86 % → 94 % (basis 81 %) | 86 % → 89 % (basis 86 %) | 0,074 → 0,072 $ | 1,9 → 2,2 |
+
+Videnbasen voksede ca. 9 KB pr. fag (ca. 7 % dyrere pr. kald), men prisen pr. rigtigt svar faldt. I sagerne ligger gevinsten i undgåede returer fra kontrollen. Den måles med `forbrug.py --til/--siden` omkring udgivelsen.
+
+**Effektiv drift:** `koer` kører som standard kun plugin-armen og genbruger det nyeste basis-svar. Holdout kræver `--udgivelse`. `--kun-fejlede` kører kun de opgaver, der fejlede. `--gentag-fri` gentager fri-opgaverne for at dæmpe støj. Rapporten viser tid, ture, input-tokens, videnbasens størrelse og pris pr. bestået opgave.
+
+**Kendt faldgrube:** I `dontAsk`-tilstand afviser `claude -p` Read og Grep uden for arbejdsmappen. Uden `--add-dir` til plugin-kopien kan agenten ikke læse sin egen videnbase. De første målinger målte derfor kun agentprompten.
 
 **Læringsløkke:** huller i udviklingssættet → ny tekst i videnbasen via normal forankring (primærkilde, V/T, review) → ny kørsel. Holdout-sættet bruges kun til måling, så forbedringen kan måles på opgaver, videnbasen ikke er skrevet efter. Regressioner (basis består, plugin ikke) peger på tekst i videnbasen, der vildleder.
 

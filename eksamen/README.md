@@ -48,13 +48,24 @@ eksamen/<fag>/
 
 ## Kørsel
 ```
-python3 scripts/exam.py tjek                       # format og dækning (kører også i valider.py)
+python3 scripts/exam.py tjek                          # format og dækning (kører også i valider.py)
 python3 scripts/exam.py vis el --facit > /tmp/el.md
-python3 scripts/exam.py koer el --arm begge --saet udvikling --parallel 4
-python3 scripts/exam.py koer el --saet holdout     # kun ved udgivelse eller større ændringer
+python3 scripts/exam.py koer el                       # udviklingssættet, kun plugin-armen; basis genbruges
+python3 scripts/exam.py koer el --kun-fejlede         # kun de opgaver, plugin-armen ikke bestod sidst
+python3 scripts/exam.py koer el --gentag-fri 3        # fri-opgaverne tre gange (majoritet), mod støj
+python3 scripts/exam.py koer el --saet holdout --udgivelse --plugin-rev <før>   # før/efter en ændring
+python3 scripts/exam.py koer el --arm basis           # kun når modellen er skiftet
 python3 scripts/exam.py rapport eksamen/el/results/<fil>.json
 python3 scripts/exam.py rebedoem eksamen/el/results/<fil>.json --kun-fri   # ret gemte svar igen efter ændret rettemaske
 ```
+
+### Effektiv brug
+- **Basis genbruges.** Basis-armen afhænger ikke af videnbasen. `koer` kører derfor kun plugin-armen, og rapporten bruger det nyeste basis-svar pr. opgave. Basis køres kun igen, når modellen skiftes.
+- **Luk et hul med `--kun-fejlede`.** Kør kun de opgaver, der fejlede. Det koster få cent i stedet for ca. 6 $ for hele sættet.
+- **Holdout kun ved udgivelse.** Holdout kræver `--udgivelse`. Kør det før og efter en ændring af videnbasen med `--plugin-rev`, så sammenligningen sker på lige vilkår. Rapporten viser aldrig ID'erne på holdout-fejl.
+- **Kontekst.** Rapporten viser videnbasens størrelse, input-tokens, tid og ture pr. opgave samt pris pr. bestået opgave. Ny viden skal forbedre bestået-andelen mere, end den øger prisen pr. bestået opgave. Er det ikke tilfældet, skal teksten skæres ned.
+- **Rigtige sager.** Eksamen måler ikke returer i kontrol-loopet. Sammenlign derfor returandelen før og efter en udgivelse med `python3 scripts/forbrug.py --til <udgivelsesdato>` og `--siden <udgivelsesdato>`.
+
 `koer` kører hver opgave headless (`claude -p`) i en tom mappe uden brugerens plugins og uden internet. `basis` er modellen alene. `plugin` er fagagenten (`--agent`) med en kopi af pluginet uden afhængigheder. Valg- og talopgaver rettes deterministisk ud fra linjen `SVAR:`. Fri opgaver bedømmes af en censor-LLM efter kriterierne. Kørslen koster tokens.
 
 Plugin-armen får læseadgang til sin plugin-kopi (`--add-dir`), men ikke til resten af filsystemet, så facit i `eksamen/` kan ikke læses. `--plugin-rev <commit>` kører pluginet, som det var i en git-revision. Det bruges til at måle en ændring af videnbasen før og efter under samme vilkår.
