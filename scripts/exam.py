@@ -771,10 +771,14 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
             out += ["", f"{len(held)} holdout-opgaver er ikke bestået. De vises ikke, fordi holdout aldrig må være "
                     "grundlag for videnbasen."]
     if {"basis", "plugin"} <= set(arms):
+        def listed(ids: list[str]) -> list[str]:
+            shown = [f"- {t}" for t in ids if set_of[t] == "udvikling"]
+            hidden = sum(1 for t in ids if set_of[t] == "holdout")
+            return (shown or (["- ingen"] if not hidden else [])) + ([f"- og {hidden} i holdout"] if hidden else [])
         out += ["", "## Regressioner (basis bestået, plugin ikke) – videnbasen vildleder", ""]
-        out += [f"- {t} ({set_of[t]})" for t in regressions] or ["- ingen"]
+        out += listed(regressions)
         out += ["", "## Gevinst (plugin bestået, basis ikke)", ""]
-        out += [f"- {t}" for t in gains] or ["- ingen"]
+        out += listed(gains)
     return "\n".join(out)
 
 

@@ -127,6 +127,12 @@ def test_holdout_gaps_are_not_listed():
         f.write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
         text = exam.report([f])
     expect("holdout-fejl listes ikke som huller", "- H-1" not in text and "1 holdout-opgaver er ikke bestået" in text)
+    rows.append({**rows[0], "arm": "basis", "bestaaet": True})
+    with tempfile.TemporaryDirectory() as tmp:
+        f = pathlib.Path(tmp) / "r.json"
+        f.write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+        text = exam.report([f])
+    expect("holdout-regression vises kun som antal", "H-1" not in text and "- og 1 i holdout" in text, text)
 
 
 def case_task(**kw):

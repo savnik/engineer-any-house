@@ -125,6 +125,8 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 
 Videnbasen voksede ca. 9 KB pr. fag (ca. 7 % dyrere pr. kald), men prisen pr. rigtigt svar faldt. I sagerne ligger gevinsten i undgåede returer fra kontrollen. Den måles med `forbrug.py --til/--siden` omkring udgivelsen.
 
+**Installatøruddannelsen (AK) og ventilation (2026-10-18, én kørsel, basis mod plugin):** el AK 27 opgaver, 93 % mod 93 %. Vvs AK 22 opgaver, 86 % mod 86 %. Ventilation 32 opgaver, 91 % mod 94 %. Mesteropgaverne ligger tæt på loftet for begge arme. Modellen klarer projektering og ansvar godt, og hullerne er få, enkelte kriterier i fri-opgaver (tegningssymboler, P2X-tab). De er ikke lukket i videnbasen, fordi der ikke var en efterprøvelig primærkilde, og gevinsten er for lille til at betale for mere kontekst. AK-sættene bruges som regressionsværn: de skal blive ved med at bestå, når videnbasen ændres.
+
 **Effektiv drift:** `koer` kører som standard kun plugin-armen og genbruger det nyeste basis-svar. Holdout kræver `--udgivelse`. `--kun-fejlede` kører kun de opgaver, der fejlede. `--gentag-fri` gentager fri-opgaverne for at dæmpe støj. Rapporten viser tid, ture, input-tokens, videnbasens størrelse og pris pr. bestået opgave.
 
 **Kendt faldgrube:** I `dontAsk`-tilstand afviser `claude -p` Read og Grep uden for arbejdsmappen. Uden `--add-dir` til plugin-kopien kan agenten ikke læse sin egen videnbase. De første målinger målte derfor kun agentprompten.
