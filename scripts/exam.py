@@ -623,7 +623,15 @@ def cmd_run(args) -> int:
     arms = ["basis", "plugin"] if args.arm == "begge" else [args.arm]
     agent = f"{goals['plugin']}:{goals['agent']}"
     jobs = []
-    for t in tasks:
+    if args.kun_koerselsfejl:
+        # Re-run exactly the runs that errored in an earlier file, without printing their IDs.
+        by_id = {t["id"]: t for t in tasks}
+        prev = json.loads(pathlib.Path(args.kun_koerselsfejl).read_text(encoding="utf-8"))
+        jobs = [(by_id[r["id"]], r["arm"]) for r in prev["resultater"]
+                if r.get("fejl") and r["id"] in by_id and r["arm"] in arms]
+        arms = sorted({arm for _, arm in jobs}) or arms
+        print(f"Kun de {len(jobs)} kørsler, der fejlede i {pathlib.Path(args.kun_koerselsfejl).name}")
+    for t in tasks if not args.kun_koerselsfejl else []:
         repeats = max(args.gentag, args.gentag_fri if t["type"] == "fri" else 0)
         jobs += [(t, arm) for _ in range(repeats) for arm in arms]
     print(f"{args.fag}: {len(tasks)} opgaver × {len(arms)} arm(e) = {len(jobs)} kørsler")
@@ -786,9 +794,15 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
     if reused_basis:
         out += ["", f"Basis er genbrugt fra: {', '.join(sorted(reused_basis))}"]
     if errors:
-        out += ["", f"**{len(errors)} kørselsfejl er ikke talt med** (fx ramt kontogrænse). Kør dem igen med "
-                "`koer --id " + ",".join(sorted({r['id'] for r in errors})) + "`:", ""]
-        out += [f"- {r['id']} ({r['arm']}): {r['note']}" for r in errors]
+        dev_errors = [r for r in errors if r["saet"] != "holdout"]
+        out += ["", f"**{len(errors)} kørselsfejl er ikke talt med** (fx ramt kontogrænse)."]
+        if dev_errors:
+            out[-1] += " Kør udviklingsopgaverne igen med `koer --id " + \
+                ",".join(sorted({r['id'] for r in dev_errors})) + "`:"
+        out += [""] + [f"- {r['id']} ({r['arm']}): {r['note']}" for r in dev_errors]
+        if len(dev_errors) < len(errors):
+            out += [f"- {len(errors) - len(dev_errors)} holdout-kørsel(er) med fejl – ID skjult. "
+                    "Kør dem igen med `koer FAG --kun-koerselsfejl FIL --saet alle --udgivelse`."]
 
     by_task: dict[str, dict[str, list[bool]]] = {}
     goals_of: dict[str, list[str]] = {}
@@ -847,6 +861,7 @@ def main() -> int:
     p.add_argument("--web", action="store_true")
     p.add_argument("--gentag-fri", type=int, default=0, help="ekstra gentagelser kun af fri-opgaverne (støj)")
     p.add_argument("--kun-fejlede", action="store_true", help="kun udviklingsopgaver, plugin-armen ikke bestod sidst")
+    p.add_argument("--kun-koerselsfejl", metavar="FIL", help="kør kun de kørsler igen, der fejlede (fx kontogrænse) i FIL")
     p.add_argument("--udgivelse", action="store_true", help="kræves for at køre holdout-sættet")
     p.add_argument("--uden-basis", action="store_true", help="rapportér plugin-armen uden genbrugt basis")
     p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
