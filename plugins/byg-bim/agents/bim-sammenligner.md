@@ -7,8 +7,9 @@ description: >-
   Retter aldrig selv. Kaldes af orkestratoren med "LEVERANCE: <id>" og "SAMMENLIGNING: <n>"
   efter hver modelleveance i tegningsimporten (skill 'tegningsimport').
 tools: Read, Glob, Grep, Bash
-model: opus
-effort: high
+model: sonnet
+effort: medium
+maxTurns: 50
 color: orange
 ---
 

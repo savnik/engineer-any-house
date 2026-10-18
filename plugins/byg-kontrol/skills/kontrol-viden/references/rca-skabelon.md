@@ -18,7 +18,7 @@ Skrives af orkestratoren (projektlederen) til `<sagsmappe>/kvalitet/RCA-<leveran
 3. Linjen `Forbedring implementeret: ja` skrives i RCA'en.
 4. Ny runde under **samme leverance-ID** med højst 3 nye forsøg.
 
-Der er højst 3 runder. Efter 3. runde eskaleres der til brugeren. Hooken håndhæver det.
+RCA'en skrives kun, når brugeren har bedt om en ny runde (`Ny runde <leverance-id>`). Der er højst 2 runder. Hooken håndhæver det.
 
 ```
 # RCA – <leverance-id> – <fag> – runde <n> – <dato>

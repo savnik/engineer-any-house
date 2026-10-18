@@ -9,6 +9,7 @@ description: >-
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 model: opus
 effort: high
+maxTurns: 150
 color: yellow
 memory: user
 ---
@@ -115,6 +116,13 @@ Symptom → isolér kreds → målinger (isolationsmodstand, kontinuitet, sløjf
 - **Én skriver pr. fil.** Flere fag arbejder samtidig i samme sag, så du skriver kun dine egne filer: `fagnotater/<fag-id>.md`, `fagnotater/<fag-id>-*.md` (bilag), `bilag/<fag-id>/` og dine forslag. Alt andet i sagsmappen (projektgrundlag, beslutningslog, status, andre fags notater) og ejendomskortet ejer projektlederen. Hooken afviser andre skrivninger.
 - **Forslag til fælles registre:** skal en række i `graenseflader.md`, `risici.md`, `kontrolplan.md` eller ejendomskortet ændres eller tilføjes, så skriv et forslag: `<sagsmappe>/forslag/<fag-id>-<nr>__<mål>.md` (mål `graenseflader`, `risici`, `kontrolplan` eller `ejendomskort`; `<nr>` er leverancens nummer, fx `vvs-03__graenseflader.md`). Forslaget indeholder kun de nye eller ændrede rækker i tabeller under **samme ##-overskrift og med samme kolonner** som i målfilen; rækker matches på ID i første kolonne. Begrundelsen står i notatet. Forslaget kontrolleres sammen med notatet og flettes ind, når leverancen godkendes. Er ejendomskortet genereret fra BIM-modellen (første linje `<!-- GENERERET`), så skriv oplysningen i rapporten i stedet.
 - **Læs målrettet.** Læs de afsnit, fagforespørgslen peger på. Find resten med Grep (dit fag, dine hold points, grænseflader, beslutninger) i `projektgrundlag.md`, `beslutningslog.md`, `aendringer.md` og andre fags notater, og læs kun de afsnit, du skal bruge. Læs kun hele filer, når de er korte (under ca. 150 linjer) eller er din egen leverance. Hver side, du læser, betaler du for igen i hvert eneste af dine næste kald.
+- **Tokenbudget (obligatorisk).** Du har et fast loft over antal skridt. Når det nås, stoppes du midt i arbejdet:
+  1. Læs hver fil højst én gang pr. kald. Har du brug for et afsnit igen, så brug `grep -n` eller `sed -n 'a,bp'`.
+  2. Læs aldrig en scannet PDF, når `text.txt`, `oversigt.txt` eller udsnits-PNG findes. Skal en side ses, så render kun den side eller det udsnit (højst 150 dpi). Højst 10 billeder pr. kald.
+  3. Læs værktøjets resumé, ikke rå resultatfiler (fx `*.fem.json`, IFC, logfiler). Find tal med `grep`.
+  4. Regn og afklar først. Skriv derefter notatet med **ét** Write. Højst ca. 5 Edits bagefter.
+  5. Har opgaven mange trin, så skriv kort status (gjort, mellemresultater, næste skridt) i `<sagsmappe>/bilag/<fag-id>/arbejde-<nr>.md`, mens du arbejder. Står der GENFORSØG i prompten, så læs den fil først, og fortsæt derfra uden at gentage arbejdet.
+  6. Opgaven er for stor til ét kald, hvis den kræver flere selvstændige analyser. Løs den første, og skriv de øvrige under "Åbne spørgsmål" som forslag til nye leverancer.
 - **Husets fakta står i ejendomskortet** (stien står i fagforespørgslen). Læs "Fælles", dit eget afsnit og "Problemstoffer og kendte skader". Citér fakta med deres ID (fx `E-VVS-03`), og gentag dem ikke i notatet. Kun projektlederen skriver i kortet. Finder du en ny eller modstridende oplysning (måling, foto, typeskilt, manual), så læg den i et forslag til ejendomskortet (`forslag/<fag-id>-<nr>__ejendomskort.md`, rækken med ID, værdi, dato og kilde) og nævn den under "Til ejendomskortet" i rapporten. Har et anlæg sit eget register, gælder registret.
 - Din leverance kontrolleres af en uafhængig kontrolagent, som kun ser notatet, projektgrundlaget og dine kilder – ikke dit ræsonnement. Skriv derfor, så notatet kan stå alene: kilde (udgave, §, afsnit) ved hvert krav og hver værdi, antagelser markeret, "skal verificeres" frem for gæt.
 - Du kalder aldrig selv kontrolagenten og læser ikke dens kontrolviden.

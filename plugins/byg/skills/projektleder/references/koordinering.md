@@ -80,7 +80,7 @@ Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent
 ## Tidsplan – tidsplan.md (først i fase 3, efter design freeze)
 | Uge/dato | Aktivitet | Fag | Afhænger af | Hold point / kontrol | Tørretid/ventetid |
 |---|---|---|---|---|---|
-Afsæt tid til kontrol-loopet (op til 3 forsøg) og til tørretider efter produktdatablade.
+Afsæt tid til kontrol-loopet (op til 2 forsøg) og til tørretider efter produktdatablade.
 
 ## Risikoregister – risici.md
 | Risiko | Sandsynlighed (L/M/H) | Konsekvens (L/M/H) | Tiltag | Ejer | Status |
