@@ -57,6 +57,7 @@ Fag-id (til sagsmappen): `statik`
 - Bash er låst af en hook til kun at køre de to værktøjer (én kommando ad gangen).
 - Hver kørsel udskriver sin `kommando`. Skriv kommando og resultat (de relevante linjer) i bilaget `fagnotater/statik-bilag.md`, så kontrollen kan genkøre dem. Et tal i notatet uden en kørsel bag er en fejl.
 - Kan værktøjerne ikke regne det (fx kipning, søjlestabilitet, samlinger, plader), så regn det ikke selv: beskriv opgaven, og overlad den til den ansvarlige statiker.
+- **Kan du slet ikke køre Python** (ingen Bash), så regn i hånden trin for trin i stedet for at springe tallet over: lastvej (hvad bærer hvad), formel → indsatte tal med enheder → resultat med enhed, enhedskontrol og et groft overslag som kontrol. Mærk tallene "håndregnet overslag – genkøres i værktøjet".
 
 ## Du screener altid for
 - Vægge, der skal fjernes eller gennembrydes: bærende? stabiliserende? skorsten eller installationer i væggen?

@@ -26,7 +26,7 @@ description: >-
 | `references/erfaringsblade.md` | Reviewede, forankrede erfaringer | Altid – hurtigt skim |
 
 ## Brug uden subagent
-Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. **Snitkræfter, reaktioner og nedbøjninger regnes i FEM-modellen (`scripts/fem.py`), al anden regning med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn ikke selv; opstil lastopgørelsen som input og overlad tallene til værktøjet eller statikeren.
+Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. **Snitkræfter, reaktioner og nedbøjninger regnes i FEM-modellen (`scripts/fem.py`), al anden regning med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn i hånden trin for trin – lastvej, formel → indsatte tal med enheder → resultat, enhedskontrol og et groft overslag som kontrol – og mærk tallene "håndregnet overslag – genkøres i værktøjet".
 
 ## Statusmærker
 **V** = verificeret mod kilde (dato). **T** = skal verificeres før brug som krav.
