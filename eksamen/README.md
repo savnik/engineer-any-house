@@ -35,7 +35,7 @@ eksamen/<fag>/
 | `id` | Unikt, fx `EL-001` |
 | `maal` | Liste af læringsmål-ID'er, opgaven tester |
 | `saet` | `udvikling` eller `holdout` |
-| `type` | `valg` (ét rigtigt svar), `tal` (beregning) eller `fri` (fagligt skøn, bedømt af censor-LLM) |
+| `type` | `valg` (ét rigtigt svar), `tal` (beregning), `fri` (fagligt skøn, bedømt af censor-LLM) eller `case` (mesteropgave i flere dele) |
 | `niveau` | `svend` eller `mester` |
 | `spoergsmaal` | Selvstændig opgavetekst med alle nødvendige data |
 | `valgmuligheder` | `valg`: `{"A": "...", "B": "...", "C": "...", "D": "..."}` |
@@ -45,6 +45,9 @@ eksamen/<fag>/
 | `begrundelse` | Kort forklaring af facit |
 | `kilde` | Primærkilde med sted og URL |
 | `status` | `V 2026-10-17` (efterprøvet) eller `T` |
+
+### Case (mesterniveau)
+En case er ét scenarie med 2–8 dele, fx projektering eller dimensionering i flere trin, valg af beskyttelse og ansvar og tilsyn. `spoergsmaal` er scenariet med alle data. `dele` er en liste af `{"del": "a", "type": "tal|valg|fri", "spoergsmaal": "...", ...}` med samme facit- og kriteriefelter som de enkelte typer. Regne- og valgdele rettes deterministisk ud fra `SVAR a:` osv. Fri-delene bedømmes samlet af censor-LLM'en, del for del. Casen er bestået, når andelen af beståede dele er mindst `bestaa_andel` (standard 0,6, som ca. 60 af 100 point ved de skriftlige prøver). Rapporten gemmer hver dels resultat og casens point. Alle dele vises samtidig. En senere del må derfor ikke afsløre facit i en tidligere del, fx ved at nævne den rigtige løsning.
 
 ## Kørsel
 ```

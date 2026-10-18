@@ -129,6 +129,56 @@ def test_holdout_gaps_are_not_listed():
     expect("holdout-fejl listes ikke som huller", "- H-1" not in text and "1 holdout-opgaver er ikke bestået" in text)
 
 
+def case_task(**kw):
+    t = {"id": "C-1", "maal": ["M1"], "saet": "udvikling", "type": "case", "niveau": "mester",
+         "spoergsmaal": "Et parcelhus skal have ny tavle.", "kilde": "K1", "status": "V 2026-10-18",
+         "dele": [{"del": "a", "type": "tal", "spoergsmaal": "Strøm?", "facit": {"vaerdi": 16, "enhed": "A"}},
+                  {"del": "b", "type": "valg", "spoergsmaal": "Type?", "facit": "B",
+                   "valgmuligheder": {"A": "AC", "B": "A", "C": "F", "D": "B"}},
+                  {"del": "c", "type": "tal", "spoergsmaal": "Fald?", "facit": {"vaerdi": 2.0, "enhed": "%",
+                                                                               "tolerance_pct": 5}}]}
+    t.update(kw)
+    return t
+
+
+def test_case():
+    t = case_task()
+    prompt = exam.build_prompt(t)
+    options, key = exam.shuffled_options(t["dele"][1], "C-1/b")
+    expect("case-prompt har delene", "Del a) Strøm?" in prompt and "Del c) Fald?" in prompt)
+    expect("case-prompt har blandede valgmuligheder", f"{key}) A" in prompt)
+    other = next(k for k in options if k != key)
+    answer = f"Del a ...\nSVAR a: 16 A\nDel b\nSVAR b: {key}\nDel c\nSVAR c: 2,5 %\nSVAR: 16"
+    g = exam.grade_case(t, answer, pathlib.Path("."), None)
+    expect("case-dele rettes hver for sig", g["dele"] == {"a": True, "b": True, "c": False}, str(g))
+    expect("case bestået ved 2/3 ≥ 60 %", g["bestaaet"] and abs(g["point"] - 0.667) < 0.01, str(g))
+    g = exam.grade_case(t, f"SVAR a: 10 A\nSVAR b: {other}\nSVAR c: 2 %", pathlib.Path("."), None)
+    expect("case ikke bestået ved 1/3", not g["bestaaet"], str(g))
+    leak = case_task(dele=[{"del": "a", "type": "tal", "spoergsmaal": "Ik?", "facit": {"vaerdi": 170, "enhed": "A"}},
+                           {"del": "b", "type": "valg", "spoergsmaal": "Er 170 A nok?", "facit": "A",
+                            "valgmuligheder": {"A": "ja", "B": "nej", "C": "måske"}}])
+    expect("case-lækage af tal opdages", any("170" in w for w in exam.case_leaks(leak)), str(exam.case_leaks(leak)))
+    expect("ingen falsk lækage", exam.case_leaks(case_task()) == [], str(exam.case_leaks(case_task())))
+    expect("SVAR uden del ignorerer deludsvar", exam.extract_answer("SVAR a: 3\nSVAR: 7") == "7")
+    original = exam.EXAM_DIR
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            exam.EXAM_DIR = pathlib.Path(tmp)
+            write_fixture(exam.EXAM_DIR, [case_task(), case_task(id="C-2", saet="holdout")])
+            errors, _ = exam.validate("el")
+            expect("gyldig case", not errors, str(errors))
+        with tempfile.TemporaryDirectory() as tmp:
+            exam.EXAM_DIR = pathlib.Path(tmp)
+            bad = case_task(dele=[{"del": "a", "type": "valg", "spoergsmaal": "?", "facit": "Z",
+                                   "valgmuligheder": {"A": "1", "B": "2", "C": "3"}}])
+            write_fixture(exam.EXAM_DIR, [bad, case_task(id="C-2", saet="holdout")])
+            errors, _ = exam.validate("el")
+            expect("case med én del afvises", any("mindst 2 dele" in e for e in errors), str(errors))
+            expect("case-del med forkert facit afvises", any("C-1/a" in e and "facit" in e for e in errors), str(errors))
+    finally:
+        exam.EXAM_DIR = original
+
+
 def test_shuffle():
     t = {"id": "X-1", "type": "valg", "facit": "B", "valgmuligheder": {"A": "a", "B": "b", "C": "c", "D": "d"}}
     options, key = exam.shuffled_options(t)
@@ -209,6 +259,7 @@ if __name__ == "__main__":
     test_report_skips_run_errors()
     test_efficiency_helpers()
     test_holdout_gaps_are_not_listed()
+    test_case()
     test_shuffle()
     test_validation()
     test_plugin_copy_without_memory()

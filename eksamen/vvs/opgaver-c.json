@@ -1,0 +1,693 @@
+{
+ "opgaver": [
+  {
+   "id": "VVS-201",
+   "maal": [
+    "VVS-AKI-01",
+    "VVS-AKI-10"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "Et parcelhus fra 1968 i ét plan skal have luft/vand-varmepumpe i stedet for oliefyr. Du skal lave et overslag over det dimensionerende varmetab. Data: indetemperatur 20 °C, dimensionerende udetemperatur −12 °C. Ydervægge 95 m² med U = 0,40 W/(m²·K), vinduer og døre 22 m² med U = 1,6 W/(m²·K), loft 120 m² med U = 0,15 W/(m²·K), terrændæk 120 m² med U = 0,30 W/(m²·K), hvor der regnes med 10 °C under gulvet. Opvarmet luftvolumen 300 m³ med et luftskifte på 0,5 pr. time, og ventilationstabet regnes som 0,34 · n · V · ΔT i W (n i h⁻¹, V i m³). Se bort fra linjetab. Radiatoranlægget skal i det dimensionerende punkt køre med 45/35 °C. Vand regnes med massefylde 1,0 kg/l og c = 4,18 kJ/(kg·K).",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn det samlede dimensionerende varmetab (transmission plus ventilation) i W.",
+     "facit": {
+      "vaerdi": 4910,
+      "enhed": "W",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "b",
+     "type": "tal",
+     "spoergsmaal": "Beregn den samlede vandstrøm i radiatoranlægget i l/h, når hele varmetabet dækkes ved 45/35 °C.",
+     "facit": {
+      "vaerdi": 423,
+      "enhed": "l/h",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "c",
+     "type": "tal",
+     "spoergsmaal": "Loftet efterisoleres samtidig, så det netop opfylder bygningsreglementets mindstekrav til U-værdi for loft- og tagkonstruktioner ved ombygning. Hvor mange W falder det dimensionerende transmissionstab gennem loftet?",
+     "facit": {
+      "vaerdi": 115,
+      "enhed": "W",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Hvad gør du, før du vælger varmepumpens størrelse og lover kunden, at de eksisterende radiatorer kan klare opgaven ved 45/35 °C, og hvad skal der ske ved idriftsætningen?",
+     "kriterier": [
+      "Fordeler varmetabet rum for rum og sammenholder det med hver radiators ydelse ved de lavere temperaturer, ikke kun med husets samlede tal.",
+      "Peger på mindst ét tiltag, hvis enkelte rum ikke kan dækkes, fx større eller flere radiatorer, efterisolering eller tætning af det pågældende rum.",
+      "Vælger varmepumpens ydelse ud fra det beregnede varmetab med tillæg for varmt brugsvand.",
+      "Advarer mod at overdimensionere varmepumpen.",
+      "Nævner, at anlægget ved idriftsætningen indreguleres, fx ved forindstilling af termostatventiler, hydraulisk balancering eller indstilling af varmekurven."
+     ]
+    }
+   ],
+   "begrundelse": "a) Transmission: 95·0,40·32 + 22·1,6·32 + 120·0,15·32 + 120·0,30·10 = 1216 + 1126 + 576 + 360 = 3278 W. Ventilation: 0,34·0,5·300·32 = 1632 W. I alt 4910 W. b) q = 4910 W/(4,18 kJ/(kg·K)·10 K) = 0,1175 kg/s = 423 l/h. c) Kravet ved ombygning er U = 0,12 W/(m²·K) (BR18 § 279, bilag 2 tabel 3): 120·(0,15 − 0,12)·32 = 115 W.",
+   "kilde": "BR18 § 279 og bilag 2 tabel 3 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/274_279/); BR18 § 256 nr. 1 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/251_256/); BR18 § 387 stk. 2 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/); formler: Φ = ΣU·A·ΔT + 0,34·n·V·ΔT og q = Φ/(c·ΔT)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-202",
+   "maal": [
+    "VVS-AKI-01",
+    "VVS-AKI-10"
+   ],
+   "saet": "holdout",
+   "type": "tal",
+   "spoergsmaal": "Et hus har et dimensionerende varmetab på 8,0 kW ved −12 °C ude og 20 °C inde. Antag, at varmebehovet til rumopvarmning falder lineært med udetemperaturen og er nul ved 20 °C. En luft/vand-varmepumpe kan levere 6,0 kW uanset udetemperatur (forenklet antagelse). Ved hvilken udetemperatur (balancepunktet) kan varmepumpen netop dække rumvarmebehovet alene? Angiv svaret i °C.",
+   "facit": {
+    "vaerdi": -4.0,
+    "enhed": "°C",
+    "tolerance_pct": 3
+   },
+   "begrundelse": "Behovet er 8,0 kW · (20 − t)/32. Sæt lig 6,0 kW: 20 − t = 24 K, t = −4 °C. Under −4 °C skal en spids- eller suppleringskilde (fx elpatron) dække resten.",
+   "kilde": "Formel: Φ(t) = Φdim · (ti − t)/(ti − tdim) (lineært varmebehov)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-203",
+   "maal": [
+    "VVS-AKI-01"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Du projekterer et nyt radiatoranlæg med kedel og varmtvandsbeholder i en eksisterende villa. Hvilken standard skal varme- og køleanlæg ifølge bygningsreglementet projekteres og udføres efter?",
+   "valgmuligheder": {
+    "A": "DS 418, der fastlægger bygningers varmetab",
+    "B": "DS 469, om varme- og køleanlæg i bygninger",
+    "C": "DS 439, om vandinstallationer i bygninger",
+    "D": "DS 452, om isolering af tekniske installationer"
+   },
+   "facit": "B",
+   "begrundelse": "BR18 § 387 stk. 2: varme- og køleanlæg projekteres og udføres som anvist i DS 469. DS 418 bruges til varmetab (§ 256), DS 452 til isolering (§ 390), DS 439 til vandinstallationer.",
+   "kilde": "BR18 § 387 stk. 2 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-204",
+   "maal": [
+    "VVS-AKI-01"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "En skole får installeret en ny gasfyret centralvarmekedel med en nominel ydelse på 180 kW. Hvilket af følgende krav i bygningsreglementet gælder IKKE for netop denne kedel?",
+   "valgmuligheder": {
+    "A": "Kedlen skal isoleres, så de udvendige flader højst er 35 °C ved 20 °C i rummet",
+    "B": "Kedlen skal have måleudtag og måleudstyr, fx røgtermometer, timetæller og kedeltermometer",
+    "C": "Kedlen må højst have et røggastab på 7 % ved fuldlast og skal have røggaskøler",
+    "D": "Kedlen og anlægget skal projekteres og udføres som anvist i DS 469"
+   },
+   "facit": "C",
+   "begrundelse": "Kravet om højst 7 % røggastab og røggaskøler gælder olie- og gasfyrede kedler over 400 kW (§ 308). Over 120 kW gælder isolering til 35 °C (§ 307) og måleudtag/måleudstyr (§ 312); DS 469 gælder alle varmeanlæg (§ 387).",
+   "kilde": "BR18 §§ 307, 308 og 312 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/306_313/); § 387 stk. 2 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-205",
+   "maal": [
+    "VVS-AKI-01",
+    "VVS-AK-05"
+   ],
+   "saet": "udvikling",
+   "type": "fri",
+   "spoergsmaal": "Du har afleveret et nyt gulvvarmeanlæg med shunt (blandesløjfe), vejrkompenseret fremløbstemperatur og rumtermostater i et renoveret parcelhus fra 1975. Kunden er vant til et radiatoranlæg og spørger, hvordan han skal bruge og passe det nye anlæg. Hvad forklarer du ham?",
+   "kriterier": [
+    "Forklarer, at gulvvarme reagerer langsomt, og at rumtemperaturen bør holdes nogenlunde konstant frem for at skrue meget op og ned (fx ingen stor natsænkning).",
+    "Forklarer, at vejrkompenseringen (varmekurven) styrer fremløbstemperaturen efter udetemperaturen og justeres, hvis hele huset er for koldt eller for varmt.",
+    "Forklarer, at rumtermostaterne regulerer temperaturen i de enkelte rum.",
+    "Nævner mindst ét af følgende tilbagevendende tjek: anlægstrykket på manometeret, udluftning, rensning af snavssamler eller filter, eller at fordeleren og ventilerne er tætte.",
+    "Nævner mindst ét forhold, kunden ikke selv skal ændre eller skal kontakte installatøren om, fx indreguleringen af kredsene på fordeleren, sikkerhedsventil der drypper eller gentagne trykfald."
+   ],
+   "begrundelse": "Formidling af drift og vedligehold af varmeanlæg med automatik til brugeren (læringsmålets færdighed). BR18 kræver, at anlægget drives og vedligeholdes, så kravene til enhver tid er overholdt.",
+   "kilde": "DS 469 Varme- og køleanlæg i bygninger (regulering, jf. BR18 § 387 stk. 2, https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/); producenternes bruger- og installationsvejledninger for gulvvarme med vejrkompensering; BR18 § 392 stk. 1 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/392/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-206",
+   "maal": [
+    "VVS-AKI-10"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "En ledning med indvendig diameter 20 mm og længde 25 m fører 0,40 l/s vand. Rørfriktionstallet λ sættes til 0,025, og massefylden til 1000 kg/m³. Beregn tryktabet i den lige ledning med Darcy–Weisbachs formel Δp = λ · (L/d) · ρ·v²/2. Se bort fra enkeltmodstande. Angiv svaret i kPa.",
+   "facit": {
+    "vaerdi": 25.3,
+    "enhed": "kPa",
+    "tolerance_pct": 3
+   },
+   "begrundelse": "A = π·0,020²/4 = 3,14·10⁻⁴ m²; v = 0,0004/3,14·10⁻⁴ = 1,27 m/s. Δp = 0,025·(25/0,020)·1000·1,27²/2 = 25 330 Pa ≈ 25,3 kPa.",
+   "kilde": "Formel: Darcy–Weisbach, Δp = λ·(L/d)·ρv²/2, v = Q/A",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-207",
+   "maal": [
+    "VVS-AKI-10"
+   ],
+   "saet": "holdout",
+   "type": "tal",
+   "spoergsmaal": "En vandret ledning skal forskydes sidelæns 420 mm for at gå uden om en søjle. Forskydningen laves med to 45°-bøjninger og et skråt rørstykke imellem. Hvor langt er det skrå stykke målt fra bøjningsmidte til bøjningsmidte? Angiv svaret i mm.",
+   "facit": {
+    "vaerdi": 594,
+    "enhed": "mm",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "Skråstykket er hypotenusen: L = 420/sin 45° = 594 mm.",
+   "kilde": "Formel: trigonometri i retvinklet trekant, L = forskydning/sin v",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-208",
+   "maal": [
+    "VVS-AKI-10",
+    "VVS-AKI-01"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "I en villa skal cirkulationspumpen til et radiatoranlæg udskiftes. Anlægget skal kunne afgive 12 kW ved en afkøling på 20 K (fx 60/40 °C). Det beregnede tryktab i den ugunstigste kreds inkl. ventiler er 35 kPa. Vand regnes med massefylde 1000 kg/m³ og c = 4,18 kJ/(kg·K). Den samlede virkningsgrad for pumpe og motor i driftspunktet er 25 %.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn den nødvendige vandstrøm i m³/h.",
+     "facit": {
+      "vaerdi": 0.517,
+      "enhed": "m³/h",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "b",
+     "type": "tal",
+     "spoergsmaal": "Beregn pumpens elektriske optagne effekt i driftspunktet i W (hydraulisk effekt = vandstrøm · tryktab).",
+     "facit": {
+      "vaerdi": 20.1,
+      "enhed": "W",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "c",
+     "type": "valg",
+     "spoergsmaal": "En ældre pumpe i et andet anlæg køres med halveret omdrejningstal. Hvad sker der ifølge affinitetslovene (samme anlægskarakteristik)?",
+     "valgmuligheder": {
+      "A": "Vandstrøm halveres, løftehøjde falder til en fjerdedel, effekt til en ottendedel",
+      "B": "Vandstrøm halveres, løftehøjde halveres, og effekten falder til en fjerdedel",
+      "C": "Vandstrøm falder til en fjerdedel, løftehøjde halveres, effekt til en ottendedel",
+      "D": "Vandstrøm halveres, løftehøjde falder til en ottendedel, effekt til en fjerdedel"
+     },
+     "facit": "A"
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "En kollega har valgt en pumpe, der yder 2,5 m³/h ved 60 kPa, 'for at være på den sikre side'. Vurder valget og forklar, hvad du i stedet anbefaler.",
+     "kriterier": [
+      "Påviser, at pumpen er stærkt overdimensioneret i forhold til de beregnede ca. 0,5 m³/h og 35 kPa.",
+      "Nævner mindst én konsekvens af overdimensionering, fx støj i termostatventiler, unødigt elforbrug eller for lille afkøling/høj returtemperatur.",
+      "Anbefaler en elektronisk styret pumpe (fx proportionaltryk eller konstanttryk), der er valgt eller indstillet efter det beregnede driftspunkt.",
+      "Nævner, at anlægget indreguleres efter pumpeskiftet."
+     ]
+    }
+   ],
+   "begrundelse": "a) q = 12/(4,18·20) = 0,1435 kg/s = 0,517 m³/h. b) P_hyd = 0,0001435 m³/s · 35 000 Pa = 5,02 W; P_el = 5,02/0,25 = 20,1 W. c) Q ∝ n, H ∝ n², P ∝ n³.",
+   "kilde": "Formler: q = Φ/(c·ΔT), P = Q·Δp/η, affinitetslovene; BR18 § 390 stk. 1 om at undgå unødvendigt energiforbrug (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/390/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-209",
+   "maal": [
+    "VVS-AKI-10",
+    "VVS-AKI-13"
+   ],
+   "saet": "holdout",
+   "type": "case",
+   "spoergsmaal": "Du projekterer et solvarmeanlæg på det flade tag af en villa. Solfangerne er 1,20 m lange (målt i hældningsretningen) og opstilles i rækker mod syd med en hældning på 40° fra vandret. Rækkerne må ikke skygge for hinanden, når solhøjden er 15° eller derover (solen regnes ret i syd). Anlægget får en cylindrisk solvarmebeholder med indvendig diameter 0,65 m og indvendig vandhøjde 1,60 m.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn den mindste afstand i m fra forkanten af én række til forkanten af næste række (vandret målt), så den bageste række ikke skygges.",
+     "facit": {
+      "vaerdi": 3.8,
+      "enhed": "m",
+      "tolerance_pct": 2
+     }
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Bygherren vil øge hældningen til 60° for at få mere vintersol. Hvad sker der med den nødvendige rækkeafstand ved samme solhøjde?",
+     "valgmuligheder": {
+      "A": "Den bliver større, fordi solfangerens lodrette højde og dermed skyggen vokser",
+      "B": "Den bliver mindre, fordi solfangerens vandrette fremspring bliver kortere",
+      "C": "Den er uændret, fordi den kun afhænger af solhøjden og solfangerens længde",
+      "D": "Den bliver mindre, fordi skyggen falder kortere ved stejlere solfangere"
+     },
+     "facit": "A"
+    },
+    {
+     "del": "c",
+     "type": "tal",
+     "spoergsmaal": "Beregn beholderens vandvolumen i liter.",
+     "facit": {
+      "vaerdi": 531,
+      "enhed": "l",
+      "tolerance_pct": 2
+     }
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Hvilke forhold ud over skygge skal du afklare, før anlægget kan placeres på taget?",
+     "kriterier": [
+      "Nævner, at tagets bæreevne skal afklares, fx med en statiker eller tømrer.",
+      "Nævner, at anlægget skal forankres mod vindlast, fx med ballast eller fastgørelse.",
+      "Nævner, at rørgennemføringer i tagdækningen skal inddækkes tæt.",
+      "Nævner mindst ét forhold om drift, fx adgang for service og rensning, frostsikring af solfangerkredsen eller isolering af rørene på taget.",
+      "Nævner, at temperaturen i anlægget ikke må kunne skade personer eller bygningen, fx ved stagnation og kogning om sommeren."
+     ]
+    }
+   ],
+   "begrundelse": "a) Lodret højde h = 1,20·sin 40° = 0,771 m; vandret fremspring 1,20·cos 40° = 0,919 m; skyggelængde h/tan 15° = 2,878 m; afstand 0,919 + 2,878 = 3,80 m. b) Ved 60°: h = 1,039 m, afstand 0,60 + 3,88 = 4,48 m. c) V = π·0,325²·1,60 = 0,531 m³ = 531 l. d) BR18 § 325.",
+   "kilde": "Formler: trigonometri (sin, cos, tan) og V = π·r²·h; BR18 § 325 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/325_327/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-210",
+   "maal": [
+    "VVS-AKI-10"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "niveau": "svend",
+   "spoergsmaal": "En pumpekurve er opgivet i m³/h, mens din beregnede vandstrøm er 0,25 l/s. Hvilken omregning er korrekt?",
+   "valgmuligheder": {
+    "A": "0,25 l/s svarer til 900 l/h, dvs. 0,9 m³/h",
+    "B": "0,25 l/s svarer til 90 l/h, dvs. 0,09 m³/h",
+    "C": "0,25 l/s svarer til 15 l/h, dvs. 0,015 m³/h",
+    "D": "0,25 l/s svarer til 900 l/h, dvs. 9 m³/h"
+   },
+   "facit": "A",
+   "begrundelse": "0,25 l/s · 3 600 s/h = 900 l/h = 0,9 m³/h (1 m³ = 1 000 l).",
+   "kilde": "Enhedsomregning: 1 h = 3 600 s, 1 m³ = 1 000 l",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-211",
+   "maal": [
+    "VVS-AKI-11",
+    "VVS-AKI-01"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Du afleverer et nyt radiatoranlæg i en eksisterende bolig. Bygningsreglementet kræver en funktionsafprøvning af varme- og køleanlæg før ibrugtagning. Hvad skal funktionsafprøvningen dokumentere?",
+   "valgmuligheder": {
+    "A": "At anlægget overholder reglementets krav til indregulering og styring",
+    "B": "At anlægget er trykprøvet med 1,5 gange det højeste tilladte driftstryk",
+    "C": "At anlægget har den varmeydelse, som energimærket forudsætter",
+    "D": "At anlægget er godkendt af kommunen ved byggesagens færdigmelding"
+   },
+   "facit": "A",
+   "begrundelse": "BR18 § 391: funktionsafprøvningen skal dokumentere, at varme- og køleanlæggene overholder bygningsreglementets krav til indregulering og styring.",
+   "kilde": "BR18 § 391 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/391/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-212",
+   "maal": [
+    "VVS-AKI-11"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Ved et kedelskifte i et parcelhus installerer du en ny 25 kW oliekedel med oliebrænder, fordi huset ligger uden for fjernvarme- og naturgasområde, og varmepumpe er fravalgt. Hvad kræver bygningsreglementet særskilt for netop denne installation, ud over den generelle drifts- og vedligeholdelsesmanual?",
+   "valgmuligheder": {
+    "A": "At brænderen indreguleres ved installationen",
+    "B": "At kedlen har en røggaskøler og højst 7 % røggastab",
+    "C": "At kedlen får timetæller og udtag til røggasanalyse",
+    "D": "At der monteres en særskilt varmemåler på kedlen"
+   },
+   "facit": "A",
+   "begrundelse": "BR18 § 328 stk. 3: ved installation af centralvarmekedler med oliebrænder skal brænderen indreguleres. Røggaskøler/7 % gælder over 400 kW (§ 308), måleudstyr over 120 kW (§ 312).",
+   "kilde": "BR18 § 328 stk. 3 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/328/); §§ 308 og 312 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/306_313/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-213",
+   "maal": [
+    "VVS-AKI-11",
+    "VVS-AKI-13"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "Din virksomhed har for et år siden installeret en luft/vand-varmepumpe i et eksisterende parcelhus fra 1980 (rumvarme og varmt brugsvand). Kunden klager over elregningen. Du har aflæst: varmemåleren registrerer al leveret varme, også elpatronens, og viser 9 800 kWh på et år. Elmåleren for varmepumpen inkl. elpatron viser 3 100 kWh, og elpatronens separate elmåler viser 600 kWh. Elpatronen regnes at omsætte 1 kWh el til 1 kWh varme. I tilbuddet stod en SCOP på 3,8 fra produktets datablad.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Hvor mange procent af den leverede varme har elpatronen leveret?",
+     "facit": {
+      "vaerdi": 6.1,
+      "enhed": "%",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Hvad skal den funktionsafprøvning, som bygningsreglementet kræver for et energiforsyningsanlæg baseret på vedvarende energi inden ibrugtagning, påvise?",
+     "valgmuligheder": {
+      "A": "At anlægget er korrekt installeret og har den forudsatte energimæssige effektivitet",
+      "B": "At anlægget er tæt, og at kølemiddelfyldningen er registreret i en logbog",
+      "C": "At anlægget er korrekt installeret og at elinstallationen er udført af en elinstallatør",
+      "D": "At anlægget har den forudsatte effekt ved dimensionerende udetemperatur −12 °C"
+     },
+     "facit": "A"
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Hvilke data og hvilken dokumentation indsamler og strukturerer du for at finde årsagen til, at elforbruget er højere end forventet?",
+     "kriterier": [
+      "Indsamler driftsdata fra varmepumpens styring eller log, fx frem- og returtemperaturer, varmtvandstemperatur og indstillinger for elpatron og legionellaprogram.",
+      "Sammenholder med installationsdokumentationen, fx indstillet varmekurve, indreguleringsdata, dimensioneringsgrundlag og funktionsafprøvningen fra afleveringen.",
+      "Peger på mindst to mulige årsager, fx for høj fremløbstemperatur, hyppige legionellaopvarmninger med elpatron, en større varmtvandsandel end forudsat eller en fejlmonteret måler.",
+      "Beskriver, at resultatet og de foreslåede ændringer dokumenteres skriftligt over for kunden.",
+      "Beskriver, at virkningen af ændringerne følges op med nye målinger."
+     ]
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Hvordan formidler du resultatet til kunden, så det er korrekt og forståeligt?",
+     "kriterier": [
+      "Forklarer, at databladets SCOP gælder rumvarme under standardiserede forhold og ikke omfatter varmt brugsvand, og derfor ikke kan sammenlignes direkte med den målte årsvirkningsgrad i huset.",
+      "Angiver, hvad den målte forskel betyder i kWh eller kroner for kunden, og hvilke tiltag der foreslås.",
+      "Er saglig og undgår at love en bestemt besparelse, før tiltagene er afprøvet og målt."
+     ]
+    }
+   ],
+   "begrundelse": "a) Elpatronens varme 600 kWh / 9 800 kWh = 6,1 %. b) BR18 § 327a. d) SCOP bestemmes efter DS/EN 14825 for rumopvarmning ved referenceklima og bestemte fremløbstemperaturer (fx 35 og 55 °C) uden varmt brugsvand; den målte årsvirkningsgrad omfatter brugsvand, elpatron og husets faktiske temperaturer.",
+   "kilde": "BR18 § 327a (https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/327a_327b/); DS/EN 14825 (bestemmelse af SCOP for rumopvarmning); Kommissionens forordning (EU) nr. 813/2013 (ecodesign for rumvarmeapparater) og nr. 811/2013 (energimærkning)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-214",
+   "maal": [
+    "VVS-AKI-11",
+    "VVS-AKI-10"
+   ],
+   "saet": "holdout",
+   "type": "fri",
+   "spoergsmaal": "Du skal aflevere et beregningsnotat for dimensioneringen af et nyt varmeanlæg (varmetab, radiatorer, rør og pumpe) i en større villa til bygherrens rådgivende ingeniør, som skal kontrollere det. Hvordan opbygger og dokumenterer du notatet, så det kan efterprøves?",
+   "kriterier": [
+    "Angiver forudsætningerne eksplicit, fx inde- og udetemperaturer, U-værdier, luftskifte, systemtemperaturer og stofdata.",
+    "Angiver kilden til hver inputværdi, fx målt, oplyst af producenten eller hentet fra en tabel.",
+    "Viser beregningsgangen eller mellemresultaterne rum for rum/kreds for kreds, så resultaterne kan spores og efterregnes.",
+    "Beskriver egen kontrol af resultaterne, fx overslag, plausibilitetstjek mod erfaringstal eller kontrol af enheder, og hvem der har kontrolleret.",
+    "Forsyner notatet med dato og revisionsnummer."
+   ],
+   "begrundelse": "God praksis for teknisk dokumentation af beregninger, så projektet kan kontrolleres og vedligeholdes. BR18 kræver projektering efter DS 469 og varmetab efter DS 418.",
+   "kilde": "BR18 § 256 nr. 1 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/251_256/) og § 387 stk. 2 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-215",
+   "maal": [
+    "VVS-AKI-13",
+    "VVS-AKI-10"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "Et Power-to-X-demonstrationsanlæg producerer brint ved elektrolyse. Elektrolysen har en virkningsgrad på 65 % regnet på brintens nedre brændværdi, som sættes til 33,3 kWh/kg. Hvor mange kg brint kan der produceres af 1,0 MWh el?",
+   "facit": {
+    "vaerdi": 19.5,
+    "enhed": "kg",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "1 000 kWh · 0,65 = 650 kWh i brinten; 650/33,3 = 19,5 kg.",
+   "kilde": "Formel: m = E_el · η / H_n",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-216",
+   "maal": [
+    "VVS-AKI-13",
+    "VVS-AKI-10"
+   ],
+   "saet": "holdout",
+   "type": "tal",
+   "spoergsmaal": "En gård producerer rå biogas med 60 % metan (volumen). Metan har en nedre brændværdi på 9,97 kWh/m³ (normalkubikmeter). Resten af gassen regnes uden brændværdi. Hvor stort er energiindholdet i 250 m³ rå biogas i kWh (nedre brændværdi)?",
+   "facit": {
+    "vaerdi": 1496,
+    "enhed": "kWh",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "250 · 0,60 = 150 m³ metan; 150 · 9,97 = 1 495,5 kWh.",
+   "kilde": "Formel: E = V · andel metan · H_n,metan",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-217",
+   "maal": [
+    "VVS-AKI-13",
+    "VVS-AKI-01"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "Et murstenshus fra 1972 i et naturgasområde har en kondenserende gaskedel fra 2018. Ejeren vil have et hybridanlæg: en luft/vand-varmepumpe, der kører først, og gaskedlen som spids. Data: kedlens årsvirkningsgrad regnet på øvre brændværdi er 95 %. Husets varmebehov er 15 000 kWh/år.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Varmepumpen dækker 80 % af varmebehovet med en årsvirkningsgrad på 3,0, og gaskedlen dækker resten. Regn med 0,204 kg CO₂ pr. kWh gas (øvre brændværdi) og 0,10 kg CO₂ pr. kWh el. Hvor mange kg CO₂ om året sparer hybridanlægget i forhold til at dække hele behovet med gaskedlen?",
+     "facit": {
+      "vaerdi": 2177,
+      "enhed": "kg CO₂/år",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Et andet hus i samme naturgasområde er opvarmet med en gaskedel alene og gennemgår en væsentlig ombygning. Hvad kræver bygningsreglementets § 294 om vedvarende energi?",
+     "valgmuligheder": {
+      "A": "Der skal være en andel af vedvarende energi, hvis det er teknisk muligt og rentabelt",
+      "B": "Gaskedlen skal fjernes, og opvarmningen skal fremover alene baseres på vedvarende energi",
+      "C": "Der skal være en andel af vedvarende energi på mindst 50 % af det årlige varmebehov",
+      "D": "Der skal kun være en andel af vedvarende energi, hvis lokalplanen kræver det"
+     },
+     "facit": "A"
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Ejeren spørger, om hybridanlægget er den rigtige løsning på lang sigt, eller om han skal vælge en ren varmepumpe. Giv en faglig vurdering.",
+     "kriterier": [
+      "Nævner, at driftsøkonomien for hybrid mod ren varmepumpe afhænger af prisforholdet mellem el og gas.",
+      "Nævner mindst én miljø- eller omstillingsmæssig faktor, fx at elforsyningen bliver grønnere, CO₂-udledning fra gasdelen eller usikkerhed om gasnettets og gasafgifternes fremtid.",
+      "Nævner mindst én teknisk forudsætning for en ren varmepumpe, fx at radiatorerne kan klare lavere fremløbstemperatur eller behov for efterisolering.",
+      "Nævner faste udgifter eller investeringer, der ikke er med i regnestykket, fx gasabonnement/målerleje, service på to anlæg eller sløjfning af gasstikket."
+     ]
+    }
+   ],
+   "begrundelse": "a) Kun gas: 15 000/0,95·0,204 = 3 221 kg. Hybrid: 0,2·15 000/0,95·0,204 + 0,8·15 000/3,0·0,10 = 644 + 400 = 1 044 kg. Besparelse 2 177 kg/år. b) BR18 § 294: i eksisterende bygninger, hvor opvarmningen ikke er baseret på vedvarende energi, og hvor der foretages væsentlige ombygninger, skal der være en andel af vedvarende energi, hvis det er teknisk muligt og økonomisk rentabelt (vurderet efter § 275).",
+   "kilde": "BR18 § 294 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/293_294/); formel: CO₂ = tilført energi · emissionsfaktor",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-218",
+   "maal": [
+    "VVS-AKI-13"
+   ],
+   "saet": "holdout",
+   "type": "case",
+   "spoergsmaal": "En boligforening overvejer at installere en varmepumpe som supplement til fjernvarmen i en mindre ejendom. Investeringen er 140 000 kr., og den forventede årlige driftsbesparelse er 12 500 kr. Levetiden sættes til 20 år, og foreningen regner med en realrente på 3 % p.a. Se bort fra restværdi og prisudvikling.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn den simple tilbagebetalingstid i år.",
+     "facit": {
+      "vaerdi": 11.2,
+      "enhed": "år",
+      "tolerance_pct": 2
+     }
+    },
+    {
+     "del": "b",
+     "type": "tal",
+     "spoergsmaal": "Beregn investeringens nettonutidsværdi i kr. (nutidsværdien af 20 årlige besparelser ved 3 % minus investeringen).",
+     "facit": {
+      "vaerdi": 45968,
+      "enhed": "kr.",
+      "tolerance_pct": 3
+     }
+    },
+    {
+     "del": "c",
+     "type": "valg",
+     "spoergsmaal": "Hvordan skal resultatet af b tolkes?",
+     "valgmuligheder": {
+      "A": "Investeringen er rentabel ved 3 %, fordi nettonutidsværdien er positiv",
+      "B": "Investeringen er urentabel, fordi tilbagebetalingstiden er over ti år",
+      "C": "Investeringen er kun rentabel, hvis realrenten er højere end 3 %",
+      "D": "Nettonutidsværdien kan ikke bruges, når levetiden er længere end 15 år"
+     },
+     "facit": "A"
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Hvilke usikkerheder og forhold bør bestyrelsen have med i beslutningen ud over de to nøgletal?",
+     "kriterier": [
+      "Nævner usikkerhed om energipriserne, fx udviklingen i el- og fjernvarmepris og afgifter, og foreslår en følsomhedsberegning.",
+      "Nævner mindst ét af følgende: tilskudsmuligheder, vedligeholdelses- og serviceomkostninger, reinvestering i komponenter med kortere levetid eller fjernvarmeselskabets tarifstruktur (fx faste bidrag).",
+      "Nævner mindst én ikke-økonomisk faktor, fx CO₂-udledning, forsyningssikkerhed, støj fra udedel eller foreningens grønne profil."
+     ]
+    }
+   ],
+   "begrundelse": "a) 140 000/12 500 = 11,2 år. b) NNV = 12 500·(1 − 1,03⁻²⁰)/0,03 − 140 000 = 185 968 − 140 000 = 45 968 kr. c) Positiv NNV ved kalkulationsrenten betyder, at investeringen forrenter sig bedre end 3 %.",
+   "kilde": "Formler: simpel tilbagebetalingstid = I/B; NNV = B·(1 − (1+r)⁻ⁿ)/r − I",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-219",
+   "maal": [
+    "VVS-AKI-13",
+    "VVS-AKI-01"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Ved beregning af en bygnings samlede behov for tilført energi efter bygningsreglementet vægtes forsyningsformerne. Hvilke faktorer gælder for el og fjernvarme?",
+   "valgmuligheder": {
+    "A": "El 1,9 og fjernvarme 0,85",
+    "B": "El 2,5 og fjernvarme 0,80",
+    "C": "El 1,8 og fjernvarme 1,00",
+    "D": "El 1,9 og fjernvarme 1,00"
+   },
+   "facit": "A",
+   "begrundelse": "BR18 § 252: 1,9 for el, 0,85 for fjernvarme; andre former for varme 1,0 og den relevante nyttevirkning.",
+   "kilde": "BR18 § 252 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/251_256/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-220",
+   "maal": [
+    "VVS-AKI-13"
+   ],
+   "saet": "udvikling",
+   "type": "fri",
+   "spoergsmaal": "En kunde med en ny kondenserende gaskedel har læst, at kedlen er 'brint-klar', og at gassen i nettet bliver grøn. Han spørger, om han så kan beholde gasfyret med god samvittighed i stedet for at skifte til varmepumpe. Hvad svarer du?",
+   "kriterier": [
+    "Forklarer, at opgraderet biogas (biometan) har samme egenskaber som naturgas og kan bruges i eksisterende gaskedler uden ombygning.",
+    "Forklarer, at 'brint-klar' ikke betyder, at kedlen kan køre på brint i dag.",
+    "Forklarer, at gasnettet ikke leverer brint til boliger.",
+    "Forklarer, at drift på ren brint mindst kræver en ombygning af kedlen.",
+    "Sammenligner energiomsætningen: brint eller anden P2X-gas fremstillet af el har store omsætningstab, mens en varmepumpe leverer flere kWh varme pr. kWh el.",
+    "Giver en afbalanceret anbefaling, fx at en nyere kedel kan bruges sin levetid ud, men at næste skift bør vurderes mod varmepumpe eller fjernvarme."
+   ],
+   "begrundelse": "Vurdering af energikilder og energiomsætning i den grønne omstilling. Biogas udgjorde 38,0 % af den distribuerede gas i 2024, og Evida sigter mod 100 % grøn gas. Evidas strategi forudser, at husholdningskunderne frakobles, og at Evida gør klar til at distribuere brint og CO₂ (PtX). 'Hydrogen-ready' bruges om kedler, der kan ombygges til 100 % brint med et ombygningssæt; 'blend-ready' om kedler, der tåler iblanding (ca. 20 %).",
+   "kilde": "Evida Holding A/S årsrapport 2024 (biogasandel 38,0 %, afkobling af privatkunder; https://evida.dk/media/sb3bs1ps/evida-holding-as-2024.pdf); Evidas koncernstrategi (husholdningskunderne frakobles; https://evida.dk/media/04gdomtg/evidas-koncernstrategi_web_.pdf); BEK nr. 230 af 21/03/2018 om gaskvalitet § 3 nr. 7, § 23 og § 27 stk. 2 (https://www.retsinformation.dk/eli/lta/2018/230); EUNOMIA/ECOS, Hydrogen Boilers Technical Feasibility Study (2023, https://ecostandard.org/wp-content/uploads/2023/04/Hydrogen-Boilers-Technical-Feasibility-Study-EUNOMIA-1.pdf)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-221",
+   "maal": [
+    "VVS-AKI-01",
+    "VVS-AKI-13"
+   ],
+   "saet": "holdout",
+   "type": "case",
+   "spoergsmaal": "Et parcelhus fra 1960 på 160 m² opvarmet etageareal ombygges gennemgribende. Rådgiveren vil eftervise energikravene med renoveringsklasserne i stedet for at efterisolere alle berørte bygningsdele til komponentkravene. En beregning efter SBi-anvisning 213 viser et behov for tilført energi til opvarmning, ventilation og varmt brugsvand på 142 kWh/m² pr. år før og 96 kWh/m² pr. år efter ombygningen.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn grænsen for renoveringsklasse 2 for denne bolig i kWh/m² pr. år.",
+     "facit": {
+      "vaerdi": 83.75,
+      "enhed": "kWh/m² pr. år",
+      "tolerance_pct": 1
+     }
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Hvad er konklusionen på beregningen?",
+     "valgmuligheder": {
+      "A": "Kravet til reduktion er opfyldt, men huset når ikke renoveringsklasse 2",
+      "B": "Huset opfylder renoveringsklasse 2, fordi behovet er reduceret med over 30 kWh/m²",
+      "C": "Huset når hverken kravet til reduktion eller renoveringsklasse 2",
+      "D": "Huset opfylder renoveringsklasse 2, men ikke kravet til reduktion af energibehovet"
+     },
+     "facit": "A"
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Hvad skal du som vvs-installatør bidrage med til, at ombygningen kan godkendes efter renoveringsklasserne, og hvilke installationstiltag kan bringe huset ned under grænsen?",
+     "kriterier": [
+      "Forklarer, at renoveringsklassen er et alternativ til at opfylde komponentkravene for alle berørte bygningsdele, og at installationstiltag derfor kan tælle med i eftervisningen.",
+      "Foreslår mindst to relevante installationstiltag, fx varmepumpe i stedet for fossilt fyr, isolering af rør og beholdere, mere effektiv brugsvandsproduktion eller ventilation med varmegenvinding.",
+      "Nævner, at installationernes data (fx virkningsgrader, SCOP, systemtemperaturer) skal leveres og dokumenteres til energiberegningen."
+     ]
+    }
+   ],
+   "begrundelse": "a) BR18 § 281 nr. 1: 70,0 + 2 200/160 = 83,75 kWh/m² pr. år. b) Reduktion 142 − 96 = 46 ≥ 30 kWh/m² (§ 280 nr. 1), men 96 > 83,75. c) § 274: renoveringsklasserne er et alternativ til komponentkravene i § 279; § 280 nr. 3 kræver desuden en andel af vedvarende energi.",
+   "kilde": "BR18 §§ 274, 280 og 281 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/280_282/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "VVS-222",
+   "maal": [
+    "VVS-AKI-11"
+   ],
+   "saet": "udvikling",
+   "type": "fri",
+   "spoergsmaal": "Du overtager serviceaftalen for et ældre varmeanlæg med kedel, shunt, tre varmekredse og varmtvandsbeholder i en villa, hvor der ikke findes nogen tegninger eller dokumentation. Hvordan udarbejder du en brugbar teknisk dokumentation af anlægget, og hvordan holder du den ajour?",
+   "kriterier": [
+    "Beskriver en registrering på stedet med fotos og opmåling, fx placering af komponenter, rørføring, dimensioner og typeskiltsdata.",
+    "Udarbejder et principdiagram (fx i et tegne- eller CAD-program) med en entydig komponentnummerering.",
+    "Mærker komponenterne på anlægget med samme nummerering som i diagrammet.",
+    "Samler komponentliste/datablade, indstillinger (fx varmekurve, pumpetrin, sikkerhedsventilens åbningstryk) og servicehistorik ét sted, fx digitalt hos kunden og i virksomhedens system.",
+    "Beskriver, at dokumentationen opdateres efter hver ændring eller serviceindgreb, så den svarer til det faktiske anlæg (som udført)."
+   ],
+   "begrundelse": "Teknisk dokumentation af eksisterende installationer. BR18 kræver, at komponenter, der kræver eftersyn, er tilgængelige, og at anlægget drives og vedligeholdes, så kravene til enhver tid er opfyldt.",
+   "kilde": "BR18 § 389 nr. 10 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/) og § 392 stk. 1 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/392/)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  }
+ ]
+}

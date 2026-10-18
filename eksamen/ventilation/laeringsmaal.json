@@ -1,0 +1,88 @@
+{
+  "fag": "ventilation",
+  "plugin": "byg-ventilation",
+  "agent": "ventilationsekspert",
+  "note": "Kompetencemål for specialet ventilationstekniker (vvs-energiuddannelsen, uddannelsesordning 2026; de fælles mål 1–12 testes i vvs-sættet) og fagelementerne Ventilation og indeklima 1–2 i VVS-installatør (AK), ordret.",
+  "kilder": [
+    {
+      "id": "UO-VVS-2026",
+      "titel": "Uddannelsesordning for vvs-energiuddannelsen, gældende fra 1. august 2026 (STIL, regelgrundlag 29261)",
+      "url": "https://uddannelser.stil.dk/uddannelser-api/api/uddannelser/18724/regelgrundlag/29261/forside",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-142-2026",
+      "titel": "BEK nr. 142 af 22/01/2026 om erhvervsuddannelsen i vvs-energi",
+      "url": "https://www.retsinformation.dk/eli/lta/2026/142/pdf",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "EVU-CENSOR-VVS",
+      "titel": "Censorvejledning, svendeprøve VVS-energispecialist (revideret januar 2026)",
+      "url": "https://viewer.ipaper.io/evu/skuemestrecensorer/vvs/censorvejledning-vvs-energispecialist/",
+      "dato": "2026-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "AK-VVS-2026",
+      "titel": "Studieordning VVS-Installatør (AK), national del, august 2026 – kompetencegivende fagelementer (Zealand)",
+      "url": "https://www.zealand.dk/wp-content/uploads/2026/05/Samlet-studieordning-VVS-2026.pdf",
+      "dato": "2026-08",
+      "laest": "2026-10-17"
+    }
+  ],
+  "maal": [
+    {
+      "id": "VENT-KM-20",
+      "kilde": "UO-VVS-2026 kompetencemål 20 (speciale ventilationstekniker)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan beregne og vejlede om energiforbrug og besparelsespotentiale med henblik på energieffektivisering og -optimering samt valg af korrekte tekniske løsninger i relation til specialets område i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VENT-KM-23",
+      "kilde": "UO-VVS-2026 kompetencemål 23 (speciale ventilationstekniker)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan udføre service på, indregulere, energioptimere og fejlfinde klima- og ventilationsanlæg i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VENT-KM-24",
+      "kilde": "UO-VVS-2026 kompetencemål 24 (speciale ventilationstekniker)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, udføre service på, fejlfinde, reparere, programmere og indstille el-tekniske komponenter, intelligente styringer og reguleringsautomatiksystemer i klima-, energi og ventilationsanlæg samt foretage måling og analyse af effekt på indeklima og støjniveau i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VENT-KM-25",
+      "kilde": "UO-VVS-2026 kompetencemål 25 (speciale ventilationstekniker)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan dimensionere mindre klima- og ventilationsanlæg og installere komplette anlæg og ændring af eksisterende anlæg i bolig og erhverv.",
+      "rolle": "i"
+    },
+    {
+      "id": "VENT-KM-26",
+      "kilde": "UO-VVS-2026 kompetencemål 26 (speciale ventilationstekniker)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, udføre service på og reparere vvs-tekniske anlæg for fjernkøling i bolig, erhverv og industri.",
+      "rolle": "uden",
+      "begrundelse": "Fjernkøling ligger uden for boligventilation og agentens rolle"
+    },
+    {
+      "id": "VENT-AK-01",
+      "kilde": "AK-VVS-2026 fagelement 'Ventilation og indeklima 1' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Grundlæggende teori og boligventilation. Projektering og dimensionering af ventilationsanlæg. Ventilationsprincipper, anlægstyper, termisk- og atmosfærisk indeklima, luftens tilstandsændring, interne/eksterne belastninger for anlæg, energiforbrug til drift af ventilationsanlæg, styrings- og reguleringsteori. | Viden: udviklingsbaseret viden om opbygning af forskellige typer ventilationsanlæg. • forståelse for dimensionering og virkemåde inden for bolig. • viden om gældende love og regler vedrørende ventilationsanlæg. • forståelse for SEL-værdier. • forståelse for etablering og varetagelse af drift og vedligeholdelse af ventilationsanlæg med tilhørende automatik. | Færdigheder: anvende og kombinere værktøjer til at projektere, dimensionere og etablere indeklimaanlæg. • vurdere installationsformer og vælge relevante og tidssvarende løsninger. • formidle sin viden på området til brugere, bygherrer, arkitekter, rådgivere og entreprenører med henblik på at kunne rådgive, lede og tilrettelægge udførelsen af arbejder inden for området. • formidle og etablere drifts- og vedligeholdelse af ventilationssystemer med tilhørende automatik. | Kompetencer: rådgive og træffe beslutninger i overensstemmelse med gældende love, regler og normer vedrørende indeklima/ventilationsanlæg. • håndtere projektering og tilrettelæggelse af arbejder på boligventilationsanlæg i et udviklingsorienteret perspektiv. • i en struktureret sammenhæng tilegne sig ny viden inden for ventilation og indeklima. • deltage i fagligt og tværfagligt samarbejde inden for ventilation og indeklima.",
+      "rolle": "i"
+    },
+    {
+      "id": "VENT-AK-02",
+      "kilde": "AK-VVS-2026 fagelement 'Ventilation og indeklima 2' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Komfort- og industriventilation. Projektering og dimensionering af ventilationsanlæg. Ventilationsprincipper, anlægstyper, termisk- og atmosfærisk indeklima, luftens tilstandsændring, interne/eksterne belastninger for anlæg, energiforbrug til drift af ventilationsanlæg, styrings- og reguleringsteori. | Viden: udviklingsbaseret viden om lyd i ventilationsanlæg. • udviklingsbaseret viden om brandbeskyttelse af ventilationsanlæg. • forståelse for ventilationsaggregater med tilhørende automatik. • forståelse for energiberegninger i ventilationsanlæg. • udviklingsbaseret viden om opbygning af forskellige typer ventilationsanlæg samt virkemåde inden for komfort- og industriventilation. • udviklingsbaseret viden og forståelse for dimensionering af ventilationsanlæg, herunder luftens tilstandsændringer. • viden om gældende love og regler vedrørende ventilationsanlæg. | Færdigheder: anvende og kombinere værktøjer til at projektere, dimensionere og etablere indeklimaanlæg under hensyntagen til funktions-, indeklima- og driftsmæssige krav samt krav til økonomiske, energibesparende og miljømæssige hensyn. • vurdere installationsformer og vælge relevante og tidssvarende løsninger. • formidle sin viden på området til brugere, bygherrer, arkitekter, rådgivere og entreprenører med henblik på at kunne rådgive, lede og tilrettelægge udførelsen af arbejder inden for området. | Kompetencer: deltage i udviklingen inden for området, så der nu og i fremtiden satses på bedre indeklima, komfort og energioptimering. • rådgive og træffe beslutninger i overensstemmelse med gældende love, regler og normer vedrørende indeklima/ventilationsanlæg. • håndtere projektering og tilrettelæggelse af arbejder på ventilationsanlæg under hensyntagen til lydforhold, indregulering og energiforbrug. • deltage i fagligt og tværfagligt samarbejde inden for ventilation og indeklima. • i en struktureret sammenhæng tilegne sig ny viden inden for ventilation og indeklima.",
+      "rolle": "i"
+    }
+  ]
+}

@@ -1,0 +1,856 @@
+{
+ "opgaver": [
+  {
+   "id": "EL-201",
+   "maal": [
+    "EL-AK-01",
+    "EL-AK-11"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "Et parcelhus fra 1972 (TN-net, 400 V mellem faser) får et nyt fritliggende anneks med værksted. Annekset forsynes fra husets gruppetavle med et nedgravet 5-leder Cu-kabel 4 mm², længde 45 m (enkelt vej). Den samlede last i annekset er symmetrisk 3-faset: 9,2 kW virkeeffekt ved cos φ = 0,95. Kablets strømværdi for den aktuelle installationsmåde i jord med 3 belastede ledere er 34 A (fra tabellen i DS/HD 60364-5-52). Korrektionsfaktoren for jordens termiske modstand og temperatur er 0,85, og for samlet fremføring med et andet kabel i renden 0,90. Regn med resistiviteten ρ = 0,0225 Ω·mm²/m, og se bort fra kablets reaktans. I annekset kommer der en lille undertavle med stikkontakter, belysning og en 3-faset stikkontakt 16 A.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn belastningsstrømmen Ib i hver fase. Angiv svaret i A.",
+     "facit": {
+      "vaerdi": 13.98,
+      "enhed": "A",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "Ib = 9200 / (√3 · 400 · 0,95) = 13,98 A."
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Hvilken mærkestrøm er den største, du kan vælge for kablets overbelastningsbeskyttelse (automatsikring), så Ib ≤ In ≤ Iz er opfyldt med de korrigerede værdier?",
+     "valgmuligheder": {
+      "A": "16 A",
+      "B": "20 A",
+      "C": "25 A",
+      "D": "32 A"
+     },
+     "facit": "C",
+     "begrundelse": "Iz = 34 · 0,85 · 0,90 = 26,0 A. Største standardværdi ≤ 26,0 A er 25 A. For automatsikringer er I2 ≤ 1,45 · In, så I2 ≤ 1,45 · Iz er også opfyldt."
+    },
+    {
+     "del": "c",
+     "type": "tal",
+     "spoergsmaal": "Beregn spændingsfaldet i kablet ved belastningsstrømmen Ib i procent af 400 V. Brug ΔU = √3 · Ib · L · ρ / A · cos φ.",
+     "facit": {
+      "vaerdi": 1.46,
+      "enhed": "%",
+      "tolerance_pct": 3
+     },
+     "begrundelse": "ΔU = √3 · 13,98 · 45 · 0,0225 / 4 · 0,95 = 5,82 V, dvs. 1,46 % af 400 V."
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Hvad skal du ud over strømværdi og spændingsfald efterprøve og beslutte i projekteringen af forsyningen til annekset, før arbejdet sættes i gang? Begrund kort.",
+     "kriterier": [
+      "Nævner, at fejlbeskyttelsen (beskyttelse ved automatisk afbrydelse) skal eftervises for forsyningen til annekset.",
+      "Nævner, at stikkontakterne i annekset (også den 3-fasede 16 A) skal have supplerende beskyttelse med RCD højst 30 mA.",
+      "Nævner mindst ét krav til det nedgravede kabel, fx nedgravningsdybde, mekanisk beskyttelse eller markeringsbånd.",
+      "Nævner mindst ét af: selektivitet mellem forsikringen i husets tavle og grupperne i annekstavlen, kortslutningsbeskyttelse af kablet eller dokumentation af valget."
+     ]
+    }
+   ],
+   "begrundelse": "Dimensionering i flere trin: Ib, Iz med korrektionsfaktorer, valg af In og spændingsfald. Lederes tværsnit fastlægges for drift og fejl (installationsbekendtgørelsens § 20), og stikkontakter til og med 20 A og andre tilslutningssteder til og med 32 A skal have RCD højst 30 mA (§ 35).",
+   "kilde": "BEK nr. 1082/2016 (installationsbekendtgørelsen) §§ 20 og 35, https://www.retsinformation.dk/eli/lta/2016/1082. Formler: Ib = P/(√3·U·cos φ), Iz = Itab·k1·k2, Ib ≤ In ≤ Iz og ΔU = √3·I·L·ρ/A·cos φ. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-202",
+   "maal": [
+    "EL-AK-02"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Du projekterer en ny elinstallation i en villa, der forsynes med en 4-leder stikledning (TN-C) fra netselskabets kabelskab, og installationen udføres som TN-system. Hvor langt ind i bygningens installation må der efter installationsbekendtgørelsen anvendes en kombineret PEN-leder?",
+   "valgmuligheder": {
+    "A": "Kun frem til første tavle eller fordelingspunkt; derefter skal N og PE være adskilt.",
+    "B": "Frem til sidste fordelingstavle, når PEN-lederen har et tværsnit på mindst 10 mm² Cu.",
+    "C": "Frem til gruppetavlerne, når hovedudligningen er forbundet direkte til PEN-lederen.",
+    "D": "I hele installationen, når alle grupperne er beskyttet af en RCD 30 mA type A."
+   },
+   "facit": "A",
+   "begrundelse": "§ 28: I bygninger må der ikke være TN-C-system efter første tavle eller fordelingspunkt. Herefter skal beskyttelsesleder og nulleder altid være adskilt (gælder ikke ved udvidelse eller ændring af eksisterende installationer). 10 mm²-reglen fra HD 60364 er ikke tilstrækkelig i Danmark.",
+   "kilde": "BEK nr. 1082/2016 § 28, https://www.retsinformation.dk/eli/lta/2016/1082",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-203",
+   "maal": [
+    "EL-AK-02"
+   ],
+   "saet": "holdout",
+   "type": "valg",
+   "spoergsmaal": "Et nyt parcelhus skal forsynes fra et lavspændingsnet, der er udført som TN-system. Stikledningen er et kabel fra et kabelskab ved vejen (ikke direkte fra transformerstationen). Huset har ikke egen transformer, og der er ingen eksisterende installation. Bygherren ønsker installationen udført som TN-system i stedet for TT. Hvornår må det ske efter installationsbekendtgørelsen?",
+   "valgmuligheder": {
+    "A": "Kun når ejeren af det elektriske anlæg (netselskabet) har givet en særlig tilladelse.",
+    "B": "Altid, fordi stikledningen er udført med kabel, og nettet foran installationen er udført som TN-system.",
+    "C": "Når installatøren dokumenterer en jordelektrode med overgangsmodstand under 1 Ω.",
+    "D": "Når afstanden til transformerstationen er under 100 m, og kablet er mindst 16 mm²."
+   },
+   "facit": "A",
+   "begrundelse": "§ 27, stk. 1: TN må bruges ved egen transformerstation, ved kabelstikledning direkte fra transformerstationen, hvor TN allerede anvendes, eller med særlig tilladelse fra anlægsejeren. Ingen af de tre første situationer foreligger her.",
+   "kilde": "BEK nr. 1082/2016 § 27, https://www.retsinformation.dk/eli/lta/2016/1082",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-204",
+   "maal": [
+    "EL-AK-12"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "I en ny tavle i et lille værksted beskytter en justerbar effektafbryder et kabel til en maskine. Kablet tillader en indstillingsstrøm på højst 32 A. Maskinens fabrikant foreskriver en forsikring på højst 25 A. Hvad skal den holdbare mærkning ved afbryderen angive efter installationsbekendtgørelsen?",
+   "valgmuligheder": {
+    "A": "Største tilladte indstillingsstrøm 25 A, fordi den mindste tilladte værdi gælder.",
+    "B": "Største tilladte indstillingsstrøm 32 A, fordi kablets strømværdi er afgørende.",
+    "C": "Den aktuelle indstilling, fordi kun den indstillede værdi skal fremgå af tavlen.",
+    "D": "Ingen værdi, fordi justerbare afbrydere alene skal dokumenteres i tavlens diagram og ikke mærkes."
+   },
+   "facit": "A",
+   "begrundelse": "§ 31: Ved enhver overstrømsbeskyttelse skal en holdbar mærkning angive største tilladte mærkestrøm eller indstillingsstrøm. Tjener beskyttelsen flere formål, gælder den mindste af de tilladte værdier.",
+   "kilde": "BEK nr. 1082/2016 § 31, https://www.retsinformation.dk/eli/lta/2016/1082",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-205",
+   "maal": [
+    "EL-AK-12"
+   ],
+   "saet": "holdout",
+   "type": "valg",
+   "spoergsmaal": "Din elinstallatørvirksomhed bygger og leverer en lille transportbåndsmaskine med egen styring til en kunde i Danmark og er dermed maskinens fabrikant. Hvor længe skal det tekniske dossier for maskinen mindst kunne stilles til rådighed for myndighederne efter maskindirektivet?",
+   "valgmuligheder": {
+    "A": "I mindst 10 år efter maskinens fremstillingsdato.",
+    "B": "I mindst 5 år efter, at maskinen er afleveret.",
+    "C": "Så længe maskinen er i drift hos kunden.",
+    "D": "I mindst 3 år efter den sidste ændring."
+   },
+   "facit": "A",
+   "begrundelse": "Maskindirektivet bilag VII, del A, pkt. 2: Det tekniske dossier skal være til rådighed for de kompetente myndigheder i mindst 10 år efter maskinens fremstillingsdato (ved seriefremstilling efter den sidste enhed). 5 år er opbevaringstiden for KLS-dokumentation, ikke for det tekniske dossier. Opgaven skal revideres 20/1-2027, når maskinforordningen (EU) 2023/1230 gælder; fra da regnes de 10 år fra, at maskinen er bragt i omsætning, og henvisningerne skal ændres til forordningen.",
+   "kilde": "BEK nr. 1094/2021 om maskiner, bilag 1 (maskindirektivet), bilag VII, del A, pkt. 2, https://www.retsinformation.dk/eli/lta/2021/1094",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-206",
+   "maal": [
+    "EL-AK-03"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Din virksomhed skal levere bygningsautomatik til en ny kontorbygning (ikke bolig) med et dimensionerende varmebehov på 340 kW. Hvilken beskrivelse svarer til de funktioner, systemet mindst skal kunne efter bygningsreglementet (BR18 § 295)?",
+   "valgmuligheder": {
+    "A": "Overvåge og analysere energiforbruget løbende, kommunikere med og regulere de tekniske anlæg efter behov, udtrykke energieffektiviteten og detektere og melde fejl til driften.",
+    "B": "Styre varme, ventilation og belysning efter faste ugeprogrammer, logge rumtemperaturer i mindst et år og sende et samlet månedligt energiforbrug til ejeren og til kommunen som bygningsmyndighed.",
+    "C": "Regulere varme og køling efter udetemperaturen, udlæse alle energimålere til netselskabet hver time og automatisk afbryde tekniske anlæg, når bygningen meldes tom.",
+    "D": "Overvåge de tekniske anlæg via en åben protokol som KNX eller BACnet, vise driftsdata på en skærm i teknikrummet og gemme alarmhistorik i mindst fem år for ejeren."
+   },
+   "facit": "A",
+   "begrundelse": "BR18 § 295, stk. 1 og 3: Nye bygninger omfattet af § 260 (andre end boliger) med dimensionerende varme- eller kølebehov over 290 kW skal have bygningsautomatik, der kan 1) løbende overvåge og analysere energiforbruget, 2) kommunikere med og regulere de tekniske anlæg energieffektivt efter behov, 3) udtrykke den energimæssige effektivitet og 4) detektere fejl og underrette driftspersonalet. Reglen kræver ingen bestemt protokol.",
+   "kilde": "BR18 kap. 11 § 295, stk. 1 og 3, https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/295_296/",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-207",
+   "maal": [
+    "EL-AK-03",
+    "EL-AK-11"
+   ],
+   "saet": "holdout",
+   "type": "case",
+   "spoergsmaal": "En eksisterende kontor- og lagerbygning fra 1990 (ikke bolig) har et dimensionerende varmebehov på 310 kW. Den har i dag kun lokale styringer på de enkelte anlæg. Ejeren spørger, om han er forpligtet til at installere bygningsautomatik, og vil i givet fald have din virksomhed til at levere og idriftsætte et BMS, der styrer varme, ventilation og belysning. I dag kører de to ventilationsaggregater døgnet rundt hele året. Hvert aggregat har to ventilatorer, der hver optager 1,5 kW. Med BMS'et skal aggregaterne kun køre 10 timer i døgnet alle årets 365 dage.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn den årlige elbesparelse på ventilatorerne. Antag konstant optagen effekt, når de kører, og ingen effekt, når de står stille. Angiv svaret i kWh.",
+     "facit": {
+      "vaerdi": 30660,
+      "enhed": "kWh",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "4 ventilatorer · 1,5 kW = 6,0 kW. Besparelse 6,0 · (24 − 10) · 365 = 30 660 kWh."
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Hvad siger bygningsreglementet om pligten til at installere bygningsautomatik i netop denne eksisterende bygning?",
+     "valgmuligheder": {
+      "A": "Den skal installeres, hvis det er teknisk gennemførligt og rentabelt, og fristen var udgangen af 2025.",
+      "B": "Den skal kun installeres, hvis bygningen ombygges væsentligt, fordi kravene ellers kun gælder nybyggeri.",
+      "C": "Den skal installeres uanset økonomi, fordi varmebehovet er over grænsen på 290 kW for alle bygninger.",
+      "D": "Der er ingen pligt, fordi grænsen for eksisterende bygninger er et dimensionerende varmebehov over 500 kW."
+     },
+     "facit": "A",
+     "begrundelse": "BR18 § 295, stk. 2: I eksisterende bygninger omfattet af § 260 med dimensionerende varme- eller kølebehov over 290 kW skal der installeres bygningsautomatik, hvis det er teknisk gennemførligt og rentabelt, jf. § 275. Installationen skulle være gennemført inden udgangen af 2025."
+    },
+    {
+     "del": "c",
+     "type": "valg",
+     "spoergsmaal": "Hvad kræver bygningsreglementet, før det nye automatiksystem tages i brug?",
+     "valgmuligheder": {
+      "A": "En funktionsafprøvning, der viser korrekt installation og regulering, tilsigtet funktion og den forudsatte energieffektivitet.",
+      "B": "En energimærkning af bygningen udført af en energikonsulent, som dokumenterer besparelsen ved det nye automatiksystem.",
+      "C": "En anmeldelse til kommunen med systemets funktionsbeskrivelse og en skriftlig tilladelse til ibrugtagning, før systemet tilsluttes.",
+      "D": "En indregulering af ventilationen efter DS 447 og en målerapport, der underskrives af en uvildig ventilationsrådgiver."
+     },
+     "facit": "A",
+     "begrundelse": "BR18 § 296: Funktionsafprøvning af bygningsautomatik inden ibrugtagning, der påviser korrekt installation og regulering, at den virker efter hensigten og giver den forudsatte energimæssige effektivitet."
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Beskriv, hvordan du tilrettelægger idriftsættelsen og afleveringen af BMS'et til ejerens driftspersonale.",
+     "kriterier": [
+      "Arbejdet sker efter en skriftlig plan eller testprotokol med de funktioner, der skal eftervises, fx tidsprogrammer, setpunkter og alarmer.",
+      "Kontrollerer, at hver styret enhed reagerer korrekt på BMS'ets signaler, fx at ventilationen starter og stopper efter programmet.",
+      "Eftervisning af energieffektiviteten, fx ved at sammenligne målt energiforbrug eller driftstimer før og efter.",
+      "Afleverer skriftlig dokumentation, fx funktionsbeskrivelse, punktliste og testresultater.",
+      "Instruerer driftspersonalet i at betjene systemet og håndtere fejlmeldinger."
+     ]
+    }
+   ],
+   "begrundelse": "BR18 § 295, stk. 2 (eksisterende bygninger over 290 kW, når det er teknisk gennemførligt og rentabelt, frist udgangen af 2025) og § 296 (funktionsafprøvning før ibrugtagning).",
+   "kilde": "BR18 kap. 11 §§ 295–296, https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/295_296/. Formel: E = P · t. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-208",
+   "maal": [
+    "EL-AK-03"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "En villaejer vil have sin eksisterende manuelle skydeport ved indkørslen automatiseret. Din virksomhed køber et motorsæt (motor, styring, fotoceller og blinklys), som leverandøren leverer som delmaskine med inkorporeringserklæring og monteringsvejledning. Du monterer motorsættet på den eksisterende port, programmerer styringen og afleverer den færdige automatiske port til kunden. Portmotoren optager 600 W ved 230 V og cos φ = 0,80.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn motorens strøm under drift. Angiv svaret i A.",
+     "facit": {
+      "vaerdi": 3.26,
+      "enhed": "A",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "I = P / (U · cos φ) = 600 / (230 · 0,80) = 3,26 A."
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Hvem er fabrikant af den færdige automatiske port efter maskinbekendtgørelsen (maskindirektivet)?",
+     "valgmuligheder": {
+      "A": "Din virksomhed, fordi I sammensætter motorsættet og porten til en færdig maskine og leverer den til brug.",
+      "B": "Leverandøren af motorsættet, fordi motorsættet allerede er ledsaget af en inkorporeringserklæring og en vejledning.",
+      "C": "Villaejeren, fordi han ejer porten og selv tager den færdige automatiske port i brug ved indkørslen.",
+      "D": "Ingen, fordi en port ved en privat bolig ikke er en maskine, så længe den kun betjenes af beboerne."
+     },
+     "facit": "A",
+     "begrundelse": "Fabrikant er den, der konstruerer og/eller fremstiller en maskine og er ansvarlig for dens overensstemmelse, også til eget brug. En delmaskine skal inkorporeres i en maskine, og den, der gør det og leverer maskinen til brug, er fabrikant af den færdige maskine."
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Hvad skal fabrikanten af den færdige automatiske port have udført og udarbejdet, før porten afleveres og tages i brug? Begrund kort.",
+     "kriterier": [
+      "Nævner en risikovurdering af den færdige port, fx klemning og påkørsel, og at risiciene nedbringes med fx fotoceller, kraftbegrænsning eller kontaktlister.",
+      "Nævner et teknisk dossier for den færdige maskine, hvori delmaskinens inkorporeringserklæring og monteringsvejledning indgår.",
+      "Nævner EF-overensstemmelseserklæring og CE-mærkning af den færdige port.",
+      "Nævner brugsanvisning og instruktion til kunden, fx nødbetjening ved strømsvigt og vedligehold."
+     ]
+    }
+   ],
+   "begrundelse": "Maskindirektivet (bilag 1 til BEK 1094/2021) art. 2 f (fabrikant), art. 5, stk. 1 (væsentlige krav, teknisk dossier, brugsanvisning, overensstemmelsesvurdering, EF-overensstemmelseserklæring og CE-mærkning), art. 13, stk. 2 (inkorporeringserklæring og monteringsvejledning indgår i den færdige maskines tekniske dossier) og bilag I, generelle principper 1 (risikovurdering). Opgaven skal revideres 20/1-2027, når maskinforordningen (EU) 2023/1230 gælder; fra da regnes de 10 år fra, at maskinen er bragt i omsætning, og henvisningerne skal ændres til forordningen.",
+   "kilde": "BEK nr. 1094/2021 om maskiner, bilag 1: art. 2 f, art. 5, art. 13 og bilag I, generelle principper, https://www.retsinformation.dk/eli/lta/2021/1094. Formel: I = P/(U·cos φ).",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-209",
+   "maal": [
+    "EL-AK-03",
+    "EL-AK-11"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "Du projekterer en 4–20 mA-målesløjfe til en 2-leder temperaturtransmitter, der sidder i en fjern pumpebrønd. Sløjfen forsynes med 24 V DC fra PLC-tavlen. PLC'ens analoge indgang har en indgangsmodstand på 250 Ω. Transmitteren skal efter databladet have mindst 12 V over sine klemmer for at fungere. Kablet er et 2-leder Cu-kabel 0,5 mm² med ρ = 0,0175 Ω·mm²/m. Hvor langt må kablet (enkelt vej) højst være, for at transmitteren fungerer ved fuldt udslag (20 mA)? Se bort fra andre modstande i sløjfen. Angiv svaret i m.",
+   "facit": {
+    "vaerdi": 5000,
+    "enhed": "m",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "Største samlede sløjfemodstand: (24 − 12) V / 0,020 A = 600 Ω. Til kablet er der 600 − 250 = 350 Ω. L = R · A / (2 · ρ) = 350 · 0,5 / (2 · 0,0175) = 5000 m.",
+   "kilde": "Formler: Ohms lov for en strømsløjfe, R_max = (U_forsyning − U_min) / I_max, og R_kabel = 2·ρ·L/A. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-215",
+   "maal": [
+    "EL-AK-08"
+   ],
+   "saet": "udvikling",
+   "type": "valg",
+   "spoergsmaal": "Du er medejer af en elinstallatørvirksomhed med 7 ansatte og skal have styr på arbejdspladsvurderingen (APV). Hvilket udsagn er korrekt efter bekendtgørelsen om systematisk arbejdsmiljøarbejde?",
+   "valgmuligheder": {
+    "A": "APV'en skal være skriftlig med risikovurdering, sygefravær, handlingsplan og opfølgning, og forholdene afdækkes mindst hvert tredje år.",
+    "B": "APV'en skal være skriftlig med risikovurdering, handlingsplan og opfølgning, og den skal revideres og indsendes til Arbejdstilsynet hvert år.",
+    "C": "APV'en kræves først, når virksomheden har 10 ansatte, og indtil da er en mundtlig gennemgang af risici på hver enkelt byggeplads tilstrækkelig.",
+    "D": "APV'en skal udarbejdes af en ekstern autoriseret rådgiver, og den gælder i fem år, medmindre Arbejdstilsynet beder om en ny."
+   },
+   "facit": "A",
+   "begrundelse": "BEK 608/2026 § 2: APV kræves, når virksomheden har mindst én ansat. Den skal have en skriftlig behandlingsmåde med risikovurdering, inddragelse af sygefravær, skriftlig handlingsplan og opfølgning. Den skal laves ved ændringer, og forholdene skal afdækkes mindst hvert tredje år. Ekstern bistand er kun krævet, hvis arbejdsgiveren ikke selv har indsigten (§ 3, stk. 3).",
+   "kilde": "BEK nr. 608/2026 om systematisk arbejdsmiljøarbejde §§ 2–3, https://www.retsinformation.dk/eli/lta/2026/608",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-216",
+   "maal": [
+    "EL-AK-08"
+   ],
+   "saet": "holdout",
+   "type": "valg",
+   "spoergsmaal": "Ved den løbende efterprøvning af jeres kvalitetsledelsessystem giver kontrolinstansen en anmærkning om, at instruktionen af nye medarbejdere ikke er beskrevet tilstrækkeligt. Hvad gælder efter KLS-bekendtgørelsen?",
+   "valgmuligheder": {
+    "A": "I skal følge op inden for den frist, kontrolinstansen fastsætter, højst 6 måneder; ellers bliver anmærkningen til en afvigelse.",
+    "B": "I skal følge op inden for 14 dage, og ellers tilbagekalder myndigheden straks virksomhedens autorisation på hele elområdet.",
+    "C": "I kan vente til næste ordinære efterprøvning, fordi en anmærkning først kræver handling, når den er blevet til en egentlig afvigelse.",
+    "D": "I skal følge op inden for 12 måneder og selv indberette opfølgningen til myndigheden sammen med ledelsens årlige evaluering."
+   },
+   "facit": "A",
+   "begrundelse": "BEK 725/2024 § 9, stk. 3: Virksomheden skal følge op på kontrolinstansens anmærkninger inden for en frist fastsat af kontrolinstansen på højst 6 måneder. Er der ikke fulgt op, fører det til en afvigelse, jf. stk. 2.",
+   "kilde": "BEK nr. 725/2024 (KLS-bekendtgørelsen) § 9, stk. 2–3, https://www.retsinformation.dk/eli/lta/2024/725",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-217",
+   "maal": [
+    "EL-AK-08",
+    "EL-AK-02"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "Du er fagligt ansvarlig i en elinstallatørvirksomhed med 12 ansatte. En kunde klager over, at en ny gruppe til en udestue, som jeres montør lavede for tre uger siden, ikke er omfattet af RCD. Slutkontrolskemaet er udfyldt og underskrevet med 'RCD afprøvet OK'. Ved gennemgangen opdager du også, at montørens installationstester ikke har været til kontrol i 26 måneder.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "valg",
+     "spoergsmaal": "Hvad skal virksomheden efter KLS-bekendtgørelsen opbevare om prøve- og måleudstyr som installationstesteren?",
+     "valgmuligheder": {
+      "A": "Rapporter, der dokumenterer, at prøvningsintervallerne for det nødvendige prøve- og måleudstyr overholdes.",
+      "B": "Fabrikantens datablad og købsfaktura for hvert enkelt instrument, så det kan ses, at det er egnet til formålet.",
+      "C": "Et kalibreringscertifikat fra et akkrediteret laboratorium for hvert instrument for hvert eneste kalenderår.",
+      "D": "En liste over instrumenterne, mens prøvningsintervallerne fastsættes og kontrolleres af kontrolinstansen."
+     },
+     "facit": "A",
+     "begrundelse": "BEK 725/2024 bilag 1 (nyaffattet ved BEK 1312/2025), pkt. III, nr. 5 b: rapporter til dokumentation af overholdelse af prøvningsintervaller for prøve- og måleudstyr."
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Skal virksomheden efter bekendtgørelsen om systematisk arbejdsmiljøarbejde have en arbejdsmiljøorganisation?",
+     "valgmuligheder": {
+      "A": "Ja, fordi virksomheden har 10 eller flere ansatte.",
+      "B": "Nej, det kræves først fra 20 ansatte i virksomheden.",
+      "C": "Nej, montørerne er omfattet af byggepladsens organisation.",
+      "D": "Kun hvis Arbejdstilsynet har givet et påbud om det."
+     },
+     "facit": "A",
+     "begrundelse": "BEK 608/2026 § 12: I virksomheder med 10 eller flere ansatte skal samarbejdet om sikkerhed og sundhed foregå i en arbejdsmiljøorganisation."
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Hvordan håndterer du afvigelsen med den manglende RCD i kvalitetsledelsessystemet og over for kunden?",
+     "kriterier": [
+      "Fejlen udbedres snarest, og gruppen verificeres igen (eftersyn, afprøvning og rapportering) med et gyldigt kontrolleret instrument.",
+      "Afvigelsen registreres, og årsagen analyseres, fx hvorfor slutkontrollen blev underskrevet uden reel afprøvning.",
+      "Der iværksættes og dokumenteres en forbedringsaktivitet, så fejlen ikke sker igen, fx instruktion af montøren, ændret slutkontrolskema eller skærpet tilsyn.",
+      "Vurderer, om andre installationer, der er målt med det samme instrument eller kontrolleret af samme montør, skal efterkontrolleres."
+     ]
+    },
+    {
+     "del": "d",
+     "type": "fri",
+     "spoergsmaal": "Hvordan styrer du virksomhedens måleudstyr fremover?",
+     "kriterier": [
+      "Beskriver et register eller en oversigt over instrumenterne med fastsatte prøvningsintervaller og næste prøvningsdato.",
+      "Beskriver en fast påmindelse eller ansvarlig person, der sikrer, at instrumenter sendes til kontrol i tide.",
+      "Instrumenter, der er over intervallet, tages ud af brug, til de er kontrolleret."
+     ]
+    }
+   ],
+   "begrundelse": "KLS-bekendtgørelsen bilag 1: forbedringsaktiviteter ved afvigelser (pkt. I, nr. 7, og III, nr. 5 a), slutkontrol (III, nr. 1) og prøvningsintervaller for måleudstyr (III, nr. 5 b). Installationsbekendtgørelsens § 75 om verifikation. BEK 608/2026 § 12 om arbejdsmiljøorganisation.",
+   "kilde": "BEK nr. 725/2024 bilag 1, nyaffattet ved BEK nr. 1312/2025, https://www.retsinformation.dk/eli/lta/2025/1312; BEK nr. 1082/2016 § 75, https://www.retsinformation.dk/eli/lta/2016/1082; BEK nr. 608/2026 § 12, https://www.retsinformation.dk/eli/lta/2026/608",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-218",
+   "maal": [
+    "EL-AK-08"
+   ],
+   "saet": "holdout",
+   "type": "fri",
+   "spoergsmaal": "Din virksomhed skal fjerne hele den gamle elinstallation i en værkstedsbygning fra 1972 før en totalrenovering: ca. 40 lysstofarmaturer fra byggeåret, en gammel tavle monteret på store plader af ukendt materiale og kabler over et nedhængt loft af ca. 80 m² plader af ukendt materiale. Beskriv, hvordan du håndterer de miljø- og arbejdsmiljømæssige forhold i arbejdet.",
+   "facit": null,
+   "kriterier": [
+    "Behandler lysstofarmaturernes kondensatorer fra før 1986 som mulige PCB-holdige, fx så de ikke knuses eller blandes med andet affald.",
+    "PCB-holdige kondensatorer håndteres som farligt affald, fx via en godkendt indsamler eller et modtageanlæg.",
+    "Undersøger før arbejdet, om tavlepladerne eller loftpladerne indeholder asbest, fx ved prøvetagning og analyse.",
+    "Nævner, at nedrivning af asbestholdigt materiale i dette omfang kun må udføres af en virksomhed med autorisation til nedrivning af asbest (arbejdsmiljøloven § 49 e)."
+   ],
+   "fail_hvis": [
+    "Anbefaler at bortskaffe armaturerne som almindeligt brændbart affald eller blandet byggeaffald."
+   ],
+   "begrundelse": "Miljøstyrelsens vejledning: lysarmaturer er elektronikaffald, PCB-holdige kondensatorer fjernes selektivt og håndteres som farligt affald, og kondensatorer fra perioden 1950–1986 indeholder ofte PCB. Arbejdsmiljøloven § 49 e (indsat ved LOV 629/2024): nedrivning af asbestholdigt materiale må kun udføres af autoriserede virksomheder. Der er en undtagelse for kortvarigt nedrivningsarbejde af mindre karakter, fx få, enkelte plader, men det arbejde skal stadig udføres efter asbestreglerne. Ca. 80 m² loftplader og tavlepladerne falder ikke ind under undtagelsen.",
+   "kilde": "Miljøstyrelsen, Vejledning om håndtering af PCB-holdige kondensatorer i lysarmaturer (2015), https://www2.mst.dk/Udgiv/publikationer/2015/01/978-87-93283-47-3.pdf; arbejdsmiljøloven kap. 8 a, § 49 e, indsat ved LOV nr. 629/2024, https://www.retsinformation.dk/eli/lta/2024/629",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-210",
+   "maal": [
+    "EL-AK-01"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "I et parcelhus fra 1968 bliver den integrerede garage (14 m²) ombygget til et værelse. Garagens elinstallation er original: to udvendigt monterede stikkontakter, et lysstofarmatur og en 400 V-stikkontakt, alle på en gruppe uden RCD fra den gamle tavle. Husets øvrige installation ændres ikke. Værelset skal opvarmes med elpaneler. Varmetabsberegningen giver 60 W/m².",
+   "dele": [
+    {
+     "del": "a",
+     "type": "valg",
+     "spoergsmaal": "Hvad kræver installationsbekendtgørelsen for installationen i det ombyggede rum?",
+     "valgmuligheder": {
+      "A": "Installationen i rummet skal tilpasses den nye anvendelse og udføres efter de regler, der gælder på ændringstidspunktet.",
+      "B": "Installationen må bevares som den er, fordi den var lovlig, da den blev udført, og den ikke selv bliver ændret.",
+      "C": "Hele husets installation skal bringes op til de nugældende regler, fordi en del af bygningen nu skifter anvendelse til beboelse.",
+      "D": "Installationen må bevares, når der monteres en RCD 30 mA for gruppen, fordi det giver samme sikkerhedsniveau."
+     },
+     "facit": "A",
+     "begrundelse": "§ 26: Skifter et område anvendelse, skal installationen tilpasses den nye anvendelse. § 25, stk. 2: De dele, der ændres, udføres efter reglerne på ændringstidspunktet. Kravet gælder området, ikke hele huset."
+    },
+    {
+     "del": "b",
+     "type": "tal",
+     "spoergsmaal": "Beregn strømmen, når værelsets samlede elvarme (dimensioneret efter varmetabet) er tændt på 230 V. Elpanelerne er rent ohmske. Angiv svaret i A.",
+     "facit": {
+      "vaerdi": 3.65,
+      "enhed": "A",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "P = 14 · 60 = 840 W. I = 840 / 230 = 3,65 A."
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Beskriv kort din projektering af værelsets elinstallation: grupper, beskyttelse, materiel og forsyning.",
+     "kriterier": [
+      "Stikkontakter og andre tilslutningssteder i værelset beskyttes med RCD højst 30 mA.",
+      "Tager stilling til den gamle 400 V-stikkontakt og lysstofarmaturet, fx at de fjernes eller erstattes, så installationen passer til et beboelsesrum.",
+      "Tager stilling til forsyningen fra den gamle tavle, fx ny gruppe eller ny/udvidet tavle med plads til RCD, og belastningen fra elvarmen.",
+      "Nævner verifikation (eftersyn, afprøvning, rapportering), før den nye installation tages i brug."
+     ]
+    }
+   ],
+   "begrundelse": "Installationsbekendtgørelsen §§ 25–26 (ændrede dele og skift af anvendelse), § 35 (RCD) og § 75 (verifikation før idriftsættelse).",
+   "kilde": "BEK nr. 1082/2016 §§ 25, 26, 35 og 75, https://www.retsinformation.dk/eli/lta/2016/1082. Formel: P = A · q, I = P/U.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-211",
+   "maal": [
+    "EL-AK-11",
+    "EL-AK-01"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "En 230 V-gruppe til stikkontakter i et TN-system er udført med 2,5 mm² Cu. Afstanden fra tavlen til den fjerneste stikkontakt er 32 m (enkelt vej). Ved tavlen er fejlsløjfeimpedansen målt til 0,45 Ω. Regn med ρ = 0,0225 Ω·mm²/m for både fase- og beskyttelsesleder (samme tværsnit), regn impedanserne sammen aritmetisk, og se bort fra reaktans. Beregn fejlsløjfeimpedansen Zs (fase–beskyttelsesleder) ved den fjerneste stikkontakt. Angiv svaret i Ω.",
+   "facit": {
+    "vaerdi": 1.026,
+    "enhed": "Ω",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "R_kabel = 2 · 0,0225 · 32 / 2,5 = 0,576 Ω (fase- og beskyttelsesleder). Zs = 0,45 + 0,576 = 1,026 Ω.",
+   "kilde": "Formel: Zs = Zfør + 2·ρ·L/A (fejlsløjfeimpedans i TN-system, princip i DS/HD 60364-4-41). Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-212",
+   "maal": [
+    "EL-AK-02",
+    "EL-AK-11"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "En frisørsalon (liberalt erhverv) i stueetagen af en ældre villa forsynes 3 × 400/230 V med nulleder. Alle laster er 1-fasede og praktisk talt ohmske (cos φ = 1). Ved fuld drift er fasestrømmene målt til L1 = 16 A, L2 = 10 A og L3 = 6 A. På L1 sidder bl.a. en vandvarmer, der trækker 3 A, og som kan flyttes til en anden fase.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn strømmen i nullederen ved fuld drift. Brug I_N = √(I1² + I2² + I3² − I1·I2 − I2·I3 − I3·I1). Angiv svaret i A.",
+     "facit": {
+      "vaerdi": 8.72,
+      "enhed": "A",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "I_N = √(256 + 100 + 36 − 160 − 60 − 96) = √76 = 8,72 A."
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Du vil flytte vandvarmeren (3 A) fra L1 for at reducere nulstrømmen. Hvilken flytning giver den laveste nulstrøm?",
+     "valgmuligheder": {
+      "A": "Til L3, så fasestrømmene bliver 13 A, 10 A og 9 A.",
+      "B": "Til L2, så fasestrømmene bliver 13 A, 13 A og 6 A.",
+      "C": "Ingen flytning, da 16 A, 10 A og 6 A allerede er bedst.",
+      "D": "Til L2 sammen med 3 A fra L3, så strømmene bliver 13, 16 og 3 A."
+     },
+     "facit": "A",
+     "begrundelse": "I_N: A = 3,6 A, B = 7,0 A, C = 8,7 A, D = 11,8 A (D giver fasestrømmene 13, 16 og 3 A)."
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Salonen har mange ikke-lineære laster (LED-drivere, hårtørrere med elektronik, ladere). Hvad betyder det for nullederen, og hvad gør du i projekteringen af den nye forsyning?",
+     "kriterier": [
+      "Forklarer, at 3. harmoniske (og ulige multipla af 3) fra de tre faser lægger sig sammen i nullederen, så nulstrømmen kan blive større end beregnet ud fra ubalancen alene, og evt. større end fasestrømmene.",
+      "Nullederen må derfor ikke reduceres i tværsnit i forhold til faselederne, og den kan skulle dimensioneres eller beskyttes efter den forventede nulstrøm.",
+      "Nævner måling af fase- og nulstrømme med et true-RMS-instrument eller en netanalysator for at kende den reelle belastning."
+     ]
+    }
+   ],
+   "begrundelse": "Nulstrøm i et 4-leder-system med ohmske 1-fasede laster og faseforskydning 120°. Ligelig fordeling af lasterne mindsker nulstrømmen. Harmoniske strømme af 3. orden adderes i nullederen (DS/HD 60364-5-52, princip for nullederens tværsnit ved harmoniske).",
+   "kilde": "Formel: I_N = √(I1² + I2² + I3² − I1·I2 − I2·I3 − I3·I1) for ohmske laster i et symmetrisk 3-faset net; DS/HD 60364-5-52 om nullederens tværsnit ved harmoniske (princip). Beregnet med Python.",
+   "status": "V 2026-10-18",
+   "niveau": "mester"
+  },
+  {
+   "id": "EL-213",
+   "maal": [
+    "EL-AK-02",
+    "EL-AK-11"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "En ny 3-faset stikledning (400 V mellem faser) til et lille værksted er et 4 × 50 mm² Al-kabel med længden 60 m. Kablets data ved driftstemperatur er R = 0,641 Ω/km og X = 0,080 Ω/km pr. leder. Belastningen er 63 A pr. fase ved cos φ = 0,90 (induktiv) og symmetrisk. Beregn spændingsfaldet mellem faser med ΔU = √3 · I · L · (R · cos φ + X · sin φ). Angiv svaret i V.",
+   "facit": {
+    "vaerdi": 4.01,
+    "enhed": "V",
+    "tolerance_pct": 3
+   },
+   "begrundelse": "sin φ = 0,436. ΔU = √3 · 63 · 0,060 · (0,641 · 0,90 + 0,080 · 0,436) = 4,01 V (ca. 1,0 % af 400 V).",
+   "kilde": "Formel: ΔU = √3 · I · L · (R cos φ + X sin φ) for symmetrisk 3-faset last. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-219",
+   "maal": [
+    "EL-AK-11"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "En 3-faset elvandvarmer har tre ens varmelegemer på hver 52,9 Ω. Den er beregnet til stjernekobling (Y) på et 400/230 V-net. Ved en reparation bliver varmelegemerne fejlagtigt koblet i trekant (D) på samme net. Beregn den samlede effekt i trekantkobling. Varmelegemerne er rent ohmske, og modstanden antages konstant. Angiv svaret i kW.",
+   "facit": {
+    "vaerdi": 9.07,
+    "enhed": "kW",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "I Y: 3 · 230² / 52,9 = 3,0 kW. I D ligger hvert legeme på 400 V: 3 · 400² / 52,9 = 9,07 kW, dvs. tre gange så meget.",
+   "kilde": "Formel: P = 3 · U² / R med U = fasespænding (Y) eller spænding mellem faser (D). Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-220",
+   "maal": [
+    "EL-AK-11",
+    "EL-AK-02"
+   ],
+   "saet": "holdout",
+   "type": "case",
+   "spoergsmaal": "I et lille snedkerværksted skal en ny 3-faset asynkronmotor til en udsugningsventilator monteres. Mærkepladen angiver 7,5 kW (akseleffekt), 400 V, 4-polet, 1460 o/min. Ved prøvekørsel ved mærkelast måler du U = 400 V mellem faser, I = 14,2 A i hver fase og cos φ = 0,84.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn motorens akselmoment ved mærkedrift. Angiv svaret i Nm.",
+     "facit": {
+      "vaerdi": 49.1,
+      "enhed": "Nm",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "M = P / ω = 7500 / (2π · 1460 / 60) = 49,1 Nm."
+    },
+    {
+     "del": "b",
+     "type": "tal",
+     "spoergsmaal": "Beregn den reaktive effekt, motoren optager fra nettet ved prøvekørslen, ud fra de målte værdier. Angiv svaret i kvar.",
+     "facit": {
+      "vaerdi": 5.34,
+      "enhed": "kvar",
+      "tolerance_pct": 2
+     },
+     "begrundelse": "sin φ = √(1 − 0,84²) = 0,543. Q = √3 · 400 · 14,2 · 0,543 = 5,34 kvar."
+    },
+    {
+     "del": "c",
+     "type": "valg",
+     "spoergsmaal": "Hvilken energieffektivitetsklasse skal motoren mindst opfylde, når den bringes i omsætning i EU i 2026 (forordning (EU) 2019/1781)? Motoren er ikke bremsemotor og ikke Ex-motor.",
+     "valgmuligheder": {
+      "A": "IE2",
+      "B": "IE3",
+      "C": "IE4",
+      "D": "IE5"
+     },
+     "facit": "B",
+     "begrundelse": "Forordning (EU) 2019/1781, bilag I, pkt. 1: 3-fasede motorer 0,75–1000 kW med 2–8 poler skal mindst være IE3 fra 1/7-2021. IE4 kræves fra 1/7-2023 kun for 75–200 kW med 2, 4 eller 6 poler."
+    }
+   ],
+   "begrundelse": "Beregning af moment og reaktiv effekt samt ecodesignkrav til motorer.",
+   "kilde": "Formler: M = P/(2π·n/60), Q = √3·U·I·sin φ. Forordning (EU) 2019/1781 bilag I, pkt. 1, https://eur-lex.europa.eu/legal-content/DA/TXT/?uri=CELEX:32019R1781. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-221",
+   "maal": [
+    "EL-AK-12"
+   ],
+   "saet": "udvikling",
+   "type": "fri",
+   "spoergsmaal": "Din virksomhed har el-entreprisen i en ombygning, hvor en villa bliver til et revisorkontor. Bygherrens rådgiver og den senere driftsherre skal kunne bruge jeres dokumentation. Beskriv, hvilken teknisk dokumentation (tegninger og skemaer) du udarbejder for el-installationen, og hvordan du sikrer, at den passer med det udførte.",
+   "facit": null,
+   "kriterier": [
+    "Nævner installationstegninger (plan) med placering af tavler, udtag, armaturer og gruppenumre.",
+    "Nævner, at tegningerne bruger standardiserede symboler, fx efter DS/EN 60617.",
+    "Nævner et oversigts- eller enstregsskema for tavlerne med beskyttelsesudstyr, RCD'er og kabeltværsnit.",
+    "Nævner, at tavlens mærkning af grupper og sikringer svarer til skemaerne, så hver gruppe kan identificeres entydigt.",
+    "Nævner, at dokumentationen opdateres til 'som udført' med revisionsangivelse (fx revisionsbogstav og dato), inden den afleveres."
+   ],
+   "begrundelse": "Installationsbekendtgørelsen § 30 (entydig mærkning af koblings- og beskyttelsesudstyr) og § 31 (mærkning af største mærkestrøm). Symbolstandarden er DS/EN 60617 (princip).",
+   "kilde": "BEK nr. 1082/2016 §§ 30–31, https://www.retsinformation.dk/eli/lta/2016/1082; DS/EN 60617 (grafiske symboler til diagrammer, princip)",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-222",
+   "maal": [
+    "EL-AK-12"
+   ],
+   "saet": "holdout",
+   "type": "valg",
+   "spoergsmaal": "En tysk underleverandør har udført en del af en el-installation i et dansk erhvervsbyggeri efter en løsning, der ikke følger de standarder, reglerne henviser til. Dokumentationen for, at sikkerhedskravet alligevel er opfyldt, foreligger kun på tysk. Hvad kræver elsikkerhedsloven?",
+   "valgmuligheder": {
+    "A": "Dokumentationen skal foreligge på dansk eller engelsk.",
+    "B": "Dokumentationen skal foreligge på dansk, men ikke andre sprog.",
+    "C": "Tysk er tilladt, da det er et officielt sprog i EU.",
+    "D": "Kun en dansk resumé er krævet, resten må være på tysk."
+   },
+   "facit": "A",
+   "begrundelse": "Elsikkerhedsloven § 7, stk. 2: Anvendes standarderne ikke eller kun delvist, skal det kunne dokumenteres, hvordan sikkerhedskravet i § 3 er opfyldt. Dokumentationen skal foreligge på dansk eller engelsk.",
+   "kilde": "LBK nr. 57/2026 (elsikkerhedsloven) § 7, stk. 2, https://www.retsinformation.dk/eli/lta/2026/57",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-223",
+   "maal": [
+    "EL-AK-12",
+    "EL-AK-01"
+   ],
+   "saet": "udvikling",
+   "type": "case",
+   "spoergsmaal": "Du overtager dokumentationen for en gruppetavle i et rækkehus, hvor der er lavet tilbygning. Tavleoversigten (rev. B, 2019) lyder: Gr. 1: lys/stik stue, 1,5 mm², C10, maks. 13 A. Gr. 2: stik køkken, 2,5 mm², C16, maks. 20 A. Gr. 3: opvaskemaskine, 2,5 mm², C16, maks. 20 A. Gr. 4: tilbygning (ny), 1,5 mm², C16, maks. 16 A. Strømværdien (Iz) for 1,5 mm² er 15,5 A og for 2,5 mm² 21 A ved den aktuelle installationsmåde. Regn med ρ = 0,0225 Ω·mm²/m.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "valg",
+     "spoergsmaal": "Hvilken gruppe er dokumenteret og udført forkert i forhold til kravet In ≤ Iz?",
+     "valgmuligheder": {
+      "A": "Gruppe 1",
+      "B": "Gruppe 2",
+      "C": "Gruppe 3",
+      "D": "Gruppe 4"
+     },
+     "facit": "D",
+     "begrundelse": "Gruppe 4: In = 16 A > Iz = 15,5 A for 1,5 mm². Mærkningen 'maks. 16 A' er derfor også forkert. De øvrige grupper har In ≤ Iz."
+    },
+    {
+     "del": "b",
+     "type": "tal",
+     "spoergsmaal": "Gruppe 2 er 18 m lang (enkelt vej) og belastes med 13 A ved cos φ = 1. Beregn spændingsfaldet i gruppe 2 i procent af 230 V. Brug ΔU = 2 · I · L · ρ / A.",
+     "facit": {
+      "vaerdi": 1.83,
+      "enhed": "%",
+      "tolerance_pct": 3
+     },
+     "begrundelse": "ΔU = 2 · 13 · 18 · 0,0225 / 2,5 = 4,21 V = 1,83 % af 230 V."
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Den fejlbehæftede gruppe udbedres. Hvordan håndterer du dokumentstyringen af tavleoversigt og tegninger, så kunden og senere installatører kan stole på dokumentationen?",
+     "kriterier": [
+      "Opdaterer tavleoversigten og tegningerne til det udførte og giver dem en ny revision (fx rev. C) med dato og en kort beskrivelse af ændringen.",
+      "Sikrer, at den holdbare mærkning ved sikringen og i tavlen svarer til den nye dokumentation, fx største tilladte mærkestrøm.",
+      "Erstatter eller markerer den gamle revision som udgået, så der ikke er to gyldige versioner hos kunden eller i virksomheden.",
+      "Gemmer dokumentationen og verifikationen i virksomhedens kvalitetsledelsessystem, fx sammen med slutkontrollen."
+     ]
+    }
+   ],
+   "begrundelse": "Overstrømsbeskyttelse: In ≤ Iz. Mærkning: installationsbekendtgørelsen §§ 30–31. Opbevaring af dokumentation i KLS: BEK 725/2024 § 3.",
+   "kilde": "BEK nr. 1082/2016 §§ 30–31, https://www.retsinformation.dk/eli/lta/2016/1082; BEK nr. 725/2024 § 3, https://www.retsinformation.dk/eli/lta/2024/725. Formel: ΔU = 2·I·L·ρ/A. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-224",
+   "maal": [
+    "EL-AK-02"
+   ],
+   "saet": "holdout",
+   "type": "case",
+   "spoergsmaal": "En grundejerforening ejer belysningen på en 400 m lang sti, der er åben for offentligheden. Der er 20 armaturer af klasse I, jævnt fordelt langs stien og forsynet 1-faset 230 V fra et kabelskab i den ene ende med et 3 × 10 mm² Cu-kabel. Gruppen har ingen RCD. Flere armaturer er defekte, og foreningen vil skifte dem til LED. Hvert nyt LED-armatur optager 0,25 A ved cos φ = 1.",
+   "dele": [
+    {
+     "del": "a",
+     "type": "tal",
+     "spoergsmaal": "Beregn spændingsfaldet ved det fjerneste armatur, når alle 20 LED-armaturer er tændt. Armaturerne står med lige stor afstand, og det fjerneste sidder i stiens ende. Regn med jævnt fordelt last og med ρ = 0,0225 Ω·mm²/m, fase og nul. Angiv svaret i % af 230 V.",
+     "facit": {
+      "vaerdi": 2.0,
+      "enhed": "%",
+      "tolerance_pct": 4
+     },
+     "begrundelse": "I = 20 · 0,25 = 5 A. Ved jævnt fordelt last regnes lasten samlet midt på strækningen (200 m): ΔU = 2 · 5 · 200 · 0,0225 / 10 = 4,5 V = 1,96 % af 230 V. Regnet eksakt for 20 armaturer med 20 m afstand (tyngdepunkt 210 m) bliver det 2,05 %. Begge godkendes."
+    },
+    {
+     "del": "b",
+     "type": "valg",
+     "spoergsmaal": "Foreningen vil skifte seks defekte armaturer til nye LED-armaturer af klasse I af en anden type end de eksisterende og uden at indføre RCD. Hvad gælder efter installationsbekendtgørelsen?",
+     "valgmuligheder": {
+      "A": "Den del af anlægget, hvor de nye armaturer indgår, betragtes som ny og skal opfylde kravene til nye installationer.",
+      "B": "Det er tilladt, fordi reparation af et eksisterende anlæg altid må udføres efter reglerne på opførelsestidspunktet.",
+      "C": "Det er tilladt, når de nye armaturer har samme effekt, lysfordeling og kapslingsklasse som de eksisterende armaturer.",
+      "D": "Det er kun tilladt, når hele stibelysningen samtidig omlægges til TN-system med en ny jordelektrode i kabelskabet."
+     },
+     "facit": "A",
+     "begrundelse": "§ 74: Ved reparation eller vedligeholdelse af belysningsanlæg på offentligt tilgængelige områder skal der bruges identiske armaturer eller enkeltdele, armaturer af klasse II eller supplerende beskyttelse med RCD efter § 35. Opfyldes det ikke, betragtes den del af anlægget som ny."
+    },
+    {
+     "del": "c",
+     "type": "fri",
+     "spoergsmaal": "Giv foreningen et samlet forslag til renoveringen af stibelysningen, så anlægget bliver lovligt, driftssikkert og energieffektivt.",
+     "kriterier": [
+      "Vælger en lovlig løsning for de nye armaturer, fx armaturer af klasse II eller supplerende beskyttelse med RCD højst 30 mA.",
+      "Vurderer det eksisterende kabel og samlingerne, fx ved isolationsmåling og eftersyn af armaturernes tilslutning, før det genbruges.",
+      "Foreslår en energieffektiv styring, fx skumringsrelæ, tidsur eller dæmpning om natten.",
+      "Nævner verifikation af det udførte og opdatering af dokumentationen for anlægget."
+     ]
+    }
+   ],
+   "begrundelse": "Installationsbekendtgørelsen § 74 (reparation af belysningsanlæg på offentligt tilgængelige områder) og § 35. Spændingsfald ved jævnt fordelt last regnes med lasten samlet midt på strækningen.",
+   "kilde": "BEK nr. 1082/2016 §§ 2, nr. 1, 35 og 74, https://www.retsinformation.dk/eli/lta/2016/1082. Formel: ΔU = 2·I·(L/2)·ρ/A ved jævnt fordelt last. Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-226",
+   "maal": [
+    "EL-AK-03"
+   ],
+   "saet": "udvikling",
+   "type": "fri",
+   "spoergsmaal": "Et mindre advokatkontor (ca. 300 m², 12 rum) i en ældre villa skal have ny belysning og et nyt ventilationsanlæg. Ejeren ønsker, at lys og ventilation styres automatisk efter brugen af rummene, så energiforbruget falder. Ventilationsfirmaet leverer aggregatet med egen styring. Beskriv, hvordan du som el-installatør projekterer styringen, og hvordan du samarbejder med ventilationsfirmaet.",
+   "facit": null,
+   "kriterier": [
+    "Foreslår behovsstyring af lyset, fx tilstedeværelsesfølere, dagslysregulering eller dæmpbare armaturer via et styresystem som DALI eller KNX.",
+    "Foreslår behovsstyring af ventilationen, fx efter tilstedeværelse, CO₂ eller tidsprogram.",
+    "Aftaler signalet mellem el-styringen og aggregatet, fx potentialfri kontakt, 0–10 V eller en busprotokol som Modbus.",
+    "Aftaler grænseflader og ansvarsfordeling med ventilationsfirmaet skriftligt, fx hvem leverer følere, kabler og programmering.",
+    "Tager stilling til placering af styringskomponenterne, fx en samlet styretavle eller aktuatorer i gruppetavlen."
+   ],
+   "begrundelse": "Fagligt skøn om bygningsautomation på mindre anlæg. BR18 § 295, stk. 3 beskriver de funktioner, bygningsautomatik skal have i store bygninger (energiovervågning, behovsstyring, fejlmelding). Kravet gælder ikke her (under 290 kW), men principperne bruges som god praksis.",
+   "kilde": "BR18 kap. 11 § 295, stk. 3 (princip), https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/295_296/",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-227",
+   "maal": [
+    "EL-AK-01"
+   ],
+   "saet": "holdout",
+   "type": "fri",
+   "spoergsmaal": "Loftet i et 1½-plans hus fra 1938 efterisoleres af en tømrer med 300 mm mineraluld og ny dampspærre. Under loftet sidder 18 indbyggede halogenspots, og der ligger gamle kabler og samledåser i isoleringslaget. Bygherren beder dig deltage i projekteringen med tømreren. Hvad skal du som el-installatør sikre, og hvad aftaler du med tømreren?",
+   "facit": null,
+   "kriterier": [
+    "Vurderer spots og andet varmeafgivende materiel i isoleringen, fx at de skal være egnet til tildækning med isolering efter fabrikantens anvisning, eller erstattes, eller have afstand/afskærmning.",
+    "Tager hensyn til, at kabler i isolering får dårligere varmeafgivelse, fx ved at kontrollere tværsnit og belastning eller flytte kablerne ud af isoleringen.",
+    "Sikrer, at samledåser forbliver tilgængelige eller flyttes, så forbindelserne ikke bliver begravet i isoleringen.",
+    "Aftaler med tømreren, hvordan gennemføringer i dampspærren udføres tæt, fx ved et installationslag (servicehulrum) under dampspærren eller tætningsmanchetter."
+   ],
+   "begrundelse": "Installationsbekendtgørelsen § 17, stk. 2 (miljømæssige forhold i levetiden), § 18, stk. 2 (installation efter fabrikantens instruktioner), § 20 (tværsnit efter installationsmåde), § 21 (ingen gensidig skadelig påvirkning mellem installationer og objekter) og § 23 (adgang til forbindelser).",
+   "kilde": "BEK nr. 1082/2016 §§ 17, 18, 20, 21 og 23, https://www.retsinformation.dk/eli/lta/2016/1082",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-228",
+   "maal": [
+    "EL-AK-11",
+    "EL-AK-01"
+   ],
+   "saet": "udvikling",
+   "type": "tal",
+   "spoergsmaal": "Et PVC-isoleret Cu-kabel skal kunne tåle en kortslutning, indtil beskyttelsen har afbrudt. Den forventede kortslutningsstrøm er 1,2 kA, og udkoblingstiden er 0,1 s. Brug den adiabatiske betingelse S ≥ √(I² · t) / k med k = 115 A·√s/mm². Beregn det mindste tværsnit. Angiv svaret i mm².",
+   "facit": {
+    "vaerdi": 3.3,
+    "enhed": "mm²",
+    "tolerance_pct": 2
+   },
+   "begrundelse": "S = √(1200² · 0,1) / 115 = 379,5 / 115 = 3,30 mm². Nærmeste standardtværsnit over er 4 mm².",
+   "kilde": "Formel: adiabatisk opvarmning ved kortslutning, S = √(I²t)/k (DS/HD 60364-4-43 og -5-54, princip; k for PVC/Cu er givet i opgaven). Beregnet med Python.",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  },
+  {
+   "id": "EL-229",
+   "maal": [
+    "EL-AK-08"
+   ],
+   "saet": "udvikling",
+   "type": "fri",
+   "spoergsmaal": "Din virksomhed har lavet en ny elinstallation i en lille metalvirksomhed med 6 ansatte: hovedtavle, to undertavler, 3-fasede maskiner, CEE-stikkontakter og belysning i hallen. Ejeren beder om en vedligeholdelsesplan for elinstallationen, som hans værkfører kan følge. Beskriv planens indhold, og hvordan du afleverer den.",
+   "facit": null,
+   "kriterier": [
+    "Gør det klart, at ejeren eller brugeren af installationen er ansvarlig for forsvarlig drift og vedligehold.",
+    "Planen har konkrete opgaver med intervaller, fx afprøvning af RCD'er med testknappen, eftersyn af tavler og stikkontakter og kontrol af forbindelser (fx termografi).",
+    "Planen beskriver, hvordan udførte eftersyn registreres, fx i en logbog.",
+    "Planen angiver, at fejl, der kræver indgreb i installationen, udbedres af en autoriseret elinstallatørvirksomhed.",
+    "Planen gennemgås med værkføreren ved afleveringen."
+   ],
+   "begrundelse": "Elsikkerhedsloven § 10: Ejeren eller brugeren er ansvarlig for, at installationen drives og vedligeholdes forsvarligt og skal lade fejl og mangler afhjælpe snarest muligt.",
+   "kilde": "LBK nr. 57/2026 (elsikkerhedsloven) § 10, https://www.retsinformation.dk/eli/lta/2026/57",
+   "niveau": "mester",
+   "status": "V 2026-10-18"
+  }
+ ]
+}

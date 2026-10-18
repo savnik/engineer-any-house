@@ -34,7 +34,9 @@ import threading
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 EXAM_DIR = ROOT / "eksamen"
-TYPES = {"valg", "tal", "fri"}
+TYPES = {"valg", "tal", "fri", "case"}
+PART_TYPES = {"valg", "tal", "fri"}
+CASE_PASS_SHARE = 0.6  # like the written trade exams: about 60 of 100 points to pass
 SETS = {"udvikling", "holdout"}
 LEVELS = {"svend", "mester"}
 ROLES = {"i", "uden"}
@@ -43,6 +45,9 @@ ANSWER_INSTRUCTIONS = {
     "valg": "Afslut med én linje i formatet `SVAR: <bogstav>`.",
     "tal": "Vis kort beregningen, og afslut med én linje i formatet `SVAR: <tal> <enhed>`.",
     "fri": "Svar fagligt og konkret, højst ca. 300 ord.",
+    "case": "Besvar hver del under overskriften 'Del <bogstav>'. Afslut regnedele med én linje "
+            "`SVAR <bogstav>: <tal> <enhed>` og valgdele med `SVAR <bogstav>: <bogstav for svaret>`. "
+            "Skøn- og rådgivningsdele besvares fagligt og konkret med højst ca. 200 ord pr. del.",
 }
 EXAM_PREAMBLE = (
     "Dette er en skriftlig eksamensopgave. Besvar den, som du ville gøre det over for en censor, og ud fra "
@@ -68,6 +73,23 @@ BESVARELSE:
 Bedøm det faglige indhold. Henvisninger i parentes i et kriterium (paragraffer, normer, afsnit) er censorens kilde og skal ikke citeres i besvarelsen, medmindre kriteriet udtrykkeligt kræver en henvisning. Et fagligt korrekt svar, der siger det samme med andre ord, opfylder kriteriet. Et forsigtigt forbehold er ikke en fejl.
 
 Tag stilling til hvert kriterium med én linje (`K1: ja|nej – kort begrundelse`). Afslut med præcis én linje: `DOM: BESTÅET` eller `DOM: IKKE BESTÅET`."""
+
+
+CASE_GRADER_PROMPT = """Du er censor ved en dansk mesterprøve. Bedøm kun de nævnte dele af besvarelsen strengt efter deres kriterier.
+
+Bedøm det faglige indhold. Henvisninger i parentes i et kriterium er censorens kilde og skal ikke citeres, medmindre kriteriet udtrykkeligt kræver en henvisning. Et fagligt korrekt svar med andre ord opfylder kriteriet.
+
+CASE:
+{question}
+
+{parts}
+
+BESVARELSE:
+<<<
+{answer}
+>>>
+
+For hver del: én linje pr. kriterium (`<del>K1: ja|nej – kort begrundelse`) og derefter præcis én linje `DOM <del>: BESTÅET` eller `DOM <del>: IKKE BESTÅET`. En del er kun bestået, hvis alle dens kriterier er opfyldt og intet af dens 'ikke bestået'-forhold gælder."""
 
 
 # ---------- loading and validation ----------
@@ -143,26 +165,32 @@ def validate(trade: str) -> tuple[list[str], list[str]]:
                 coverage[gid].add(t.get("saet", ""))
                 if goal_by_id[gid].get("rolle") == "uden":
                     warnings.append(f"{where}: tester {gid}, som er uden for rollen")
-        if t.get("type") == "valg":
-            options = t.get("valgmuligheder") or {}
-            if len(options) < 3:
-                errors.append(f"{where}: valg kræver mindst 3 valgmuligheder")
-            if t.get("facit") not in options:
-                errors.append(f"{where}: facit '{t.get('facit')}' er ikke en valgmulighed")
-        elif t.get("type") == "tal":
-            f = t.get("facit")
-            if not isinstance(f, dict) or not isinstance(f.get("vaerdi"), (int, float)):
-                errors.append(f"{where}: tal kræver facit {{vaerdi, enhed, tolerance_pct}}")
-            elif not isinstance(f.get("tolerance_pct", 0), (int, float)):
-                errors.append(f"{where}: tolerance_pct skal være et tal")
-        elif t.get("type") == "fri":
-            if not t.get("kriterier"):
-                errors.append(f"{where}: fri kræver 'kriterier'")
+        if t.get("type") == "case":
+            parts = t.get("dele") or []
+            if len(parts) < 2:
+                errors.append(f"{where}: case kræver mindst 2 dele")
+            labels = [d.get("del") for d in parts]
+            if len(set(labels)) != len(labels) or not all(isinstance(x, str) and re.fullmatch(r"[a-h]", x)
+                                                            for x in labels):
+                errors.append(f"{where}: case-delene skal have unikke bogstaver a–h i 'del'")
+            for d in parts:
+                if d.get("type") not in PART_TYPES:
+                    errors.append(f"{where}/{d.get('del')}: ugyldig deltype '{d.get('type')}'")
+                elif not d.get("spoergsmaal"):
+                    errors.append(f"{where}/{d.get('del')}: mangler 'spoergsmaal'")
+                else:
+                    errors += validate_answer_spec(d, f"{where}/{d.get('del')}")
+        elif t.get("type") in PART_TYPES:
+            errors += validate_answer_spec(t, where)
         if not str(t.get("status", "")).startswith(("V", "T")):
             errors.append(f"{where}: status skal begynde med V eller T")
         elif str(t.get("status")).startswith("T"):
             warnings.append(f"{where}: facit er ikke verificeret (T)")
-    choices = [t for t in tasks if t.get("type") == "valg" and t.get("facit") in (t.get("valgmuligheder") or {})]
+    items = tasks + [d for t in tasks if t.get("type") == "case" for d in (t.get("dele") or [])]
+    for t in tasks:
+        if t.get("type") == "case":
+            warnings += [f"{trade}/{t.get('id')}: {w}" for w in case_leaks(t)]
+    choices = [t for t in items if t.get("type") == "valg" and t.get("facit") in (t.get("valgmuligheder") or {})]
     if len(choices) >= 10:
         longest = sum(1 for t in choices
                       if len(t["valgmuligheder"][t["facit"]]) == max(len(v) for v in t["valgmuligheder"].values()))
@@ -179,6 +207,65 @@ def validate(trade: str) -> tuple[list[str], list[str]]:
 
 
 # ---------- rendering ----------
+
+def number_forms(value: float) -> set[str]:
+    """Ways a number may be written in Danish or English text (e.g. 0,4 / 0.4; 1.500 / 1500)."""
+    forms = set()
+    for digits in (0, 1, 2, 3):
+        s = f"{value:.{digits}f}"
+        if float(s) == round(value, digits) and abs(float(s) - value) < 1e-9:
+            forms |= {s, s.replace(".", ",")}
+    whole = f"{value:,.0f}" if float(value).is_integer() else ""
+    if whole and abs(value) >= 1000:
+        forms |= {whole.replace(",", "."), whole.replace(",", " ")}
+    return {f for f in forms if len(f.replace(",", "").replace(".", "")) >= 2}
+
+
+def case_leaks(task: dict) -> list[str]:
+    """Later parts are shown together with earlier ones; flag text that repeats an earlier part's key."""
+    leaks = []
+    parts = task.get("dele") or []
+    for i, d in enumerate(parts):
+        later = " ".join(x.get("spoergsmaal", "") + " " + " ".join((x.get("valgmuligheder") or {}).values())
+                         for x in parts[i + 1:])
+        if not later:
+            continue
+        if d.get("type") == "tal" and isinstance((d.get("facit") or {}).get("vaerdi"), (int, float)):
+            for form in number_forms(float(d["facit"]["vaerdi"])):
+                if re.search(rf"(?<![\d,.]){re.escape(form)}(?![\d])", later):
+                    leaks.append(f"del {d.get('del')}: facit {form} står i en senere del")
+                    break
+        if d.get("type") == "valg" and d.get("facit") in (d.get("valgmuligheder") or {}):
+            key = d["valgmuligheder"][d["facit"]].lower()
+            words = re.findall(r"\w{4,}", key)
+            for n in range(min(len(words), 4), 2, -1):
+                hit = next((" ".join(words[j:j + n]) for j in range(len(words) - n + 1)
+                            if " ".join(words[j:j + n]) in " ".join(re.findall(r"\w{4,}", later.lower()))), None)
+                if hit:
+                    leaks.append(f"del {d.get('del')}: facit ('{hit}') går igen i en senere del")
+                    break
+    return leaks
+
+
+def validate_answer_spec(t: dict, where: str) -> list[str]:
+    """Checks the key of one choice, number or free-text item (a task or a case part)."""
+    errors = []
+    if t["type"] == "valg":
+        options = t.get("valgmuligheder") or {}
+        if len(options) < 3:
+            errors.append(f"{where}: valg kræver mindst 3 valgmuligheder")
+        if t.get("facit") not in options:
+            errors.append(f"{where}: facit '{t.get('facit')}' er ikke en valgmulighed")
+    elif t["type"] == "tal":
+        f = t.get("facit")
+        if not isinstance(f, dict) or not isinstance(f.get("vaerdi"), (int, float)):
+            errors.append(f"{where}: tal kræver facit {{vaerdi, enhed, tolerance_pct}}")
+        elif not isinstance(f.get("tolerance_pct", 0), (int, float)):
+            errors.append(f"{where}: tolerance_pct skal være et tal")
+    elif t["type"] == "fri" and not t.get("kriterier"):
+        errors.append(f"{where}: fri kræver 'kriterier'")
+    return errors
+
 
 def render(trade: str, with_key: bool) -> str:
     goals, tasks = load_trade(trade)
@@ -199,6 +286,13 @@ def render(trade: str, with_key: bool) -> str:
         out += ["", t["spoergsmaal"], ""]
         for k, v in (t.get("valgmuligheder") or {}).items():
             out.append(f"- **{k}** {v}")
+        for d in t.get("dele") or []:
+            out += ["", f"**Del {d['del']}** ({d['type']}): {d['spoergsmaal']}"]
+            out += [f"  - **{k}** {v}" for k, v in (d.get("valgmuligheder") or {}).items()]
+            if with_key:
+                out.append(f"  - Facit: {format_key(d)}")
+                out += [f"  - Kriterium: {c}" for c in d.get("kriterier", [])]
+                out += [f"  - Ikke bestået hvis: {c}" for c in d.get("fail_hvis", [])]
         if with_key:
             out += ["", f"**Facit:** {format_key(t)}"]
             if t.get("kriterier"):
@@ -218,6 +312,8 @@ def format_key(t: dict) -> str:
         return str(f)
     if t["type"] == "tal":
         return f"{f['vaerdi']} {f.get('enhed', '')} (±{f.get('tolerance_pct', 0)} %)"
+    if t["type"] == "case":
+        return f"bestået ved mindst {round(100 * t.get('bestaa_andel', CASE_PASS_SHARE))} % af delene"
     return "efter kriterierne"
 
 
@@ -229,8 +325,12 @@ LIMIT_RE = re.compile(r"hit your (session|usage|weekly) limit|rate.?limit|overlo
 ANSWER_RE = re.compile(r"^\W*SVAR\W*:\s*(.+?)\s*$", re.IGNORECASE | re.MULTILINE)
 
 
-def extract_answer(text: str) -> str | None:
-    matches = ANSWER_RE.findall(text or "")
+def extract_answer(text: str, part: str = "") -> str | None:
+    if part:
+        pattern = re.compile(rf"^\W*SVAR\s*{re.escape(part)}\W*:\s*(.+?)\s*$", re.IGNORECASE | re.MULTILINE)
+        matches = pattern.findall(text or "")
+    else:
+        matches = [m for m in ANSWER_RE.findall(text or "") if not re.match(r"[a-h]\W*:", m, re.IGNORECASE)]
     return matches[-1].strip("*`_ ") if matches else None
 
 
@@ -252,8 +352,8 @@ def parse_number(s: str) -> float | None:
         return None
 
 
-def grade_choice(task: dict, text: str) -> tuple[bool, str]:
-    ans = extract_answer(text)
+def grade_choice(task: dict, text: str, part: str = "") -> tuple[bool, str]:
+    ans = extract_answer(text, part)
     if ans is None:
         return False, "ingen SVAR-linje"
     letter = re.match(r"([A-Za-z])\b", ans)
@@ -261,8 +361,8 @@ def grade_choice(task: dict, text: str) -> tuple[bool, str]:
     return got == str(task["facit"]).upper(), f"svarede {got}, facit {task['facit']}"
 
 
-def grade_number(task: dict, text: str) -> tuple[bool, str]:
-    ans = extract_answer(text)
+def grade_number(task: dict, text: str, part: str = "") -> tuple[bool, str]:
+    ans = extract_answer(text, part)
     if ans is None:
         return False, "ingen SVAR-linje"
     value = parse_number(ans)
@@ -338,12 +438,13 @@ def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, re
     return dst
 
 
-def shuffled_options(task: dict) -> tuple[dict, str]:
+def shuffled_options(task: dict, seed: str = "") -> tuple[dict, str]:
     """Options in a stable, id-seeded order relabelled A, B, C ... and the relabelled key.
 
     Authors tend to put the key in the same position; shuffling at run time removes that cue."""
+    seed = seed or task["id"]
     items = sorted(task["valgmuligheder"].items(),
-                   key=lambda kv: hashlib.sha256(f"{task['id']}:{kv[0]}".encode()).hexdigest())
+                   key=lambda kv: hashlib.sha256(f"{seed}:{kv[0]}".encode()).hexdigest())
     labels = [chr(ord("A") + i) for i in range(len(items))]
     key = next(lbl for lbl, (orig, _) in zip(labels, items) if orig == task["facit"])
     return {lbl: text for lbl, (_, text) in zip(labels, items)}, key
@@ -354,6 +455,11 @@ def build_prompt(task: dict) -> str:
     if task["type"] == "valg":
         options, _ = shuffled_options(task)
         parts += [""] + [f"{k}) {v}" for k, v in options.items()]
+    for d in task.get("dele") or []:
+        parts += ["", f"Del {d['del']}) {d['spoergsmaal']}"]
+        if d["type"] == "valg":
+            options, _ = shuffled_options(d, f"{task['id']}/{d['del']}")
+            parts += [f"   {k}) {v}" for k, v in options.items()]
     parts += ["", ANSWER_INSTRUCTIONS[task["type"]]]
     return "\n".join(parts)
 
@@ -401,6 +507,8 @@ def grade(task: dict, text: str, work: pathlib.Path, args) -> dict:
     if task["type"] == "tal":
         ok, note = grade_number(task, text)
         return {"bestaaet": ok, "note": note}
+    if task["type"] == "case":
+        return grade_case(task, text, work, args)
     grader = GRADER_PROMPT.format(
         question=task["spoergsmaal"],
         criteria="\n".join(f"K{i}. {c}" for i, c in enumerate(task["kriterier"], 1)),
@@ -413,6 +521,44 @@ def grade(task: dict, text: str, work: pathlib.Path, args) -> dict:
     ok, note = grade_verdict(g.get("result", ""))
     return {"bestaaet": ok, "note": note, "bedoemmelse": g.get("result", ""),
             "pris_bedoemmelse": g.get("total_cost_usd") or 0}
+
+
+def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
+    """Each part is graded on its own; the case passes when the share of passed parts reaches bestaa_andel."""
+    results: dict[str, bool] = {}
+    notes = []
+    for d in task["dele"]:
+        if d["type"] == "valg":
+            _, key = shuffled_options(d, f"{task['id']}/{d['del']}")
+            results[d["del"]], note = grade_choice({**d, "facit": key}, text, d["del"])
+            notes.append(f"{d['del']}: {note.split(' (')[0]}")
+        elif d["type"] == "tal":
+            results[d["del"]], note = grade_number(d, text, d["del"])
+            notes.append(f"{d['del']}: {note}")
+    free = [d for d in task["dele"] if d["type"] == "fri"]
+    out = {"pris_bedoemmelse": 0}
+    if free:
+        parts = "\n\n".join(
+            f"DEL {d['del']}: {d['spoergsmaal']}\nKRITERIER:\n"
+            + "\n".join(f"{d['del']}K{i}. {c}" for i, c in enumerate(d["kriterier"], 1))
+            + "\nIKKE BESTÅET, hvis:\n" + ("\n".join(f"- {c}" for c in d.get("fail_hvis", [])) or "- (ingen)")
+            for d in free)
+        g = run_claude(CASE_GRADER_PROMPT.format(question=task["spoergsmaal"], parts=parts, answer=text), work,
+                       ["--tools", "", "--max-turns", "1", "--model", args.bedoemmer], args.timeout)
+        verdict = g.get("result") or ""
+        out["pris_bedoemmelse"] = g.get("total_cost_usd") or 0
+        if g.get("is_error") or "DOM" not in verdict:
+            return {**out, "bestaaet": False, "fejl": True, "note": "kørselsfejl i bedømmelsen: "
+                    + (g.get("fejl") or verdict[:120])}
+        out["bedoemmelse"] = verdict
+        for d in free:
+            m = re.findall(rf"DOM\s*{d['del']}\W*:\s*(IKKE BESTÅET|BESTÅET)", verdict, re.IGNORECASE)
+            results[d["del"]] = bool(m) and m[-1].upper() == "BESTÅET"
+            notes.append(f"{d['del']}: {m[-1].upper() if m else 'ingen dom'}")
+    share = sum(results.values()) / len(task["dele"])
+    passed = share >= task.get("bestaa_andel", CASE_PASS_SHARE)
+    return {**out, "bestaaet": passed, "point": round(share, 3), "dele": results,
+            "note": f"{sum(results.values())}/{len(task['dele'])} dele ({'; '.join(notes)})"}
 
 
 def cmd_regrade(args) -> int:
