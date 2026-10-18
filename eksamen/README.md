@@ -74,3 +74,47 @@ python3 scripts/exam.py rebedoem eksamen/el/results/<fil>.json --kun-fri   # ret
 Plugin-armen får læseadgang til sin plugin-kopi (`--add-dir`), men ikke til resten af filsystemet, så facit i `eksamen/` kan ikke læses. `--plugin-rev <commit>` kører pluginet, som det var i en git-revision. Det bruges til at måle en ændring af videnbasen før og efter under samme vilkår.
 
 Plugin-armen kører som standard **uden** fagagentens lokale hukommelse (`memory: user` fjernes i kopien). Eksamen måler altså pluginet alene: det, der er forankret i repoet, og ikke erfaringer fra brugerens egne sager i `~/.claude/agent-memory/`. `--med-hukommelse` måler plugin og lokal hukommelse samlet, fx for at se, hvad hukommelsen bidrager med, før den forankres. Agenten har under eksamen kun læseværktøjer, så den kan ikke skrive i hukommelsen.
+
+## Erfaringer: læs før du udbygger eller måler pluginet
+Målt 17.–18. okt. 2026 på el, vvs og ventilation (svende- og AK-niveau). Tallene står i `ARKITEKTUR.md`, afsnittet "Eksamenslag".
+
+### Hvad pluginet bidrager med
+- **Gevinsten kommer fra videnbasen og fra konkrete danske regler.** Det gælder grænseværdier, paragraffer og gør-det-selv-grænser, fx CO ≤ 500 ppm, 13 A foran 10 A-stikkontakter, T250-aftræk og Ik min = 5 × In. Dem gætter basismodellen forkert, og de koster dyrt i en sag. På svendesættene steg pluginet fra 80–86 % til 94 %. På holdout gik el fra 71 % i basis til 87 %.
+- **Agentprompten alene giver næsten intet.** Plugin uden adgang til videnbasen lå på niveau med basis.
+- **Mesterniveauet (AK) giver ingen gevinst.** Basis og plugin ligger ens, 86–94 %. Projektering, dimensionering og skøn kan modellen i forvejen. Byg ikke videnbase til mesterniveauet. Brug AK-sættene som regressionsværn.
+- **Pluginet koster næsten intet ekstra.** Det er lidt billigere pr. opgave end basis og ca. 3 s langsommere. Prisen pr. bestået opgave er den rigtige målestok for, om ny viden betaler sig.
+- **Eksamen måler ikke det hele.** Kontrol-loopet, sagsmappen og koordineringen mellem fag indgår ikke. Den værdi måles på rigtige sager med `forbrug.py --til/--siden` omkring en udgivelse, som returandel og forbrug.
+
+### Fremgangsmåde, når videnbasen skal udbygges
+1. Kør `koer <fag>` for udviklingssættet. Basis genbruges.
+2. Gennemgå hvert hul, og afgør, om det er et **reelt videnshul** eller en **fejl i rettemasken**: et kriterium, der er for snævert, sammensat eller fagligt forkert. Ca. halvdelen af hullerne i fri-opgaver var fejl i rettemasken. Når basis og plugin begge vælger samme forkerte svar, har modellen typisk en fast fejlopfattelse, men tjek facit først.
+3. Giv kun forfatteren af videnbasen udviklingsopgaverne, aldrig `eksamen/` og aldrig holdout. Udtræk hullerne til en fil.
+4. Efterprøv hver regel selv mod primærkilden. Skriv den generaliseret og kort, med V-mærke. Uden primærkilde skrives intet.
+5. **Tjek indgangene.** Agenten skal faktisk læse reglen. Gasreglerne blev fx først brugt, da agentprompten og `SKILL.md` pegede på dem, fordi agenten opfattede gas som uden for sit mandat.
+6. Kør `koer <fag> --kun-fejlede`. Kør derefter holdout med `--udgivelse --plugin-rev <før>` og igen med den nye version, så før og efter måles på lige vilkår.
+7. Stop, når prisen pr. bestået opgave ikke længere falder.
+
+### Faldgruber ved måling
+- **`dontAsk` og `--add-dir`.** `claude -p` i `dontAsk` afviser Read og Grep uden for arbejdsmappen. Uden `--add-dir` til plugin-kopien kan agenten ikke læse sin videnbase, og målingen tester kun prompten. Det er sket én gang. Testen `test_plugin_arm_can_read_its_plugin` dækker det nu.
+- **Agentens hukommelse.** Den indlæses kun med `--med-hukommelse`. Ellers måles pluginet med lokale erfaringer fra sagerne.
+- **Kontogrænsen.** Headless-kørsler deler kvote med sessionerne. Kør med højst `--parallel 2–3`. Ramte grænser markeres som kørselsfejl og tælles ikke med. Kør dem igen med `--id`.
+- **Støj.** Én kørsel giver ±2 fri-opgaver pr. sæt. Forskelle på en enkelt opgave er støj. Brug `--gentag-fri 3`, før du konkluderer.
+- **Censor-LLM'en.** Den krævede paragrafcitater, til det blev forbudt i censorprompten. Sammensatte kriterier får fagligt gode svar til at dumpe. Hold ét krav pr. kriterium. Brug `rebedoem`, når rettemasken ændres.
+- **Loftet.** Opgaverne er skrevet af samme modelfamilie, som tager eksamen. Især mesteropgaver bliver derfor nemme for modellen. Konkrete tal og paragraffer er sværere at gætte og giver bedre adskillelse. Vil du have et reelt mål på mesterniveau, skal opgaverne skrives eller gennemgås af en fagperson.
+
+### Faldgruber ved opgaveskrivning
+To uafhængige kontrolrunder pr. sæt er nødvendige. Første runde fandt 1–4 fagligt forkerte kriterier pr. sæt og mange lækager. Typiske fejl:
+- **Facit kan aflæses af formen.** Det er længst, det eneste med forbehold, eller altid B. Valgmulighederne blandes ved kørsel, og `tjek` advarer om længdebias.
+- **Lækage til holdout.** Et holdout-krav står som facit, distraktor eller begrundelse i en udviklingsopgave, også under et andet mål.
+- **En case afslører sig selv.** En senere del nævner svaret på en tidligere. `tjek` fanger direkte gentagelser, men ikke omskrivninger.
+- **Et kriterium forbyder et anerkendt råd.** Eksemplet er en midlertidig prop i gulvafløbet under skybrud.
+- **Forældede eller sekundære kilder.** Fx Bolius' gengivelse af gør-det-selv-reglerne, BEK-numre der er afløst, og regler med kommende udløbsdato (maskinforordningen 20/1-2027).
+
+### Pris (oktober 2026)
+| Hvad | Pris |
+|---|---|
+| Én opgave i én arm | ca. 0,07 $ |
+| Fuldt udviklingssæt pr. fag og arm | ca. 4–6 $ |
+| Før/efter for to fag på alle sæt | ca. 25 $ |
+| `--kun-fejlede` | cents |
+| Opgaveskrivning med to kontrolrunder | ca. 6–8 agentkørsler pr. sæt |

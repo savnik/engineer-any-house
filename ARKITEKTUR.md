@@ -131,6 +131,8 @@ Videnbasen voksede ca. 9 KB pr. fag (ca. 7 % dyrere pr. kald), men prisen pr. ri
 
 **Kendt faldgrube:** I `dontAsk`-tilstand afviser `claude -p` Read og Grep uden for arbejdsmappen. Uden `--add-dir` til plugin-kopien kan agenten ikke læse sin egen videnbase. De første målinger målte derfor kun agentprompten.
 
+**Konklusion og erfaringer:** Pluginet betaler sig gennem videnbasens konkrete danske regler, ikke gennem agentprompten og ikke på mesterniveau. Fremgangsmåde og faldgruber ved udbygning og måling står i `eksamen/README.md`, afsnittet "Erfaringer".
+
 **Læringsløkke:** huller i udviklingssættet → ny tekst i videnbasen via normal forankring (primærkilde, V/T, review) → ny kørsel. Holdout-sættet bruges kun til måling, så forbedringen kan måles på opgaver, videnbasen ikke er skrevet efter. Regressioner (basis består, plugin ikke) peger på tekst i videnbasen, der vildleder.
 
 ## Videnmodel
