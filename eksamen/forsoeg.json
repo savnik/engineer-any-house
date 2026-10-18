@@ -1647,6 +1647,192 @@
       "status": "forslag",
       "beslutning": null,
       "maalinger": {}
+    },
+    {
+      "id": "F-016",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Agenten bruger grundstandardens eksponeringsfaktor (Ce = 1,2 for afskærmet) til snelast, fordi videnbasen kun har s_k. DS/EN 1991-1-3 DK NA:2024 5.2(7) fastsætter Ce = Ctop·Cs med Ctop 0,8/1,0/1,25 (vindblæst/normal/afskærmet) og Cs efter bygningens størrelse (afskærmet 1,0). Ændring: én V-mærket række om Ce i normgrundlag.md (Laster) og 'snelast (Ce)' i SKILL.md-indgangen. Forventning: STAT-123 består (tal), ingen gruppe ned 2 eller flere, holdout-tal uændrede eller bedre, pris pr. bestået uændret inden for 10 % (ca. 300 B ekstra tekst).",
+      "aendring": "skills/statik-viden/references/normgrundlag.md: række om Ce efter DK NA 5.2(7). SKILL.md: indgang nævner snelast (Ce)",
+      "opgaver": [
+        "STAT-123"
+      ],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "5213943",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-195918-basis-udvikling.json",
+              "20261018-220541-plugin-alle-5213943.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.291,
+                  "pris_pr_bestaaet": 0.097,
+                  "sek_pr_opgave": 30.6
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.913,
+                  "pris_pr_bestaaet": 0.1142,
+                  "sek_pr_opgave": 23.5
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.466,
+                  "pris_pr_bestaaet": 0.0822,
+                  "sek_pr_opgave": 22.3,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.875,
+                  "pris_pr_bestaaet": 0.0647,
+                  "sek_pr_opgave": 18.9,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-132"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "b845df7",
+      "laering": "Ce for snelast i DK NA (Ctop·Cs, afskærmet 1,25) afløser grundstandardens tabel 5.1. Agenten brugte 1,2, indtil én V-mærket række i normgrundlag.md og en henvisning i SKILL.md kom ind. Herefter er svaret rigtigt, og prisen er uændret (+0,7 KB). Holdout flyttede sig ikke, så holdout-hullerne ligger ikke i snelast. Ny faldgrube: exam.py parse_number læser et dansk decimaltal med præcis tre decimaler (0,867) som 867. Talopgaver med facit under 1 og tre decimaler dumper derfor tilfældigt, alt efter hvor mange decimaler agenten skriver. Det skal rettes i et vaerktoej-forsøg, før talopgaver sammenlignes. Næste: F-013 (regn i hånden) oven på denne revision.",
+      "slut": "2026-10-18",
+      "vurdering": "uafklaret",
+      "begrundelse": "Reglen giver uafklaret (+0). Jeg afviger, fordi STAT-123 er en deterministisk tal-opgave, der gik fra 1,15 til 1,2 kN/m (facit) både i --kun-fejlede og i fuld eftermåling. Det er ikke støj fra fri-opgaver. Det eneste fald (STAT-132) er en parserfejl i exam.py: 'SVAR: 0,867' læses som 867, fordi parse_number tolker et dansk decimaltal med tre decimaler som engelsk tusindtalsadskillelse. Agentens svar var korrekt. Korrigeret er udvikling +1. Holdout er uændret (11/16), ingen gruppe faldt, og prisen pr. bestået er uændret. Reglen er verificeret mod primærkilden (DK NA:2024 5.2(7))."
+    },
+    {
+      "id": "F-017",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "exam.py parse_number tolker et dansk decimaltal med præcis tre decimaler (fx 0,867) som engelsk tusindtal (867), så korrekte talsvar dumper (STAT-132 i F-016). Rettelse: et komma efter et indledende 0 eller et enkelt ciffer er decimaltegn, og et tal med tusindtalskomma kræver et førende ciffer forskelligt fra 0. Tilføj en test. Kør rebedoem på seneste resultater. Forventning: STAT-132 og eventuelle holdout-tal består ved rebedoem, ingen andre ændringer.",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }

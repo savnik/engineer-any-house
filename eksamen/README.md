@@ -141,6 +141,8 @@ Målt 17.–18. okt. 2026 på el, vvs og ventilation (svende- og AK-niveau). Tal
 - **Kontogrænsen.** Headless-kørsler deler kvote med sessionerne. Kør med højst `--parallel 2–3`. Ramte grænser markeres som kørselsfejl og tælles ikke med. Kør dem igen med `--id`.
 - **Støj.** Én kørsel giver ±2 fri-opgaver pr. sæt. Forskelle på en enkelt opgave er støj. Brug `--gentag-fri 3`, før du konkluderer.
 - **Censor-LLM'en.** Den krævede paragrafcitater, til det blev forbudt i censorprompten. Sammensatte kriterier får fagligt gode svar til at dumpe. Hold ét krav pr. kriterium. Brug `rebedoem`, når rettemasken ændres.
+- **Talparseren.** `parse_number` læser et dansk decimaltal med præcis tre decimaler (`0,867`) som tusindtal (867). Et korrekt svar kan derfor dumpe. Se `exam.py svar`, før et fald på en talopgave tolkes som en regression (F-016, forslag F-017).
+- **Holdout-vagten gælder også underagenter.** CI-agenten kan i dag ikke få en underagent til at rette opgavefilerne, fordi vagten blokerer den også. Rettemaske- og opgaveforsøg kræver derfor en anden vej (F-014, forslag F-015).
 - **Loftet.** Opgaverne er skrevet af samme modelfamilie, som tager eksamen. Især mesteropgaver bliver derfor nemme for modellen. Konkrete tal og paragraffer er sværere at gætte og giver bedre adskillelse. Vil du have et reelt mål på mesterniveau, skal opgaverne skrives eller gennemgås af en fagperson.
 
 ### Faldgruber ved opgaveskrivning
