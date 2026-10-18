@@ -1844,8 +1844,8 @@
       "hypotese": "Gentagelse af F-013 med ny begrundelse: F-013 blev uafklaret alene fordi fuld eftermåling og holdout ikke var inden for rundens budget. Udviklingssættet kan ikke vise effekten, kun holdout kan (F-013-læring), og brugeren har nu godkendt holdout. Uden Bash har statikeren kun læseværktøjer, men agentprompt og SKILL.md siger 'regn ikke selv' og 'aldrig hovedregning', så agenten tager forbehold eller springer mellemtrin over i indgrebsberegninger. Ændring (én variabel, oven på F-016): når værktøjerne ikke kan køres, regnes i hånden trin for trin (formel, indsatte tal med enheder, resultat), med lastvej og enhedskontrol samt et overslag som kontrol. Tallet mærkes som håndregnet overslag. Forventning: holdout-tal +1 til +2, udvikling uændret (mættet), ingen gruppe ned 2 eller flere, pris pr. bestået højst +10 %.",
       "aendring": "agents/statiker.md (Regneværktøj) og skills/statik-viden/SKILL.md (Brug uden subagent): håndregning trin for trin uden Python i stedet for 'regn ikke selv'",
       "opgaver": [],
-      "status": "aaben",
-      "beslutning": null,
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
       "maalinger": {
         "statik": {
           "foer": {
@@ -1921,10 +1921,89 @@
                 }
               }
             }
+          },
+          "efter": {
+            "rev": "725adea",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-222424-plugin-alle-725adea.json",
+              "20261019-002400-plugin-alle-725adea.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.252,
+                  "pris_pr_bestaaet": 0.0841,
+                  "sek_pr_opgave": 31.2
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 1.056,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 23.6
+                }
+              },
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 29,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.442,
+                  "pris_pr_bestaaet": 0.0842,
+                  "sek_pr_opgave": 21.9,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.9,
+                  "pris_pr_bestaaet": 0.0655,
+                  "sek_pr_opgave": 19.4,
+                  "fejlede": [
+                    "STAT-112",
+                    "STAT-119"
+                  ]
+                }
+              }
+            }
           }
         }
       },
-      "rev_foer": "e738e5f"
+      "rev_foer": "e738e5f",
+      "laering": "Håndregning trin for trin gav +2 i holdout/opgaver-b, begge deterministiske talopgaver (fejl → bestået), uden merpris. Det er netop indgrebsregningen, hypotesen sigtede på. Nettoresultatet er dog kun +1: udviklingssættet faldt med én fri-opgave (støj) og én reel talopgave (STAT-112). I STAT-112 regnede agenten rigtigt, men tog γM = 1,3 'efter hukommelsen' i stedet for at slå 1,35 op i normgrundlag.md. Håndregningsprompten får altså agenten til at springe opslaget af normværdier over. STAT-132's skift er parserfejlen fra F-017 og tæller ikke. Næste skridt: samme ændring plus et krav om at slå hver normværdi (γ, kmod, ψ, Ce osv.) op i normgrundlag.md og citere rækken, før den indsættes (forslag F-019). Plugin-ændringen er rullet tilbage.",
+      "slut": "2026-10-19",
+      "vurdering": "uafklaret",
+      "rev_efter": "725adea"
+    },
+    {
+      "id": "F-019",
+      "dato": "2026-10-19",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "prompt",
+      "hypotese": "F-018 viste +2 holdout-tal ved håndregning trin for trin, men STAT-112 faldt, fordi agenten tog γM efter hukommelsen. Ændring: F-018's håndregning plus et krav om at slå hver normværdi op i normgrundlag.md og citere rækken, før den indsættes. Forventning: holdout-tal +2 som i F-018, STAT-112 består igen, ingen gruppe ned 2, pris pr. bestået højst +10 %. Kør efter F-017 (parserfejl), så talopgaver kan sammenlignes.",
+      "aendring": "",
+      "opgaver": [
+        "STAT-112"
+      ],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }
