@@ -4,7 +4,7 @@
 Brug: python3 scripts/valider.py [--claude]   (--claude kører også `claude plugin validate` på alle plugins og marketplacet)
 Tjekker: JSON, marketplace og afhængigheder, frontmatter og unikke navne (også til den samlede pakke), værktøjer for
 fag- og kontrolagenter, fagregister, ${CLAUDE_PLUGIN_ROOT}-stier, evals, protokoller i synk, versionsnoter, ingen bin/,
-hook-tests, eksamenslaget og dataseparation.
+hook-tests, eksamenslaget, forsøgsloggen og dataseparation.
 """
 import json
 import pathlib
@@ -215,6 +215,9 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROD / "tests" / "test_exam.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Eksamenslaget (format, dækning af læringsmål eller rettelogik) fejlede:\n" + r.stdout[-2000:])
+    r = subprocess.run([sys.executable, str(ROD / "tests" / "test_forsoeg.py")], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Forsøgsloggen, beslutningsreglen eller holdout-vagten fejlede:\n" + r.stdout[-2000:])
     r = subprocess.run([sys.executable, str(ROD / "scripts" / "tjek_data.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Dataseparation – sagsdata eller hemmeligheder i repoet:\n" + r.stdout[-2000:])

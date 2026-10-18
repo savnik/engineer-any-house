@@ -3,11 +3,12 @@
 
 Brug:
   python3 scripts/exam.py tjek [fag ...]            format og dækning (alle læringsmål i rollen har opgaver i begge sæt)
-  python3 scripts/exam.py vis <fag> [--facit]       eksamenssættet og dækningskortet som markdown
+  python3 scripts/exam.py vis <fag> [--facit] [--saet udvikling]   sættet og dækningskortet som markdown
   python3 scripts/exam.py koer <fag> [--arm plugin|basis|begge] [--saet udvikling|holdout|alle --udgivelse]
                                      [--id EL-001,...] [--kun-fejlede] [--gentag 1] [--gentag-fri 3]
                                      [--parallel 3] [--model M] [--bedoemmer sonnet] [--web]
                                      [--med-hukommelse] [--plugin-rev REV] [--uden-basis]
+  python3 scripts/exam.py svar <fag> [--id EL-001,...] [--arm plugin|basis]   seneste svar og bedømmelse (kun udvikling)
   python3 scripts/exam.py rapport <resultatfil> [<resultatfil> ...]
   python3 scripts/exam.py rebedoem <resultatfil> [--kun-fri]   ret gemte svar igen efter nyt facit/kriterier
 
@@ -267,8 +268,10 @@ def validate_answer_spec(t: dict, where: str) -> list[str]:
     return errors
 
 
-def render(trade: str, with_key: bool) -> str:
+def render(trade: str, with_key: bool, only_set: str = "") -> str:
     goals, tasks = load_trade(trade)
+    if only_set:
+        tasks = [t for t in tasks if t["saet"] == only_set]
     out = [f"# Eksamenssæt – {trade}", ""]
     out += ["## Kilder", "", "| ID | Kilde | Læst |", "|---|---|---|"]
     out += [f"| {s['id']} | [{s['titel']}]({s['url']}) | {s['laest']} |" for s in goals["kilder"]]
@@ -677,6 +680,36 @@ def latest_failed_plugin(trade: str) -> set[str]:
     return {tid for tid, ok in latest.items() if not ok}
 
 
+def latest_answers(trade: str, ids: set[str], arm: str = "plugin") -> list[dict]:
+    """The newest answer per task in one arm, for the development set only."""
+    latest: dict[str, dict] = {}
+    for f in result_files(trade):
+        for r in valid_rows(f):
+            if r["arm"] == arm and r["saet"] == "udvikling" and (not ids or r["id"] in ids):
+                latest[r["id"]] = r
+    return [latest[t] for t in sorted(latest)]
+
+
+def cmd_answers(args) -> int:
+    _, tasks = load_trade(args.fag)
+    holdout = {t["id"] for t in tasks if t["saet"] == "holdout"}
+    ids = {t for t in args.id.split(",") if t}
+    if ids & holdout:
+        print("Holdout-svar vises ikke – holdout må aldrig være grundlag for ændringer.")
+        return 1
+    if not ids:
+        ids = latest_failed_plugin(args.fag) - holdout
+    rows = latest_answers(args.fag, ids, args.arm)
+    for r in rows:
+        print(f"## {r['id']} · {r['arm']} · {'bestået' if r['bestaaet'] else 'ikke bestået'} · {r.get('note', '')}\n")
+        print(r.get("svar", "").strip(), "\n")
+        if r.get("bedoemmelse"):
+            print("**Bedømmelse:**\n" + r["bedoemmelse"].strip() + "\n")
+    if not rows:
+        print("Ingen svar fundet.")
+    return 0
+
+
 def knowledge_base_bytes(plugin_dir: pathlib.Path) -> int:
     """Size of what the agent can load: its prompt and the knowledge base (skills' references and SKILL.md)."""
     files = list(plugin_dir.glob("agents/*.md")) + list(plugin_dir.glob("skills/*/SKILL.md")) \
@@ -790,6 +823,7 @@ def main() -> int:
     p = sub.add_parser("vis")
     p.add_argument("fag")
     p.add_argument("--facit", action="store_true")
+    p.add_argument("--saet", choices=sorted(SETS), default="", help="kun ét sæt (CI-agenten bruger udvikling)")
     p = sub.add_parser("koer")
     p.add_argument("fag")
     p.add_argument("--arm", choices=["basis", "plugin", "begge"], default="plugin")
@@ -809,6 +843,10 @@ def main() -> int:
     p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
     p.add_argument("--med-hukommelse", action="store_true",
                    help="indlæs fagagentens lokale hukommelse (~/.claude/agent-memory) i plugin-armen")
+    p = sub.add_parser("svar")
+    p.add_argument("fag")
+    p.add_argument("--id", default="", help="standard: udviklingsopgaver, plugin-armen ikke bestod sidst")
+    p.add_argument("--arm", choices=["basis", "plugin"], default="plugin")
     p = sub.add_parser("rapport")
     p.add_argument("filer", nargs="+")
     p = sub.add_parser("rebedoem")
@@ -838,10 +876,12 @@ def main() -> int:
             failed |= bool(errors)
         return 1 if failed else 0
     if args.cmd == "vis":
-        print(render(args.fag, args.facit))
+        print(render(args.fag, args.facit, args.saet))
         return 0
     if args.cmd == "koer":
         return cmd_run(args)
+    if args.cmd == "svar":
+        return cmd_answers(args)
     if args.cmd == "rebedoem":
         return cmd_regrade(args)
     print(report([pathlib.Path(f) for f in args.filer]))

@@ -75,6 +75,47 @@ Plugin-armen får læseadgang til sin plugin-kopi (`--add-dir`), men ikke til re
 
 Plugin-armen kører som standard **uden** fagagentens lokale hukommelse (`memory: user` fjernes i kopien). Eksamen måler altså pluginet alene: det, der er forankret i repoet, og ikke erfaringer fra brugerens egne sager i `~/.claude/agent-memory/`. `--med-hukommelse` måler plugin og lokal hukommelse samlet, fx for at se, hvad hukommelsen bidrager med, før den forankres. Agenten har under eksamen kun læseværktøjer, så den kan ikke skrive i hukommelsen.
 
+## Forbedringsforsøg
+Forbedringer laves som forsøg med CI-agenten (`claude --agent ci-forbedring`) eller i hånden med `scripts/forsoeg.py`.
+Hvert forsøg har én hypotese, én variabel, en måling før og efter, en beslutning og en læring.
+
+| Fil | Indhold |
+|---|---|
+| `forsoeg.json` | Forsøgsloggen: alt, der er afprøvet. Felterne er hypotese, kategori, målopgaver, `rev_foer` og `rev_efter`, målinger pr. fag og gruppe, beslutning, begrundelse og læring. Forslag står der også |
+| `benchmark.json` | Det aktuelle udgangspunkt pr. fag og gruppe (sæt × opgavefil), med kilde (forsøg @ revision). Det opdateres, når et forsøg afsluttes med `behold` |
+
+En gruppe er `<sæt>/<opgavefil>`, fx `udvikling/opgaver-c` (AK). For holdout gemmes kun antal, beståede, pris og
+en hash af ID-listen. For udvikling gemmes også de fejlede ID'er, så `status` kan vise udestående huller, og hvilke
+forsøg der allerede har ramt dem.
+
+```
+python3 scripts/forsoeg.py status                      # benchmark, åbne forsøg, forslag og huller
+python3 scripts/forsoeg.py soeg varmepumpe              # er idéen afprøvet før?
+python3 scripts/forsoeg.py ny --fag vvs --kategori videnbase --hypotese "…" --opgaver VVS-035
+python3 scripts/forsoeg.py maal F-012 --foer <resultatfiler>    # og senere --efter
+python3 scripts/forsoeg.py vurder F-012                 # beslutningsreglen
+python3 scripts/forsoeg.py afslut F-012 --beslutning behold --laering "…"
+python3 scripts/exam.py svar vvs --id VVS-035          # agentens svar og censorens bedømmelse (kun udvikling)
+```
+
+**Beslutningsreglen** (`assess` i `forsoeg.py`) gælder for kategorierne videnbase, prompt og model. Den sammenligner
+plugin-armen før og efter på de samme opgaver. Er det ikke de samme opgaver, indgår gruppen ikke.
+- **behold:** mindst 2 flere beståede i alt, holdout målt før og efter, ingen gruppe faldet 2 eller flere, og prisen
+  pr. bestået steget højst 10 %. Eller samme kvalitet og prisen pr. bestået faldet mere end 10 %.
+- **forkast:** en gruppe er faldet 2 eller flere (også AK-sættene), eller prisen er steget uden gevinst.
+- **uafklaret:** inden for støj, holdout mangler, eller der er forskellige opgaver før og efter. Gentag med
+  `--gentag-fri 3`, eller forkast.
+
+Rettemaske, opgaver, værktøj og nulmåling afgøres med en skriftlig begrundelse. Afviger beslutningen fra reglen,
+kræves `--begrundelse`. Grænserne (`NOISE_TASKS = 2`, `PRICE_TOLERANCE = 10 %`) bygger på én kørsels støj, og
+forslag F-007 skal fastlægge dem empirisk. Holdout har et budget på 8 målinger pr. fag (`HOLDOUT_BUDGET`). Hver
+beslutning på holdout lækker lidt, så når budgettet er brugt, skal der skrives nye holdout-opgaver.
+
+**Holdout-vagten** (`scripts/hooks/holdout_vagt.py`, en hook i CI-agentens frontmatter) afviser direkte læsning af
+`opgaver*.json` og `results/`, Grep med indhold i `eksamen/` og rekursiv søgning uden sti. Agenten ser kun
+udviklingssættet, gennem `exam.py vis --saet udvikling`, `exam.py svar`, `rapport` og `forsoeg.py`. Rettelser i
+opgavefilerne uddelegerer den til en anden agent.
+
 ## Erfaringer: læs før du udbygger eller måler pluginet
 Målt 17.–18. okt. 2026 på el, vvs og ventilation (svende- og AK-niveau). Tallene står i `ARKITEKTUR.md`, afsnittet "Eksamenslag".
 
