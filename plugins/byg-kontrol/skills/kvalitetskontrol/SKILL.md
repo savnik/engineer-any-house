@@ -34,7 +34,8 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 - Format `<sag-id>/<fag-id>/<nr>`: sag-id = sagsmappens navn (fx `2025-03-14-bad-1970`), nr = 01, 02 … pr. opgave til faget.
 - Første linje i hver prompt til fag- og kontrolagent: `LEVERANCE: <id>`.
 - Ændring af en godkendt leverance: nyt ID med suffiks (`…/vvs/01-r2`).
-- Enkeltstående spørgsmål uden sag: opret først `byg-sager/<ÅÅÅÅ-MM-DD>-<emne>/` med en kort `projektgrundlag.md`.
+- Enkeltstående spørgsmål uden sag: opret **ikke** en mappe i `byg-sager/`; brug `~/byg-tmp/<ÅÅÅÅ-MM-DD>-<emne>/` med en kort `projektgrundlag.md` (midlertidigt – det godkendte svar løftes ind i hovedsagen, hvis det skal gemmes).
+- Branch-sag (`<hovedsag>--<emne>/`): sag-id = branch-mappens navn; leverancen flettes ind i hovedsagen ved godkendelse.
 - Review af eksternt materiale: `LEVERANCE: ekstern/<emne>` (ingen loop – dommen er rådgivende).
 
 ## 2. Loopet

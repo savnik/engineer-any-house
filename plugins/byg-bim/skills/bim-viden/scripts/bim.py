@@ -13,7 +13,7 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
   afkod tjek <afkodning.yaml>              Kontrol af en tegningsafkodning (kalibrering, mål mod tegningen, kæder)
   sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>]
                                            Model i tegningens pixelramme + automatisk sammenligning
-  forslag <model.yaml> <navn> [--note …]  Ny forslagsfil forslag/<navn>.yaml oven på hovedmodellen (ret aldrig i
+  forslag <model.yaml> <navn> [--note …] [--ud <mappe>]  Ny forslagsfil forslag/<navn>.yaml (--ud: branch-sagens mappe) oven på hovedmodellen (ret aldrig i
                                            hovedmodellen selv – byg og kontrollér forslaget)
   flet  <forslag.yaml> [--proev] [--note …] [--tving]
                                            Godkendt forslag → hovedmodellen (kun berørte elementer skrives om;

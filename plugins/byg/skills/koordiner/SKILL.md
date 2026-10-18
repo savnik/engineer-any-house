@@ -5,7 +5,7 @@ argument-hint: "[sag-id eller sti til sagsmappe]"
 disable-model-invocation: true
 ---
 
-Koordinér sagen: $ARGUMENTS (er intet angivet: den senest ændrede mappe i `byg-sager/`, og bekræft med brugeren).
+Koordinér sagen: $ARGUMENTS (er intet angivet: den senest ændrede sag i `byg-sager/` (ikke `ejendomme/` eller `arkiv/`), og bekræft med brugeren).
 
 1. Læs `${CLAUDE_PLUGIN_ROOT}/skills/projektleder/SKILL.md` (fase 4–6), `references/koordinering.md` og sagens `projektgrundlag.md` og `status.md`.
 2. Er projektgrundlaget ikke accepteret, så stop og kør interviewet færdigt først.

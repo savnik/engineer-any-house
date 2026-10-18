@@ -367,6 +367,13 @@ def main() -> int:
             FEJL.append(f"beskyt hovedtråd: {r}")
         forvent("andre filer påvirkes ikke", kald("beskyt", {**G, "agent_type": "x", "tool_input": {"file_path": str(sag / "andet.md")}}, env), "tilladt")
 
+        # Én skriver pr. fil gælder også midlertidige spørgsmålsmapper i ~/byg-tmp/
+        tmpsag = pathlib.Path(tmp) / "byg-tmp" / "2026-10-18-spoergsmaal"
+        forvent("fagagent må ikke skrive fremmed fil i byg-tmp", kald("beskyt", {**G, "agent_type": "byg-vvs:vvs-mester",
+                "tool_input": {"file_path": str(tmpsag / "projektgrundlag.md")}}, env), "afvist")
+        forvent("fagagent må skrive eget notat i byg-tmp", kald("beskyt", {**G, "agent_type": "byg-vvs:vvs-mester",
+                "tool_input": {"file_path": str(tmpsag / "fagnotater" / "vvs.md")}}, env), "tilladt")
+
         # Manuel status uden CLAUDE_PLUGIN_DATA skal finde pluginets datamappe under ~/.claude/plugins/data/
         hjem = pathlib.Path(tmp) / "hjem"
         pdata = hjem / ".claude" / "plugins" / "data" / "byg-kontrol-test" / "kontrol"

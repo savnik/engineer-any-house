@@ -7,10 +7,20 @@
 - Sag-id = mappenavnet. Leverance-ID = `<sag-id>/<fag-id>/<nr>` (fx `2025-03-14-bad-1970/vvs/01`); projektlederens egne: `<sag-id>/projekt/<nr>`.
 - Hver sag hører til en ejendom. Ejendommens faste fakta står i **ejendomskortet** `byg-sager/ejendomme/<ejendom-id>.md` (se nedenfor). Det deles af alle sager på samme ejendom, og projektgrundlag og `status.md` henviser til det med linjen `**Ejendom:** <sti>`.
 
+## Permanent og midlertidigt
+`byg-sager/` holder kun permanente data: **hovedsager**, **aktive branch-sager**, `ejendomme/` og `arkiv/`. Alt midlertidigt ligger uden for strukturen.
+- **Hovedsag** (`<sag-id>/`): sandheden for ejendommens projekt. Har ejendommen en BIM-hovedmodel, ligger den i hovedsagen: `<sag-id>/bim/model.yaml` med `historik/`, `forslag/` og `ud/`. Der findes ingen separat BIM-sag.
+- **Branch-sag** (`<hovedsag-id>--<emne>/`, flad søskendemappe): undersøger en ændring (fx VVS-omlægning) som en git-branch. Den har sin egen `status.md`, `projektgrundlag.md`, `fagnotater/` og `kvalitet/` og sine modelændringer som forslag (`bim.py forslag <hovedsag>/bim/model.yaml <navn> --ud <branch>/bim/forslag`), hvor `basis` peger på hovedsagens model med sha256. Branchen ændrer aldrig hovedsagens filer direkte. Ved godkendelse flettes forslaget ind (`bim.py flet`); er hovedmodellen ændret siden (sha-konflikt), laves forslaget om oven på den nye model ("rebase"). Godkendte leverancer og beslutninger løftes ind i hovedsagens `beslutningslog.md`/`status.md`, og branchen flyttes til `arkiv/`.
+- **Spørgsmål** (`/byg:spoerg`) opretter ingen sagsmappe. Kræver de filer, bruges `~/byg-tmp/<ÅÅÅÅ-MM-DD>-<emne>/`, som ikke er under revisionsstyring og må slettes. Et svar, der skal gemmes, løftes ind i hovedsagen eller en branch.
+- **Store rådata** (FEM-output, renderinger, mellemresultater) ligger i `~/byg-tmp/`; kun det, der indgår i en godkendt leverance, gemmes i sagen. Husets dokumenter går til `ejendomme/<ejendom-id>/bilag/`.
+- **Arkiv** (`arkiv/`): afsluttede/flettede sager og gamle strukturer. Læses kun, når der henvises dertil; `arkiv/README.md` har en sti-tabel (gammel → ny sti). Stier i `kvalitet/` og i godkendte leverancer rettes ikke ved flytning.
+
 ## Struktur
 ```
 byg-sager/.git/                       lokal revisionsstyring (oprettes og committes af byg-kontrols hook; pushes aldrig)
 byg-sager/ejendomme/<ejendom-id>.md   ejendomskort: husets faste fakta, fælles for alle sager på ejendommen
+byg-sager/arkiv/                      afsluttede og flettede sager (sti-tabel i README.md)
+byg-sager/<sag-id>--<emne>/           branch-sag (samme struktur, forslag oven på hovedsagens model)
 byg-sager/<sag-id>/
 ├── projektgrundlag.md      formål, omfang, rammer, antagelser (skabelon i interview.md); husets fakta henvises fra ejendomskortet
 ├── beslutningslog.md       beslutninger med begrundelse
@@ -31,6 +41,7 @@ byg-sager/<sag-id>/
 │   ├── kontrollog.md       én linje pr. dom
 │   ├── <leverance>__forsoeg-<n>.json   kontroldomme (gemmes af hooken)
 │   └── RCA-<leverance>[__runde-<n>].md  root cause-analyser (én pr. stoppet runde)
+├── bim/                    BIM-hovedmodel (model.yaml, historik/, forslag/, ud/) – kun i hovedsagen
 └── bilag/                  fotos, tilbud, rapporter, tegninger
 ```
 
