@@ -133,7 +133,8 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
             g["ids"].append(tid)
             if sum(r["bestaaet"] for r in rows) * 2 <= len(rows):
                 g["failed"].append(tid)
-            g["cost"] += sum(r.get("pris_usd") or 0 for r in rows)
+            # Mean per task, so repeats (--gentag-fri) do not make an arm look more expensive.
+            g["cost"] += sum(r.get("pris_usd") or 0 for r in rows) / len(rows)
             g["secs"] += [r["sek"] for r in rows if r.get("sek") is not None]
         summary = {}
         for name, arms in sorted(groups.items()):

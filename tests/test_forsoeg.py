@@ -73,7 +73,8 @@ def test_summarize():
         old.write_text(json.dumps({"fag": "el", "plugin_rev": "aaa", "resultater":
                                    [row(t, "plugin", False) for t in dev + held]}))
         new.write_text(json.dumps({"fag": "el", "plugin_rev": "bbb", "resultater":
-                                   [row(dev[0], "plugin", True), row(dev[1], "plugin", True, "kørselsfejl: grænse")]}))
+                                   [row(dev[0], "plugin", True), row(dev[0], "plugin", True),
+                                    row(dev[1], "plugin", True, "kørselsfejl: grænse")]}))
         s = forsoeg.summarize([old, new])["el"]
         g = s["grupper"]
         dev_group = next(k for k in g if k.startswith("udvikling/"))
@@ -82,6 +83,8 @@ def test_summarize():
         expect("holdout gemmer ingen ID'er",
                all("fejlede" not in a for k, arms in g.items() if k.startswith("holdout/") for a in arms.values()))
         expect("rev fra plugin-filerne", s["rev"] == "aaa,bbb", s["rev"])
+        expect("gentagelser gør ikke opgaven dyrere", abs(g[dev_group]["plugin"]["pris_usd"] - 0.3) < 1e-9,
+               g[dev_group]["plugin"]["pris_usd"])
 
 
 def test_validate():
