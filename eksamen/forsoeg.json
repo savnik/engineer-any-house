@@ -2172,6 +2172,128 @@
       "slut": "2026-10-19",
       "vurdering": "manuel",
       "begrundelse": "Rettemaske-forsøg afgøres manuelt. Ved rebedoem af F-012's svar består alle tre målopgaver (STAT-010, -016, -119), og STAT-012 skifter som censorstøj. Kriterierne kræver nu fagindholdet i stedet for ordlyden. Basis stiger tilsvarende (+2), så plugin-gevinsten i udviklingssættet er ikke pustet op."
+    },
+    {
+      "id": "F-021",
+      "dato": "2026-10-19",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Komplet benchmark for statik efter F-016 og F-020: plugin 5213943 med den løsnede rettemaske (rebedoem) samt basis på alle sæt (udvikling A rebedoemt, B og holdout nykørt med --gentag-fri 3).",
+      "aendring": "ingen – kun måling",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "5213943",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-195918-basis-udvikling-rebedoemt.json",
+              "20261018-220541-plugin-alle-5213943-rebedoemt.json",
+              "20261019-003911-basis-udvikling.json",
+              "20261019-004310-basis-holdout.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.294,
+                  "pris_pr_bestaaet": 0.098,
+                  "sek_pr_opgave": 27.7
+                },
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.327,
+                  "pris_pr_bestaaet": 0.1091,
+                  "sek_pr_opgave": 30.6
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 9,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.971,
+                  "pris_pr_bestaaet": 0.1079,
+                  "sek_pr_opgave": 21.0
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.946,
+                  "pris_pr_bestaaet": 0.1182,
+                  "sek_pr_opgave": 23.5
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 28,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.872,
+                  "pris_pr_bestaaet": 0.1026,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-012",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 31,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.597,
+                  "pris_pr_bestaaet": 0.0838,
+                  "sek_pr_opgave": 22.3,
+                  "fejlede": [
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.92,
+                  "pris_pr_bestaaet": 0.0662,
+                  "sek_pr_opgave": 15.3,
+                  "fejlede": [
+                    "STAT-123",
+                    "STAT-132"
+                  ]
+                },
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 30,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.906,
+                  "pris_pr_bestaaet": 0.0635,
+                  "sek_pr_opgave": 18.9,
+                  "fejlede": [
+                    "STAT-132"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "1aaa4ce",
+      "laering": "Med fuld basis viser statik-pluginet kun en lille gevinst: udvikling A 31 mod 28, udvikling B 30 mod 29 og holdout 11/16 mod 12/16. På holdout er basis altså mindst lige så god. Gevinsten ligger i fri-opgaverne i udviklingssættet, mens talopgaverne er ens (33/37 begge). Pluginet koster 0,103 $ pr. bestået mod basis 0,094 $ og 3 gange så mange input-tokens. Holdout-hullerne, som er kælderens fejlmønstre, lukkes altså ikke af den nuværende videnbase. Det næste skridt er indgrebsregning (F-018/F-019), ikke mere normtekst.",
+      "slut": "2026-10-19",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling, ingen ændring – sætter benchmarket."
     }
   ]
 }
