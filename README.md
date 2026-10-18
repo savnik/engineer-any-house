@@ -95,10 +95,14 @@ scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (
 scripts/eval_fag.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
 eksamen/<fag>/               eksamenslaget: officielle læringsmål og opgavesæt med facit (udvikling + holdout)
 scripts/exam.py              tjekker dækningen af læringsmålene og kører eksamen med og uden plugin (koer koster tokens)
+scripts/forsoeg.py           forsøgslog og benchmark for forbedringer (eksamen/forsoeg.json, eksamen/benchmark.json)
+.claude/agents/ci-forbedring.md  CI-agenten: strukturerede forbedringsforsøg målt mod eksamenslaget
+scripts/hooks/holdout_vagt.py    CI-agentens vagt: holdout-opgaver og -svar kan ikke læses direkte
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
 tests/test_sagsflet.py       tests af skriveret pr. fag, forslag og fletning og git i byg-sager/
 tests/test_exam.py           tests af eksamenslaget (rettelogik, format og dækning)
+tests/test_forsoeg.py        tests af forsøgsloggen, beslutningsreglen og holdout-vagten
 tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session
 ```
@@ -113,5 +117,7 @@ Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.p
 Evals (kræver login og koster tokens): `python3 scripts/eval_fag.py byg-vvs`. Kør ikke `claude plugin eval ./plugins/byg-vvs` direkte: fag-plugins afhænger af `byg-kontrol`, som ikke findes i eval-sandkassen, og så indlæses pluginet slet ikke (evalen tester kun den bare model). Effort-sammenligning: `python3 scripts/effort_ab.py byg-vvs --effort medium`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
 
 Eksamen (kræver login og koster tokens): `python3 scripts/exam.py koer el` (plugin-armen; basis genbruges) eller `--kun-fejlede`. Den måler fagagenten mod basismodellen på opgaver bygget over de officielle læringsmål. Se `eksamen/README.md`, især reglen om holdout-sættet.
+
+Forbedringer (continuous improvement): `claude --agent ci-forbedring` i repoets rod. Agenten vælger ét forsøg ud fra `python3 scripts/forsoeg.py status`, måler før og efter, afgør forsøget efter beslutningsreglen og fører forsøgsloggen. Den afleverer en draft-PR. Se `eksamen/README.md`, afsnittet "Forbedringsforsøg".
 
 Se `ARKITEKTUR.md` for designbeslutninger, platformnoter og roadmap.

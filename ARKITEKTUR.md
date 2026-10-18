@@ -133,6 +133,14 @@ Videnbasen voksede ca. 9 KB pr. fag (ca. 7 % dyrere pr. kald), men prisen pr. ri
 
 **Konklusion og erfaringer:** Pluginet betaler sig gennem videnbasens konkrete danske regler, ikke gennem agentprompten og ikke på mesterniveau. Fremgangsmåde og faldgruber ved udbygning og måling står i `eksamen/README.md`, afsnittet "Erfaringer".
 
+**CI-agent og forsøgslog (2026-10-18):** Forbedringerne var blevet komplicerede at holde styr på: hvad er afprøvet,
+på hvilken revision, og hvad gav det? Projektagenten `.claude/agents/ci-forbedring.md` laver derfor ét forsøg ad gangen
+efter en fast cyklus: vælg, formulér hypotesen, mål før, ændr, mål efter (billigt først), afgør og aflevér som
+draft-PR. `scripts/forsoeg.py` fører forsøgslog og benchmark i repoet og anvender beslutningsreglen. Agenten er ikke
+et plugin, fordi den arbejder på repoet og ikke i sagerne. Den ser aldrig holdout: en PreToolUse-hook afviser direkte
+adgang, og alle sammendrag gemmer holdout kun som antal og hash. Loggen er indledt med de forsøg, der allerede var
+gennemført (F-001–F-006), og med de åbne idéer som forslag (F-007–F-011).
+
 **Læringsløkke:** huller i udviklingssættet → ny tekst i videnbasen via normal forankring (primærkilde, V/T, review) → ny kørsel. Holdout-sættet bruges kun til måling, så forbedringen kan måles på opgaver, videnbasen ikke er skrevet efter. Regressioner (basis består, plugin ikke) peger på tekst i videnbasen, der vildleder.
 
 ## Videnmodel
@@ -186,7 +194,7 @@ De lokale kilder findes ikke i CI. Der kører kun strukturtjek og nøglemønstre
 
 ## Roadmap
 1. Verificér T-punkter (murer: KC-recepter, DS/EN-udgaver, riller, kvartsstøv; tømrer: C18/C24, NTR, vinduesmontage, brand i småhuse; netselskab; skorstensfejer) og markér V med dato.
-2. Kør eksamenslaget (el, vvs) med begge arme og udbyg det til de øvrige fag; kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
+2. Forbedringer via CI-agenten (`claude --agent ci-forbedring`), først F-007 (mål støjen, så beslutningsreglens grænser bliver empiriske). Udbyg eksamenslaget til de øvrige fag; kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
 3. Test hooks i Cowork med den samlede pakke.
 4. Kalibrér kontrollen: mål afvisningsrate, antal runder og kontrolsvigt pr. fag; justér rubric-versioner.
 5. Nye fag via `scripts/nyt_fag.py` (fx kloak, tag, gulv) – altid med kontrolagent.
