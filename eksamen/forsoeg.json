@@ -935,9 +935,10 @@
       "hypotese": "Måle støjen: hvor meget svinger fri-opgaverne mellem kørsler",
       "aendring": "koer --gentag-fri 3 på udviklingssættet; fastlæg NOISE_TASKS empirisk",
       "opgaver": [],
-      "status": "forslag",
+      "status": "aaben",
       "beslutning": null,
-      "maalinger": {}
+      "maalinger": {},
+      "rev_foer": "4ab0e22"
     },
     {
       "id": "F-008",
