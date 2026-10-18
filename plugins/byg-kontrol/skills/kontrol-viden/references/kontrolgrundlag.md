@@ -29,4 +29,4 @@ Agentkontrollen er en faglig kvalitetssikring af rådgivning og planlægning. De
 ## Principper fra forskning om LLM-review (baggrund for protokollen)
 - Modeller retter dårligt egne ræsonnementsfejl uden ekstern feedback → kontrollen skal tilføre primærkilder, ikke blot en ny læsning.
 - LLM-dommere favoriserer egne tekster → anden model, anden prompt, ingen adgang til fagagentens ræsonnement.
-- Gevinsten ved gentagen forfining aftager efter få runder → højst 3 forsøg og fastfrosset rubric.
+- Gevinsten ved gentagen forfining aftager efter få runder → højst 2 forsøg og fastfrosset rubric (målt 2026-10: ca. 40 % afvisninger, hver koster et helt nyt fag- og kontrolkald).
