@@ -1,0 +1,938 @@
+{
+  "opgaver": [
+    {
+      "id": "EL-001",
+      "maal": [
+        "EL-KM-01",
+        "EL-TEMA-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal udskifte en gruppeafbryder i en boligtavle. Gruppen forsyner kun almindelige danske 10 A-stikkontakter til husholdningsbrug. Hvad er den største mærkestrøm, den nærmeste foransiddende kortslutningsbeskyttelse må have efter installationsbekendtgørelsen (uanset kablets strømværdi)?",
+      "valgmuligheder": {
+        "A": "10 A",
+        "B": "13 A",
+        "C": "16 A",
+        "D": "20 A"
+      },
+      "facit": "B",
+      "begrundelse": "§ 45, nr. 1: for stikkontakter med mærkestrøm 10 A og 13 A må kortslutningsbeskyttelsen højst være 13 A. 16 A gælder kun for 16 A-stikkontakter.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 45 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-002",
+      "maal": [
+        "EL-TEMA-01",
+        "EL-KM-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et parcelhus får helt ny elinstallation. Boligarealet er ifølge BBR 178 m². Hvor mange grupper skal der mindst være til 250 V-stikkontakter og tilslutningssteder for belysning og brugsgenstande med lavt energiforbrug over tid? Se bort fra grupper til apparater med højt energiforbrug. Angiv svaret som antal grupper.",
+      "facit": {
+        "vaerdi": 4,
+        "enhed": "grupper",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "§ 56: antallet skal mindst være boligarealet divideret med 50 (178/50 = 3,56), dvs. mindst 4 grupper (én pr. påbegyndt 50 m²), dog altid mindst 2.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 56; Sikkerhedsstyrelsen: Kravene til beskyttelsesudstyr og antallet af grupper og Hvis du skal ændre eller udvide eksisterende installationer – https://www.retsinformation.dk/eli/lta/2016/1082; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/kravene-beskyttelsesudstyr-og-antallet-grupper",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-003",
+      "maal": [
+        "EL-TEMA-01",
+        "EL-KM-01"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "I en ny boliginstallation er stuen et rektangulært rum på 7,0 m × 6,5 m. Hvor mange 250 V-stikkontakter skal der mindst være i den faste installation i stuen efter installationsbekendtgørelsen? Angiv svaret som antal stikkontakter.",
+      "facit": {
+        "vaerdi": 10,
+        "enhed": "stikkontakter",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "§ 57, stk. 1: én pr. påbegyndt 4 m² gulvareal; 45,5 m² giver 12, men der kræves ikke mere end 10 stikkontakter i et rum.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 57, stk. 1; Sikkerhedsstyrelsen: Stikkontakter i boliger – https://www.retsinformation.dk/eli/lta/2016/1082; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/stikkontakter-boliger",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-004",
+      "maal": [
+        "EL-AUT-02",
+        "EL-TEMA-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En kunde har et hus med en eksisterende elinstallation, som ikke ændres. Hvilke dele skal efter installationsbekendtgørelsens regler for eksisterende installationer være omfattet af supplerende beskyttelse med RCD med mærkeudløsestrøm på højst 30 mA?",
+      "valgmuligheder": {
+        "A": "Stikkontakter til husholdningsbrug til og med 13 A og andre tilslutningssteder med overstrømsbeskyttelse til og med 16 A.",
+        "B": "Kun stikkontakter i badeværelser, køkkener og udendørs; øvrige rum er lovlige efter reglerne på udførelsestidspunktet.",
+        "C": "Stikkontakter til husholdningsbrug til og med 16 A og andre tilslutningssteder med overstrømsbeskyttelse til og med 20 A.",
+        "D": "Ingen dele, da en eksisterende installation alene skal overholde reglerne fra udførelsestidspunktet."
+      },
+      "facit": "C",
+      "begrundelse": "§ 61 (kapitel 5, eksisterende installationer): stikkontakter til og med 16 A og andre tilslutningssteder op til og med 20 A. Kravet gælder, selv om installationen ellers var lovlig efter reglerne på udførelsestidspunktet.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 61 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-005",
+      "maal": [
+        "EL-AUT-02",
+        "EL-TEMA-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En RCD i en villa er defekt. Kunden har selv købt en billig RCD 30 mA af type AC og beder dig montere den. Hvad er korrekt?",
+      "valgmuligheder": {
+        "A": "Type AC må ikke anvendes som fejlbeskyttelse i boliger; der skal mindst bruges type A.",
+        "B": "Type AC er tilladt, hvis den har samme mærkeudløsestrøm og mærkestrøm som den gamle.",
+        "C": "Type AC er tilladt i eksisterende boliger, men ikke i boliger opført efter 1. juli 2017.",
+        "D": "Type AC er tilladt, hvis der ikke er elektroniske brugsgenstande på de beskyttede grupper."
+      },
+      "facit": "A",
+      "begrundelse": "§ 53: RCD af type AC må ikke anvendes som fejlbeskyttelse i boliger. Sikkerhedsstyrelsen: det er ikke tilladt at bruge RCD af type AC i boliger.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 53; Sikkerhedsstyrelsen: Valg og installation af RCD – https://www.retsinformation.dk/eli/lta/2016/1082; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/eltavler-og-maalertavler/valg-og-installation-rcd-fejlstroemsafbryder",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-006",
+      "maal": [
+        "EL-TEMA-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Ved et servicebesøg finder du en løs og misfarvet nulleder i en udendørs stikkontakt i et parcelhus. Hvem er efter elsikkerhedsloven ansvarlig for, at installationen drives og vedligeholdes forsvarligt, og at fejlen bliver afhjulpet snarest muligt?",
+      "valgmuligheder": {
+        "A": "Den elinstallatørvirksomhed, der oprindeligt udførte installationen",
+        "B": "Netselskabet, da fejlen kan påvirke forsyningsnettet",
+        "C": "Erhvervsstyrelsen som tilsynsmyndighed på elområdet",
+        "D": "Ejeren eller brugeren af den elektriske installation"
+      },
+      "facit": "D",
+      "begrundelse": "Elsikkerhedsloven § 10, stk. 1-2: ejeren eller brugeren er ansvarlig for, at installationen overholder reglerne, drives og vedligeholdes forsvarligt og skal lade fejl og mangler afhjælpe snarest muligt.",
+      "kilde": "Elsikkerhedsloven, LBK nr. 57 af 19/01/2026, § 10 – https://www.retsinformation.dk/eli/lta/2026/57",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-007",
+      "maal": [
+        "EL-TEMA-03"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvilken myndighed fører i 2026 kontrol med, at elsikkerhedsloven og reglerne udstedt i medfør af den overholdes, og kan påbyde ejeren af en farlig installation at få fejl udbedret?",
+      "valgmuligheder": {
+        "A": "Sikkerhedsstyrelsen som selvstændig styrelse",
+        "B": "Erhvervsstyrelsen",
+        "C": "Arbejdstilsynet",
+        "D": "Energistyrelsen"
+      },
+      "facit": "B",
+      "begrundelse": "LBK 57/2026 §§ 13 og 17 nævner Erhvervsstyrelsen. Sikkerhedsstyrelsen blev fra januar 2026 en del af Erhvervsstyrelsen.",
+      "kilde": "Elsikkerhedsloven, LBK nr. 57 af 19/01/2026, §§ 13, 16-18 – https://www.retsinformation.dk/eli/lta/2026/57; https://www.sik.dk/sikkerhedsstyrelsen-del-erhvervsstyrelsen",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-008",
+      "maal": [
+        "EL-TEMA-03",
+        "EL-AUT-02"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Et parcelhus fra 1965 har en lovlig, original installation uden beskyttelsesleder. Køkkenet bliver revet ned og bygget op igen med samme placering af rummet. Kunden ønsker 5 nye stikkontakter langs bordpladen og en ny gruppe til induktionskomfur. Kunden spørger, om du ikke bare kan bruge de eksisterende kabler uden jord, 'for det var lovligt dengang'. Rådgiv kunden om kravene til den nye køkkeninstallation.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at de dele af installationen, der ændres eller udvides, skal følge reglerne på ændringstidspunktet (§ 25, stk. 2), mens resten må blive som udført.",
+        "Forklarer, at der skal fremføres beskyttelsesleder til de nye tilslutningssteder, fordi udvidelsen er større end to tilslutningssteder (§ 63) og/eller fordi stikkontakter med jord kræver virksom beskyttelsesleder (§ 64).",
+        "Angiver, at der i køkkenregionen skal være mindst tre stikkontakter fordelt på mindst to grupper.",
+        "Angiver, at de nye grupper/tilslutningssteder skal have supplerende beskyttelse med RCD ≤ 30 mA.",
+        "Angiver, at arbejdet skal udføres af en autoriseret elinstallatørvirksomhed."
+      ],
+      "begrundelse": "§§ 25, 63, 64, 57 stk. 2 og 75 i installationsbekendtgørelsen; Sikkerhedsstyrelsens vejledning om ændring og udvidelse af eksisterende installationer (nyt køkken, flere end 2 tilslutningssteder).",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 25, 35, 53, 57, 63, 64, 75; Sikkerhedsstyrelsen: Hvis du skal ændre eller udvide eksisterende installationer – https://www.retsinformation.dk/eli/lta/2016/1082; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/hvis-du-skal-aendre-eller-udvide-eksisterende-installationer",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret siger, at de 5 nye stikkontakter lovligt kan udføres uden beskyttelsesleder."
+      ]
+    },
+    {
+      "id": "EL-009",
+      "maal": [
+        "EL-AUT-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En lejlighed fra 1960 har en installation uden beskyttelsesleder, som er beskyttet af en RCD 30 mA type A. Beboeren ønsker to nye stikkontakter i soveværelset fra den eksisterende gruppe og vil have stikkontakter med jord (beskyttelseskontakt), så klasse I-apparater kan tilsluttes med jord. Hvad gælder for de to nye stikkontakter med jord efter installationsbekendtgørelsen?",
+      "valgmuligheder": {
+        "A": "De kræver ingen beskyttelsesleder, fordi RCD'en på 30 mA dækker udvidelsen.",
+        "B": "De kræver, at jordbøsningen forbindes til nullederen i dåsen.",
+        "C": "De kræver, at der fremføres en virksom beskyttelsesleder til dem.",
+        "D": "De kræver, at hele lejlighedens installation først føres op til nugældende regler."
+      },
+      "facit": "C",
+      "begrundelse": "§ 64: ved udvidelser og ændringer i eksisterende installationer skal stikkontakter med beskyttelseskontakt, som er omfattet af udvidelsen, tilsluttes en virksom beskyttelsesleder. § 63 (udeladelse af beskyttelsesleder ved højst to tilslutningssteder med RCD) ændrer ikke på det; § 39, stk. 2 forbyder at bruge andre ledere som beskyttelsesleder.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 39, 63 og 64 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-010",
+      "maal": [
+        "EL-TEMA-02"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En symmetrisk 3-faset last tilsluttes et 400 V-net (spænding mellem faser). Strømmen i hver fase er målt til 12 A, og effektfaktoren er cos φ = 0,85. Beregn den optagne virkeeffekt P. Antag sinusformede størrelser. Angiv svaret i kW.",
+      "facit": {
+        "vaerdi": 7.07,
+        "enhed": "kW",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "P = √3 · U · I · cos φ = 1,732 · 400 · 12 · 0,85 ≈ 7067 W ≈ 7,07 kW.",
+      "kilde": "Formel for 3-faset virkeeffekt P = √3·U·I·cos φ (vekselstrømsteori)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-011",
+      "maal": [
+        "EL-TEMA-02"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "På en 230 V-gruppe er der to brugsgenstande parallelt: en ren ohmsk varmeovn, der trækker 8,0 A, og en motor, der trækker 5,0 A ved cos φ = 0,60 (induktiv). Beregn den samlede strøm i faselederen. Antag sinusformede størrelser. Angiv svaret i A.",
+      "facit": {
+        "vaerdi": 11.7,
+        "enhed": "A",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Vektoriel addition: virkekomposant 8,0 + 5,0·0,6 = 11,0 A; blindkomposant 5,0·0,8 = 4,0 A; I = √(11,0² + 4,0²) ≈ 11,70 A (ikke 13 A ved aritmetisk sum).",
+      "kilde": "Vektoriel sammenlægning af strømme, I = √(Iw² + Ib²) (vekselstrømsteori)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-012",
+      "maal": [
+        "EL-KM-01",
+        "EL-TEMA-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En 1-faset 230 V-gruppe er udført med 2,5 mm² Cu-kabel. Afstanden fra tavlen til den fjerneste stikkontakt er 28 m (enkelt vej). Belastningsstrømmen er 13 A, cos φ = 1. Regn med resistiviteten ρ = 0,0225 Ω·mm²/m (ved driftstemperatur) og se bort fra reaktans. Beregn spændingsfaldet i procent af 230 V. Angiv svaret i %.",
+      "facit": {
+        "vaerdi": 2.85,
+        "enhed": "%",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "ΔU = 2·L·I·ρ/A = 2·28·13·0,0225/2,5 = 6,55 V; 6,55/230 = 2,85 %.",
+      "kilde": "Spændingsfald i 1-faset kreds ΔU = 2·L·I·ρ/A (Ohms lov); Sikkerhedsstyrelsen: spændingsfald skal kontrolleres ved verifikation – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/verifikation-mindre-elinstallationer",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-013",
+      "maal": [
+        "EL-KM-04"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En 3-faset asynkronmotor til en ventilator har mærkeeffekten 4,0 kW (akseleffekt), virkningsgrad η = 0,86 og cos φ = 0,82. Den tilsluttes 400 V. Beregn motorens mærkestrøm, som motorværnet skal indstilles efter. Angiv svaret i A.",
+      "facit": {
+        "vaerdi": 8.19,
+        "enhed": "A",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "I = P/(√3·U·η·cos φ) = 4000/(1,732·400·0,86·0,82) ≈ 8,19 A.",
+      "kilde": "Formel for 3-faset motorstrøm I = P_aksel/(√3·U·η·cos φ)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-014",
+      "maal": [
+        "EL-KM-04"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal fast tilslutte udedelen til en luft/vand-varmepumpe med kølemidlet R290 (propan). Fabrikantens installationsvejledning kræver en afbryder til mekanisk vedligeholdelsesarbejde og angiver et beskyttet område omkring udedelen. Hvad er korrekt?",
+      "valgmuligheder": {
+        "A": "Afbryderen må afbryde faserne alene, og den placeres bedst lige ved udedelen inden for det beskyttede område.",
+        "B": "Afbryderen kan undværes, hvis gruppeafbryderen i tavlen kan låses i frakoblet stilling.",
+        "C": "Afbryderen skal afbryde alle spændingsførende ledere og placeres uden for det beskyttede område.",
+        "D": "Afbryderen skal afbryde alle ledere inklusive beskyttelseslederen og være af typen med nøglebetjening."
+      },
+      "facit": "C",
+      "begrundelse": "Sikkerhedsstyrelsen: sikkerhedsafbryderen skal afbryde alle spændingsførende ledere; i det beskyttede område ved R290-varmepumper må der ikke være antændelseskilder som afbrydere, så den kan ikke placeres der. Beskyttelseslederen må ikke afbrydes.",
+      "kilde": "Sikkerhedsstyrelsen: Installation af varmepumpe – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/installation-varmepumpe",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-015",
+      "maal": [
+        "EL-TEMA-04",
+        "EL-AUT-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Et parcelhus forsynes via et kabelskab fra et kabellagt lavspændingsnet. Stikledningssikringen er 35 A. Netselskabet har ikke oplyst kortslutningsniveauet. Hvilken mindste fase-nul-kortslutningsstrøm (Ik min) umiddelbart foran stikledningen kan der normalt regnes med efter Fællesregulativet? Angiv svaret i A.",
+      "facit": {
+        "vaerdi": 175,
+        "enhed": "A",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "Fællesregulativet stk. 14: i kabellagte net kan der normalt regnes med en fase-nul-kortslutningsstrøm på 5 gange stikledningssikringens mærkestrøm: 5·35 A = 175 A.",
+      "kilde": "Fællesregulativet 2026 (Green Power Denmark, gyldig fra 1/1-2026), Del B, pkt. 14 (Installationer tilsluttet i lavspændingsnet) – https://elnet.dk/files/media/document/F%C3%A6llesregulativet_2026.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-016",
+      "maal": [
+        "EL-TEMA-04",
+        "EL-AUT-01"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En gruppe beskyttes af en C13-automatsikring (minikredsbryder karakteristik C). For at kortslutningsbeskyttelsen skal virke hurtigt, skal den mindste kortslutningsstrøm i ethvert punkt af kredsen være højere end 10 gange mærkestrømmen. Regn med U0 = 230 V og Ik = U0/Zs. Hvad er den største fase-nul-sløjfeimpedans Zs, der kan accepteres ved den fjerneste stikkontakt? Angiv svaret i Ω.",
+      "facit": {
+        "vaerdi": 1.77,
+        "enhed": "Ω",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Ik ≥ 10·13 = 130 A ⇒ Zs ≤ 230/130 ≈ 1,77 Ω.",
+      "kilde": "Sikkerhedsstyrelsen: Simpel dimensionering af installationer (betingelse: Ik min > 10 × In for karakteristik C) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/dimensionering-elektriske-installationer/simpel-dimensionering-installationer; Ohms lov",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-017",
+      "maal": [
+        "EL-AUT-01",
+        "EL-TEMA-04"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Hvad er den største tilladte udkoblingstid for fejlbeskyttelse ved automatisk afbrydelse af forsyningen for fastforbundet materiel til og med 32 A i et TT-system (230 V til jord) efter HD 60364-4-41, punkt 411.3.2?",
+      "valgmuligheder": {
+        "A": "0,2 sekund",
+        "B": "0,4 sekund",
+        "C": "1 sekund",
+        "D": "5 sekunder"
+      },
+      "facit": "A",
+      "begrundelse": "Tabellen gengivet af Sikkerhedsstyrelsen: TT 0,2 s og TN 0,4 s for materiel til og med 32 A; over 32 A: TT 1 s og TN 5 s.",
+      "kilde": "Sikkerhedsstyrelsen: Krav til installation af solcelleanlæg (gengivelse af HD 60364-4-41:2017, 411.3.2) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/solcelleinstallationer/krav-installation-solcelleanlaeg",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-018",
+      "maal": [
+        "EL-AUT-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En solcelleinverter i en bolig med TT-system fejlbeskyttes af driftstekniske grunde med en RCD type B med mærkeudløsestrøm IΔn = 100 mA. Fejlbeskyttelsen kræver RA · IΔn ≤ 50 V, hvor RA er summen af jordelektrodens overgangsmodstand og beskyttelseslederens modstand. Hvad er den største tilladte RA? Angiv svaret i Ω.",
+      "facit": {
+        "vaerdi": 500,
+        "enhed": "Ω",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "RA ≤ 50 V / 0,1 A = 500 Ω.",
+      "kilde": "Sikkerhedsstyrelsen: Spørgsmål og svar om solceller (HD 60364-4-41, 411.5.3: RA × IΔn ≤ 50 V) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/sporgsmal-og-svar/elinstallationer/sporgsmal-og-svar-om-solceller",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-019",
+      "maal": [
+        "EL-KM-14",
+        "EL-TEMA-05"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Ved første verifikation af en ny 230/400 V-boliginstallation måler du isolationsmodstanden mellem de spændingsførende ledere (forbundet sammen) og beskyttelseslederen. Hvilken grænse skal måleresultatet overholde efter de gældende regler?",
+      "valgmuligheder": {
+        "A": "Mere end 0,25 MΩ",
+        "B": "Mere end 0,5 MΩ",
+        "C": "Mere end 1 MΩ",
+        "D": "Mere end 10 MΩ"
+      },
+      "facit": "C",
+      "begrundelse": "Sikkerhedsstyrelsen: kravet til isolationsmodstand er fordoblet i de nye regler; der skal nu måles mere end 1 MΩ (0,5 MΩ var det tidligere krav).",
+      "kilde": "Sikkerhedsstyrelsen: Afprøvning af den elektriske installation, punkt B (efter DS/HD 60364-6:2016) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/afproevning-elektriske-installation",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-020",
+      "maal": [
+        "EL-TEMA-05",
+        "EL-KM-14"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Eftersynet af en ny installation er gennemført, og du går i gang med afprøvningen efter Sikkerhedsstyrelsens metode (DS/HD 60364-6). Hvilken prøvning skal udføres først?",
+      "valgmuligheder": {
+        "A": "Afprøvning af RCD'erne ved 1 × IΔn med installationstester",
+        "B": "Gennemgangsmåling af beskyttelseslederne",
+        "C": "Måling af fase-nul-sløjfeimpedans ved fjerneste stikkontakt",
+        "D": "Afprøvning af fasefølge ved de 3-fasede stikkontakter"
+      },
+      "facit": "B",
+      "begrundelse": "Metoden skal følges i rækkefølge: A gennemgang af beskyttelsesleder (lav målestrøm), B isolationsmodstand, ... F1 automatisk afbrydelse/RCD, F3 sløjfeimpedans, H fasefølge.",
+      "kilde": "Sikkerhedsstyrelsen: Afprøvning af den elektriske installation – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/afproevning-elektriske-installation",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-021",
+      "maal": [
+        "EL-KM-14",
+        "EL-TEMA-05"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du har udskiftet gruppetavlen i et rækkehus. Den nye tavle har to RCD'er type A 30 mA og én RCBO til en ny gruppe for en opvaskemaskine. Beskriv, hvordan du afprøver fejlstrømsbeskyttelsen med installationstester, og hvordan verifikationen afsluttes og dokumenteres.",
+      "facit": null,
+      "kriterier": [
+        "Angiver, at RCD'erne afprøves ved 1 × IΔn med ren sinus ved både 0° og 180° faseforskydning.",
+        "Angiver mindst én yderligere prøvestrøm, fx 0,5 × IΔn (må ikke udløse) eller 5 × IΔn.",
+        "Angiver, at en RCD type A også afprøves med pulserende d.c.-fejlstrøm.",
+        "Angiver, at RCBO'en afprøves, før den forbindes på afgangssiden (inden der sættes spænding på gruppen), eller tilsvarende særlig fremgangsmåde for RCBO.",
+        "Nævner mindst ét praktisk forhold ved RCD-afprøvningen, fx måling i forhold til nullederen på tilgangssiden for at undgå fejl fra udstyr på beskyttelseslederen, eller funktionsafprøvning af RCD'er og gruppeafbrydere."
+      ],
+      "begrundelse": "Sikkerhedsstyrelsens metode F1 (minimumskrav fra S-564) og punkt I (funktionsafprøvning).",
+      "kilde": "Sikkerhedsstyrelsen: Afprøvning af den elektriske installation, punkt F1 og Rapportering af verifikation – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/afproevning-elektriske-installation; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/rapportering-verifikation; Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 75",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret nøjes med at trykke på RCD'ens testknap som afprøvning."
+      ]
+    },
+    {
+      "id": "EL-022",
+      "maal": [
+        "EL-KM-12"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal måle spændingen på målerens tilgangsklemmer og på stikledningen i et kombinationsskab ved en villa. Hvilken overspændingskategori bør dit måleinstrument mindst være beregnet til?",
+      "valgmuligheder": {
+        "A": "KAT I",
+        "B": "KAT II",
+        "C": "KAT III",
+        "D": "KAT IV"
+      },
+      "facit": "D",
+      "begrundelse": "Sikkerhedsstyrelsen: til måling på selve måleren og ud på forsyningsanlægget (stikledninger, jordkabler) bør der kun bruges instrumenter for KAT IV; tavler og installationen efter måleren KAT III.",
+      "kilde": "Sikkerhedsstyrelsen: Arbejde på eller nær ved en idriftsat installation (Måleinstrumenter, Overspændingskategorier) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/l-aus-arbejde-under-spaending/arbejde-paa-eller-naer-ved-idriftsat-installation",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-023",
+      "maal": [
+        "EL-KM-12"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du har afbrudt en gruppe og skal kontrollere, at der er spændingsløst, før du afmonterer en stikkontakt. Hvilken fremgangsmåde lever op til Sikkerhedsstyrelsens vejledning?",
+      "valgmuligheder": {
+        "A": "En berøringsfri polsøger holdes mod ledningerne; lyser den ikke, er der spændingsløst.",
+        "B": "Et multimeter i modstandsområdet sættes mellem fase og nul; viser det ikke kortslutning, er der spændingsløst.",
+        "C": "En lampe sættes i stikkontakten; lyser den ikke, er der spændingsløst.",
+        "D": "En to-polet spændingstester efter DS/EN 61243-3, som kontrolleres før og om nødvendigt efter brug."
+      },
+      "facit": "D",
+      "begrundelse": "Ved kontrol af spændingsløs tilstand med to-polet spændingsdetektor skal den opfylde DS/EN 61243-3 og kontrolleres før brug og om nødvendigt efter brug.",
+      "kilde": "Sikkerhedsstyrelsen: Arbejde på eller nær ved en idriftsat installation (Kontrol af spændingsløs tilstand) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/l-aus-arbejde-under-spaending/arbejde-paa-eller-naer-ved-idriftsat-installation",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-024",
+      "maal": [
+        "EL-KM-12",
+        "EL-KM-13"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En 17-årig elektrikerlærling er med på en fejlfindingsopgave i en villa. Hvad må lærlingen efter installationsbekendtgørelsen?",
+      "valgmuligheder": {
+        "A": "Måle og fejlsøge under spænding, når lærlingen er instrueret og under opsyn af en sagkyndig.",
+        "B": "Udføre alt arbejde under spænding, når en svend er til stede på adressen.",
+        "C": "Kun arbejde på installationen, når den er spændingsløs; måling under spænding kræver, at man er fyldt 18 år.",
+        "D": "Udskifte en stikkontakt under spænding, hvis lærlingen bruger isoleret værktøj efter DS/EN 60900."
+      },
+      "facit": "A",
+      "begrundelse": "§ 78: arbejde på eller nær ved installation under spænding kræver, at man er fyldt 18 år; måling og fejlsøgning under spænding kan udføres af personer under uddannelse, der er fyldt 16 år og er instrueret og under opsyn af en sagkyndig person.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 78 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-025",
+      "maal": [
+        "EL-KM-13"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal udskifte en ældre gruppetavle med skruesikringer i et parcelhus. På taget er der et solcelleanlæg med inverter, tilsluttet i tavlen, og huset har et hjemmebatteri. Beskriv din risikovurdering og de sikkerhedsforanstaltninger, du træffer, før og under arbejdet.",
+      "facit": null,
+      "kriterier": [
+        "Vælger at arbejde spændingsløst og afbryder forsyningen, herunder både net og alle andre kilder (inverter/solceller og batteri).",
+        "Sikrer mod genindkobling (fx aflåsning og skiltning).",
+        "Kontrollerer spændingsløs tilstand med en egnet, kontrolleret spændingstester.",
+        "Gør opmærksom på, at solcellernes d.c.-side forbliver spændingsførende, selv om a.c.-siden er afbrudt.",
+        "Nævner mindst én yderligere foranstaltning ud fra risikovurderingen, fx jording og kortslutning, afdækning af nærliggende spændingsførende dele eller personlige værnemidler."
+      ],
+      "begrundelse": "Installationsbekendtgørelsen § 76 og DS/EN 50110-1 (spændingsløst arbejde, andre kilder som solceller/UPS); Sikkerhedsstyrelsen om solceller (d.c. under spænding efter afbrydelse).",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 76; Sikkerhedsstyrelsen: Arbejde på eller nær ved en idriftsat installation og Krav til installation af solcelleanlæg – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/l-aus-arbejde-under-spaending/arbejde-paa-eller-naer-ved-idriftsat-installation; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/solcelleinstallationer/krav-installation-solcelleanlaeg",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret anbefaler at udskifte tavlen under spænding, uden at det begrundes med, at spændingsløst arbejde er umuligt."
+      ]
+    },
+    {
+      "id": "EL-026",
+      "maal": [
+        "EL-KM-13",
+        "EL-KM-12"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde med et lille værksted har fået tilbud fra et firma uden elautorisation om termografering af værkstedets eltavler. Firmaet vil fjerne afdækningerne selv og siger, at én person er nok, fordi tavlen er under 63 A. Hvad svarer du kunden?",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at termografering af eltavler kun må udføres af (eller med medvirken af) en autoriseret elinstallatørvirksomhed eller en tavlefabrikant, fordi afdækninger og låger skal fjernes.",
+        "Forklarer, at der skal udføres en risikovurdering efter DS/EN 50110-1 før termograferingen.",
+        "Forklarer, at risikovurderingen afgør, om arbejdet er arbejde under spænding eller i nærheden af spænding, og om én person er forsvarligt; den gamle faste 63 A-regel gælder ikke længere.",
+        "Nævner personlige værnemidler (fx L-AUS-handsker/beskyttelse mod lysbue) som en del af risikovurderingen."
+      ],
+      "begrundelse": "Sikkerhedsstyrelsen: termografering er autorisationskrævende; risikovurdering efter EN 50110; tidligere fast 63 A-krav er erstattet af risikovurdering.",
+      "kilde": "Sikkerhedsstyrelsen: Termografering af eltavler er autorisationskrævende arbejde – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/eltavler-og-maalertavler/termografering-eltavler-autorisationskraevende-arbejde",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret siger, at der gælder en fast regel om to personer over 63 A (eller én person under 63 A) som nugældende krav."
+      ]
+    },
+    {
+      "id": "EL-027",
+      "maal": [
+        "EL-KM-06"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvilket af følgende er et krav til installationen på d.c.-siden af et solcelleanlæg på et parcelhustag?",
+      "valgmuligheder": {
+        "A": "Kablerne må lægges direkte på tagfladen, hvis de er UV-bestandige.",
+        "B": "Udføres d.c.-siden som SELV eller PELV, må spændingen være op til 230 V d.c.",
+        "C": "Materiellet skal udføres med dobbelt eller forstærket isolation (klasse II eller tilsvarende).",
+        "D": "D.c.-stik, som lægmand kan nå, skal kunne adskilles uden værktøj, så anlægget hurtigt kan afbrydes."
+      },
+      "facit": "C",
+      "begrundelse": "Sikkerhedsstyrelsen: d.c.-siden skal udføres med dobbelt eller forstærket isolation; kabler må ikke anbringes direkte på tagets overflade; ved SELV/PELV må spændingen ikke overstige 120 V d.c.; tilgængelige stik må kun kunne adskilles med nøgle eller værktøj.",
+      "kilde": "Sikkerhedsstyrelsen: Krav til installation af solcelleanlæg – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/solcelleinstallationer/krav-installation-solcelleanlaeg",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-028",
+      "maal": [
+        "EL-KM-06",
+        "EL-TEMA-03"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En villaejer vil have et 6 kW solcelleanlæg på taget med en 3-faset hybridinverter og et hjemmebatteri. Han har købt paneler, inverter og batteri hver for sig på nettet og vil selv montere panelerne. Hvad skal du som installatør sørge for, og hvad må ejeren selv?",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at tilslutning af anlægget til den faste installation (fra inverterens a.c.-afgang) altid er autorisationskrævende.",
+        "Skelner mellem ren mekanisk montage af stativ/paneler og den elektriske sammenkobling: komponenter købt hver for sig må ejeren ikke selv sammenkoble (kun autoriseret elinstallatør eller firma, der erhvervsmæssigt servicerer solcelleanlæg).",
+        "Angiver, at installationen (produktionsanlæg og energilager) skal tilmeldes netselskabet, før arbejdet påbegyndes.",
+        "Angiver, at anlægget tilsluttes som et generatoranlæg på forsyningssiden af gruppernes beskyttelsesudstyr – ikke på en tilfældig gruppe og ikke via stikprop.",
+        "Angiver, at tavlen skal mærkes med, at der er tilsluttet et solcelleanlæg (og at dele kan være spændingsførende efter adskillelse).",
+        "Angiver verifikation før idriftsættelse (fx efter HD 60364-6/EN 62446)."
+      ],
+      "begrundelse": "Sikkerhedsstyrelsens vejledninger om autorisation og installation af solcelleanlæg; Fællesregulativet 2026 afsnit 2 (tilmelding før arbejdet påbegyndes, produktionsanlæg og energilageranlæg).",
+      "kilde": "Sikkerhedsstyrelsen: Det kræver autorisation at tilslutte et solcelleanlæg og Krav til installation af solcelleanlæg – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/solcelleinstallationer/det-kraever-autorisation-tilslutte-solcelleanlaeg; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/solcelleinstallationer/krav-installation-solcelleanlaeg; Fællesregulativet 2026 (Green Power Denmark, gyldig fra 1/1-2026), Del A, pkt. 2 – https://elnet.dk/files/media/document/F%C3%A6llesregulativet_2026.pdf",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret siger, at ejeren selv må tilslutte inverteren i gruppetavlen."
+      ]
+    },
+    {
+      "id": "EL-029",
+      "maal": [
+        "EL-KM-16",
+        "EL-KM-06"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En familie har fået elbil og oplader den hver nat med et mode 2-ladekabel i en almindelig stikkontakt i carporten på en gruppe, der også forsyner lys og stikkontakter i huset. Hvad er Sikkerhedsstyrelsens anbefaling og krav?",
+      "valgmuligheder": {
+        "A": "Mode 2-opladning er uproblematisk med fuld ladestrøm, så længe gruppen er beskyttet af en 30 mA RCD type A.",
+        "B": "Højst ca. 6 A over længere tid; over 6 A i mere end 2 timer kræver en egnet stikkontakt på en separat gruppe.",
+        "C": "Mode 2-opladning er forbudt i boliger, og der skal i stedet altid installeres en 22 kW ladeboks.",
+        "D": "Opladningen må ske med fuld strøm hele natten, hvis der bruges en forlængerledning med større tværsnit end gruppens kabel."
+      },
+      "facit": "B",
+      "begrundelse": "Sikkerhedsstyrelsen: højst 6 A over længere tid i almindelige boligstikkontakter; > 6 A i > 2 timer kræver stikkontakt til længerevarende høj belastning og separat gruppe (§ 56, stk. 4); ingen forlængerledninger (HD 60364-7-722). Anbefaler vægmonteret ladeboks.",
+      "kilde": "Sikkerhedsstyrelsen: Opladning af el-biler – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/elbiler/opladning-el-biler; Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 56, stk. 4",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-030",
+      "maal": [
+        "EL-KM-16"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du installerer en vægmonteret ladeboks (AC, 11 kW) i en carport. Ifølge fabrikanten har ladeboksen ingen indbygget beskyttelse mod d.c.-fejlstrømme. Hvilken RCD skal ladestikket fejlbeskyttes med?",
+      "valgmuligheder": {
+        "A": "RCD type B, 30 mA",
+        "B": "RCD type A, 30 mA",
+        "C": "RCD type AC, 30 mA",
+        "D": "RCD type A, 300 mA"
+      },
+      "facit": "A",
+      "begrundelse": "Kapitel 722: uden indbygget blokering mod d.c.-reststrømme er RCD type B (30 mA) det oplagte valg; type A/F kun hvis ladeboksen begrænser d.c.-reststrømme til 6 mA; type AC er forbudt i boliger.",
+      "kilde": "Sikkerhedsstyrelsen: Opladning af el-biler (Valg af RCD til AC-ladestik) og Valg og installation af RCD – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/elbiler/opladning-el-biler; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/eltavler-og-maalertavler/valg-og-installation-rcd-fejlstroemsafbryder",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-031",
+      "maal": [
+        "EL-KM-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal montere et smart-relæ bag en eksisterende afbryder i et parcelhus fra 1975. Fabrikantens vejledning kræver nulleder, men i afbryderdåsen er der kun fase og returleder til lampen. Hvad er en korrekt løsning?",
+      "valgmuligheder": {
+        "A": "Forbinde relæets nulklemme til beskyttelseslederen i dåsen, eller til jordbøsningen i en stikkontakt.",
+        "B": "Hente nul fra en nabodåse fra en anden gruppe, eller fra et lampeudtag på en anden gruppe.",
+        "C": "Bruge et relæ, som efter fabrikanten kan køre uden nul, eller trække nul fra samme gruppe.",
+        "D": "Forbinde nulklemmen til returlederen til lampen, eller lade klemmen stå uden forbindelse."
+      },
+      "facit": "C",
+      "begrundelse": "Materiel skal installeres efter fabrikantens instruktioner (§ 18, stk. 2); grøn/gul må kun bruges som beskyttelsesleder (§ 39, stk. 2); en strømkreds skal kunne adskilles fra alle sine spændingsførende ledere (§ 33, stk. 2), hvilket nul fra en anden gruppe forhindrer.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 18, 33 og 39 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-032",
+      "maal": [
+        "EL-KM-02"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde i en villa vil have trådløse smart-dimmere i stuen og køkkenet til eksisterende LED-spots og vil kunne styre dem fra en app. Kunden spørger, hvad du gør, og hvad han selv kan stå for bagefter. Rådgiv kunden.",
+      "facit": null,
+      "kriterier": [
+        "Skelner mellem, hvad kunden selv må (ren udskiftning af en afbryder med en dimmer på et IP20-sted, BEK 560 § 1, nr. 1), og hvad der kræver autoriseret elinstallatør (fx nulleder til smart-dimmeren, ny ledningsføring eller ændringer i tavlen).",
+        "Kontrollerer kompatibiliteten mellem dimmer og LED-spots efter fabrikantens forskrifter (fx dimmerprincip eller minimums-/maksimumsbelastning).",
+        "Nævner forhold i dåsen, fx plads, varmeafgivelse eller fabrikantens krav til montering.",
+        "Nævner mindst ét yderligere forhold fra fabrikantens anvisning, fx derating ved flere dimmere i samme dåse/ramme eller indstilling af minimumsniveau mod flimmer."
+      ],
+      "begrundelse": "Autorisationsloven § 2; BEK 560/2017 § 1, nr. 1 (udskiftning af afbrydere ≤ 250 V på IP20-steder må udføres af enhver); installationsbekendtgørelsen § 18, stk. 2 (fabrikantens instruktioner).",
+      "kilde": "Autorisationsloven LBK nr. 30/2019, § 2 – https://www.retsinformation.dk/eli/lta/2019/30; BEK nr. 560/2017, § 1, nr. 1 – https://www.retsinformation.dk/eli/lta/2017/560; Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, § 18 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-033",
+      "maal": [
+        "EL-KM-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du idriftsætter et Wi-Fi-modul til styring af en varmepumpe og en smart-hub i en villa. Hvilket tiltag er mest i tråd med myndighedernes anbefalinger for sikring af smart-enheder?",
+      "valgmuligheder": {
+        "A": "Beholde fabriksindstillet brugernavn og adgangskode, så leverandørens support kan logge på.",
+        "B": "Slå automatisk opdatering fra, så en opdatering ikke ændrer varmepumpens drift.",
+        "C": "Åbne en port i routeren direkte til enheden, så kunden kan nå den hjemmefra.",
+        "D": "Skifte standardbrugernavn og -adgangskode og slå automatisk opdatering til."
+      },
+      "facit": "D",
+      "begrundelse": "sikkerdigital.dk: 1) skift adgangskode og brugernavn, 2) slå automatisk opdatering til, 3) slå internetadgang fra, når den ikke bruges.",
+      "kilde": "sikkerdigital.dk (Erhvervsstyrelsen m.fl.): Har du sikret din smart-enhed mod hackere? – https://admin.sikkerdigital.dk/Media/637879438201021012/IoT_A5_fysisk_handout.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-034",
+      "maal": [
+        "EL-KM-03",
+        "EL-KM-08"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "I et nyrenoveret parcelhus skal der kobles inverter, ladeboks, ventilationsaggregat og to IP-kameraer på husets netværk, og kunden vil se energidata samlet i én app. Du skal planlægge det lille kommunikationsnetværk. Beskriv dine valg med fokus på data- og cybersikkerhed og samspillet med elinstallationen.",
+      "facit": null,
+      "kriterier": [
+        "Nævner mindst ét tiltag for en sikker og robust netværksforbindelse til de tekniske enheder, fx kablet forbindelse frem for Wi-Fi eller placering af router/accesspunkt, så forbindelsen er stabil.",
+        "Adskiller de tekniske enheder fra husets øvrige netværk, fx separat net/VLAN eller gæstenet.",
+        "Planlægger kabelføringen, så data-/svagstrømskabler og stærkstrømsinstallationen ikke påvirker hinanden skadeligt og kan arbejdes på hver for sig.",
+        "Dokumenterer netværket for kunden, fx enhedsoversigt eller adresser og adgangsoplysninger.",
+        "Tager stilling til, hvor de opsamlede energidata samles og lagres (fx lokalt i en hub/energistyring eller i producenternes skytjenester), og hvem der har adgang til dem."
+      ],
+      "begrundelse": "sikkerdigital.dk: tilsluttede enheder kan give adgang til det øvrige netværk; installationsbekendtgørelsen §§ 21-22 (gensidig skadelig påvirkning og adskillelse); i øvrigt fagligt skøn om netværksopbygning og datahåndtering.",
+      "kilde": "sikkerdigital.dk: Har du sikret din smart-enhed mod hackere? – https://admin.sikkerdigital.dk/Media/637879438201021012/IoT_A5_fysisk_handout.pdf; Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 21-22 – https://www.retsinformation.dk/eli/lta/2016/1082",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-035",
+      "maal": [
+        "EL-KM-08"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde vil styre varmepumpe og elbilopladning efter husets aktuelle forbrug og vil koble en dataopsamlingsenhed til netselskabets fjernaflæste elmåler (fx via HAN-porten). Hvad er korrekt efter bekendtgørelsen om fjernaflæste elmålere?",
+      "valgmuligheder": {
+        "A": "Kun netselskabet må hente data fra måleren; kunden må alene se forsinkede timedata i netselskabets webportal.",
+        "B": "Kunden må tilkoble eksterne enheder efter åbne standarder uden at bryde plomber; netselskabet kan aktivere porten.",
+        "C": "Tilkobling til måleren kræver altid en autoriseret elinstallatør, fordi målerens plombe skal brydes ved montagen.",
+        "D": "Data må hentes, men kun ukrypteret, så kunden selv kan læse dem uden nøgle fra netselskabet."
+      },
+      "facit": "B",
+      "begrundelse": "BEK 1215/2024 § 7: forbrugeren kan efter åbne standarder tilkoble eksterne enheder; overførsel sikres ved kryptering el.lign.; tilkobling af lægmand uden at bryde plomber; netvirksomheden kan aktivere eksternt uden unødige ekstraomkostninger.",
+      "kilde": "BEK nr. 1215 af 20/11/2024 om fjernaflæste elmålere og måling af elektricitet i slutforbruget, §§ 5 og 7 – https://www.retsinformation.dk/eli/lta/2024/1215",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-036",
+      "maal": [
+        "EL-KM-07"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et nyt parcelhus (anvendelseskategori 4) med fast elforsyning skal have brandteknisk installation til varsling af beboerne. Hvad kræver bygningsreglementet (BR18 § 93 med de præ-accepterede løsninger i bilag 12)?",
+      "valgmuligheder": {
+        "A": "Batteridrevne røgalarmer er tilstrækkelige, når der er mindst én på hver etage.",
+        "B": "Et automatisk brandalarmanlæg med alarmoverførsel til redningsberedskabet.",
+        "C": "Der er kun krav om varsling i bygninger indrettet til flere end 150 personer.",
+        "D": "Røgalarmanlæg tilsluttet den faste strømforsyning og med batteribackup."
+      },
+      "facit": "D",
+      "begrundelse": "BR18 § 93, stk. 1, nr. 4: en boligenhed i anvendelseskategori 4 skal udføres med røgalarmanlæg. Bilag 12, afsnit 5.4.3: røgalarmanlæg skal være tilsluttet bygningens faste normale strømforsyning og have batteribackup; batteridrift alene kun i bygninger uden fast strømforsyning (fx kolonihavehuse).",
+      "kilde": "BR18 kap. 5 Brand, § 93, stk. 1, nr. 4 – https://www.bygningsreglementet.dk/Tekniske-bestemmelser/05/Krav; BR18 bilag 12 (præ-accepterede løsninger), afsnit 5.4.3 – https://www.bygningsreglementet.dk/media/uxep2y1h/bilag-12-ver-11-20210308-a.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-037",
+      "maal": [
+        "EL-KM-07"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Et alarmfirma har monteret en indbrudsalarm (AIA) i en villa og beder dig lave 230 V-forsyningen til alarmcentralen. Kunden ønsker ikke, at alarmen falder ud, hvis RCD'en slår fra. Hvordan løser du forsyningen, og hvad skal du være opmærksom på?",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at den faste 230 V-tilslutning udføres af en autoriseret elinstallatør (eller af alarmfirmaet, hvis det erhvervsmæssigt producerer/servicerer centralen) efter fabrikantens anvisninger.",
+        "Forklarer, at udeladelse af RCD ≤ 30 mA af driftstekniske grunde kun er tilladt for et fast tilslutningssted (eller en stikkontakt for en enkelt brugsgenstand, der anbringes/mærkes, så den ikke bruges til andet), og at kredsen så skal have automatisk afbrydelse med andet beskyttelsesudstyr.",
+        "Nævner alternativet at bevare RCD-beskyttelsen og sikre driften på anden måde, fx centralens nødbatteri eller en egen gruppe med RCBO.",
+        "Nævner mindst ét installationsforhold, fx adskillelse mellem alarmens svagstrømskabler og stærkstrømsinstallationen eller mærkning af gruppen i tavlen."
+      ],
+      "begrundelse": "Installationsbekendtgørelsen § 35, stk. 3-5 (nr. 4: andre tilslutningssteder) / § 61, stk. 3-5, §§ 21-22 og 36; autorisationsloven § 2, stk. 1 og 4.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 21-22, 35, 36 og 61 – https://www.retsinformation.dk/eli/lta/2016/1082; Autorisationsloven LBK nr. 30/2019, § 2, stk. 4 – https://www.retsinformation.dk/eli/lta/2019/30; Sikkerhedsstyrelsen: Valg og installation af RCD (Steder uden beskyttelse med RCD) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/eltavler-og-maalertavler/valg-og-installation-rcd-fejlstroemsafbryder",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret fjerner RCD-beskyttelsen fra en almindelig stikkontakt, som også kan bruges til andre brugsgenstande."
+      ]
+    },
+    {
+      "id": "EL-038",
+      "maal": [
+        "EL-KM-10"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du vil bruge Sikkerhedsstyrelsens vejledende verifikationsskema (tjekliste) for mindre elinstallationer til at rapportere verifikationen. For hvilken installation er skemaet beregnet?",
+      "valgmuligheder": {
+        "A": "Enhver boliginstallation, uanset antal grupper og tavler, så længe den er 1-faset.",
+        "B": "Kun udvidelser af eksisterende installationer med højst to nye tilslutningssteder.",
+        "C": "Mindre installationer med højst 6 grupper, helst med én enkelt gruppetavle.",
+        "D": "Installationer med højst 10 grupper og højst to undertavler."
+      },
+      "facit": "C",
+      "begrundelse": "Sikkerhedsstyrelsen: verifikationsskemaet kan kun bruges til mindre installationer, fx en boliginstallation; det er begrænset til 6 grupper og bør kun bruges, hvor der er opsat én enkelt gruppetavle.",
+      "kilde": "Sikkerhedsstyrelsen: Rapportering af verifikation (Særligt for mindre installationer) – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/rapportering-verifikation",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-039",
+      "maal": [
+        "EL-KM-10"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du har installeret en ny gruppetavle med to RCD'er, en ladeboks og tilslutning af en varmepumpe i et parcelhus. Kunden har ingen elfaglig viden. Beskriv, hvilken dokumentation du laver til kunden (brugervejledning og service-/vedligeholdelsesplan), og hvad virksomheden selv skal gemme.",
+      "facit": null,
+      "kriterier": [
+        "Sikrer en entydig og holdbar mærkning/oversigt i tavlen over, hvad hver gruppe og RCD betjener.",
+        "Giver en brugervejledning med periodisk afprøvning af RCD'erne via testknappen.",
+        "Angiver en service-/vedligeholdelsesplan for ladeboks og varmepumpe efter fabrikanternes anvisninger (og overdrager deres manualer).",
+        "Angiver, at virksomheden selv opbevarer dokumentation for slutkontrollen (fx installation, hvem udførte, hvem kontrollerede, dato og resultat).",
+        "Forklarer kunden, hvad der gøres ved udkobling, fx frakoble apparater, kun én genindkobling af en sikring og kontakt til elinstallatør ved gentagelse."
+      ],
+      "begrundelse": "Installationsbekendtgørelsen §§ 30, 36 og 81; BEK 725/2024 bilag 1, III (bilaget nyaffattet ved BEK 1312/2025 med uændret el-indhold).",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 30, 36, 75, 81 – https://www.retsinformation.dk/eli/lta/2016/1082; BEK nr. 725 af 12/06/2024 om kvalitetsledelsessystemer, § 3, stk. 3 og bilag 1, pkt. III – https://www.retsinformation.dk/eli/lta/2024/725",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-040",
+      "maal": [
+        "EL-KM-15"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "I et køkken sidder 8 halogenspots på hver 35 W. De udskiftes med LED-spots på hver 5 W med samme lysmængde. Lyset er tændt i gennemsnit 4 timer om dagen hele året (365 dage). Beregn den årlige elbesparelse. Se bort fra tab i transformere/drivere. Angiv svaret i kWh.",
+      "facit": {
+        "vaerdi": 350.4,
+        "enhed": "kWh",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Besparelse = 8 · (35 − 5) W · 4 h · 365 = 350 400 Wh ≈ 350,4 kWh.",
+      "kilde": "Energi E = P · t (effekt × tid)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-041",
+      "maal": [
+        "EL-KM-15"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En familie i et parcelhus fra 1985 klager over en høj elregning. Huset har en ældre elvandvarmer, el-gulvvarme i badeværelset uden ur-styring og mange apparater på standby. Du er der for at skifte en stikkontakt, og kunden spørger, hvad der kan gøres. Vejled kunden.",
+      "facit": null,
+      "kriterier": [
+        "Foreslår at kortlægge forbruget med målinger, fx målerdata (kvarters-/timeværdier) fra netselskabet eller måling på enkelte grupper.",
+        "Foreslår styring af el-gulvvarmen frem for konstant drift, fx termostat med ur-/tidsstyring eller smart-styring.",
+        "Foreslår mindst ét yderligere sparetiltag, fx reduktion af standbyforbrug (afbryderstikdåser/smart-stik) eller LED-belysning.",
+        "Nævner elvandvarmeren som mulig storforbruger, fx dens temperaturindstilling, tidsstyring eller isolering.",
+        "Skelner mellem, hvad kunden selv kan gøre (fx brug af stikprop-tilsluttede smart-stik), og hvad der kræver autoriseret installatør (indgreb i den faste installation)."
+      ],
+      "begrundelse": "Energirådgivning ud fra målte data (BEK 1215/2024 §§ 4-5: målere registrerer mindst hvert 15. minut og kan vise aktuel effekt) og grænsen for autorisationskrævende arbejde (autorisationsloven § 2).",
+      "kilde": "BEK nr. 1215 af 20/11/2024, §§ 4-5 og 7 – https://www.retsinformation.dk/eli/lta/2024/1215; Autorisationsloven LBK nr. 30/2019, § 2 – https://www.retsinformation.dk/eli/lta/2019/30",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-042",
+      "maal": [
+        "EL-AUT-02"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "I et hus fra 1972 skal køkkenet laves om, og kunden vil have den gamle gruppetavle (fra 1985, HFI-afbryder og skruesikringer) flyttet ca. 80 cm til siden og ellers bibeholdt. Kunden mener, at det er en bagatel. Rådgiv om kravene.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at en flyttet tavle skal leve op til de krav, der gælder på flytningstidspunktet, og at der ikke er nogen bagatelgrænse for flytningens længde.",
+        "Forklarer, at tavlen kunne have været bibeholdt efter de gamle regler, hvis den var blevet på stedet (§ 68, stk. 1).",
+        "Angiver mindst ét nugældende krav, der typisk betyder ny tavle, fx RCD ≤ 30 mA af type A (type AC/HFI ikke tilladt i boliger), fordeling på mindst to RCD'er eller tavle efter DS/EN 61439.",
+        "Angiver mindst ét placeringskrav for beskyttelsesudstyret, fx højst 2,2 m over gulv og under 1 m kun i aflåseligt skab.",
+        "Angiver mærkning af grupperne eller verifikation før idriftsættelse."
+      ],
+      "begrundelse": "Installationsbekendtgørelsen §§ 25, 53, 55, 68 og 75; Sikkerhedsstyrelsen: Ændring og udskiftning af eltavle (ingen bagatelgrænse).",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 25, 30, 53, 55, 68, 75 – https://www.retsinformation.dk/eli/lta/2016/1082; Sikkerhedsstyrelsen: Ændring og udskiftning af eltavle – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/eltavler-og-maalertavler/aendring-og-udskiftning-eltavle",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret siger, at tavlen kan flyttes uden at opfylde nugældende krav, fordi flytningen er kort."
+      ]
+    },
+    {
+      "id": "EL-043",
+      "maal": [
+        "EL-AUT-02",
+        "EL-AUT-01"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Et badeværelse i et hus fra 1962 renoveres totalt med nyt gulv, ny bruseniche uden fast skillevæg og plads til en vaskemaskine. Rørene er udskiftet fra metal til plast. Du skal projektere elinstallationen efter DS/HD 60364-7-701:2024. Beskriv de vigtigste krav.",
+      "facit": null,
+      "kriterier": [
+        "Angiver, at der skal udføres lokal supplerende potentialudligning, når der etableres nyt gulv.",
+        "Angiver, at områderne ved en bruseniche uden fast skillevæg ikke kan afgrænses med en kant på 10 cm; afgrænsning kræver fx fast skillevæg eller en lukket brusedør.",
+        "Angiver kapslingsklasse mindst IPX4 i område 1 og 2 (eller IPX7 i område 0).",
+        "Angiver, at en vaskemaskine i område 1 skal være fast tilsluttet (eller at stikkontakten placeres uden for områderne).",
+        "Angiver, at strømkredsene i rummet skal have supplerende beskyttelse med RCD ≤ 30 mA."
+      ],
+      "begrundelse": "Sikkerhedsstyrelsens vejledninger om badeværelser (DS/HD 60364-7-701:2024) og potentialudligning (701.415.2).",
+      "kilde": "Sikkerhedsstyrelsen: Elektrisk materiel i badeværelser DS/HD 60364-7-701:2024, Potentialudligning i badeværelser og Hvis du skal ændre eller udvide eksisterende installationer – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/elektrisk-materiel-badevaerelser-dshd-60364-7-7012024; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/potentialudligning/potentialudligning-badevaerelser; https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/hvis-du-skal-aendre-eller-udvide-eksisterende-installationer",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-044",
+      "maal": [
+        "EL-AUT-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvilket af følgende må installeres i område 2 ved et badekar efter DS/HD 60364-7-701:2024?",
+      "valgmuligheder": {
+        "A": "En 230 V-stikkontakt med kapslingsklasse IP44 og RCD 30 mA",
+        "B": "En lille gruppetavle i IP55-kapsling",
+        "C": "Et shaverstik efter EN 61558-2-5",
+        "D": "En 230 V-panelstikkontakt til en hårtørrer"
+      },
+      "facit": "C",
+      "begrundelse": "Sikkerhedsstyrelsen: i område 2 må bl.a. installeres shaverstik efter EN 61558-2-5; 230 V-stikkontakter må ikke installeres i område 0, 1 og 2; gruppetavler kan ikke placeres i området.",
+      "kilde": "Sikkerhedsstyrelsen: Elektrisk materiel i badeværelser DS/HD 60364-7-701:2024 – https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/elektrisk-materiel-badevaerelser-dshd-60364-7-7012024",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "EL-045",
+      "maal": [
+        "EL-AUT-01",
+        "EL-AUT-02"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Ved et serviceeftersyn i et hus fra 1960 finder du, at installationen kun er beskyttet af en gammel fejlspændingsafbryder (FSA) med egen jordelektrode. Der er ingen RCD. Kunden spørger, om det er lovligt og sikkert, og hvad der skal gøres.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at en fejlspændingsafbryder ikke er en RCD og ikke giver den supplerende beskyttelse med RCD ≤ 30 mA, som også eksisterende installationer skal have.",
+        "Anbefaler RCD (type A eller bedre, ikke type AC) som fejl- og supplerende beskyttelse.",
+        "Forklarer, at ejeren er ansvarlig for at lade fejl og mangler afhjælpe snarest muligt.",
+        "Nævner mindst ét forhold om jordforbindelsen, fx at FSA'ens beskyttelses-/jordingsledere ikke må forbindes til hovedudligningen eller måling af jordelektrodens overgangsmodstand."
+      ],
+      "begrundelse": "Installationsbekendtgørelsen §§ 53, 61, 71-72 og 75; elsikkerhedsloven § 10.",
+      "kilde": "Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016, §§ 53, 61, 71, 72, 75 – https://www.retsinformation.dk/eli/lta/2016/1082; Elsikkerhedsloven LBK nr. 57/2026, § 10 – https://www.retsinformation.dk/eli/lta/2026/57",
+      "status": "V 2026-10-17",
+      "fail_hvis": [
+        "Svaret siger, at installationen er i orden, fordi den var lovlig på udførelsestidspunktet."
+      ]
+    }
+  ]
+}

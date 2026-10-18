@@ -12,7 +12,7 @@ description: >-
 
 | Fil | Indhold | Læs når |
 |---|---|---|
-| `references/normgrundlag.md` | Lov, bekendtgørelser, standarder, gør-det-selv-listen, status | Krav, autorisation, gør-det-selv |
+| `references/normgrundlag.md` | Lov, bekendtgørelser, standarder, gør-det-selv-listen, installationsbekendtgørelsens centrale §§, ændring og udvidelse (køkken, tavleflytning, beskyttelsesleder), solceller, netselskab (tilmelding, kortslutningsniveau), status | Krav, grænseværdier, rumkrav, ombygning af eksisterende installation, autorisation, gør-det-selv |
 | `references/faglig-praksis.md` | Principper, løsninger, ældre installationer, fejlfinding, grænseflader | Projektering, vurdering, fejlfinding |
 | `references/tjeklister.md` | Projektering, hold points, verifikation, aflevering | KS, tilbud, aflevering |
 | `references/praksis-erfaring.md` | Praktisk erfaring fra udførelse: fejlfinding, tavleudskiftning, ladestander, service og montage | Udførelse, fejlfinding, serviceopgaver |
