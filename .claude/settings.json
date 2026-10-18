@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 scripts/exam.py:*)",
+      "Bash(python3 scripts/forsoeg.py:*)",
+      "Bash(python3 scripts/valider.py:*)",
+      "Bash(python3 scripts/tjek_data.py:*)"
+    ]
+  }
+}
