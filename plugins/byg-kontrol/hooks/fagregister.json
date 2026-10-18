@@ -10,7 +10,8 @@
             "skriv": ["bim/forslag/*", "bim/kilder/*"], "skriv_ny": ["bim/model.yaml"],
             "git_ekstra": ["bim/historik/*", "bim/sammenligning/*"]},
     "statik": {"agent": "statiker", "kontrol": "statik-kontrol", "regnevaerktoej": ["statik.py", "fem.py"], "skriv": ["fem/*"],
-               "kontrol_skrivefri": {"fem.py": {"regn": "--ingen-filer", "test": "", "skabelon": ""}}}
+               "kontrol_skrivefri": {"fem.py": {"regn": "--ingen-filer", "test": "", "skabelon": ""}}},
+    "arkitekt": {"agent": "arkitekt", "kontrol": "arkitekt-kontrol"}
   },
   "skriv_alle": ["fagnotater/{fag}.md", "fagnotater/{fag}-*.md", "bilag/{fag}/*", "forslag/{fag}-*__*.md"],
   "projekt_kontrol": "projekt-kontrol",

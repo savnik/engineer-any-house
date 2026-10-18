@@ -16,7 +16,7 @@
 
 ## Komponenter
 ```
-byg-team ──(dependencies)──► byg, byg-kontrol, byg-data, byg-vvs, byg-el, byg-murer, byg-ventilation, byg-maler, byg-toemrer, byg-statik, byg-bim
+byg-team ──(dependencies)──► byg, byg-kontrol, byg-data, byg-vvs, byg-el, byg-murer, byg-ventilation, byg-maler, byg-toemrer, byg-statik, byg-arkitekt, byg-bim
 byg ─────────────────────────► byg-kontrol
 byg-<fag> ───────────────────► byg-kontrol
 ```
@@ -98,6 +98,16 @@ Måling af 437 transskripter: subagenter 59 %, hovedtråd 35 %, workflows 6 % (m
 | Bash, låst | `statiker` og `statik-kontrol` har Bash, men `byg-kontrol/hooks/regne_vagt.py` tillader kun én kørsel af fagets registrerede regneværktøj (`"regnevaerktoej"` i fagregistret). Kontrolagenten kan derfor regne uden at kunne skrive; validatoren tillader kun Bash for kontrolagenter i fag med regneværktøj |
 | Mærkning | Hvert beregnet tal mærkes "OVERSLAG – skal eftervises af den ansvarlige statiker"; kontrollen afviser umærkede overslag (kritisk) |
 | `statik-kontrol` | Læse- og søgeværktøjer plus låst Bash. Genkører bilagets kommandoer og regner med egne input, hvor den er uenig; tjekker lastvejen til jord, stabilitet og midlertidig understøtning |
+
+## Arkitekt (2026-10-18)
+**Rolle:** `arkitekt` er en **rådgivende** fagagent som `statiker`. Den screener myndighedsforhold (byggetilladelse eller undtagelse efter BR18 § 5, byggeret og bebyggelsesprocent efter kap. 8 og 23, højde og afstand til skel, lokalplan, servitutter, bevaring), skitserer planløsninger, tilbygninger og kviste og reviewer ansøgningsmateriale. Den udarbejder ikke ansøgningsprojektet; "ansvarlig arkitekt" er et fag uden agent.
+
+| Komponent | Design |
+|---|---|
+| Mærkning | Planer og arealtal mærkes "SKITSE – ansøgningsprojekt udarbejdes af ansvarlig arkitekt/rådgiver"; kontrollen afviser umærkede skitser (kritisk) |
+| BIM via forslag | Ingen Bash. Arkitekten beskriver planen entydigt i fagnotatet (rum, mål, nye/nedrevne vægge, åbninger, højder), og projektlederen beder `bim-modelloer` om et BIM-forslag. Én skriver pr. fil – modellen ejes af BIM-faget |
+| Hold points | `HP-ARK-1` myndighedsafklaring før planen låses, `HP-ARK-2` statiker og tømrer har svaret, `HP-ARK-3` BIM-forslag flettet, `HP-ARK-4` tilladelse før byggestart |
+| `arkitekt-kontrol` | Regner selv etageareal og bebyggelsesprocent efter BR18 §§ 453–455 med leverancens tal og tjekker § 5-konklusionen, højde-afstand og plangrundlag |
 
 ## Parallelitet og revisionsstyring (2026-10-16)
 **Problem:** fag og sessioner, der kører parallelt, skrev i de samme filer. I sagerne gjaldt det grænseflader, risici, kontrolplan og ejendomskort, og i repoet versionsnumre, `ARKITEKTUR.md`, README og de genererede protokolblokke. Reglen "kun projektlederen skriver" sendte alt gennem hovedtråden.

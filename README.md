@@ -1,6 +1,6 @@
 # byg-eksperter
 
-Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projektleder**, der interviewer, planlægger og koordinerer, **fagagenter på mesterniveau** (vvs, el, murer, ventilation, maler, tømrer, statiker, BIM) og en **uafhængig kvalitetskontrol** med én kontrolagent pr. fag. Hver leverance kontrolleres hårdt og kildebaseret. Afviste leverancer sendes retur med fund, og efter 3 afviste forsøg stoppes der med root cause-analyse.
+Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projektleder**, der interviewer, planlægger og koordinerer, **fagagenter på mesterniveau** (vvs, el, murer, ventilation, maler, tømrer, statiker, arkitekt, BIM) og en **uafhængig kvalitetskontrol** med én kontrolagent pr. fag. Hver leverance kontrolleres hårdt og kildebaseret. Afviste leverancer sendes retur med fund, og efter 3 afviste forsøg stoppes der med root cause-analyse.
 
 > Agenterne rådgiver og planlægger. De erstatter ikke autoriserede håndværkere, certificerede rådgivere, lovpligtige kontroller eller kommunens byggesagsbehandling. Viden markeret **T** skal verificeres, før den bruges som krav.
 
@@ -9,10 +9,11 @@ Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projek
 |---|---|
 | `byg-team` | Meta-plugin – installerer alle nedenstående |
 | `byg` | Projektleder-skill og -agent, kommandoer `/byg:…`, sagsmappe og videnbank |
-| `byg-kontrol` | 9 kontrolagenter (8 fag + projekt), kontrolviden, hooks der håndhæver loopet |
+| `byg-kontrol` | 10 kontrolagenter (9 fag + projekt), kontrolviden, hooks der håndhæver loopet |
 | `byg-data` | Skill `ejendomsdata`: henter BBR, matrikel, lokalplan, fredning, jordforurening, grundvand, klima, energimærke og vurdering ud fra en adresse (Python-stdlib-script, ingen persondata). Valgfri gratis Datafordeler-nøgle i `DATAFORDELER_API_KEY` eller `~/.config/byg-data/datafordeler_api_key` – aldrig i repoet |
 | `byg-vvs` · `byg-el` · `byg-murer` · `byg-ventilation` · `byg-maler` · `byg-toemrer` | Fagagent, videnbase (normgrundlag, faglig praksis, tjeklister, erfaringsblade), hukommelse og evals |
 | `byg-statik` | Statiker (`statiker`): rådgivende om bærende konstruktioner – hvad er bærende, vægfjernelse, bjælker og vederlag, bjælkelag, tag, fundering, revner og sætninger, midlertidig understøtning og review af statisk dokumentation. Alle konkrete beregninger i en FEM-model med `fem.py` (PyNite: PNG-tegninger og interaktiv HTML, eget Python-miljø), lastopgørelse og håndkontrol med `statik.py` (Python-stdlib). Overslag mærkes altid som overslag; den statiske dokumentation til byggesagen udarbejdes af den ansvarlige statiker |
+| `byg-arkitekt` | Arkitekt (`arkitekt`): rådgivende om planløsning og disposition, tilbygning, kvist, tagetage og facade samt myndighedsscreening – byggetilladelse eller undtagelse, etageareal og bebyggelsesprocent, højde og afstand til skel, lokalplan, servitutter og bevaring. Beskriver planen, så `bim-modelloer` kan tegne den som BIM-forslag; ansøgningsprojektet udarbejdes af den ansvarlige arkitekt |
 | `byg-bim` | BIM-modellør (`bim-modelloer`) og uafhængig sammenligner (`bim-sammenligner`), værktøjet `bim.py` (modelspec i YAML → IFC4 med IfcOpenShell, kontrol mod buildingSMART-regler/IDS/BBR, planer, snit, facader og 3D som PNG, afkodning af PDF-tegninger og sammenligning af tegning og model) og skill `tegningsimport`. Værktøjet opretter selv sit Python-miljø i `~/.local/share/byg-bim/venv` (`bim.py opsaet`, kræver netværk første gang) |
 
 Fag-plugins og `byg` afhænger af `byg-kontrol`, så kontrollen altid følger med.

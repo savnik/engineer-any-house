@@ -53,6 +53,13 @@ Før første fagkald indsamler projektlederen disse fakta fra brugeren. Det sker
 - Revner og sætninger: placering, bredde, udvikling, fotos med målestok
 - Hvem udarbejder den statiske dokumentation, og er der byggetilladelse
 
+## Arkitekt
+- Matrikel, grundareal og zone; BBR (etageareal, bebygget areal, opførelsesår)
+- Lokalplan/byplanvedtægt og tinglyste servitutter; bevaringsværdi eller fredning
+- Eksisterende tegninger (kommunens byggesagsarkiv), BIM-model hvis den findes, og fotos af alle facader
+- Bygherrens rumprogram og ønsker (rum, arealer, funktion) og budgetramme
+- Afstand til skel, sti og vej; terræn og højder; naboer og indblik
+
 ## Maler
 - Underlag og eksisterende behandling (lag, alder), bly- og PCB-mistanke (før 1977/1978)
 - Fugtforhold i underlaget, vådzoner
