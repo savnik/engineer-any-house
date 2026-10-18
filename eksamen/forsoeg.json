@@ -1533,6 +1533,120 @@
       "laering": "Billigt tjek (--kun-fejlede, 5 opgaver, 0.80 USD): 0/5 flyttede sig. Ændringen virker på adfærden: uden Bash regner agenten nu i hånden trin for trin med enhedskontrol i stedet for at tage forbehold. Men udviklingssættets eneste fejlede talopgave (STAT-123) skyldes en normværdi (eksponeringsfaktor for afskærmet terræn i DK NA til EN 1991-1-3), ikke regning, og de øvrige huller er fri-opgaver med for snævre kriterier i rettemasken. Udviklingssættet kan derfor ikke vise en effekt på regnefejl, kun holdout kan. Fuld eftermåling plus holdout (ca. 9 USD) var ikke inden for rundens budget. Næste gang: kør hele forsøget med fuld eftermåling og holdout, eller tilføj først flere talopgaver om indgreb til udviklingssættet (opgaver-forsøg), så effekten kan måles uden holdout. Ændringen er rullet tilbage.",
       "slut": "2026-10-18",
       "vurdering": "uafklaret"
+    },
+    {
+      "id": "F-014",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "rettemaske",
+      "hypotese": "Tre fri-kriterier i udviklingssættet er for snævre og dumper fagligt gode svar (F-012). STAT-010 K2 kræver eksplicit KFI, ψ og tabelnumre. STAT-016 K1 kræver netop formuleringen om, at rust udvider sig og sprænger dæklaget. STAT-119 K2 afviser svar, der dækker E-middelværdi mod karakteristisk værdi og kmod/anvendelsesklasse. Ændring: STAT-010 K2 kræver kontrol af, at lastkombinationer og partialkoefficienter følger DK NA. STAT-016 K1 opfyldes af en korrekt beskrivelse af korrosionsmekanismen eller afskalningen. STAT-119 K2 opfyldes af en vurdering af stivhed/E-værdi (middel mod karakteristisk) eller kmod/anvendelsesklasse. Forventning ved rebedoem af F-012s svar: 2-3 af de tre opgaver består, øvrige opgaver uændrede ud over censorstøj (±2 fri), ingen merpris for agenten.",
+      "aendring": "eksamen/statik opgavefiler: STAT-010 K2, STAT-016 K1 og STAT-119 K2 løsnet",
+      "opgaver": [
+        "STAT-010",
+        "STAT-016",
+        "STAT-119"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "4ecb7f3",
+      "laering": "Rettemaske- og opgaveforsøg kan i dag ikke gennemføres af CI-agenten. Instruksen siger, at rettelser uddeles til en underagent, men holdout-vagten (PreToolUse i ci-forbedring) arver til underagenter og blokerer alle veje til opgavefilerne. Det kræver et vaerktoej-forsøg, fx en snæver underkommando 'exam.py ret-kriterium FAG ID NR TEKST', der afviser holdout-opgaver og ikke udskriver andre opgaver, eller at brugeren retter i en session uden vagten. Selve rettelserne står fortsat. STAT-010 K2 skal kræve kontrol af, at lastkombinationer og partialkoefficienter følger DK NA, uden krav om KFI, ψ eller tabelnumre. STAT-016 K1 skal kunne opfyldes af en korrekt beskrivelse af korrosionsmekanismen eller afskalningen. STAT-119 K2 skal kunne opfyldes af E-middelværdi mod karakteristisk værdi eller kmod/anvendelsesklasse. Bemærk også, at STAT-010 K1 dumpede ved en streng læsning, fordi der ikke stod 'komplet fra alle etager'. Kriteriet er formentlig også for snævert. Kør rebedoem på 20261018-194220-plugin-alle-9ea2a8e.json efter rettelsen.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Ændringen kunne ikke udføres. Holdout-vagten sidder i ci-forbedrings frontmatter og gælder også de underagenter, den starter. Den general-purpose-agent, der skulle rette kriterierne, blev afvist ved Read, Edit og Bash på opgavefilerne og omgik den med rette ikke. Der er ingen ændring og ingen eftermåling."
+    },
+    {
+      "id": "F-015",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "CI-agenten kan ikke gennemføre rettemaske- og opgaveforsøg (F-014), fordi holdout-vagten også blokerer de underagenter, rettelsen uddeles til. En snæver underkommando 'exam.py ret-kriterium FAG ID NR TEKST' (afviser holdout-opgaver, ændrer kun den ene streng, udskriver intet fra andre opgaver), som vagten tillader, gør forsøgene mulige uden at svække holdout. Kræver brugerens godkendelse.",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }
