@@ -348,6 +348,82 @@
         "holdout/opgaver-a": "F-007 @ 4ab0e22",
         "udvikling/opgaver-a": "F-007 @ 4ab0e22"
       }
+    },
+    "statik": {
+      "grupper": {
+        "holdout/opgaver-a": {
+          "plugin": {
+            "n": 3,
+            "bestaaet": 3,
+            "opgaver_hash": "9b5f1814b754",
+            "pris_usd": 0.272,
+            "pris_pr_bestaaet": 0.0908,
+            "sek_pr_opgave": 30.3
+          }
+        },
+        "holdout/opgaver-b": {
+          "plugin": {
+            "n": 13,
+            "bestaaet": 8,
+            "opgaver_hash": "8578c18039df",
+            "pris_usd": 0.896,
+            "pris_pr_bestaaet": 0.112,
+            "sek_pr_opgave": 23.8
+          }
+        },
+        "udvikling/opgaver-a": {
+          "basis": {
+            "n": 32,
+            "bestaaet": 26,
+            "opgaver_hash": "95b7bb7aff23",
+            "pris_usd": 2.71,
+            "pris_pr_bestaaet": 0.1042,
+            "sek_pr_opgave": 19.7,
+            "fejlede": [
+              "STAT-010",
+              "STAT-012",
+              "STAT-013",
+              "STAT-015",
+              "STAT-016",
+              "STAT-033"
+            ]
+          },
+          "plugin": {
+            "n": 32,
+            "bestaaet": 30,
+            "opgaver_hash": "95b7bb7aff23",
+            "pris_usd": 2.61,
+            "pris_pr_bestaaet": 0.087,
+            "sek_pr_opgave": 21.6,
+            "fejlede": [
+              "STAT-010",
+              "STAT-016"
+            ]
+          }
+        },
+        "udvikling/opgaver-b": {
+          "plugin": {
+            "n": 31,
+            "bestaaet": 29,
+            "opgaver_hash": "05274c729412",
+            "pris_usd": 1.781,
+            "pris_pr_bestaaet": 0.0614,
+            "sek_pr_opgave": 18.5,
+            "fejlede": [
+              "STAT-119",
+              "STAT-123"
+            ]
+          }
+        }
+      },
+      "kilder": {
+        "holdout/opgaver-a": "F-012 @ 9ea2a8e",
+        "holdout/opgaver-b": "F-012 @ 9ea2a8e",
+        "udvikling/opgaver-a": "F-012 @ 9ea2a8e",
+        "udvikling/opgaver-b": "F-012 @ 9ea2a8e"
+      },
+      "opdateret": "2026-10-18",
+      "forsoeg": "F-012"
     }
   }
 }

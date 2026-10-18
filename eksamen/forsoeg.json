@@ -1357,6 +1357,182 @@
       "status": "forslag",
       "beslutning": null,
       "maalinger": {}
+    },
+    {
+      "id": "F-012",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Nulmåling: statik-eksamenssættet (79 opgaver) måles første gang for plugin byg-statik @ 9ea2a8e (alle sæt, --gentag-fri 3) som udgangspunkt for benchmarket. Ingen ændring.",
+      "aendring": "ingen",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "9ea2a8e",
+      "laering": "Statik @ 9ea2a8e: plugin udvikling 59/63 opgaver, holdout 11/16, 0.104 USD pr. bestået, 21.5 s pr. opgave. Basis på udvikling/opgaver-a 26/32 mod plugin 30/32 – gevinsten ligger i fri-opgaverne (basis 1/7), valg og tal er ens. Udviklingssættets talopgaver er næsten mættede. Svaghederne ligger i holdout og i fri-opgaver, hvor 3 af 4 udviklingshuller er for snævre kriterier i rettemasken (STAT-010 K2, STAT-016 K1, STAT-119 K2). STAT-123 er et reelt videnshul: eksponeringsfaktor for afskærmet terræn efter DK NA til EN 1991-1-3 (agenten bruger grundstandardens Ce=1,2). Basis for udvikling/opgaver-b og holdout mangler og bør køres.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling uden ændring: første måling af statik-sættet sættes som benchmark. Plugin på alle sæt med --gentag-fri 3, basis kun udvikling/opgaver-a pga. rundens budget på 15 USD."
+    },
+    {
+      "id": "F-013",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "prompt",
+      "hypotese": "I eksamen (og overalt uden Bash) har statikeren kun Read/Glob/Grep/Skill, men agentprompt og SKILL.md siger 'regn ikke selv' og 'aldrig hovedregning'. Agenten svarer så med forbehold eller springer mellemtrin over, hvilket giver regnefejl i indgreb (tryk under formur/bagmur, spredning, excentricitet, E-forhold, asymmetrisk understøtning). Ændring: når værktøjerne ikke kan køres, regnes i hånden trin for trin (formel → indsatte tal med enheder → resultat), med lastvej/hvilken del der bærer og enhedskontrol, og et overslag som kontrol. Forventning: tal-opgaver +2 eller flere på samme opgaver (især STAT-123 og holdout-talopgaver), ingen gruppe ned ≥2, pris pr. bestået højst +10 % (lidt flere output-tokens).",
+      "aendring": "agents/statiker.md (Regneværktøj) og skills/statik-viden/SKILL.md (Brug uden subagent): regel for håndregning uden Python i stedet for 'regn ikke selv'",
+      "opgaver": [
+        "STAT-123"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "9ea2a8e",
+      "laering": "Billigt tjek (--kun-fejlede, 5 opgaver, 0.80 USD): 0/5 flyttede sig. Ændringen virker på adfærden: uden Bash regner agenten nu i hånden trin for trin med enhedskontrol i stedet for at tage forbehold. Men udviklingssættets eneste fejlede talopgave (STAT-123) skyldes en normværdi (eksponeringsfaktor for afskærmet terræn i DK NA til EN 1991-1-3), ikke regning, og de øvrige huller er fri-opgaver med for snævre kriterier i rettemasken. Udviklingssættet kan derfor ikke vise en effekt på regnefejl, kun holdout kan. Fuld eftermåling plus holdout (ca. 9 USD) var ikke inden for rundens budget. Næste gang: kør hele forsøget med fuld eftermåling og holdout, eller tilføj først flere talopgaver om indgreb til udviklingssættet (opgaver-forsøg), så effekten kan måles uden holdout. Ændringen er rullet tilbage.",
+      "slut": "2026-10-18",
+      "vurdering": "uafklaret"
     }
   ]
 }
