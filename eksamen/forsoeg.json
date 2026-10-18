@@ -2019,10 +2019,159 @@
         "STAT-016",
         "STAT-119"
       ],
-      "status": "aaben",
-      "beslutning": null,
-      "maalinger": {},
-      "rev_foer": "f91fcf4"
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e-rebedoemt.json",
+              "20261018-195918-basis-udvikling-rebedoemt.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.313,
+                  "pris_pr_bestaaet": 0.1045,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.938,
+                  "pris_pr_bestaaet": 0.1173,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 28,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.872,
+                  "pris_pr_bestaaet": 0.1026,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-012",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 32,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.779,
+                  "pris_pr_bestaaet": 0.0868,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": []
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 30,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.822,
+                  "pris_pr_bestaaet": 0.0607,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "f91fcf4",
+      "laering": "Kriterier, der kræver en bestemt ordlyd eller en udtømmende opremsning ('alle etager', 'KFI og ψ eksplicit', 'rust udvider sig'), dumper fagligt rigtige svar. Skriv kriterier som det faglige indhold, der skal være til stede, og giv eksempler med 'fx'. Censorstøj på fri-opgaver er stor: rebedoem af F-018's svar med uændrede kriterier for STAT-013, -021 og -033 vendte tre opgaver til ikke bestået. Sammenlign derfor aldrig fri-opgaver på tværs af to bedømmelser uden --gentag-fri 3. Rettemaske- og opgaveforsøg skal laves i en session uden holdout-vagt (F-014/F-015). Udestående: holdout-kriterierne er ikke gennemgået for samme fejltype.",
+      "slut": "2026-10-19",
+      "vurdering": "manuel",
+      "begrundelse": "Rettemaske-forsøg afgøres manuelt. Ved rebedoem af F-012's svar består alle tre målopgaver (STAT-010, -016, -119), og STAT-012 skifter som censorstøj. Kriterierne kræver nu fagindholdet i stedet for ordlyden. Basis stiger tilsvarende (+2), så plugin-gevinsten i udviklingssættet er ikke pustet op."
     }
   ]
 }
