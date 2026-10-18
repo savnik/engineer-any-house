@@ -1,4 +1,5 @@
 **/evals/results/
+eksamen/*/results/
 dist/
 .DS_Store
 __pycache__/

@@ -1,0 +1,892 @@
+{
+  "opgaver": [
+    {
+      "id": "VVS-101",
+      "maal": [
+        "VVS-KM-13"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et nyt parcelhus skal opføres på en grund, hvor tilslutning til fjernvarme ikke er mulig, og hvor der ikke er etableret naturgasnet. Kommunen har ikke givet dispensation. Bygherren spørger dig, hvilken af disse opvarmningsløsninger der opfylder bygningsreglementets (BR18) krav til bygningsopvarmning.",
+      "valgmuligheder": {
+        "A": "En luft/vand-varmepumpe som eneste varmekilde, fordi den udnytter omgivelsesvarme.",
+        "B": "En kondenserende kedel fyret med flaskegas (LPG), fordi der ikke er naturgasnet.",
+        "C": "En kondenserende oliekedel, fordi området hverken har fjernvarme eller naturgas.",
+        "D": "En oliekedel suppleret med solvarme, så en del af behovet dækkes af VE."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 293, stk. 1: bygningsopvarmning skal baseres på vedvarende energi. Undtagelserne for fjernvarme og naturgasnet (stk. 2-3) gælder ikke, stk. 4 gælder kun eksisterende bygninger, og et VE-tilskud gør ikke opvarmningen VE-baseret. BR-vejledningen nævner varmepumper som relevant VE-løsning.",
+      "kilde": "BR18 § 293, https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/293_294/; BR-vejledning om energiforbrug kap. 8.4 (bygningsopvarmning, dispensation), https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/brv/energiforbrug-2/kap-8_4/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-102",
+      "maal": [
+        "VVS-KM-13",
+        "VVS-KM-20"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En boligejer vil vide, hvor mange kroner om året han sparer ved at skifte sit oliefyr ud med en luft/vand-varmepumpe. Husets samlede varmebehov (rumvarme og varmt brugsvand) er 18.000 kWh/år. Oliefyrets årsvirkningsgrad er 85 %, fyringsolie indeholder 10,0 kWh/liter og koster 13,00 kr./liter. Varmepumpens SCOP er 3,5, og el koster 2,40 kr./kWh. Se bort fra faste afgifter, service og elpatron. Beregn den årlige besparelse i kr.",
+      "facit": {
+        "vaerdi": 15187,
+        "enhed": "kr./år",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Olie: 18.000/(0,85 · 10,0) = 2.117,6 l · 13,00 = 27.529 kr. El: 18.000/3,5 = 5.142,9 kWh · 2,40 = 12.343 kr. Besparelse: 27.529 − 12.343 = 15.187 kr./år.",
+      "kilde": "Formler: brændselsforbrug = varmebehov/(virkningsgrad · brændværdi); elforbrug = varmebehov/SCOP",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-103",
+      "maal": [
+        "VVS-KM-13",
+        "VVS-KM-18",
+        "VVS-KM-15"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En landejendom med egen drikkevandsbrønd (forsyner kun ejendommen) og en stor græsplæne skal have ny varmepumpe. Ejeren er i tvivl om jordvarme med vandret nedgravede jordslanger (højst 1 m dybde) eller en luft/vand-varmepumpe og spørger, hvad forskellen er, og hvilke regler der gælder for jordvarme. Brønden ligger 30 m fra det ønskede slangefelt. Giv din faglige rådgivning.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer forskellen i varmekilde: jorden giver en mere stabil og om vinteren højere kildetemperatur end udeluften, så jordvarme typisk har bedre og mere stabil årsvirkningsgrad, mens luft/vand-varmepumpens virkningsgrad falder ved lave udetemperaturer, og fordamperen skal afrimes.",
+        "Nævner, at et terrænnært (højst 5 m dybt), ikke-industrielt jordvarmeanlæg skal anmeldes til kommunen før etablering og kan etableres, hvis kommunen ikke gør indsigelse inden 4 uger, mens et dybt/boret anlæg kræver tilladelse.",
+        "Nævner afstandskravet: et terrænnært anlæg skal som udgangspunkt ligge mindst 50 m fra en vandindvindingsboring eller -brønd, så 30 m kræver, at kommunen efter ansøgning lemper kravet (muligt ned til 5 m, når brønden kun forsyner ejendommen) – ellers må feltet flyttes.",
+        "Nævner krav til brinen, fx at kun bestemte frostsikringsmidler (fx ethanol/IPA-sprit eller propylenglycol) må bruges i højst 35 % koncentration, og at anlægget skal være tæt."
+      ],
+      "fail_hvis": [
+        "Siger, at vandret jordvarme kan etableres uden at kommunen involveres."
+      ],
+      "begrundelse": "Valg mellem jordvarme og luft/vand-varmepumpe og jordvarmereglerne.",
+      "kilde": "BEK nr. 240 af 27/02/2017 om jordvarmeanlæg §§ 2, 3, 6, 8 og 15 (https://www.retsinformation.dk/eli/lta/2017/240), som ændret ved BEK nr. 1219 af 09/10/2025 (§§ 9 og 11) (https://www.retsinformation.dk/eli/lta/2025/1219); Rørcenter-anvisning 017, afsnit om jord/vand- og luft/vand-anlæg (https://bygningsreglementet.dk/media/tpqdndtn/legi.pdf)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-104",
+      "maal": [
+        "VVS-KM-14"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "I et parcelhus skal en vaskemaskine flyttes til et rum uden gulvafløb. Hvordan kan kravet i BR18 om sikkerhed mod udsivning og udstrømning af vand opfyldes for vandtilslutningen til maskinen, ifølge bygningsreglementets vejledning?",
+      "valgmuligheder": {
+        "A": "Ved at maskinen tilsluttes en almindelig kuglehane, som brugeren lukker efter hver vask.",
+        "B": "Ved at slangen er en armeret trykslange godkendt til drikkevand, og at hanen har kontraventil.",
+        "C": "Ved at gulvet i rummet males med en vandtæt maling, så vandet kan tørres op.",
+        "D": "Ved at maskinen eller installationen den tilsluttes, udføres med mekanisk eller automatisk vandstop."
+      },
+      "facit": "D",
+      "begrundelse": "BR18 § 406 kræver sikkerhed mod udsivning og udstrømning, også ved tilslutning til apparater med automatisk vandpåfyldning. Vejledningen anviser gulvafløb eller mekanisk/automatisk vandstop for apparatet eller installationen. En manuel hane, maling eller en godkendt slange opfylder ikke kravet.",
+      "kilde": "BR18 § 406, https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/406/; Bygningsreglementets vejledning om vand, afsnit 'Utætheder', https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/vejledninger/vejledning_vand/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-105",
+      "maal": [
+        "VVS-KM-14"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde klager over lang ventetid på varmt vand i køkkenet. Koblingsledningen fra cirkulationsstrengen til køkkenarmaturet er 12 m PEX-rør med indvendig diameter 10 mm. Armaturet tapper 0,10 l/s. Antag, at vandet i koblingsledningen er afkølet og skal skubbes ud, før det varme vand når armaturet, og se bort fra varmetab under tapningen. Beregn ventetiden i sekunder.",
+      "facit": {
+        "vaerdi": 9.42,
+        "enhed": "s",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Volumen = π/4 · 0,010² · 12 = 0,000942 m³ = 0,942 l. Ventetid = 0,942 l / 0,10 l/s = 9,4 s.",
+      "kilde": "Formel: V = π/4 · d² · L og t = V/q",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-106",
+      "maal": [
+        "VVS-KM-14"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "I et parcelhus fra 1975 stopper køkkenvaskens afløb til hvert halve år. Afløbet går i et vandret 40 mm plastrør gennem et køkkenskab og en væg, inden det tilsluttes faldstammen. Ejeren har hidtil hældt afløbsrens i. Han beder dig finde årsagen og løse problemet varigt. Beskriv din fejlfinding og dine anbefalinger.",
+      "facit": null,
+      "kriterier": [
+        "Undersøger mulige årsager i installationen, fx manglende eller for lille fald, lavpunkter/hængende rør eller skarpe bøjninger, der giver aflejringer – evt. med kamerainspektion.",
+        "Renser afløbet mekanisk (fx med rensefjeder eller spuling) via vandlås eller renseadgang og vurderer, om der mangler en let tilgængelig renseadgang, som skal etableres.",
+        "Rådgiver kunden om, hvad der ikke må komme i afløbet, fx fedt, olie og madrester, og om at undgå ætsende afløbsrens, der kan skade installationen.",
+        "Foreslår en varig udbedring, fx omlægning af røret med korrekt fald og understøtning, hvis fejlen ligger i installationen."
+      ],
+      "fail_hvis": [
+        "Anbefaler blot fortsat brug af kemisk afløbsrens som løsning."
+      ],
+      "begrundelse": "Fejlfinding på gentagne tilstopninger i et afløb.",
+      "kilde": "BR18 §§ 71 nr. 1 og 11 samt 81 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/70_74/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/80_81/)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-107",
+      "maal": [
+        "VVS-KM-14",
+        "VVS-AK-10"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du har repareret en utæt koldtvandsledning i et køkken ved at udskifte et rørstykke. Hvad kræver bygningsreglementet, før installationen tages i brug igen?",
+      "valgmuligheder": {
+        "A": "At der udtages en vandprøve til analyse, og at resultatet foreligger, før vandet bruges.",
+        "B": "At installationen desinficeres med klor, fordi røret har været åbent.",
+        "C": "At installationen gennemskylles med drikkevand, selv om der kun er skiftet et kort rørstykke.",
+        "D": "At installationen trykprøves; gennemskylning kræves kun ved nye installationer."
+      },
+      "facit": "C",
+      "begrundelse": "BR18 § 419, stk. 4: før en installation eller en del af den tages i brug, også efter en reparation, skal den gennemskylles med drikkevand.",
+      "kilde": "BR18 § 419, stk. 4, https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/419/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-108",
+      "maal": [
+        "VVS-KM-15"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde vil spare en skorsten og spørger, hvilke fyringsanlæg der må dele aftrækssystem. Hvilken kombination tillader bygningsreglementet?",
+      "valgmuligheder": {
+        "A": "En brændeovn og en gasfyret kondenserende kedel på samme aftræk.",
+        "B": "En åben pejs og en brændeovn i samme stue på samme aftræk.",
+        "C": "Et kraftvarmeapparat og en gaskedel på samme aftræk.",
+        "D": "To oliekedler opstillet i kaskade på samme aftræk."
+      },
+      "facit": "D",
+      "begrundelse": "BR18 § 315: kraftvarmeapparater, åbne fyringsanlæg og oliekedler skal have selvstændigt aftræk, men oliekedler i kaskade må tilsluttes samme aftræk. Brændeovne må ikke tilsluttes aftræk fra gasfyrede anlæg (stk. 2).",
+      "kilde": "BR18 § 315, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/314_315/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-109",
+      "maal": [
+        "VVS-KM-15"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En åben pejs har en fri åbning (pejsemunding) på 60 cm × 45 cm. Hvad er det mindste lysningsareal i aftrækssystemet, som bygningsreglementet kræver for pejsen? Angiv svaret i cm².",
+      "facit": {
+        "vaerdi": 300,
+        "enhed": "cm²",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "Den frie åbning er 60 · 45 = 2.700 cm², altså over 2.500 cm². Derfor gælder hovedreglen i BR18 § 314, stk. 2: mindst 300 cm² (175 cm² gælder kun ved fri åbning på højst 2.500 cm²).",
+      "kilde": "BR18 § 314, stk. 2, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/314_315/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-110",
+      "maal": [
+        "VVS-KM-15"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "I et eksisterende hus skal en gammel oliekedel erstattes af en automatisk fyret pillekedel (25 kW) i samme fyrrum. Kunden vil gerne genbruge den eksisterende murede skorsten og spørger, hvad du skal kontrollere ved kedel, fyrrum og skorsten, før kedlen kan tages i brug. Beskriv de vigtigste krav og kontroller.",
+      "facit": null,
+      "kriterier": [
+        "Nævner, at aftræk til fast brændsel skal være modstandsdygtigt over for sodild (klassificeret G), og at skorstenens tilstand og tæthed skal kontrolleres – evt. med foring.",
+        "Nævner, at aftrækkets lysningsareal skal svare til den indfyrede effekt.",
+        "Nævner tilstrækkelig forbrændingsluft til fyrrummet, fx via regulerbar udeluftventil eller kanal fra det fri.",
+        "Nævner, at der under normal drift skal være undertryk i forbrændingsrum og aftræk i forhold til opstillingsrummet, og at kedlen skal opfylde DS/EN 303-5 eller tilsvarende sikkerhedsniveau."
+      ],
+      "fail_hvis": [
+        "Siger, at skorstenen kan genbruges uden kontrol, fordi den har fungeret med oliefyret."
+      ],
+      "begrundelse": "Krav til fastbrændselskedel og aftræk i BR18 kap. 12.",
+      "kilde": "BR18 §§ 302, 303, 306, 314 og 321 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/301_303/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/306_313/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/314_315/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/316_323/)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-111",
+      "maal": [
+        "VVS-AK-10",
+        "VVS-KM-15"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Efter installation af en varmepumpe tages en overjordisk 1.200 liters olietank i et parcelhus permanent ud af brug. Hvad kræver olietankbekendtgørelsen?",
+      "valgmuligheder": {
+        "A": "Restindhold fjernes; tanken fjernes, eller påfyldnings- og udluftningsrør fjernes over jord og afblændes. Kommunen får besked senest 4 uger efter.",
+        "B": "Restindhold fjernes; tanken fjernes, eller påfyldnings- og udluftningsrør fjernes over jord og afblændes. Kommunen får besked senest 4 uger før.",
+        "C": "Restindhold fjernes, og tanken fyldes med sand eller skumbeton. Kommunen skal kun have besked, hvis tanken er nedgravet.",
+        "D": "Ingen krav, da tanken er under 6.000 liter; reglerne om sløjfning gælder kun anlæg over 100.000 liter."
+      },
+      "facit": "A",
+      "begrundelse": "BEK nr. 1257/2019 § 30: ved sløjfning af overjordiske anlæg på højst 200.000 l fjernes restindhold, og sløjfningen afsluttes ved at fjerne tanken eller fjerne og afblænde påfyldnings- og udluftningsrør. Ejeren giver tilsynsmyndigheden (kommunen) besked senest 4 uger efter sløjfningen. 4 uger før gælder store anlæg (§ 23).",
+      "kilde": "BEK nr. 1257 af 27/11/2019 (olietankbekendtgørelsen) §§ 23 og 30, https://www.retsinformation.dk/eli/lta/2019/1257",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-112",
+      "maal": [
+        "VVS-KM-16"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal samle et PE100-vandrør med en elektrosvejsemuffe. Hvilken forberedelse er korrekt?",
+      "valgmuligheder": {
+        "A": "Slib oxidlaget af med fint sandpapir eller fil, rens fladerne med sprit, og svejs straks bagefter.",
+        "B": "Skrab oxidlaget af med (helst roterende) skrabeværktøj, hold fladerne rene og tørre, og svejs straks.",
+        "C": "Skrab oxidlaget af, smør rørenden let med glidemiddel, og skub muffen helt ind.",
+        "D": "Rens rørenden med sprit uden at skrabe, da muffens varmetråd smelter oxidlaget."
+      },
+      "facit": "B",
+      "begrundelse": "Oxidlaget skal skrabes af (helst med roterende skrabeværktøj) – ikke slibes med sandpapir, fil eller slibemaskine – og de skrabede flader skal holdes rene og tørre, og svejsningen ske snarest muligt efter skrabning. Glidemiddel forurener svejsefladen.",
+      "kilde": "Wavin/NPG: Elektrosvetsning av PE-rör, afsnit 'Märkning och skrapning', https://mediahub.wavin.com/m/20d2cf98e9a22fb1/original/Folder-NPG-Elektrosvetsning-av-PE-ror.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-113",
+      "maal": [
+        "VVS-KM-16"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En 25 m lang, lige PE-ledning monteres udendørs ved 5 °C og kan i drift komme op på 45 °C. PE's længdeudvidelseskoefficient regnes til 0,20 mm/(m·K). Beregn den frie længdeændring af ledningen i mm, som der skal tages højde for med ekspansionsbuer eller fikspunkter.",
+      "facit": {
+        "vaerdi": 200,
+        "enhed": "mm",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "ΔL = α · L · ΔT = 0,20 mm/(m·K) · 25 m · 40 K = 200 mm.",
+      "kilde": "Formel for termisk længdeudvidelse: ΔL = α · L · ΔT",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-114",
+      "maal": [
+        "VVS-KM-17",
+        "VVS-AK-04"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du installerer og programmerer elektroniske brusearmaturer med indstillelig maksimumstemperatur i en plejeafdeling. Det varme brugsvand fremføres ved 55 °C. Hvilken indstilling følger bygningsreglementets vejledning?",
+      "valgmuligheder": {
+        "A": "Armaturernes maksimumstemperatur indstilles til 45 °C, og brugsvandet fremføres fortsat ved 55 °C.",
+        "B": "Armaturernes maksimumstemperatur indstilles til 38 °C, og brugsvandet fremføres fortsat ved 55 °C.",
+        "C": "Armaturerne indstilles til 38 °C, og brugsvandet til afdelingen sænkes via en blandekreds til 40 °C.",
+        "D": "Armaturerne indstilles frit af beboeren; i stedet sænkes beholdertemperaturen til 48 °C."
+      },
+      "facit": "B",
+      "begrundelse": "Vejledningen til BR18 kap. 21: visse steder, fx brusepladser i børnehaver og nogle plejeafdelinger, bør det ved blanding på tapstedet sikres, at vandet ikke kan overstige 38 °C; blandekredse med lav temperatur bør undgås. § 411 kræver mindst 50 °C i installationen ved normal drift.",
+      "kilde": "BR18 §§ 411-412 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/) og Bygningsreglementets vejledning om vand, afsnit 'Varmt vand' (https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/vejledninger/vejledning_vand/)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-115",
+      "maal": [
+        "VVS-KM-17",
+        "VVS-KM-14"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "På et plejehjem har man fundet Legionella i det varme brugsvand. Badeværelserne har berøringsfri (sensorstyrede) armaturer og termostatiske brusere, og flere værelser står tomme i perioder. Ledelsen beder dig om en plan for at bekæmpe Legionella uden at udsætte beboerne for skoldning. Beskriv din plan.",
+      "facit": null,
+      "kriterier": [
+        "Foreslår termisk desinfektion: varmtvandstemperaturen hæves til over 60 °C (helst 65-70 °C) med gennemskylning af rørsystemet og alle tapsteder i nogle minutter.",
+        "Beskriver, hvordan skoldning undgås under desinfektionen, fx ved at beboere ikke har adgang/informeres, tapsteder afspærres eller skylles af personale, og at termostatiske blandere/skoldningssikringer kontrolleres efterfølgende.",
+        "Adresserer stillestående vand: sjældent brugte tapsteder skylles regelmæssigt (fx ved at programmere de berøringsfri armaturer til automatisk hygiejneskyl) og døde ender/ubenyttede ledninger fjernes ved afgreningen.",
+        "Kontrollerer driften, så temperaturen er mindst 50 °C overalt i installationen inkl. cirkulationen, fx ved at kontrollere indreguleringen af cirkulationsventilerne."
+      ],
+      "fail_hvis": [
+        "Anbefaler varigt at holde det varme brugsvand under 50 °C for at undgå skoldning."
+      ],
+      "begrundelse": "Legionellabekæmpelse i institution med intelligente armaturer.",
+      "kilde": "Rørcenter-anvisning 017, afsnit 3 og 4.1 (https://bygningsreglementet.dk/media/tpqdndtn/legi.pdf); BR18 §§ 411 og 419, stk. 5 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/419/)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-116",
+      "maal": [
+        "VVS-KM-18"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et lukket radiatoranlæg indeholder 300 liter vand og har en 18 liters membranekspansionsbeholder med forspænding 1,0 bar (overtryk). Anlægget er fyldt koldt (10 °C) til 1,2 bar (overtryk). Fra 10 °C til 70 °C udvider vandet sig 2,24 %. Regn med absolut tryk = overtryk + 1 bar, isoterm gas i beholderen, og se bort fra udvidelse af rør og radiatorer. Beregn anlægstrykket (overtryk) i bar ved 70 °C.",
+      "facit": {
+        "vaerdi": 2.73,
+        "enhed": "bar",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Gasvolumen ved fyldning: 18 · 2,0/2,2 = 16,36 l. Vandudvidelse: 300 · 0,0224 = 6,72 l. Gasvolumen varm: 9,64 l. Tryk: 2,0 · 18/9,64 = 3,73 bar abs. = 2,73 bar overtryk. Det overstiger en 2,5 bar sikkerhedsventil, som derfor åbner; beholderen er for lille.",
+      "kilde": "Boyles lov for membranekspansionsbeholder: p · V = konstant",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-117",
+      "maal": [
+        "VVS-KM-18"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et villa-radiatoranlæg med lukket ekspansionsbeholder har følgende symptom: trykket falder til ca. 0,3 bar, når anlægget er koldt, og stiger til ca. 2,8 bar, så sikkerhedsventilen drypper, når anlægget er varmt. Der er ingen synlige utætheder. Hvad er den mest sandsynlige årsag?",
+      "valgmuligheder": {
+        "A": "Ekspansionsbeholderen er for stor, så den optager for meget vand ved opvarmning.",
+        "B": "Sikkerhedsventilen er indstillet for lavt og skal skiftes til en med højere åbningstryk.",
+        "C": "Ekspansionsbeholderen har mistet forspændingen, så den ikke optager vandets udvidelse.",
+        "D": "Anlægget har luft i radiatorerne, som komprimeres og udvider sig med temperaturen."
+      },
+      "facit": "C",
+      "begrundelse": "Store trykudsving mellem koldt og varmt anlæg betyder, at ekspansionsvolumenet ikke virker: vandudvidelsen giver trykstigning til sikkerhedsventilen, og ved afkøling falder trykket. Det skyldes typisk tabt forspænding eller defekt membran. En for stor beholder giver mindre udsving, og sikkerhedsventilen må ikke hæves over anlæggets tilladte tryk.",
+      "kilde": "Boyles lov for membranekspansionsbeholder: p · V = konstant",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-118",
+      "maal": [
+        "VVS-KM-18",
+        "VVS-KM-20"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En radiator afgiver 1.500 W ved en middeltemperaturdifferens på 50 K mellem radiatorvand og rumluft (fx 75/65 °C og 20 °C rum). Efter skift til varmepumpe kører anlægget 45/35 °C, dvs. 20 K middeltemperaturdifferens ved 20 °C rum. Radiatorens eksponent er n = 1,3, og afgivet effekt følger Φ = Φnom · (ΔT/ΔTnom)^n. Beregn radiatorens varmeafgivelse i W ved 45/35 °C.",
+      "facit": {
+        "vaerdi": 456,
+        "enhed": "W",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Φ = 1.500 · (20/50)^1,3 = 1.500 · 0,304 = 456 W.",
+      "kilde": "Radiatorligningen (EN 442): Φ = Φnom · (ΔT/ΔTnom)^n",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-119",
+      "maal": [
+        "VVS-KM-18",
+        "VVS-KM-19"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Et parcelhus med direkte fjernvarmetilsluttet radiatoranlæg (radiatorer med termostatventiler) og varmtvandsbeholder har en returtemperatur på ca. 55 °C om vinteren, og fjernvarmeværket har påpeget dårlig afkøling. Beskriv din fejlfinding og hvilke tiltag du vil foreslå.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer sammenhængen: dårlig afkøling betyder større vandstrøm for samme varme (P = q · c · ΔT) og dermed dårligere udnyttelse af fjernvarmen.",
+        "Kontrollerer radiatorkredsen: termostatventiler/forindstillinger, radiatorer der 'kortslutter' (varm retur), åbne by-pass/overstrømsventiler og manglende indregulering – og foreslår indregulering.",
+        "Kontrollerer brugsvandsdelen: varmtvandsbeholderens spiral/termostat (fx tilkalkning eller manglende lukning), og at cirkulation ikke giver unødig varm retur.",
+        "Nævner fremløbsregulering, fx vejrkompensering/sænkning af fremløbstemperaturen, så radiatorerne afkøler vandet bedre."
+      ],
+      "fail_hvis": [
+        "Anbefaler at åbne en by-pass permanent for at øge vandstrømmen."
+      ],
+      "begrundelse": "Fejlfinding på dårlig afkøling i fjernvarmeinstallation.",
+      "kilde": "Formel: P = q · c · ΔT; BR18 § 391 om indregulering og styring (https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/391/)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-120",
+      "maal": [
+        "VVS-KM-19",
+        "VVS-KM-21"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du har hentet en uges logdata fra en ny jordvarmepumpe i et parcelhus med gulvvarme i hele huset og rumtermostater i alle rum. Data viser 70 kompressorstarter pr. døgn med en gennemsnitlig driftstid på ca. 6 minutter. Varmemåleren har registreret 700 kWh varme, og elmåleren 280 kWh el i samme uge. Beskriv, hvordan du behandler og tolker data, hvad du konkluderer, og hvilke indstillinger eller ændringer du foreslår.",
+      "facit": null,
+      "kriterier": [
+        "Beregner ugens målte effektfaktor (COP) ud fra data: 700/280 = 2,5, og vurderer, at den er lav for et jordvarmeanlæg med gulvvarme.",
+        "Tolker de mange korte starter som taktning og nævner sandsynlige årsager, fx for lille vandvolumen/flow fordi rumtermostaterne lukker kredsene, overdimensioneret varmepumpe eller for lille hysterese/minimum driftstid.",
+        "Foreslår konkrete ændringer i styring eller anlæg, fx større hysterese, minimum drifts- og pausetid, at holde flere gulvvarmekredse åbne eller en buffertank – og at følge op med nye logdata.",
+        "Behandler data forsvarligt, fx kun de nødvendige data, kun til formålet og ingen deling med andre uden kundens viden."
+      ],
+      "fail_hvis": [
+        "Konkluderer, at anlægget kører optimalt, fordi det starter ofte og derfor følger behovet tæt."
+      ],
+      "begrundelse": "Behandling af logdata og indstilling af varmepumpestyring mod taktning.",
+      "kilde": "Formel: COP = afgivet varme / tilført el; BR18 § 391 (indregulering og styring, https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/391/); Energistyrelsen: Dansk afklaring om fjernaflæsning – databeskyttelsesforordningens art. 5-principper (https://ens.dk/media/1857/download)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-121",
+      "maal": [
+        "VVS-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Ved en ombygning vurderer du efterisolering af varmerør i en uopvarmet kælder. Tiltaget sparer 1.200 kr. om året og har en levetid på 30 år. Bygningsreglementet regner en ombygning for rentabel, når årlig besparelse gange levetid divideret med investering er større end 1,33. Beregn den største investering i kr., hvor tiltaget netop er rentabelt.",
+      "facit": {
+        "vaerdi": 27068,
+        "enhed": "kr.",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Rentabel når 1.200 · 30 / I > 1,33, dvs. I < 36.000 / 1,33 = 27.068 kr.",
+      "kilde": "BR18 § 275, https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/274_279/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-122",
+      "maal": [
+        "VVS-KM-20",
+        "VVS-KM-13"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "I et eksisterende parcelhus installeres en ny luft/vand-varmepumpe med elpatron. Det forventede årlige elforbrug er 4.500 kWh. Hvad kræver bygningsreglementet om måling?",
+      "valgmuligheder": {
+        "A": "Elforbruget skal måles, fordi det overstiger 3.000 kWh; elpatronen skal have timetæller eller elmåler.",
+        "B": "Elforbruget skal kun måles i nybyggeri; ved nyinstallation i et eksisterende parcelhus er der intet krav.",
+        "C": "Elforbruget skal måles, når det overstiger 5.000 kWh; elpatronen skal ikke have egen måler.",
+        "D": "Varmeproduktionen skal måles med varmemåler; elforbruget skal kun måles over 10.000 kWh."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 327: elforbruget i varmepumper med et årligt elforbrug over 3.000 kWh skal måles, og en eventuel elpatron skal have timetæller eller elmåler. Det gælder nybyggeri og nyinstallation i eksisterende byggeri.",
+      "kilde": "BR18 § 327, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/325_327/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-123",
+      "maal": [
+        "VVS-KM-21"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et fjernvarmeværk vil fjernaflæse varmemålerne hver time i stedet for én gang om året for at finde lækager og dårlig afkøling. En kunde spørger dig, om værket må det uden hans samtykke. Hvilket svar svarer til Energistyrelsens afklaring?",
+      "valgmuligheder": {
+        "A": "Nej; timeværdier er personoplysninger, og aflæsning hyppigere end til fakturering kræver altid samtykke fra kunden.",
+        "B": "Ja; målerdata om en bolig er ikke personoplysninger, så databeskyttelsesforordningen gælder ikke.",
+        "C": "Ja, kun hvis kunden selv ejer måleren; ellers kræves samtykke efter art. 6, stk. 1, litra a.",
+        "D": "Ja, under betingelser: art. 6, stk. 1, litra e og f kan give hjemmel, når art. 5's principper overholdes."
+      },
+      "facit": "D",
+      "begrundelse": "Energistyrelsen vurderer, at hyppigere og intelligent fjernaflæsning kan ske med hjemmel i art. 6, stk. 1, litra e og f, forudsat at behandlingsprincipperne i art. 5 overholdes; så kræves der ikke samtykke. Data kan afsløre adfærd og er derfor personoplysninger.",
+      "kilde": "Energistyrelsen: Dansk afklaring om fjernaflæsning i forhold til databeskyttelsesforordningen, s. 1, https://ens.dk/media/1857/download",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-124",
+      "maal": [
+        "VVS-KM-21"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal vælge en ny wifi-forbundet rumtermostat til en kunde. Hvilket udsagn om EU's cybersikkerhedskrav til produktet er korrekt (pr. oktober 2026)?",
+      "valgmuligheder": {
+        "A": "Der er endnu ingen EU-krav; de første krav kommer først med Cyber Resilience Act fra december 2027.",
+        "B": "Radioudstyrsdirektivets krav gælder kun legetøj, børnepasningsudstyr og wearables.",
+        "C": "Krav om netværks-, persondata- og svindelbeskyttelse gælder for nye produkter fra 1. august 2025.",
+        "D": "Kravene gælder fra 1. august 2025, men kun produkter, der sælges til erhverv."
+      },
+      "facit": "C",
+      "begrundelse": "Delegeret forordning (EU) 2022/30 aktiverer RED art. 3, stk. 3, litra d, e og f for internetforbundet radioudstyr (samt legetøj, børnepasning og wearables) og gælder for produkter markedsført fra 1. august 2025. EN 18031-1/-2/-3 er de tilhørende standarder.",
+      "kilde": "Dansk Standard: Præsentation RED-webinar (5. september 2024), slides om delegeret forordning 2022/30, https://www.ds.dk/media/vvgj2qwn/praesentation-red-webinar.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-125",
+      "maal": [
+        "VVS-KM-22"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal reparere kølekredsen på en varmepumpe, der indeholder 1,5 kg kølemiddel i gruppe 1 (brandbart). Kræver Arbejdstilsynets regler, at du har uddannelse og certifikat til arbejdet?",
+      "valgmuligheder": {
+        "A": "Nej; certifikatfrie anlæg er anlæg med til og med 3 kg kølemiddel, uanset gruppe.",
+        "B": "Nej; grænsen for gruppe 1 er 2,5 kg, og anlægget ligger under den.",
+        "C": "Nej; reparation af hermetisk lukkede monoblokanlæg er undtaget fra certifikatkravet.",
+        "D": "Ja; grænsen for gruppe 1 er 1 kg, og monoblok-undtagelsen dækker ikke reparation."
+      },
+      "facit": "D",
+      "begrundelse": "BEK 1978/2021 § 11 som affattet ved BEK 505/2024: certifikatfrie er kun anlæg med til og med 1 kg kølemiddel i gruppe 1 eller 3 kg i gruppe 2, samt opstilling/montering/idriftsættelse af hermetisk lukkede monoblokanlæg. Overgangsreglen om 2,5 kg i gruppe 1 udløb 1. juli 2025.",
+      "kilde": "BEK nr. 505 af 22/05/2024 § 1, nr. 1 og 3 (ny § 11 og § 30, stk. 4 i bekendtgørelse om arbejdsmiljøfaglige uddannelser), https://www.retsinformation.dk/eli/lta/2024/505",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-126",
+      "maal": [
+        "VVS-KM-22"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Ved fejlfinding på en luft/vand-varmepumpe måler du på sugeledningen ved fordamperens udgang. Manometeret viser et sugetryk, der for kølemidlet svarer til en mætningstemperatur (fordampningstemperatur) på −4 °C. Rørtemperaturen på sugeledningen samme sted er 3 °C. Beregn overhedningen i K.",
+      "facit": {
+        "vaerdi": 7,
+        "enhed": "K",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "Overhedning = målt sugegastemperatur − fordampningstemperatur = 3 − (−4) = 7 K.",
+      "kilde": "Definition af overhedning i kølekredsen (termodynamik): ΔT_oh = T_sugegas − T_fordampning",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-127",
+      "maal": [
+        "VVS-KM-22",
+        "VVS-AK-10"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvilket af disse nye split-anlæg (ikke færdigsamlet fra fabrik i et kompakt kabinet) må efter de danske regler om industrielle drivhusgasser (BEK 1511/2025, gældende pr. oktober 2026) importeres, sælges og tages i brug? GWP-værdier er opgivet: R410A 2.088, R32 675, R404A 3.922.",
+      "valgmuligheder": {
+        "A": "Luft/vand-varmepumpe på 10 kW med 3,0 kg R410A.",
+        "B": "Luft/luft-varmepumpe på 5 kW med 1,8 kg R32.",
+        "C": "Køleanlæg på 4 kW med 2,0 kg R404A.",
+        "D": "Luft/vand-varmepumpe på 16 kW med 8,0 kg R32."
+      },
+      "facit": "B",
+      "begrundelse": "BEK 1511/2025 § 2 forbyder nye varer med HFC; bilag 1 nr. 4 undtager varmepumper, køleanlæg, aircondition og affugtere med fyldning på højst 5 t CO2-ækvivalent. A = 6,26 t, B = 1,22 t, C = 7,84 t, D = 5,40 t. Kun B er under 5 t. Opgaven bør revideres 1/1-2027, når EU-forbud efter forordning 2024/573 bilag IV kan få betydning.",
+      "kilde": "BEK nr. 1511 af 01/12/2025 om regulering af visse industrielle drivhusgasser § 2 og bilag 1 nr. 4, https://www.retsinformation.dk/eli/lta/2025/1511",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-128",
+      "maal": [
+        "VVS-KM-22"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde ringer: hans luft/vand-varmepumpe (split-anlæg med HFC-kølemiddel, ca. 2 kg) giver for lidt varme og viser en lavtryksalarm. Han beder dig 'bare fylde lidt kølemiddel på'. Beskriv, hvordan du griber opgaven an, og hvilke krav der gælder for dig og din virksomhed.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at arbejde på kølekredsen (reparation, påfyldning, tømning) kun må udføres af personale med de nødvendige kølefaglige kvalifikationer, og at arbejde med HFC-kølemidler kræver F-gascertificering efter EU-reglerne, også selv om fyldningen er under Arbejdstilsynets certifikatgrænse.",
+        "Afviser at fylde på uden videre: der skal først søges efter og udbedres en lækage, før der påfyldes, og påfyldt mængde skal registreres/dokumenteres.",
+        "Udelukker andre årsager til lavtryk/lav ydelse, fx tilisning eller snavs på fordamperen, nedsat luftstrøm, fejl i afrimning, eller for lavt flow/snavsfilter i vandkredsen.",
+        "Nævner, at kølemiddel ikke må slippes ud, at det ved tømning genvindes med egnet udstyr, og at anlægget efter reparation tæthedsprøves/vakuumeres før påfyldning."
+      ],
+      "fail_hvis": [
+        "Fylder kølemiddel på uden at lede efter lækagen."
+      ],
+      "begrundelse": "Fejlfinding og lovlig håndtering af kølekreds på varmepumpe.",
+      "kilde": "Forordning (EU) 2024/573 art. 10 og gennemførelsesforordning (EU) 2024/2215 om certificering; BEK nr. 505 af 22/05/2024 (ny § 11 og bilag 5, pkt. 3 og 3.1.A) (https://www.retsinformation.dk/eli/lta/2024/505); BEK nr. 1511/2025 §§ 1, stk. 3 og 5 (https://www.retsinformation.dk/eli/lta/2025/1511)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-129",
+      "maal": [
+        "VVS-AK-06"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En kondenserende gaskedel på 24 kW med lukket forbrændingskammer og aftræk installeres i et parcelhus. Hvilken gasinstallationsklasse er installationen i efter bekendtgørelse om sikkerhed for gasinstallationer?",
+      "valgmuligheder": {
+        "A": "Klasse 3, fordi kedlen er et gasapparat til husholdningsbrug.",
+        "B": "Klasse 5, fordi kedlen er tilsluttet et aftræk gennem taget.",
+        "C": "Klasse 4, fordi kedlen er højst 135 kW med aftræk og lukket forbrændingskammer.",
+        "D": "Klasse 6, fordi kedlen ud over rumvarme også producerer varmt brugsvand til køkken og bad."
+      },
+      "facit": "C",
+      "begrundelse": "Klasse 4: installationer med gasapparater til og med 135 kW med aftræk og lukket forbrændingskammer, fx til opvarmning af rum eller vand. Klasse 3 er husholdningsapparater uden aftræk, klasse 5 er over 135 kW eller åbent forbrændingskammer, klasse 6 er storkøkkener.",
+      "kilde": "BEK nr. 247 af 26/03/2018 om sikkerhed for gasinstallationer § 2, stk. 2, https://www.retsinformation.dk/eli/lta/2018/247",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-130",
+      "maal": [
+        "VVS-AK-06",
+        "VVS-AK-07"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En vvs-svend ansat i en autoriseret vvs-virksomhed med gasautorisation har ikke personligt A-certifikat. Må han idriftsætte en ny 24 kW gaskedel (gasinstallationsklasse 4) i et parcelhus?",
+      "valgmuligheder": {
+        "A": "Nej; idriftsættelse i klasse 4 kræver ansættelse i autoriseret virksomhed og personligt A-certifikat.",
+        "B": "Ja; når virksomheden er autoriseret til gas, må alle dens ansatte idriftsætte gasinstallationer i klasse 4.",
+        "C": "Ja, hvis den fagligt ansvarlige kontrollerer og underskriver idriftsættelsesattesten bagefter.",
+        "D": "Nej; i boliger må kun gasdistributionsselskabet idriftsætte nye gasinstallationer i klasse 4."
+      },
+      "facit": "A",
+      "begrundelse": "§ 153: den, der udfører idriftsættelse og eftersyn af gasinstallationer i klasse 3, 4, 5 (apparater under 135 kW), 6, 10 og 11, skal være ansat i en autoriseret virksomhed og have personligt A-certifikat.",
+      "kilde": "BEK nr. 247 af 26/03/2018 § 153, https://www.retsinformation.dk/eli/lta/2018/247",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-131",
+      "maal": [
+        "VVS-AK-06"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En gaskedel brænder 2,5 m³ ren metan (CH4) pr. time. Ved fuldstændig forbrænding gælder CH4 + 2 O2 → CO2 + 2 H2O. Luft indeholder 21 % ilt (volumen). Beregn den teoretiske (støkiometriske) forbrændingsluftmængde i m³ luft pr. time ved samme tryk og temperatur.",
+      "facit": {
+        "vaerdi": 23.8,
+        "enhed": "m³/h",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Ilt: 2,5 · 2 = 5,0 m³/h. Luft: 5,0/0,21 = 23,8 m³/h.",
+      "kilde": "Forbrændingsligning for metan og Avogadros lov (volumenforhold = molforhold)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-132",
+      "maal": [
+        "VVS-AK-06",
+        "VVS-AK-07"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En kunde vil opstille et flaskegasfyret apparat (F-gas/propan) i et kælderrum under terræn. Hvad kræver bekendtgørelse om sikkerhed for gasinstallationer?",
+      "valgmuligheder": {
+        "A": "Kontinuerlig mekanisk udsugning ved loftet, koblet til apparatet, fordi gassen er lettere og stiger op.",
+        "B": "Mindst 10 cm² friskluftåbning pr. kW installeret effekt, fordelt på mindst to åbninger.",
+        "C": "Ingen særlige ventilationskrav, når apparatet har lukket forbrændingskammer og aftræk.",
+        "D": "Kontinuerlig mekanisk udsugning fra gulvhøjde, koblet så apparatet kun kører med udsugningen."
+      },
+      "facit": "D",
+      "begrundelse": "§ 120: rum under terræn med flaskegasfyrede apparater skal have kontinuerlig mekanisk rumudsugning fra gulvhøjde, og apparaterne skal kun kunne fungere, når udsugningen kører. Flaskegas (propan) er tungere end luft og samler sig ved gulvet; ventilationen skal tage hensyn til gassens densitet (§ 26). 10 cm²/kW gælder klasse 1-apparater i pavilloner o.l. (§ 116).",
+      "kilde": "BEK nr. 247 af 26/03/2018 §§ 26, 116 og 120, https://www.retsinformation.dk/eli/lta/2018/247",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-133",
+      "maal": [
+        "VVS-AK-07"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Du skal tæthedsprøve en ny naturgasinstallation i et parcelhus med installationstryk 20 mbar (under 100 mbar) frem til apparatets afspærring. Hvilket prøvetryk skal anvendes på hele installationen? Angiv svaret i mbar.",
+      "facit": {
+        "vaerdi": 150,
+        "enhed": "mbar",
+        "tolerance_pct": 0
+      },
+      "begrundelse": "Bilag 1, pkt. 2.3-2.7: installationer med installationstryk på højst 100 mbar tæthedsprøves med atmosfærisk luft ved et prøvetryk på 150 mbar; installationen er tæt, hvis trykket efter 5 minutters stabilisering ikke falder de følgende 5 minutter.",
+      "kilde": "BEK nr. 247 af 26/03/2018 bilag 1, pkt. 2.5, https://www.retsinformation.dk/eli/lta/2018/247",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-134",
+      "maal": [
+        "VVS-AK-07"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Ved eftersyn af en gaskedel i en bolig måler du et kulilteindhold i røggassen på 650 ppm (korrigeret for luftoverskud) under normal drift. Hvordan skal du handle?",
+      "valgmuligheder": {
+        "A": "Godkende; grænsen under normal drift er 1.000 ppm korrigeret for luftoverskud.",
+        "B": "Udbedre; grænsen under normal drift er 500 ppm, og fejlen rettes før eftersynet afsluttes.",
+        "C": "Notere det og informere ejeren; det er en mindre fejl, som ejeren selv kan beslutte at rette.",
+        "D": "Godkende; grænsen gælder kun ved idriftsættelse af nye kedler, ikke ved eftersyn."
+      },
+      "facit": "B",
+      "begrundelse": "§ 18: forbrændingen må under normal drift ikke give over 500 ppm CO korrigeret for luftoverskud (så der aldrig udledes over 1.000 ppm). § 22, stk. 3: fundne fejl skal udbedres inden afslutning af eftersyn; kun mindre fejl uden sikkerhedsrisiko må overlades til ejeren med besked.",
+      "kilde": "BEK nr. 247 af 26/03/2018 §§ 18 og 22 samt bilag 2, https://www.retsinformation.dk/eli/lta/2018/247",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-135",
+      "maal": [
+        "VVS-AK-07",
+        "VVS-AK-08"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du er fagligt ansvarlig og skal instruere en ny medarbejder i, hvad et eftersyn af en 20 år gammel gaskedel (gasinstallationsklasse 4) i et parcelhus skal omfatte, og hvordan det dokumenteres. Beskriv indholdet.",
+      "facit": null,
+      "kriterier": [
+        "Nævner tæthedskontrol af installationen, visuel gennemgang af hele den tilgængelige installation (også dele virksomheden ikke selv har udført) samt kontrol af aftræk, ventilation/frisklufttilførsel og sikkerhedskomponenter.",
+        "Nævner forbrændingstekniske målinger: CO2 eller iltoverskud, kulilte (CO), røggastemperatur og tryk, samt kontrol af flammebillede og indregulering efter fabrikantens anvisning.",
+        "Nævner, at fejl med sikkerhedsrisiko skal udbedres, før eftersynet afsluttes, og at ejeren gøres opmærksom på mindre fejl.",
+        "Nævner dokumentation: måleresultater i attest/rapport til ejeren og opbevaring i virksomhedens kvalitetsledelsessystem, med fabrikantens anvisninger som grundlag for intervallet."
+      ],
+      "fail_hvis": [
+        "Accepterer at lade kedlen køre med CO over grænseværdien."
+      ],
+      "begrundelse": "Indhold og dokumentation af eftersyn på gasinstallation.",
+      "kilde": "BEK nr. 247 af 26/03/2018 §§ 18, 22, 136, 144 og bilag 2 (https://www.retsinformation.dk/eli/lta/2018/247); BEK nr. 725 af 12/06/2024 bilag 1, pkt. III (https://www.retsinformation.dk/eli/lta/2024/725)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-136",
+      "maal": [
+        "VVS-AK-07"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En kunde ringer om aftenen: det lugter af gas i bryggerset, hvor gaskedlen står. Du skal give telefoninstruktion og derefter rykke ud. Beskriv, hvad du siger til kunden, og hvad du gør på stedet.",
+      "facit": null,
+      "kriterier": [
+        "Telefoninstruktion: luk gassen ved hovedhanen, undgå gnister og åben ild (ingen kontakter, el-apparater eller rygning), luft ud, og forlad huset/ring 112 ved kraftig lugt.",
+        "På stedet: lokaliserer utætheden med sæbe/egnet gasdetektor og udfører tæthedsprøve efter reparation, før gassen åbnes igen.",
+        "Hvis utætheden ikke kan udbedres med det samme, holdes den berørte del afspærret og sikret mod genåbning, og kunden får besked om, hvad der må bruges.",
+        "Forstår ansvaret ved udkald: virksomheden skal sikre, at reparationen er sikkerhedsmæssigt forsvarlig, og at installationen ikke har synlige fejl, men har ikke samme fulde ansvar som ved et eftersyn; fx anbefales et eftersyn, hvis installationen virker forsømt."
+      ],
+      "fail_hvis": [
+        "Anbefaler at søge efter utætheden med åben flamme.",
+        "Lader gassen være åben uden tæthedsprøve efter reparationen."
+      ],
+      "begrundelse": "Udkald ved gaslugt: sikkerhed, lokalisering, tæthedsprøve, afspærring og ansvar ved udkald (§ 22, stk. 2). Indberetning af sikkerhedskritiske hændelser påhviler den, der driver installationen (§ 152), og er ikke et krav for bestået.",
+      "kilde": "BEK nr. 247 af 26/03/2018 § 22 og bilag 1-2 (udkald), https://www.retsinformation.dk/eli/lta/2018/247",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-137",
+      "maal": [
+        "VVS-AK-08"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Hvad skal dokumentationen for en udført slutkontrol mindst indeholde i en autoriseret vvs-virksomheds kvalitetsledelsessystem?",
+      "valgmuligheder": {
+        "A": "Installationens identifikation, hvem der udførte den og slutkontrollen, dato og resultat.",
+        "B": "Installationens identifikation, kundens underskrift på modtagelsen, dato og fakturanummer.",
+        "C": "Hvem der udførte installationen, materialelisten, dato og den fagligt ansvarliges underskrift.",
+        "D": "Installationens identifikation, dato, resultat og kontrolinstansens godkendelse af kontrollen."
+      },
+      "facit": "A",
+      "begrundelse": "Bilag 1, pkt. III, nr. 1: dokumentation for udført slutkontrol med identifikation af installationen, hvem der udførte installationen og slutkontrollen, dato for udførelse og resultatet af slutkontrollen.",
+      "kilde": "BEK nr. 725 af 12/06/2024 om kvalitetsledelsessystemer bilag 1, pkt. III, nr. 1, https://www.retsinformation.dk/eli/lta/2024/725",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-138",
+      "maal": [
+        "VVS-AK-08"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Ved kontrolinstansens efterprøvning af din vvs-virksomheds kvalitetsledelsessystem får du en anmærkning og en afvigelse. Hvad gælder efter bekendtgørelsen om kvalitetsledelsessystemer?",
+      "valgmuligheder": {
+        "A": "Anmærkningen følges op inden for kontrolinstansens frist på højst 12 måneder; kontrolinstansen behandler afvigelsen ved næste ordinære efterprøvning.",
+        "B": "Anmærkningen følges op inden for kontrolinstansens frist på højst 6 måneder; kontrolinstansen verificerer forbedringerne for afvigelsen før godkendelse.",
+        "C": "Sikkerhedsstyrelsen fastsætter fristen for anmærkningen på højst 6 måneder; afvigelsen kan lukkes ved virksomhedens egen skriftlige erklæring.",
+        "D": "Anmærkninger har ingen frist; kun afvigelser skal rettes, og det skal ske inden 3 måneder."
+      },
+      "facit": "B",
+      "begrundelse": "§ 9, stk. 2-3: virksomheden skal iværksætte forbedringsaktiviteter for afvigelser, og kontrolinstansen skal verificere resultatet før godkendelse. Anmærkninger skal følges op inden for en frist fastsat af kontrolinstansen på højst 6 måneder; ellers bliver det en afvigelse.",
+      "kilde": "BEK nr. 725 af 12/06/2024 § 9, stk. 2-3, https://www.retsinformation.dk/eli/lta/2024/725",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-139",
+      "maal": [
+        "VVS-AK-08"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du er fagligt ansvarlig i en nyautoriseret vvs-virksomhed med to svende og en lærling. Virksomheden laver især badeværelsesrenoveringer med nye vandinstallationer i parcelhuse. Beskriv, hvordan kvalitetsledelsessystemet skal sikre, at arbejdet udføres korrekt, og hvad der skal dokumenteres.",
+      "facit": null,
+      "kriterier": [
+        "Beskriver bemanding og instruktion af medarbejderne samt tilsyn med arbejdet (fx stikprøver/tilsyn med lærlingen), og at tilsynet dokumenteres.",
+        "Beskriver slutkontrol af hver installation med dokumentation af installationens identifikation, hvem der udførte arbejdet og slutkontrollen, dato og resultat.",
+        "Beskriver håndtering af afvigelser med forbedringsaktiviteter, så fejl ikke gentages, og ledelsens evaluering af systemet mindst én gang årligt.",
+        "Nævner mindst ét af følgende: den fagligt ansvarlige skal have de nødvendige beføjelser; prøve- og måleudstyr skal overholde dokumenterede prøvningsintervaller."
+      ],
+      "begrundelse": "KLS-krav efter BEK 725/2024 og autorisationsloven.",
+      "kilde": "BEK nr. 725 af 12/06/2024 § 4 og bilag 1, pkt. I og III (https://www.retsinformation.dk/eli/lta/2024/725); autorisationsloven LBK nr. 30 af 11/01/2019 § 13 (https://www.retsinformation.dk/eli/lta/2019/30)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-140",
+      "maal": [
+        "VVS-AK-09"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Dine svende skal i en arbejdsuge fjerne og bortskaffe letsmuldrende, asbestholdig rørisolering på varmerør i en kælder. Hvad gælder for anmeldelse af arbejdet til Arbejdstilsynet?",
+      "valgmuligheder": {
+        "A": "Arbejdet skal anmeldes digitalt før start, så vidt muligt senest 3 dage før.",
+        "B": "Arbejdet skal kun anmeldes, hvis det omfatter mere end 10 m² asbestholdigt materiale.",
+        "C": "Anmeldelse er unødvendig, fordi kortvarig vedligeholdelse altid er undtaget.",
+        "D": "Arbejdet skal anmeldes senest 14 dage før start via kommunens affaldsanmeldelse."
+      },
+      "facit": "A",
+      "begrundelse": "§ 11: arbejdsgiveren skal anmelde asbestarbejde til Arbejdstilsynet før start, så vidt muligt senest 3 dage før (digitalt via Virk, § 12). Undtagelsen i stk. 2 gælder bl.a. kortvarige, ikke-kontinuerlige vedligeholdelsesopgaver med materialer, der ikke er letsmuldrende – ikke fjernelse af letsmuldrende isolering.",
+      "kilde": "BEK nr. 1328 af 19/11/2025 om asbest i arbejdsmiljøet §§ 11-12, https://www.retsinformation.dk/eli/lta/2025/1328",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-141",
+      "maal": [
+        "VVS-AK-09"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Hvad gælder efter den aktuelle asbestbekendtgørelse for, hvem der må nedrive (fjerne) asbestholdigt materiale, fx asbestholdig rørisolering?",
+      "valgmuligheder": {
+        "A": "Virksomheder, hvis medarbejdere har gennemført asbestkursus; autorisation er ikke nødvendig.",
+        "B": "Autoriserede virksomheder, men kun når der fjernes mere end 10 m² asbestholdigt materiale.",
+        "C": "Autoriserede virksomheder; kortvarigt nedrivningsarbejde af mindre karakter er dog undtaget.",
+        "D": "Alle virksomheder, når arbejdet er anmeldt til Arbejdstilsynet mindst 3 dage før arbejdsstart."
+      },
+      "facit": "C",
+      "begrundelse": "§ 7: nedrivning må kun udføres af virksomheder, der er autoriseret hertil (asbestautorisation), men kortvarigt nedrivningsarbejde af mindre karakter kan udføres uden autorisation (stk. 2).",
+      "kilde": "BEK nr. 1328 af 19/11/2025 om asbest i arbejdsmiljøet § 7, https://www.retsinformation.dk/eli/lta/2025/1328",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-142",
+      "maal": [
+        "VVS-AK-09",
+        "VVS-AK-10"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du skal give tilbud på totalrenovering af et badeværelse (ca. 6 m²) i et parcelhus opført i 1968. Gamle fliser, fliseklæb, fuger, rør og en gammel asbestcementplade bag radiatoren skal fjernes, og der forventes mere end 1 ton byggeaffald. Beskriv, hvad du som mester skal sikre vedrørende farlige stoffer, arbejdsmiljø og affald, før og under arbejdet.",
+      "facit": null,
+      "kriterier": [
+        "Nævner forundersøgelse for asbest af de berørte materialer (fx fliseklæb, plader, rørisolering) med prøver ved behov, og at arbejdet behandles som asbestarbejde ved mindste mistanke.",
+        "Nævner, at bygherren skal lave miljøscreening (og evt. kortlægning) for problematiske stoffer, fx PCB, og anmelde byggeaffaldet til kommunen, før arbejdet starter.",
+        "Nævner beskyttelsesforanstaltninger, fx støvbegrænsende metoder og udsug, afgrænsning af området eller egnede værnemidler/åndedrætsværn.",
+        "Nævner håndtering af asbestholdigt affald, fx at det befugtes og opbevares i lukket, mærket emballage."
+      ],
+      "fail_hvis": [
+        "Anbefaler at fjerne asbestpladen med vinkelsliber eller højtryksspuling."
+      ],
+      "begrundelse": "Farlige stoffer og affald ved renovering af ældre badeværelse. Arbejdet må tidligst starte, når kommunen har accepteret affaldsanmeldelsen, eller to uger efter indgivelse (BEK 496/2024 § 6).",
+      "kilde": "BEK nr. 1328 af 19/11/2025 §§ 10, 15, 19, 30-32 (https://www.retsinformation.dk/eli/lta/2025/1328); BEK nr. 496 af 21/05/2024 §§ 2 nr. 7, 3, 4 og 6 (https://www.retsinformation.dk/eli/lta/2024/496)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-143",
+      "maal": [
+        "VVS-AK-10"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du har afleveret et nyt anlæg i et parcelhus: luft/vand-varmepumpe med varmtvandsbeholder og elpatron, gulvvarme, ny vandinstallation med tilbagestrømningssikring og et nyt gulvafløb i bryggerset. Beskriv, hvad drifts- og vedligeholdelsesmanualen skal indeholde, og giv eksempler på konkrete vedligeholdelsespunkter.",
+      "facit": null,
+      "kriterier": [
+        "Nævner, at manualen skal foreligge ved ibrugtagning og beskrive, hvordan og hvor ofte vedligeholdelsen skal ske, med tegninger over placeringen af de installationer, der skal vedligeholdes.",
+        "Nævner vedligehold af tilbagestrømningssikringen (efter DS/EN 806-5 eller tilsvarende).",
+        "Nævner kontrol af varmtvandstemperaturen, fx at den er mindst 50 °C i drift.",
+        "Nævner mindst ét vedligeholdelsespunkt for varmeanlægget eller afløbet, fx anlægstryk og ekspansionsbeholderens forspænding, snavssamler/filter, fri luft ved udedelen eller rensning af gulvafløb/vandlås.",
+        "Nævner, at eftersyn og service på kølekredsen kun udføres af certificeret personale."
+      ],
+      "begrundelse": "D&V-manual efter BR18 og konkrete vedligeholdelsespunkter.",
+      "kilde": "BR18 §§ 80, 328, 392 og 419 (https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/80_81/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/328/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/392/, https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/419/); BEK nr. 505 af 22/05/2024 (https://www.retsinformation.dk/eli/lta/2024/505)",
+      "status": "V 2026-10-17"
+    }
+  ]
+}

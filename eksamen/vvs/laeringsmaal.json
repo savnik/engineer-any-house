@@ -1,0 +1,285 @@
+{
+  "fag": "vvs",
+  "plugin": "byg-vvs",
+  "agent": "vvs-mester",
+  "note": "Kompetencemål 1–22 for specialet vvs-energispecialist (ordret fra uddannelsesordningen; mål 1 fuldendt fra BEK 171/2025) og de kompetencegivende fagelementer på VVS-installatør (AK), som giver adgang til autorisation (sammenfattet). Rolle 'uden' = ligger uden for agentens rolle eller kan ikke prøves som faglig viden.",
+  "kilder": [
+    {
+      "id": "UO-VVS-2026",
+      "titel": "Uddannelsesordning for vvs-energiuddannelsen, gældende fra 1. august 2026 (STIL, regelgrundlag 29261)",
+      "url": "https://uddannelser.stil.dk/uddannelser-api/api/uddannelser/18724/regelgrundlag/29261/forside",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-142-2026",
+      "titel": "BEK nr. 142 af 22/01/2026 om erhvervsuddannelsen i vvs-energi",
+      "url": "https://www.retsinformation.dk/eli/lta/2026/142/pdf",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-171-2025",
+      "titel": "BEK nr. 171 af 04/02/2025 om erhvervsuddannelsen i vvs-energi (historisk; § 4 kompetencemål, bruges til at fuldende afkortede mål)",
+      "url": "https://www.retsinformation.dk/api/pdf/248149",
+      "dato": "2025-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "EVU-CENSOR-VVS",
+      "titel": "Censorvejledning, svendeprøve VVS-energispecialist (revideret januar 2026)",
+      "url": "https://viewer.ipaper.io/evu/skuemestrecensorer/vvs/censorvejledning-vvs-energispecialist/",
+      "dato": "2026-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "AK-VVS-2026",
+      "titel": "Studieordning VVS-Installatør (AK), national del, august 2026 – kompetencegivende fagelementer (Zealand)",
+      "url": "https://www.zealand.dk/wp-content/uploads/2026/05/Samlet-studieordning-VVS-2026.pdf",
+      "dato": "2026-08",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-1415-2018",
+      "titel": "BEK nr. 1415 af 03/12/2018 om godkendelse af fagligt ansvarlige på el-, vvs- og kloakinstallationsområdet",
+      "url": "https://www.retsinformation.dk/eli/lta/2018/1415/pdf",
+      "dato": "2019-01-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-725-2024",
+      "titel": "BEK nr. 725 af 12/06/2024 om kvalitetsledelsessystemer for autoriserede virksomheder",
+      "url": "https://www.retsinformation.dk/eli/lta/2024/725/pdf",
+      "dato": "2024-06-12",
+      "laest": "2026-10-17"
+    }
+  ],
+  "maal": [
+    {
+      "id": "VVS-KM-01",
+      "kilde": "UO-VVS-2026 kompetencemål 1 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan udføre almindeligt forekommende vvs-installationer, tilslutning af vvs-installationer og anlæg til forsyningsnettet, kloaksystemet, vandafledning og forebyggelse af bl.a. vand- og stormskader.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-02",
+      "kilde": "UO-VVS-2026 kompetencemål 2 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere almindeligt forekommende vvs- og gasinstallationer i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-03",
+      "kilde": "UO-VVS-2026 kompetencemål 3 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, reparere og udføre service på fyrede, ufyrede og vedvarende energiinstallationer samt vand, afløb og sanitet i mindre ejendomme.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-04",
+      "kilde": "UO-VVS-2026 kompetencemål 4 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, reparere, udføre service på og udskifte mekaniske og el-tekniske komponenter i vvs-installationer i bolig, erhverv, industri og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-05",
+      "kilde": "UO-VVS-2026 kompetencemål 5 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, reparere og udføre service på styrings- og reguleringsautomatikker i bolig, erhverv, industri og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-06",
+      "kilde": "UO-VVS-2026 kompetencemål 6 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan montere og reparere emner i tyndplade på bygninger, energi- og ventilationsanlæg i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-07",
+      "kilde": "UO-VVS-2026 kompetencemål 7 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan anvende it, herunder generativ kunstig intelligens, i det daglige arbejde, samt opsøge faglig viden samt dele viden med kolleger og samarbejdspartnere.",
+      "rolle": "uden",
+      "begrundelse": "Generisk it-brug, ikke faglig viden"
+    },
+    {
+      "id": "VVS-KM-08",
+      "kilde": "UO-VVS-2026 kompetencemål 8 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan holde sig opdateret om den teknologiske udviklings betydning inden for vvs-branchen.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-09",
+      "kilde": "UO-VVS-2026 kompetencemål 9 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan planlægge, kvalitetssikre og dokumentere egne arbejdsopgaver samt anvende bruger- og installationsvejledninger på dansk og engelsk.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-10",
+      "kilde": "UO-VVS-2026 kompetencemål 10 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan udføre eget arbejde sikkerhedsmæssigt forsvarligt under hensyn til arbejdsmiljø og gældende love, regler og standarder.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-11",
+      "kilde": "UO-VVS-2026 kompetencemål 11 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan vejlede kunder om komfort, energieffektivitet og miljømæssige forhold i forbindelse med bæredygtige materiale- og komponentvalg og det udførte arbejdes drift, vedligehold samt løbende service.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-12",
+      "kilde": "UO-VVS-2026 kompetencemål 12 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan selvstændigt prompte generativ kunstig intelligens samt vurdere output til enkle vvs-tekniske løsninger og digitale brugerflader til gavn for kunden.",
+      "rolle": "uden",
+      "begrundelse": "Ikke fagligt indhold; agenten er selv generativ AI"
+    },
+    {
+      "id": "VVS-KM-13",
+      "kilde": "UO-VVS-2026 kompetencemål 13 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan vejlede om vedvarende energiformer i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-14",
+      "kilde": "UO-VVS-2026 kompetencemål 14 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan dimensionere, installere, udføre service på, fejlfinde og reparere vand- og afløbssystemer i bolig, erhverv, industri og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-15",
+      "kilde": "UO-VVS-2026 kompetencemål 15 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, reparere og udføre service på gasinstallationer, fyrede, ufyrede og vedvarende energiinstallationer i bolig, erhverv, industri og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-16",
+      "kilde": "UO-VVS-2026 kompetencemål 16 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere og svejse plastrør op i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-17",
+      "kilde": "UO-VVS-2026 kompetencemål 17 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, programmere, udføre service på, fejlfinde og reparere velfærdsteknologiske og intelligente armaturer og sanitetskomponenter i bolig, erhverv og sundhedssektoren.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-18",
+      "kilde": "UO-VVS-2026 kompetencemål 18 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan planlægge, dimensionere, installere, udføre service på, reparere og optimere energianlæg, varmeforsyningsanlæg, anlæg for vedvarende energi, kombinerede energianlæg samt lavtemperaturanlæg, ekspansionssystemer og fjernkøleanlæg i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-19",
+      "kilde": "UO-VVS-2026 kompetencemål 19 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, tilslutte, fejlfinde, reparere, programmere og indstille intelligente styringer og reguleringsautomatiksystemer i bolig, erhverv, industri og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-20",
+      "kilde": "UO-VVS-2026 kompetencemål 20 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan beregne og vejlede om energiforbrug og besparelsespotentiale med henblik på energieffektivisering og -optimering samt valg af korrekte tekniske løsninger i relation til specialets område i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-21",
+      "kilde": "UO-VVS-2026 kompetencemål 21 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan opsamle, behandle og systematisere data fra tekniske installationer under hensyn til datasikkerhed, og lærlingen har forståelse for, hvordan integration af systemer og internet of things (IoT) kan skabe merværdi for kunder og virksomhed.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-KM-22",
+      "kilde": "UO-VVS-2026 kompetencemål 22 (speciale vvs-energispecialist)",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan udføre service på, fejlfinde og reparere kølekredsen (op til 3 kg) i bolig, erhverv og industri.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-01",
+      "kilde": "AK-VVS-2026 Sanitetsteknik",
+      "niveau": "mester",
+      "tekst": "Projektere og dimensionere vand- og afløbsinstallationer: brugsvand, varmtvandsbeholdere, cirkulation, isolering, trykforøgning, udluftede og ikke-udluftede spildevandsinstallationer, regn- og drænvand, pumpeanlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-02",
+      "kilde": "AK-VVS-2026 Sanitetsteknik",
+      "niveau": "mester",
+      "tekst": "Materialer, korrosion, vandbehandling og støj i vand- og afløbsinstallationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-03",
+      "kilde": "AK-VVS-2026 Sanitetsteknik",
+      "niveau": "mester",
+      "tekst": "Brandbeskyttelse og sikring mod brand ved vvs-installationer (gennemføringer, brandadskillelser).",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-04",
+      "kilde": "AK-VVS-2026 Sanitetsteknik",
+      "niveau": "mester",
+      "tekst": "Træffe beslutninger efter gældende love, regler og normer (BR18, DS 439, DS 432, DS/EN 1717), herunder automatik, og vurdere installationer i forhold til sundhed og sikkerhed.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-05",
+      "kilde": "AK-VVS-2026 Sanitetsteknik",
+      "niveau": "mester",
+      "tekst": "Rådgive bygherrer, arkitekter og rådgivere samt vejlede slutbrugeren om drift og vedligehold.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-06",
+      "kilde": "AK-VVS-2026 Gasteknik",
+      "niveau": "mester",
+      "tekst": "Gasreglementet og myndighedsbestemmelser: gassikkerhedsloven, installationsklasser, autorisationer og certifikater; gassernes egenskaber og forbrænding.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-07",
+      "kilde": "AK-VVS-2026 Gasteknik",
+      "niveau": "mester",
+      "tekst": "Fagligt tilsyn med gasinstallationer: tæthedsprøve, visuel kontrol, aftræk, frisklufttilførsel og ventilation, CO og røggasanalyse.",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-08",
+      "kilde": "AK-VVS-2026 Kvalitet, sikkerhed og miljø",
+      "niveau": "mester",
+      "tekst": "Lovgivning og branchekrav om autorisation og kvalitet; kvalitetsledelsessystem (KLS) med instruktion, tilsyn, slutkontrol og dokumentation (BEK 725/2024).",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-09",
+      "kilde": "AK-VVS-2026 Kvalitet, sikkerhed og miljø",
+      "niveau": "mester",
+      "tekst": "Arbejdsmiljø og arbejdsbetingede sygdomme, herunder farlige stoffer i eksisterende bygninger (asbest, bly, PCB).",
+      "rolle": "i"
+    },
+    {
+      "id": "VVS-AK-10",
+      "kilde": "AK-VVS-2026 Kvalitet, sikkerhed og miljø",
+      "niveau": "mester",
+      "tekst": "Drifts- og vedligeholdelsesplaner og miljø i vvs-arbejdet.",
+      "rolle": "i"
+    }
+  ]
+}

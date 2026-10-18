@@ -1,0 +1,396 @@
+{
+  "fag": "el",
+  "plugin": "byg-el",
+  "agent": "el-installatoer",
+  "note": "Kompetencemål (ordret fra uddannelsesordningen), EVU's 11 el-teoretiske temaer og autorisationsprøvens indholdskrav. Rolle 'uden' = ligger uden for agentens rolle eller kan ikke prøves som faglig viden; begrundelsen står ved målet.",
+  "kilder": [
+    {
+      "id": "UO-EL-2026",
+      "titel": "Uddannelsesordning for elektrikeruddannelsen, gældende fra 1. august 2026 (STIL, regelgrundlag 29256)",
+      "url": "https://uddannelser.stil.dk/uddannelser-api/api/uddannelser/19443/regelgrundlag/29256/forside",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-460-2026",
+      "titel": "BEK nr. 460 af 11/05/2026 om erhvervsuddannelsen til elektriker",
+      "url": "https://www.retsinformation.dk/eli/lta/2026/460/pdf",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "EVU-TEMA-2026",
+      "titel": "EVU: Vejledning til el-teoretiske temaer, delsvendeprøven 2026",
+      "url": "https://viewer.ipaper.io/evu/elektrikeruddannelsen/proever/vejledning-for-el-teoretiske-temaer-h2-delsvendeproeve-2026/",
+      "dato": "2026-08",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "SIK-AUT-EL",
+      "titel": "Sikkerhedsstyrelsens krav til el-autorisationsprøven (gengivet i Fredericia Maskinmesterskole, PE 004 rev. 11, bilag, mail 23/05/2022)",
+      "url": "https://fms.improvenet.dk/documents/03_Kvalitetsh%C3%A5ndbog_Procedurer/02_Procedurer%20for%20eksamen%20og%20evaluering%20-%20PE/PE%20004%20-%20Fremstilling%20af%20opgaver%20til%20el-autorisationspr%C3%B8ver",
+      "dato": "2022-05-23",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "AK-EL-2022",
+      "titel": "Studieordning El-installatør (AK), national del 2022, fagelement 'Bekendtgørelser og standarder' (Zealand 2024)",
+      "url": "https://zealand.dk/wp-content/uploads/2016/09/Samlet-studieordning-El-installator-2024.pdf",
+      "dato": "2022-08-15",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-1415-2018",
+      "titel": "BEK nr. 1415 af 03/12/2018 om godkendelse af fagligt ansvarlige på el-, vvs- og kloakinstallationsområdet",
+      "url": "https://www.retsinformation.dk/eli/lta/2018/1415/pdf",
+      "dato": "2019-01-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-725-2024",
+      "titel": "BEK nr. 725 af 12/06/2024 om kvalitetsledelsessystemer for autoriserede virksomheder",
+      "url": "https://www.retsinformation.dk/eli/lta/2024/725/pdf",
+      "dato": "2024-06-12",
+      "laest": "2026-10-17"
+    }
+  ],
+  "maal": [
+    {
+      "id": "EL-KM-01",
+      "kilde": "UO-EL-2026 kompetencemål 1",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan dimensionere, installere og tilslutte stikledning, tavler, el-installationer, enkle styringsanlæg, belysning og brugsgenstande.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-02",
+      "kilde": "UO-EL-2026 kompetencemål 2",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere og programmere simple intelligente installationer og belysningsanlæg i henhold til fabrikantens forskrifter.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-03",
+      "kilde": "UO-EL-2026 kompetencemål 3",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan projektere, opbygge og installere mindre kommunikationsnetværk med fokus på data- og cybersikkerhed.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-04",
+      "kilde": "UO-EL-2026 kompetencemål 4",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan dimensionere, installere og tilslutte automatiske anlæg og motorinstallationer samt ventilationsanlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-05",
+      "kilde": "UO-EL-2026 kompetencemål 5",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan programmere elektriske installationer og kan identificere basale strukturer i programmeringssprog.",
+      "rolle": "uden",
+      "begrundelse": "Programmering er ikke en del af rådgiverrollen i eksisterende boliger og prøves ikke meningsfuldt skriftligt"
+    },
+    {
+      "id": "EL-KM-06",
+      "kilde": "UO-EL-2026 kompetencemål 6",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan tilslutte almindeligt forekommende installationer til forsyningsnettet og/eller lokal elproduktion og energilagring.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-07",
+      "kilde": "UO-EL-2026 kompetencemål 7",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan tilslutte sikringsanlæg- og alarmsystemer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-08",
+      "kilde": "UO-EL-2026 kompetencemål 8",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan anvende IoT, dataopsamling, dataanalyse og data- og cybersikkerhed i forbindelse med styring og regulering af installationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-09",
+      "kilde": "UO-EL-2026 kompetencemål 9",
+      "niveau": "svend",
+      "tekst": "Lærlingen har viden om forskellige typer industri- og procesanlæg og automatisering samt digitalisering, datakommunikation, data- og cybersikkerhed og IIoT.",
+      "rolle": "uden",
+      "begrundelse": "Industri- og procesanlæg ligger uden for agentens rolle (boliginstallationer)"
+    },
+    {
+      "id": "EL-KM-10",
+      "kilde": "UO-EL-2026 kompetencemål 10",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan planlægge, kvalitetssikre og dokumentere eget arbejde samt udarbejde brugervejledninger, service- og vedligeholdelsesplaner ved anvendelse af digitale værktøjer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-11",
+      "kilde": "UO-EL-2026 kompetencemål 11",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan selvstændigt promte generativ kunstig intelligens samt vurdere output ved udarbejdelse af fx dokumentation, programmering, dataanalyse m.m.",
+      "rolle": "uden",
+      "begrundelse": "Ikke fagligt indhold; agenten er selv generativ AI"
+    },
+    {
+      "id": "EL-KM-12",
+      "kilde": "UO-EL-2026 kompetencemål 12",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan vælge sikkerhedsmæssigt og teknisk korrekt værktøj, måleudstyr og måleteknikker i forbindelse med udførelse af arbejde på og nær ved spændingsløse installationer samt foretage måling og fejlfinding på spændingsførende installationer under instruktion og opsyn.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-13",
+      "kilde": "UO-EL-2026 kompetencemål 13",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan risikovurdere el-sikkerhed, arbejdsmiljøforhold, og tilrettelægge arbejdet herefter.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-14",
+      "kilde": "UO-EL-2026 kompetencemål 14",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan selvstændigt udføre verifikation af installationsarbejde med installationstester i henhold til gældende standarder.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-15",
+      "kilde": "UO-EL-2026 kompetencemål 15",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan vejlede om energieffektivisering, indregulering og energibesparende løsninger i forbindelse med installationsopgaver i boliger.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-16",
+      "kilde": "UO-EL-2026 kompetencemål 16",
+      "niveau": "svend",
+      "tekst": "Lærlingen har viden om bæredygtighed og grøn omstilling og kan udarbejde innovative el-tekniske løsninger.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-17",
+      "kilde": "UO-EL-2026 kompetencemål 17",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan deltage i projektarbejde og gennemføre projekter.",
+      "rolle": "uden",
+      "begrundelse": "Procesmål, der ikke kan prøves som faglig viden"
+    },
+    {
+      "id": "EL-KM-18",
+      "kilde": "UO-EL-2026 kompetencemål 18",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan grundbegreberne ved vekselstrøm (AC), kredsløb og transformere samt udføre el-tekniske målinger og beregninger.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-19",
+      "kilde": "UO-EL-2026 kompetencemål 19",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan søge og vurdere teknisk information med relevans for arbejdsområdet og formidle resultatet til kolleger under anvendelse af korrekt faglig terminologi.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-20",
+      "kilde": "UO-EL-2026 kompetencemål 20",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan udvikle eksisterende eller nye el-tekniske løsninger, tænke helhedsorienteret, søge ny viden, skabe overblik og kombinere teknologi med salgs- og forretningsforståelse til skabelse af merværdi for kunder eller internt i virksomheden.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-21",
+      "kilde": "UO-EL-2026 kompetencemål 21",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, programmere og idriftsætte elektriske installationer og elektriske anlæg, fx kommunikationstekniske installationer og anlæg samt automatiske anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-22",
+      "kilde": "UO-EL-2026 kompetencemål 22",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan fejlfinde, reparere og vedligeholde elektriske installationer og elektriske anlæg, fx kommunikationstekniske installationer og anlæg samt automatiske anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-23",
+      "kilde": "UO-EL-2026 kompetencemål 23",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan energieffektivisere elektriske installationer og automatiske anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-24",
+      "kilde": "UO-EL-2026 kompetencemål 24",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan integrere og optimere teknologier, fx velfærdsteknologiske løsninger, i intelligente installationer og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-25",
+      "kilde": "UO-EL-2026 kompetencemål 25",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan sikre el-sikkerhed og arbejdsmiljø for eget arbejde samt vurdere el-sikkerhed for samarbejdspartnere og brugere.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-26",
+      "kilde": "UO-EL-2026 kompetencemål 26",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan tage ansvar for planlægning og styring af eget arbejde, herunder inddragelse af innovative, tværfaglige og samfundsmæssige perspektiver i opgaveløsningen.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-27",
+      "kilde": "UO-EL-2026 kompetencemål 27",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan verificere, dokumentere og kvalitetssikre eget arbejde samt vurdere kvaliteten af andres arbejde ud fra gældende love, regler og standarder.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-28",
+      "kilde": "UO-EL-2026 kompetencemål 28",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan kommunikere i korrekt fagterminologi på dansk og engelsk med samarbejdspartnere og brugere.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-29",
+      "kilde": "UO-EL-2026 kompetencemål 29",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan anvende it i det daglige arbejde, herunder opsøge faglig viden samt dele viden med kolleger og samarbejdspartnere.",
+      "rolle": "uden",
+      "begrundelse": "Generisk it-brug, ikke faglig viden"
+    },
+    {
+      "id": "EL-KM-30",
+      "kilde": "UO-EL-2026 kompetencemål 30",
+      "niveau": "svend",
+      "tekst": "(Elektriker 2) Lærlingen kan udføre udviklingsorienterede opgaver inden for det el-tekniske område og i denne forbindelse indgå i tværfaglige udviklingsprocesser.",
+      "rolle": "uden",
+      "begrundelse": "Procesmål for Elektriker 2; kan ikke prøves som faglig viden"
+    },
+    {
+      "id": "EL-KM-31",
+      "kilde": "UO-EL-2026 kompetencemål 31",
+      "niveau": "svend",
+      "tekst": "(Elektriker 2) Lærlingen har specialiserede el-tekniske kompetencer inden for fx kommunikationsnetværk, procesanlæg, robotteknologi, Building Management Systemer, energieffektivisering eller sikringsanlæg- og alarmsystemer.",
+      "rolle": "uden",
+      "begrundelse": "Valgfri specialisering; de boligrelevante dele dækkes af mål 3, 7, 15 og 23"
+    },
+    {
+      "id": "EL-TEMA-01",
+      "kilde": "EVU-TEMA-2026 tema 1",
+      "niveau": "svend",
+      "tekst": "Dimensionering af boliginstallationer: belastningsberegninger, komponentvalg, oplægnings- og montageforhold, systemjording, beskyttende potentialudligning, TT/TN.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-02",
+      "kilde": "EVU-TEMA-2026 tema 2",
+      "niveau": "svend",
+      "tekst": "Vekselstrømsteori: effektfaktor, vektorer, 1- og 3-faset AC, R, Z, XL, XC, P, Q, S, cos φ og sammenlægning af strømme.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-03",
+      "kilde": "EVU-TEMA-2026 tema 3",
+      "niveau": "svend",
+      "tekst": "Love og regler: Elsikkerhedsloven og BEK 1082, DS/HD 60364-serien, DS/EN 60204-1, Fællesregulativet, DS/EN 61439, Bygningsreglementet og Maskinforordningen.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-04",
+      "kilde": "EVU-TEMA-2026 tema 4",
+      "niveau": "svend",
+      "tekst": "Industriinstallationer: overbelastnings- og kortslutningsbeskyttelse, Ik min og Ik max, AC-klasser, udligning/EMC og indstilling af udstyr.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-05",
+      "kilde": "EVU-TEMA-2026 tema 5",
+      "niveau": "svend",
+      "tekst": "Verifikation og måleteknik: eftersyn, afprøvning, rapportering, sikkerhed ved måling og fejlfindingsteknik.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-06",
+      "kilde": "EVU-TEMA-2026 tema 6",
+      "niveau": "svend",
+      "tekst": "Kommunikationsnetværk.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-07",
+      "kilde": "EVU-TEMA-2026 tema 7",
+      "niveau": "svend",
+      "tekst": "Sikringsanlæg: AIA og kendskab til TVO og ABA.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-08",
+      "kilde": "EVU-TEMA-2026 tema 8",
+      "niveau": "svend",
+      "tekst": "Højspænding og vedvarende energi: transformerberegninger, solceller, batterilager, varmepumper og PtX.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-09",
+      "kilde": "EVU-TEMA-2026 tema 9",
+      "niveau": "svend",
+      "tekst": "El-sikkerhed og arbejdsmiljø ved udførsel: L-AUS efter DS/EN 50110 og BEK 1082, risikovurdering, ulykker og ansvar.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-10",
+      "kilde": "EVU-TEMA-2026 tema 10",
+      "niveau": "svend",
+      "tekst": "El-motorer og automatik efter DS/EN 60204-1.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-11",
+      "kilde": "EVU-TEMA-2026 tema 11",
+      "niveau": "svend",
+      "tekst": "Energieffektivisering og tilbagebetalingstid: brugsmønstre, forbrugsstyring og simple tilbagebetalingskalkulationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-01",
+      "kilde": "SIK-AUT-EL hovedområde 1 (20 %)",
+      "niveau": "mester",
+      "tekst": "Udførsel og drift af elektriske anlæg: grundbeskyttelse, fejlbeskyttelse, overstrømsbeskyttelse (overbelastnings- og kortslutningsbeskyttelse).",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-02",
+      "kilde": "SIK-AUT-EL hovedområde 2 (60 %)",
+      "niveau": "mester",
+      "tekst": "Udførsel og drift af elektriske installationer: grundbeskyttelse, fejlbeskyttelse, overstrømsbeskyttelse (overbelastnings- og kortslutningsbeskyttelse).",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-03",
+      "kilde": "SIK-AUT-EL hovedområde 3 (20 %)",
+      "niveau": "mester",
+      "tekst": "Lov, bekendtgørelser og standarder: Elsikkerhedsloven, bekendtgørelserne om udførelse og drift af elektriske installationer og anlæg, DS/HD 60364-serien, EN 50110-serien, EN 61936-1 og EN 50522.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-04",
+      "kilde": "AK-EL-2022 Bekendtgørelser og standarder, kompetencer",
+      "niveau": "mester",
+      "tekst": "Varetage rollen som fagligt ansvarlig og driftsansvarlig person, herunder tekniske, sikkerhedsmæssige og kvalitetsledelsesmæssige opgaver (KLS: instruktion, tilsyn, slutkontrol og dokumentation, jf. BEK 725/2024).",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-05",
+      "kilde": "AK-EL-2022 Bekendtgørelser og standarder, viden",
+      "niveau": "mester",
+      "tekst": "Projektering og dimensionering af installationer og anlæg samt mellemspændingsdistributionsanlæg.",
+      "rolle": "uden",
+      "begrundelse": "Mellemspændingsdistributionsanlæg ligger uden for boliginstallationer; dimensionering af installationer dækkes af EL-KM-01 og EL-AUT-02"
+    }
+  ]
+}

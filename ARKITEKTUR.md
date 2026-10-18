@@ -102,6 +102,22 @@ Hvert API-kald læser hele agentens kontekst igen, så prisen pr. svar følger k
 
 **Fravalgt:** fillåse under hele fagkaldet (serialiserer det, vi ville parallelisere) og en tabel pr. fag (fragmenterer registrene, som projektlederen og kontrollen skal se samlet). Kun-tilføj-logge for beslutningslog og kontrollog er ikke nødvendige, så længe kun hovedtråden skriver dem.
 
+## Eksamenslag (2026-10-17)
+**Problem:** fagviden blev kun testet med 1–2 scenarie-evals pr. fag. Der var ingen måling af bredde og intet grundlag for at sige, hvor videnbasen mangler noget, eller hvor den vildleder.
+
+**Valg:** Uddannelsesmaterialet gemmes ikke som videnbase. Det ville fylde konteksten og bringe forældede lærebogsværdier og ophavsretligt stof ind i et repo, der skal offentliggøres. I stedet bruges de **officielle læringsmål** som dækningskort, og hvert mål får egne eksamensopgaver med efterprøvet facit. Officielle prøvesæt er ikke offentlige (EVU's prøvebank og autorisationsprøverne er fortrolige). Opgaverne er derfor skrevet til repoet ud fra prøveformerne.
+
+| Komponent | Design |
+|---|---|
+| `eksamen/<fag>/laeringsmaal.json` | Kompetencemål ordret fra uddannelsesordningen (STIL, gældende fra 1/8-2026; målene er flyttet fra bekendtgørelsen til uddannelsesordningen), el: EVU's 11 el-teoretiske temaer, mesterniveau: autorisationsprøvens indhold (el: Sikkerhedsstyrelsens tre hovedområder; vvs: de kompetencegivende AK-fagelementer). Mål uden for rollen har en begrundelse |
+| `opgaver*.json` | `valg`, `tal` og `fri` med facit, kilde og V/T. Hvert mål i rollen har opgaver i både `udvikling` og `holdout` |
+| `scripts/exam.py` | `tjek` (format og dækning, i `valider.py`), `vis` (sæt og dækningskort som markdown), `koer` (headless `claude -p` i tom mappe, uden brugerens plugins og internet; arm `basis` mod `plugin` med `--agent`), `rapport` (gevinst, huller og regressioner) |
+| Rettelse | `valg` og `tal` deterministisk fra linjen `SVAR:`; `fri` af en censor-LLM efter opgavens kriterier |
+| Placering | Uden for `plugins/`, så facit hverken pakkes eller kan læses af agenten |
+| Kun pluginet | Plugin-armen fjerner `memory: user` i plugin-kopien, så målingen dækker det, der er forankret i repoet, og ikke agenthukommelsen med erfaringer fra brugerens sager. `--med-hukommelse` er et tilvalg. Agenten har kun læseværktøjer under eksamen |
+
+**Læringsløkke:** huller i udviklingssættet → ny tekst i videnbasen via normal forankring (primærkilde, V/T, review) → ny kørsel. Holdout-sættet bruges kun til måling, så forbedringen kan måles på opgaver, videnbasen ikke er skrevet efter. Regressioner (basis består, plugin ikke) peger på tekst i videnbasen, der vildleder.
+
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
 
@@ -153,7 +169,7 @@ De lokale kilder findes ikke i CI. Der kører kun strukturtjek og nøglemønstre
 
 ## Roadmap
 1. Verificér T-punkter (murer: KC-recepter, DS/EN-udgaver, riller, kvartsstøv; tømrer: C18/C24, NTR, vinduesmontage, brand i småhuse; netselskab; skorstensfejer) og markér V med dato.
-2. Kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
+2. Kør eksamenslaget (el, vvs) med begge arme og udbyg det til de øvrige fag; kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
 3. Test hooks i Cowork med den samlede pakke.
 4. Kalibrér kontrollen: mål afvisningsrate, antal runder og kontrolsvigt pr. fag; justér rubric-versioner.
 5. Nye fag via `scripts/nyt_fag.py` (fx kloak, tag, gulv) – altid med kontrolagent.

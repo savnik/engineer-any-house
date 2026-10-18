@@ -1,0 +1,877 @@
+{
+  "opgaver": [
+    {
+      "id": "VVS-001",
+      "maal": [
+        "VVS-KM-01",
+        "VVS-AK-04"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et ældre parcelhus skal have ny vandinstallation fra jordledningens indføring i kælderen. Hvor skal der ifølge bygningsreglementet (BR18) monteres den tilbagestrømningssikring, der beskytter vandforsyningsanlægget mod forurening, fx fra svigtende tilbagestrømningssikringer længere inde i installationen?",
+      "valgmuligheder": {
+        "A": "På hver enkelt koblingsledning lige før tapstederne, hvor tilbagestrømning kan opstå.",
+        "B": "I vandmålerbrønden ved skel, før jordledningen føres ind i bygningen.",
+        "C": "På fordelingsledningen efter jordledningens indføring og før første afgrening.",
+        "D": "På koldtvandstilgangen til varmtvandsbeholderen, før dens sikkerhedsventil."
+      },
+      "facit": "C",
+      "begrundelse": "BR18 § 407, stk. 2 kræver en tilbagestrømningssikring på fordelingsledningen efter jordledningens indføring og inden afgrening. Sikringer ved tapsteder og apparater kommer i tillæg og erstatter den ikke.",
+      "kilde": "BR18 § 407, stk. 2 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/407_409/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-002",
+      "maal": [
+        "VVS-KM-01"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Ved en badeværelsesrenovering nedlægges et gammelt gulvafløb i et tidligere bryggers. Afløbsledningen fortsætter i gulvet til en faldstamme, som stadig er i brug. Hvordan skal den ubenyttede ledning sikres efter BR18?",
+      "valgmuligheder": {
+        "A": "Gulvafløbet fyldes med vand og afdækkes, så vandlåsen hindrer rotter og lugt.",
+        "B": "Ledningen afproppes oppe ved gulvafløbet, så den let kan genbruges senere.",
+        "C": "Gulvafløbet udstøbes med beton, og ledningen bag det kan blive liggende åben.",
+        "D": "Ledningen afproppes så tæt som muligt ved tilslutningen til den benyttede stamme."
+      },
+      "facit": "D",
+      "begrundelse": "BR18 § 80, stk. 3: ubenyttede dele af en afløbsinstallation skal sikres mod rotter ved afpropning så tæt som muligt ved tilslutningen til den benyttede del. En prop ved gulvafløbet efterlader en blind ledning, hvor rotter kan opholde sig.",
+      "kilde": "BR18 § 80, stk. 3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/80_81/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-003",
+      "maal": [
+        "VVS-KM-01",
+        "VVS-AK-05"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En husejer i et parcelhus spørger, hvilket af følgende vvs-arbejder han lovligt må udføre selv. Der sidder en afspærringsventil i huset på koblingsledningen til det pågældende tapsted, og der bruges nye produkter, som opfylder bygningsreglementet. Hvilket arbejde må han udføre?",
+      "valgmuligheder": {
+        "A": "Udskifte et wc med et nyt, der monteres som det gamle uden indgreb i faste rør.",
+        "B": "Flytte køkkenvasken 1 m langs væggen og forlænge vand- og afløbsrørene til den.",
+        "C": "Udskifte sikkerhedsventilen på varmtvandsbeholderen med en ny af samme type.",
+        "D": "Lave en ny afgrening på koldtvandsrøret til en opvaskemaskine uden forberedelse."
+      },
+      "facit": "A",
+      "begrundelse": "BEK 560/2017 § 2 tillader enhver at udskifte wc'er, der monteres som det eksisterende uden indgreb i den faste installation, når der er afspærringsventil i boligenheden. Flytning, nye afgreninger og sikkerhedsventiler kræver autoriseret vvs-installatør.",
+      "kilde": "BEK nr. 560 af 30/05/2017 om simple arbejder § 2, stk. 1, nr. 3 og stk. 2 – https://www.retsinformation.dk/eli/lta/2017/560",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-004",
+      "maal": [
+        "VVS-KM-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvilket af følgende gasarbejder må en privatperson lovligt udføre uden autorisation?",
+      "valgmuligheder": {
+        "A": "Udskifte et fast tilsluttet naturgaskomfur med et nyt af nøjagtig samme type.",
+        "B": "Flytte gashanen til komfuret 50 cm, når hovedhanen er lukket under arbejdet.",
+        "C": "Udskifte aftrækket fra en gaskedel med et nyt CE-mærket aftræk af samme type.",
+        "D": "Udskifte slangen mellem flaskegasflasken og en transportabel gasgrill."
+      },
+      "facit": "D",
+      "begrundelse": "BEK 560/2017 § 3 tillader enhver at montere og udskifte slanger på flaskegasinstallationer som gasgrill, terrassevarmer og andet transportabelt udstyr. Faste gasinstallationer, apparater og aftræk kræver en autoriseret vvs-installatørvirksomhed med gas (autorisationsloven § 4).",
+      "kilde": "BEK nr. 560/2017 § 3 – https://www.retsinformation.dk/eli/lta/2017/560 ; autorisationsloven LBK 30/2019 § 4, stk. 1–2 – https://www.retsinformation.dk/eli/lta/2019/30",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-005",
+      "maal": [
+        "VVS-KM-02",
+        "VVS-KM-04"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En vvs-virksomhed, der erhvervsmæssigt installerer og servicerer varmepumper, har ingen el-autorisation. Kunden har allerede fået en ny gruppe og en arbejdsafbryder ved udedelen lavet af en elinstallatør. Hvilket el-arbejde må vvs-virksomheden selv udføre på varmepumpen?",
+      "valgmuligheder": {
+        "A": "Fast tilslutte, frakoble og servicere varmepumpen, men ikke lave nye grupper.",
+        "B": "Intet el-arbejde; også fast tilslutning til arbejdsafbryderen kræver elinstallatør.",
+        "C": "Alt el-arbejde, der vedrører varmepumpen, også ny gruppe og ændringer i tavlen.",
+        "D": "Alt el-arbejde på varmepumpens installation, når effekten er under 3 kW."
+      },
+      "facit": "A",
+      "begrundelse": "Autorisationsloven § 2, stk. 4: virksomheder, der erhvervsmæssigt producerer eller servicerer elektriske maskiner og brugsgenstande, må fast tilslutte, frakoble og servicere dem. Faste ledningssystemer og tavler (§ 2, stk. 2) kræver stadig elautorisation.",
+      "kilde": "Autorisationsloven LBK 30/2019 § 2, stk. 1, 2 og 4 – https://www.retsinformation.dk/eli/lta/2019/30",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-006",
+      "maal": [
+        "VVS-KM-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En automatisk fyret pilleovn skal tilsluttes et nyt aftrækssystem i et parcelhus. Hvilken temperaturklasse efter DS/EN 1443 skal aftrækket mindst have ifølge BR18?",
+      "valgmuligheder": {
+        "A": "T200",
+        "B": "T250",
+        "C": "T400",
+        "D": "T120"
+      },
+      "facit": "B",
+      "begrundelse": "BR18 § 320, stk. 3: automatisk fyrede fastbrændselsanlæg og pilleovne må ikke tilsluttes aftræk med lavere temperaturklasse end T250. T400 gælder manuelt fyrede fastbrændselsanlæg, pejse og brændeovne (stk. 2).",
+      "kilde": "BR18 § 320, stk. 2–3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/316_323/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-007",
+      "maal": [
+        "VVS-KM-03"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde vil have en manuelt fyret brændeovn med vandkappe sluttet til husets eksisterende lukkede centralvarmeanlæg, så brændeovnen kan bidrage til radiatorvarmen. Hvad siger BR18 om dette?",
+      "valgmuligheder": {
+        "A": "Det er forbudt; manuelt fyrede anlæg må aldrig kobles til et lukket varmeanlæg.",
+        "B": "Det er tilladt, hvis anlæggets lukkede ekspansionsbeholder er på mindst 25 liter.",
+        "C": "Tilladt, hvis vandkappen har egen sikkerhedsventil og sikres mod overophedning.",
+        "D": "Kun tilladt, hvis anlægget ombygges til et åbent anlæg med åben ekspansion."
+      },
+      "facit": "C",
+      "begrundelse": "BR18 § 305: vandbeholdere i brændeovne skal sikres mod overophedning og eksplosion. Ikke-automatisk styrede fyringsanlæg må ikke sluttes til lukkede centralvarmeanlæg, medmindre hver kedel (varmeafgivende enhed) forsynes med sikkerhedsventil.",
+      "kilde": "BR18 § 305 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/304_305/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-008",
+      "maal": [
+        "VVS-KM-05"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "I et privat parcelhus styres gulvvarmens fordeler af rumtermostater, der er forbundet til et styremodul med et lavvolts signalkabel (ikke stærkstrøm). Ejeren vil selv flytte en termostat og forlænge signalkablet. Hvad er korrekt?",
+      "valgmuligheder": {
+        "A": "Kun en autoriseret elinstallatør, fordi termostaten styrer en stærkstrømsfunktion.",
+        "B": "Kun en autoriseret vvs-installatør, fordi termostaten er en del af varmeanlægget.",
+        "C": "Ejeren må det kun efter et kursus i kabelføring godkendt af Sikkerhedsstyrelsen.",
+        "D": "Ejeren må selv ændre det lavvolts styresystem, men ikke 230 V-installationen."
+      },
+      "facit": "D",
+      "begrundelse": "BEK 560/2017 § 1, nr. 4 tillader enhver at ændre og reparere ikke-stærkstrømsmæssige styrings- og reguleringssystemer i private boliger, også når de styrer stærkstrømsfunktioner. Selve stærkstrømsinstallationen er autorisationskrævende.",
+      "kilde": "BEK nr. 560/2017 § 1, nr. 4 – https://www.retsinformation.dk/eli/lta/2017/560 ; autorisationsloven § 2, stk. 1 og 3 – https://www.retsinformation.dk/eli/lta/2019/30",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-009",
+      "maal": [
+        "VVS-KM-05",
+        "VVS-KM-08"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En ny kontorbygning (ikke bolig, omfattet af BR18 § 260) projekteres. Over hvilket dimensionerende varme- eller kølebehov kræver BR18, at der installeres bygningsautomatik til styring af de tekniske anlæg?",
+      "valgmuligheder": {
+        "A": "120 kW",
+        "B": "290 kW",
+        "C": "400 kW",
+        "D": "500 kW"
+      },
+      "facit": "B",
+      "begrundelse": "BR18 § 295, stk. 1: nye bygninger omfattet af § 260 (andre end boliger) med et dimensionerende varme- eller kølebehov over 290 kW skal have bygningsautomatik, der kan overvåge energiforbruget, regulere efter behov og detektere fejl (stk. 3).",
+      "kilde": "BR18 § 295, stk. 1–3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/11/krav/295_296/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-010",
+      "maal": [
+        "VVS-KM-06"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En ny kvist er inddækket med kobber. Regnvandet fra kobberet løber ned i husets eksisterende tagrender og nedløb af zink. Hvad er den faglige vurdering?",
+      "valgmuligheder": {
+        "A": "Kobberet tæres, fordi zink er ædlere end kobber i den galvaniske spændingsrække.",
+        "B": "Zinken tæres, fordi kobber er ædlere, og kobberioner i vandet angriber zinken.",
+        "C": "Ingen risiko, fordi zink og kobber begge er ikke-jernmetaller uden galvanisk virkning.",
+        "D": "Kun en risiko, hvis renderne males, fordi malingen holder fugt inde mod zinken."
+      },
+      "facit": "B",
+      "begrundelse": "I den galvaniske spændingsrække er kobber ædelt (ca. +0,02 V) og zink uædelt (ca. −0,86 V). Zinken bliver anode og korroderer, når vand fra kobber løber over zinken.",
+      "kilde": "Galvanisk spændingsrække og bimetallisk korrosion, FORCE Technology/Teknologisk Institut, Vandskadedag 2016 (dias 'Den galvaniske spændingsrække') – https://www.teknologisk.dk/_/media/64388_A4%20-%20Undg%E5%20fdejl%20og%20skader%20i%20installationerne%20-%20Frank%20Fontenay.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-011",
+      "maal": [
+        "VVS-KM-06"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En husejer vil afkoble et tagnedløb fra afløbet og lade nedløbet ende frit på flisebelægningen lige ved skellet. Belægningen falder mod fortovet og naboens grund. Hvad kræver BR18?",
+      "valgmuligheder": {
+        "A": "Det er tilladt, fordi regnvand fra tage ikke regnes som spildevand efter BR18.",
+        "B": "Det er tilladt, hvis naboen giver skriftligt samtykke til at modtage vandet.",
+        "C": "Ikke tilladt: tagvand skal holdes på egen grund og må ikke give gener for trafik.",
+        "D": "Kun tilladt i separatkloakerede områder, hvor regnvandet er adskilt fra spildevand."
+      },
+      "facit": "C",
+      "begrundelse": "BR18 § 77: afløb for regnvand må ikke medføre skader eller gener, fx for trafik, og tagvand skal holdes på egen grund (stk. 2). § 338 kræver, at tagvand afledes via tagrender og/eller nedløb til afløb.",
+      "kilde": "BR18 § 77, stk. 1–2 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/77/ ; BR18 § 338 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/14/krav/334_338/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-012",
+      "maal": [
+        "VVS-KM-08",
+        "VVS-AK-04"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En sælger af en ny varmepumpe med brugsvandsbeholder foreslår at køre det varme brugsvand fast på 45 °C i hele installationen for at få en højere virkningsgrad. Hvad kræver BR18?",
+      "valgmuligheder": {
+        "A": "Ikke tilladt: mindst 50 °C under normal brug; 45 °C kun ved spidsbelastning.",
+        "B": "Ikke tilladt: mindst 55 °C ved alle tapsteder hele tiden, også ved spidslast.",
+        "C": "Tilladt i enfamiliehuse; temperaturkravet gælder kun etageboliger og institutioner.",
+        "D": "Tilladt, hvis beholderen opvarmes til 60 °C én gang om ugen (legionellaprogram)."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 411: temperaturen må ikke falde under 50 °C i alle dele af installationen under den forudsatte brug, og ved spidsbelastning ikke under 45 °C. Kravet gælder alle bygninger.",
+      "kilde": "BR18 § 411 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-013",
+      "maal": [
+        "VVS-AK-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Ved en strengrenovering i en etageejendom udskiftes stigstrengene med rustfri stålrør. I kælderen samles de med de eksisterende varmforzinkede stålrør. Hvad er den korrekte vurdering af samlingen?",
+      "valgmuligheder": {
+        "A": "Det rustfri stål tæres ved samlingen, fordi det er uædlere end zinklaget.",
+        "B": "Ingen galvanisk påvirkning, fordi begge rørmaterialer grundlæggende er stål.",
+        "C": "Problemet løses ved at indsætte et kort stykke kobberrør mellem de to materialer.",
+        "D": "Det forzinkede rør tæres nær samlingen; placér den tilgængeligt, fx med union."
+      },
+      "facit": "D",
+      "begrundelse": "Passivt rustfrit stål er ædlere end zink. Zinklaget og stålet bliver anode og tæres. FORCE anbefaler ved renovering, at overgangen udføres med union, hvor følgerne af en gennemtæring er små. Kobber imellem forværrer korrosionen af zinken.",
+      "kilde": "FORCE Technology, 'Korrosionsskader i vandinstallationer', Vandskadedag 2016 (galvanisk spændingsrække, bimetallisk korrosion, eksempel fra renovering på Frederiksberg) – https://www.teknologisk.dk/_/media/64388_A4%20-%20Undg%E5%20fdejl%20og%20skader%20i%20installationerne%20-%20Frank%20Fontenay.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-014",
+      "maal": [
+        "VVS-AK-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et solvarmeanlæg har propylenglykolblanding i solfangerkredsen, som afgiver varme til brugsvandet gennem en varmeveksler i beholderen. Hvilket særligt krav stiller BR18 til en sådan væske, der er forskellig fra vand?",
+      "valgmuligheder": {
+        "A": "Væsken skal være ethylenglykol, da propylenglykol ikke må bruges i vekslere.",
+        "B": "Væsken skal kunne spores i det varme brugsvand, hvis veksleren bliver utæt.",
+        "C": "Der er intet særskilt krav til væsken, når varmeveksleren er CE-mærket.",
+        "D": "Væsken skal have en pH-værdi over 9 for at beskytte veksleren mod korrosion."
+      },
+      "facit": "B",
+      "begrundelse": "BR18 § 413: væsker, der er forskellige fra vand og bruges i varmevekslere til brugsvand, skal kunne spores i det varme brugsvand.",
+      "kilde": "BR18 § 413 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-015",
+      "maal": [
+        "VVS-AK-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et nyt plastafløbsrør Ø110 skal føres gennem etageadskillelsen mellem to lejligheder. Etageadskillelsen er brandcelleadskillende. Hvordan skal gennemføringen udføres?",
+      "valgmuligheder": {
+        "A": "Plastrør til og med Ø110 kan føres igennem, når hullet lukkes med akrylfuge.",
+        "B": "Kravet gælder kun ventilationskanaler; afløbsrør er ikke omfattet af kravet.",
+        "C": "Med brandlukning dokumenteret til rørtype, dimension og dækkets brandklasse.",
+        "D": "Det er nok, at røret har klasse E; selve gennemføringen er ikke reguleret."
+      },
+      "facit": "C",
+      "begrundelse": "BR18 § 114: gennemføringer i brandadskillende bygningsdele skal udføres, så bygningsdelenes brandtekniske egenskaber ikke forringes. Vejledningen (afsnit 4.4.8) understreger, at det gælder rør, kabler og kanaler.",
+      "kilde": "BR18 § 114 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/05/krav/110_119/ ; BR-vejledning til kap. 5, kapitel 4, afsnit 4.4.8 – https://www.bygningsreglementet.dk/media/ja1ef2ab/kapitel_4.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-016",
+      "maal": [
+        "VVS-AK-03"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "På en landejendom installeres en træpillekedel med en nominel ydelse på 150 kW i et fyrrum i en bygning, der også rummer værksted og kontor. Hvad kræver BR18 og den præ-accepterede løsning i BR18's brandvejledning af fyrrummet?",
+      "valgmuligheder": {
+        "A": "Selvstændig brandmæssig enhed, mindst EI 60 A2-s1,d0, med adgang direkte til det fri.",
+        "B": "Ingen særlige krav, fordi grænsen for større fyringsanlæg er 400 kW for alle brændsler.",
+        "C": "Fyrrummet skal blot have røgalarm og en dør klasse EI2 30-C mod de øvrige rum.",
+        "D": "Kedlen skal stå i en separat bygning mindst 5 m fra den øvrige bebyggelse."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 107 kræver, at større fyringsanlæg placeres i selvstændige brandmæssige enheder med direkte adgang til det fri. Vejledningen (afsnit 4.4.6) definerer større anlæg som over 120 kW (400 kW for olie og gas) og anviser vægge og dæk mindst EI 60 A2-s1,d0.",
+      "kilde": "BR18 § 107 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/05/krav/105_107/ ; BR-vejledning til kap. 5, kapitel 4, afsnit 4.4.6 – https://www.bygningsreglementet.dk/media/ja1ef2ab/kapitel_4.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-017",
+      "maal": [
+        "VVS-AK-04"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En ny jordledning til drikkevand skal lægges over et areal ved en tidligere tankstation, hvor jorden er forurenet med olie- og benzinprodukter. Den projekterende foreslår et almindeligt PE-rør. Hvad kræver BR18 i denne situation?",
+      "valgmuligheder": {
+        "A": "Intet særligt; PE-rør er godkendt til drikkevand og derfor egnede i al slags jord.",
+        "B": "Ledningen skal sikres mod, at stofferne trænger ind ved korrosion eller diffusion.",
+        "C": "Ledningen skal blot lægges i frostfri dybde og have en tilbagestrømningssikring.",
+        "D": "Der skal monteres et kulfilter på ledningen inde i bygningen efter vandmåleren."
+      },
+      "facit": "B",
+      "begrundelse": "BR18 § 408: hvor drikkevandsinstallationer kan komme i berøring med sundhedsskadelige stoffer, skal de projekteres og udføres, så stofferne ikke kan trænge ind ved korrosion eller diffusion. Plastrør kan være diffusionsåbne for kulbrinter, så der skal vælges en diffusionstæt løsning eller en anden føringsvej.",
+      "kilde": "BR18 § 408 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/407_409/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-018",
+      "maal": [
+        "VVS-AK-04",
+        "VVS-AK-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En bygherre vil bruge regnvand fra en nedgravet tank til wc-skyl og vaskemaskine i et parcelhus. Ved tom tank skal der efterfyldes med drikkevand. Hvilken løsning er korrekt?",
+      "valgmuligheder": {
+        "A": "Efterfyldning via en kontraventil (kategori 2), fordi regnvand ikke er giftigt.",
+        "B": "Efterfyldning via en dobbelt kontraventil; ejeren må selv nedgrave tanken.",
+        "C": "Ingen tilbagestrømningssikring, fordi tanken ligger under terræn og uden tryk.",
+        "D": "Luftgab (kategori 5), mærkede rør, og tanken udføres af en kloakmester."
+      },
+      "facit": "D",
+      "begrundelse": "Rørcenter-anvisning 015 placerer regnvandsanlæg til wc og tøjvask i kategori 5, hvor sikringen generelt er luftgab. BR18 § 409 kræver mærkning af installationer med ikke-drikkevand, og BEK 560/2017 § 4, stk. 3 forbeholder lagertanke til regnvand for kloakmestre.",
+      "kilde": "Rørcenter-anvisning 015 (2024) fig. 3.2 og afsnit 4.2.2 – https://www.teknologisk.dk/_/media/91893%5FR%F8rcenter%2Danvisning%20015.%20Tilbagestr%F8mningssikring%20af%20vandforsyningssystemer.pdf ; BR18 § 409 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/407_409/ ; BEK 560/2017 § 4, stk. 3 – https://www.retsinformation.dk/eli/lta/2017/560",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-019",
+      "maal": [
+        "VVS-KM-10"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En vvs-svend skal udskifte gamle varmerør i krybekælderen i et hus fra 1965. Rørene er isoleret med et gråhvidt, hårdt isoleringsmateriale med lærredsomvikling, og der foreligger ingen oplysninger om materialet. Hvad kræver asbestbekendtgørelsen, før arbejdet påbegyndes?",
+      "valgmuligheder": {
+        "A": "Intet, fordi forbuddet mod asbest fra 1986 betyder, at materialet er ufarligt.",
+        "B": "Svenden skal blot bære en FFP1-maske, mens den gamle isolering fjernes.",
+        "C": "Forundersøgelse; ved mindste mistanke behandles arbejdet som asbestarbejde.",
+        "D": "Isoleringen skal fugtes grundigt med vand; så kræves ingen andre forholdsregler."
+      },
+      "facit": "C",
+      "begrundelse": "Asbestbekendtgørelsen § 10: før nedrivning, reparation eller vedligeholdelse skal en forundersøgelse fastslå, hvilke materialer der kan formodes at indeholde asbest. Ved den mindste mistanke er arbejdet et asbestarbejde, og der tages prøver efter behov (stk. 2).",
+      "kilde": "BEK nr. 1328 af 19/11/2025 om asbest i arbejdsmiljøet § 10, stk. 1–2 – https://www.retsinformation.dk/api/pdf/252542",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-020",
+      "maal": [
+        "VVS-AK-01",
+        "VVS-KM-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En 200 liters varmtvandsbeholder skal opvarmes fra 10 °C til 55 °C med en elpatron på 3,0 kW. Antag massefylde 1,0 kg/l, specifik varmekapacitet 4,18 kJ/(kg·K), 100 % virkningsgrad og intet varmetab og intet tapforbrug under opvarmningen. Hvor mange timer tager opvarmningen?",
+      "facit": {
+        "vaerdi": 3.48,
+        "enhed": "h",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Q = m·c·ΔT = 200 · 4,18 · 45 = 37 620 kJ = 10,45 kWh. t = 10,45 kWh / 3,0 kW = 3,48 h.",
+      "kilde": "Formel: Q = m·c·ΔT og t = Q/P (fysik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-021",
+      "maal": [
+        "VVS-AK-01"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En pumpebrønd til spildevand fra et kælderbadeværelse har et nyttevolumen på 120 liter mellem pumpens start- og stopniveau. Pumpen yder 2,0 l/s, og tilløbet til brønden er konstant 0,5 l/s, også mens pumpen kører. Hvor mange sekunder kører pumpen pr. pumpecyklus?",
+      "facit": {
+        "vaerdi": 80,
+        "enhed": "s",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Brønden tømmes med nettoydelsen 2,0 − 0,5 = 1,5 l/s. t = 120 l / 1,5 l/s = 80 s.",
+      "kilde": "Formel: volumenbalance t = V/(Q_pumpe − Q_tilløb) (hydraulik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-022",
+      "maal": [
+        "VVS-AK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En fjernvarmeunit med gennemstrømningsvandvarmer skal kunne levere 12 liter varmt brugsvand pr. minut, opvarmet fra 10 °C til 45 °C. Antag massefylde 1,0 kg/l, c = 4,18 kJ/(kg·K) og intet tab. Hvilken effekt skal veksleren mindst kunne overføre, i kW?",
+      "facit": {
+        "vaerdi": 29.3,
+        "enhed": "kW",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "m = 12/60 = 0,2 kg/s. P = 0,2 · 4,18 · 35 = 29,3 kW.",
+      "kilde": "Formel: P = q·c·ΔT (fysik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-023",
+      "maal": [
+        "VVS-KM-01",
+        "VVS-AK-01"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Det statiske vandtryk målt ved vandmåleren i kælderen er 4,0 bar (overtryk). Et tapsted på 1. sal ligger 7,5 m højere end måleren. Se bort fra tryktab ved strømning, og antag massefylde 1000 kg/m³ og g = 9,81 m/s². Hvad er det statiske overtryk ved tapstedet, i bar?",
+      "facit": {
+        "vaerdi": 3.26,
+        "enhed": "bar",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Δp = ρ·g·h = 1000 · 9,81 · 7,5 = 73 575 Pa = 0,736 bar. p = 4,0 − 0,736 = 3,26 bar.",
+      "kilde": "Formel: hydrostatisk tryk Δp = ρ·g·h (fysik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-024",
+      "maal": [
+        "VVS-KM-06",
+        "VVS-AK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et tagnedløb afvander 140 m² tagflade (vandret projektion). Dimensionerende regnintensitet er 140 l/(s·ha), og afløbskoefficienten for taget sættes til 1,0. Hvor stor er den dimensionerende vandføring til nedløbet, i l/s?",
+      "facit": {
+        "vaerdi": 1.96,
+        "enhed": "l/s",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Q = φ·i·A = 1,0 · 140 l/(s·ha) · 140 m² / 10 000 m²/ha = 1,96 l/s.",
+      "kilde": "Formel: regnvandsafstrømning Q = φ·i·A (rationel metode, hydraulik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-025",
+      "maal": [
+        "VVS-AK-02"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En fitting af afzinkningsbestandig messing sidder i et område med hårdt, saltholdigt vand. Den har en godstykkelse på 2,4 mm. Antag, at interkrystallinsk korrosion skrider frem med konstant 0,15 mm pr. år fra vandsiden. Hvor mange år går der, før angrebet når gennem godset?",
+      "facit": {
+        "vaerdi": 16,
+        "enhed": "år",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "t = 2,4 mm / 0,15 mm/år = 16 år. FORCE angiver 0,1–0,2 mm/år for interkrystallinsk korrosion af afzinkningsbestandig messing. Det er grunden til, at fittings af rustfrit stål eller rødgods anbefales i risikoområder.",
+      "kilde": "FORCE Technology, 'Korrosionsskader i vandinstallationer', Vandskadedag 2016 (dias 'Interkrystallinsk korrosion af afzinkningsbestandig messing: 0,1–0,2 mm om året') – https://www.teknologisk.dk/_/media/64388_A4%20-%20Undg%E5%20fdejl%20og%20skader%20i%20installationerne%20-%20Frank%20Fontenay.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-026",
+      "maal": [
+        "VVS-KM-11",
+        "VVS-KM-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et parcelhus har et årligt varmebehov (rumvarme og varmt brugsvand) på 16 000 kWh. Det skal dækkes af en luft/vand-varmepumpe med en årsvirkningsgrad (SCOP) på 3,2 for hele behovet. Hvor stort bliver varmepumpens årlige elforbrug, i kWh?",
+      "facit": {
+        "vaerdi": 5000,
+        "enhed": "kWh",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "El = varme/SCOP = 16 000/3,2 = 5 000 kWh. Elforbruget er over 3 000 kWh/år, så BR18 § 327 kræver måling ved nyinstallation.",
+      "kilde": "Formel: E_el = Q/SCOP ; BR18 § 327 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/325_327/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-027",
+      "maal": [
+        "VVS-KM-11"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "I en uopvarmet kælder er der 15 m uisoleret varmerør. Varmetabet er 25 W pr. meter uisoleret og 7 W pr. meter efter isolering. Anlægget er i drift med denne temperatur 5 800 timer om året. Hvor mange kWh sparer isoleringen om året?",
+      "facit": {
+        "vaerdi": 1566,
+        "enhed": "kWh",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Besparelse = 15 m · (25 − 7) W/m · 5 800 h = 1 566 000 Wh = 1 566 kWh/år.",
+      "kilde": "Formel: E = q·L·t (energi = effekt × tid). Isoleringskrav: BR18 § 414, nr. 2 (DS 452) – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/414_415/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-028",
+      "maal": [
+        "VVS-KM-04"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et lukket radiatoranlæg indeholder 150 liter vand, fyldt ved 10 °C. Ved maksimal driftstemperatur er vandet 70 °C. Massefylden er 999,7 kg/m³ ved 10 °C og 977,8 kg/m³ ved 70 °C. Hvor mange liter udvider vandet sig (det volumen, ekspansionsbeholderen mindst skal kunne optage, uden tillæg)?",
+      "facit": {
+        "vaerdi": 3.36,
+        "enhed": "l",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Massen er konstant: V70 = V10 · ρ10/ρ70 = 150 · 999,7/977,8 = 153,36 l. ΔV = 3,36 l.",
+      "kilde": "Formel: massebevarelse V2 = V1·ρ1/ρ2 (fysik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-029",
+      "maal": [
+        "VVS-KM-11",
+        "VVS-KM-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et fjernvarmeforsynet hus bruger 14 000 kWh varme om året. Gennemsnitlig afkøling (frem minus retur) er 35 K. Antag massefylde 1000 kg/m³ og c = 4,18 kJ/(kg·K). Hvor mange m³ fjernvarmevand skal der cirkulere gennem installationen om året?",
+      "facit": {
+        "vaerdi": 344,
+        "enhed": "m³",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "V = Q/(ρ·c·ΔT) = 14 000 · 3600 kJ / (4,18 · 35) kJ/kg = 344 498 kg ≈ 344 m³. Bedre afkøling betyder mindre vandmængde og mindre pumpearbejde.",
+      "kilde": "Formel: Q = m·c·ΔT (fysik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-030",
+      "maal": [
+        "VVS-KM-01",
+        "VVS-AK-05"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En husejer i et hus fra 1935 med beboet kælder har to gange på tre år fået kloakvand op gennem gulvafløbet i kælderen under skybrud. Huset er tilsluttet en fælleskloak. Ejeren spørger, hvad han kan gøre, og om han selv må sætte et 'stop' i gulvafløbet. Giv din rådgivning.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at årsagen er opstuvning i kloakken under skybrud, og at afløb under opstuvningsniveauet skal sikres mod oversvømmelse (BR18 § 71, nr. 6).",
+        "Anviser mindst én permanent sikring, fx et højvandslukke eller en pumpeløsning, der løfter spildevandet over opstuvningsniveauet. En midlertidig nødtætning ovenfra (fx plastpose og sandsæk over gulvafløbet) må gerne nævnes, men er ikke tilstrækkelig alene.",
+        "Påpeger, at en permanent løsning (højvandslukke, pumpebrønd, fast afpropning eller anden ændring af afløbsinstallationen) skal udføres af en autoriseret kloakmester. Ejeren må ikke selv ændre installationen, men må godt tætne gulvafløbet midlertidigt ovenfra under skybrud.",
+        "Rådgiver om drift og vedligehold, fx at et højvandslukke eller en pumpe skal efterses og afprøves jævnligt."
+      ],
+      "fail_hvis": [
+        "Anbefaler, at ejeren selv udfører en permanent afpropning eller ombygning af afløbsinstallationen."
+      ],
+      "begrundelse": "Opstuvningssikring, autorisationsgrænse og vedligehold er de centrale mesterforhold.",
+      "kilde": "BR18 § 71, nr. 6 og § 76 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/70_74/ og https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/75_76/ ; autorisationsloven § 7 – https://www.retsinformation.dk/eli/lta/2019/30 ; BEK 560/2017 § 4, stk. 3 – https://www.retsinformation.dk/eli/lta/2017/560 ; Bolius, 'Sådan undgår du at vandet stiger op gennem afløb og toilet' (midlertidig tætning med plastpose og sandsæk; højvandslukke og pumpebrønd ved autoriseret kloakmester) – https://www.bolius.dk/saadan-undgaar-du-at-vandet-stiger-op-gennem-afloeb-og-toilet-5859",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-031",
+      "maal": [
+        "VVS-KM-10"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal skifte zinktagrender på et udhus med tag af asbestcement-bølgeplader fra 1975. Ejeren har dokumentation for, at pladerne indeholder asbest. Din kollega foreslår først at højtryksrense pladerne for mos og derefter skære den nederste plade kortere med en vinkelsliber, så de nye rendejern kan monteres. Hvordan forholder du dig?",
+      "facit": null,
+      "kriterier": [
+        "Afviser højtryksrensning, fordi højtryksspuling af asbestholdigt materiale er forbudt.",
+        "Afviser vinkelsliberen og anviser arbejdsmetoder, der begrænser støvudviklingen mest muligt (fx at undgå at bearbejde pladerne, ellers procesudsug eller befugtning).",
+        "Påpeger, at tilskæring eller fjernelse af pladerne er nedrivning af asbestholdigt materiale, som kræver en autoriseret virksomhed, medmindre det er kortvarigt nedrivningsarbejde af mindre karakter.",
+        "Påpeger, at asbestholdigt affald (afskåret materiale, støv, slam) skal samles, befugtes, emballeres lukket og mærkes som asbestholdigt."
+      ],
+      "fail_hvis": [
+        "Accepterer højtryksrensning eller skæring med vinkelsliber."
+      ],
+      "begrundelse": "Asbestbekendtgørelsen: forbud mod højtryksspuling (§ 19), støvbegrænsende metoder (§ 15), autorisation til nedrivning (§§ 6–7) og affaldshåndtering (§§ 30–32).",
+      "kilde": "BEK nr. 1328 af 19/11/2025 om asbest i arbejdsmiljøet §§ 6, 7, 15, 19, 30–32 – https://www.retsinformation.dk/api/pdf/252542",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-032",
+      "maal": [
+        "VVS-KM-03",
+        "VVS-KM-05"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En luft/vand-varmepumpe blev installeret sidste år i et hus fra 1965 med radiatorer og en brugsvandsbeholder. Kunden klager over tre ting: nogle radiatorer er kolde i toppen, elforbruget er langt højere end lovet, og det varme vand er kun lunkent. Beskriv din fejlfinding og de første tiltag.",
+      "facit": null,
+      "kriterier": [
+        "Undersøger det hydrauliske først, fx luft i radiatorer og anlæg, anlægstryk og flow/cirkulation, før reguleringen ændres.",
+        "Kontrollerer reguleringen, fx varmekurve og fremløbstemperatur eller termostatventilernes indstilling og indregulering.",
+        "Vurderer, om radiatorerne er store nok til den lave fremløbstemperatur.",
+        "Undersøger, om elpatron eller backupvarme kører unødigt, som forklaring på det høje elforbrug.",
+        "Kontrollerer brugsvandsdelen (fx beholdertemperatur, legionellafunktion eller ydelse) og påpeger, at det varme vand under normal brug ikke må falde under 50 °C."
+      ],
+      "fail_hvis": [
+        "Anbefaler at sænke det varme brugsvand permanent under 50 °C for at spare strøm."
+      ],
+      "begrundelse": "Systematisk fejlfinding: hydraulik, regulering, el-backup og brugsvandskrav.",
+      "kilde": "BR18 § 411 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/ ; BR18 § 327 (elpatron med timetæller eller elmåler) – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/325_327/ ; BR18 §§ 387 og 391 (fordeling, indregulering og funktionsafprøvning) – https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/387_389/ og https://www.bygningsreglementet.dk/tekniske-bestemmelser/19/krav/391/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-033",
+      "maal": [
+        "VVS-KM-04",
+        "VVS-KM-10"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde ringer: Sikkerhedsventilen på varmtvandsbeholderen drypper hele tiden ned i gulvafløbet. Han vil gerne selv sætte en prop i overløbet, så det stopper. Hvad svarer du, og hvordan finder og udbedrer du fejlen?",
+      "facit": null,
+      "kriterier": [
+        "Siger klart, at sikkerhedsventilen og dens overløb aldrig må blokeres, proppes eller fjernes, fordi det giver risiko for sprængning og skoldning.",
+        "Nævner mindst to sandsynlige årsager, fx snavs eller kalk i ventilsædet, for højt forsyningstryk eller termisk ekspansion ved opvarmning (fx defekt ekspansionsbeholder eller manglende reduktionsventil).",
+        "Angiver mindst én passende afhjælpning, fx at motionere, rense eller udskifte ventilen, eller at måle trykket og montere eller udskifte reduktionsventil eller ekspansionsbeholder.",
+        "Påpeger, at udskiftning af sikkerhedsventilen kræver en autoriseret vvs-installatør og ikke er et gør-det-selv-arbejde."
+      ],
+      "fail_hvis": [
+        "Foreslår at lukke, proppe eller fjerne overløbet eller sikkerhedsventilen."
+      ],
+      "begrundelse": "Sikkerhedsventilen beskytter mod skadeligt tryk (BR18 § 405, nr. 6). Overløb skal have afløb (§ 75). Udskiftning er ikke omfattet af BEK 560/2017 § 2.",
+      "kilde": "BR18 § 75 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/04/krav/75_76/ ; BR18 § 405, nr. 6 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/403_405/ ; BEK 560/2017 § 2 – https://www.retsinformation.dk/eli/lta/2017/560",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-034",
+      "maal": [
+        "VVS-KM-06"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "På en villa fra 1930 med tegltag og tagrender og nedløb af zink løber vandet over tagrenden ved det ene nedløb ved kraftig regn. Murværket under tagrenden og ved nedløbet er fugtigt. Hvad undersøger du, og hvad anbefaler du?",
+      "facit": null,
+      "kriterier": [
+        "Undersøger tilstopning, fx blade og mos i renden eller et tilstoppet nedløb, sandfang eller nedløbsbrønd.",
+        "Kontrollerer, at tagrenden har fald mod nedløbet og hænger rigtigt, så vandet ikke løber ind mod muren.",
+        "Vurderer kapaciteten ud fra tagarealet pr. nedløb og regnintensiteten og foreslår om nødvendigt større eller flere nedløb.",
+        "Undersøger, om tagrende eller nedløb er utæt (fx samlinger, gennemtæret zink eller frostsprængt nedløb), og anbefaler at udbedre vandføringen, før murværket repareres."
+      ],
+      "fail_hvis": [
+        "Anbefaler kun at imprægnere eller male murværket uden at udbedre tagrende og nedløb."
+      ],
+      "begrundelse": "Tyndpladearbejde: fejlfinding på fald, kapacitet, tæthed og afledning.",
+      "kilde": "BR18 § 338 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/14/krav/334_338/ ; formel Q = φ·i·A (hydraulik)",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-035",
+      "maal": [
+        "VVS-KM-08",
+        "VVS-KM-11"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En familie i et murstenshus fra 1972 med radiatorer og et 18 år gammelt gasfyr spørger, om de skal skifte til en luft/vand-varmepumpe, og hvad de skal være opmærksomme på. Giv en faglig rådgivning.",
+      "facit": null,
+      "kriterier": [
+        "Anbefaler, at varmepumpen dimensioneres ud fra husets faktiske varmebehov (fx beregnet ud fra gasforbruget) og ikke overdimensioneres.",
+        "Vurderer, om radiatorerne kan levere varmen ved lav fremløbstemperatur (fx ved en prøve med sænket fremløb), og nævner større radiatorer eller andre tiltag, hvis ikke.",
+        "Nævner, at det varme brugsvand fortsat skal holde mindst 50 °C under normal brug af hensyn til legionella.",
+        "Nævner mindst ét krav eller én opgave ved nyinstallationen, fx måling af elforbruget, funktionsafprøvning før ibrugtagning eller el-tilslutning ved en autoriseret elinstallatør.",
+        "Giver mindst ét driftsråd, der påvirker økonomien, fx jævn drift frem for stor natsænkning, minimal brug af elpatron eller regelmæssig service."
+      ],
+      "begrundelse": "Teknologiskifte rådgivet med dimensionering, lavtemperaturegnethed, brugsvandskrav og myndighedskrav.",
+      "kilde": "BR18 § 411 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/ ; BR18 § 327 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/325_327/ ; BR18 § 327a – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/327a_327b/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-036",
+      "maal": [
+        "VVS-KM-09"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du er vvs-svend og skal udføre vvs-delen af en badeværelsesrenovering i et parcelhus: nye vandrør i rør-i-rør-system i væggene, nyt gulvafløb og nyt væghængt wc. Beskriv, hvordan du planlægger, kvalitetssikrer og dokumenterer dit arbejde.",
+      "facit": null,
+      "kriterier": [
+        "Trykprøver (tæthedsprøver) vandinstallationen, før væggene lukkes, og dokumenterer resultatet.",
+        "Fører ingen rørgennemføringer i gulvet i den vandbelastede del af rummet.",
+        "Udfører gulvafløbets tilslutning til vådrumsmembranen efter producentens anvisning.",
+        "Gennemskyller installationen med drikkevand, før den tages i brug.",
+        "Dokumenterer en slutkontrol i virksomhedens kvalitetsledelsessystem og giver kunden oplysninger om drift og vedligehold."
+      ],
+      "fail_hvis": [
+        "Foreslår at føre vandrør op gennem gulvet i bruseområdet."
+      ],
+      "begrundelse": "Planlægning, kontrol og dokumentation efter BR18 og KLS-kravene.",
+      "kilde": "BR18 § 339 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/14/krav/339/ ; BR18 § 419, stk. 3–4 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/419/ ; BEK nr. 725/2024 bilag 1, pkt. I nr. 5 og pkt. III nr. 1 – https://www.retsinformation.dk/eli/lta/2024/725",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-037",
+      "maal": [
+        "VVS-KM-09",
+        "VVS-AK-05"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Du afleverer en ny vandinstallation i et nyopført enfamiliehus. Hvad skal den drifts- og vedligeholdelsesmanual, som skal foreligge ved ibrugtagning, mindst indeholde efter BR18?",
+      "valgmuligheder": {
+        "A": "Tegninger med placering af det, der skal vedligeholdes, og hvordan og hvor ofte.",
+        "B": "Kun produkternes datablade og garantibeviser samlet i en mappe til ejeren.",
+        "C": "Trykprøvningsrapporten og slutkontrollen fra virksomhedens kvalitetsledelsessystem.",
+        "D": "En liste over montører, timeforbrug og materialer, så fejl kan spores senere."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 419, stk. 3: manualen skal indeholde tegninger med oplysning om placering af installationer, der skal vedligeholdes, samt hvordan og hvor ofte vedligeholdelsen skal ske.",
+      "kilde": "BR18 § 419, stk. 3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/419/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-038",
+      "maal": [
+        "VVS-KM-10"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal omlægge varme- og vandrør i krybekælderen under et træhus fra 1958. Krybekælderen er ca. 60 cm høj, mørk og støvet. De gamle rør har en ukendt isolering, og nogle samlinger skal loddes. Hvordan planlægger du arbejdet sikkerhedsmæssigt forsvarligt?",
+      "facit": null,
+      "kriterier": [
+        "Kræver en forundersøgelse for asbest i den gamle isolering (og evt. andre mistænkelige materialer), før arbejdet går i gang, og behandler arbejdet som asbestarbejde ved mistanke.",
+        "Hvis der er asbest: planlægger arbejdet efter asbestreglerne, fx med anmeldelse til Arbejdstilsynet, uddannede medarbejdere eller en autoriseret virksomhed.",
+        "Behandler lodning som varmt arbejde med brandrisiko i en trækonstruktion og anviser mindst én forholdsregel, fx at fjerne eller afskærme brændbart materiale, have slukningsudstyr klar og lave efterkontrol, eller at bruge koldsamling (pressystem) i stedet.",
+        "Tager stilling til arbejdsmiljøet i krybekælderen med mindst to forhold, fx adgang og flugtvej, belysning, arbejdsstilling eller ventilation og støv."
+      ],
+      "fail_hvis": [
+        "Fjerner den gamle isolering uden forundersøgelse for asbest."
+      ],
+      "begrundelse": "Sikkerhedsmæssigt forsvarligt arbejde med asbest, brand og ergonomi.",
+      "kilde": "BEK nr. 1328 af 19/11/2025 om asbest i arbejdsmiljøet §§ 10–12 – https://www.retsinformation.dk/api/pdf/252542 ; arbejdsmiljøloven (LBK nr. 1108 af 15/09/2025) § 38 (arbejdet skal planlægges, tilrettelægges og udføres sikkerheds- og sundhedsmæssigt fuldt forsvarligt) – https://www.retsinformation.dk/eli/lta/2025/1108/pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-039",
+      "maal": [
+        "VVS-KM-11",
+        "VVS-AK-05"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En sommerhusejer bruger huset 6–8 weekender om året. Huset har en 110 liters elvandvarmer, og der er en ubenyttet rørafgrening til en tidligere udendørs bruser. Ejeren vil spare strøm og spørger om legionella. Giv din vejledning om drift og vedligehold.",
+      "facit": null,
+      "kriterier": [
+        "Anbefaler at gennemskylle det varme og det kolde vand ved tapstederne (især bruseren) ved ankomst efter stilstand.",
+        "Anbefaler en beholdertemperatur omkring 55 °C og mindst 50 °C i installationen under brug.",
+        "Anbefaler, at den ubenyttede afgrening (død ende) fjernes helt ved afgreningen.",
+        "Giver et energiråd, fx at slukke vandvarmeren mellem opholdene, men at vandet så skal opvarmes helt og gennemskylles, før det bruges."
+      ],
+      "fail_hvis": [
+        "Anbefaler at holde det varme vand permanent under 50 °C under brug for at spare energi."
+      ],
+      "begrundelse": "Afvejning af legionellarisiko, skoldning og energiforbrug ved sjælden brug.",
+      "kilde": "Rørcenter-anvisning 017, fig. 2.3 (undgå stagnerende vand), fig. 2.4 (driftstemperaturer), afsnit 4.1 og s. 46 (undgå perioder med stillestående vand) – https://bygningsreglementet.dk/media/tpqdndtn/legi.pdf ; BR18 § 411 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/411_413/ ; BR18 § 419, stk. 5 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/419/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-040",
+      "maal": [
+        "VVS-AK-01",
+        "VVS-AK-04"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En villa i tre plan ligger højt i terrænet. Bruseren på øverste plan giver næsten intet vand, når der samtidig tappes i køkkenet. Installationen er fra 1975 med galvaniserede stålrør. Ejeren har købt en trykforøgerpumpe på nettet og vil have den sat direkte på stikledningen. Hvordan griber du som mester sagen an?",
+      "facit": null,
+      "kriterier": [
+        "Starter med at måle trykket (fx statisk og dynamisk tryk ved samtidig tapning), før en pumpe vælges.",
+        "Vurderer årsagen til trykfaldet i installationen, fx tilkalkede eller tilrustede galvaniserede rør, underdimensionering, filtre eller ventiler, og at udskiftning eller opdimensionering af rørene kan være den rigtige løsning frem for en pumpe.",
+        "Hvis en pumpe er nødvendig: tager hensyn til mindst ét funktionskrav, fx at undgå skadeligt tryk eller trykstød (trykstyret eller frekvensstyret pumpe), at undgå stillestående vand eller at pumpen ikke giver støj og rystelser og er tilgængelig for service."
+      ],
+      "fail_hvis": [
+        "Monterer pumpen uden at måle tryk eller vurdere årsagen til trykfaldet."
+      ],
+      "begrundelse": "Mesterskøn: diagnose før løsning, dimensionering og funktionskravene til trykforøgning.",
+      "kilde": "BR18 §§ 404–405 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/403_405/",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-041",
+      "maal": [
+        "VVS-AK-03"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "I et 1½-plans træhus skal der installeres en ny brændeovn i stuen. En CE-mærket stålskorsten skal føres op gennem træbjælkelaget og tagkonstruktionen. Gulvet er et trægulv. Hvilke brandmæssige forhold skal du som mester sikre?",
+      "facit": null,
+      "kriterier": [
+        "Kræver, at afstanden fra ovn, røgrør og skorsten til brændbart materiale følger ydeevnedeklarationen eller producentens anvisning, så de ikke antænder bygningsdele.",
+        "Kræver, at gennemføringen i bjælkelag og tag udføres med producentens godkendte gennemføringsdetalje.",
+        "Kræver et ubrændbart underlag på trægulvet under og foran ovnen (fx ca. 300 mm frem og 150 mm til siderne for et lukket ildsted).",
+        "Nævner mindst ét krav til selve aftrækket, fx sodbrandsklasse G, egnet temperaturklasse eller begrænset overfladetemperatur."
+      ],
+      "fail_hvis": [
+        "Accepterer at føre skorstenen direkte gennem bjælkelaget med brændbar isolering tæt mod røret uden producentens gennemføringsdetalje."
+      ],
+      "begrundelse": "Brandsikring ved ildsteder og aftræk i trækonstruktioner.",
+      "kilde": "BR18 § 106 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/05/krav/105_107/ ; BR18 § 321 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/12/krav/316_323/ ; BR-vejledning til kap. 5, kapitel 4, afsnit 4.2 (minimumsafstande, ubrændbart underlag) – https://www.bygningsreglementet.dk/media/ja1ef2ab/kapitel_4.pdf",
+      "status": "V 2026-10-17"
+    },
+    {
+      "id": "VVS-042",
+      "maal": [
+        "VVS-AK-02",
+        "VVS-AK-05"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "I et parcelhus giver det et hårdt 'bank' i rørene, hver gang vaskemaskinen eller opvaskemaskinen lukker for vandet og når et etgrebsarmatur lukkes hurtigt. Kunden spørger, om det er farligt, og hvad der kan gøres. Giv din vurdering og rådgivning.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer fænomenet som trykstød (vandslag): en hurtigt lukkende ventil bremser vandsøjlen brat, så der opstår en trykbølge, der kan belaste samlinger og komponenter.",
+        "Foreslår mindst én undersøgelse af årsagen, fx at måle hviletrykket (og reducere det med en reduktionsventil, hvis det er højt) eller at kontrollere rørfastgørelser og ophæng.",
+        "Foreslår mindst én afhjælpning, fx en trykstødsdæmper tæt ved den hurtigt lukkende ventil, bedre fastgørelse eller lavere vandhastighed."
+      ],
+      "fail_hvis": [
+        "Afviser støjen som ufarlig uden at undersøge tryk og fastgørelse."
+      ],
+      "begrundelse": "Støj og trykstød i vandinstallationer, jf. BR18 § 405.",
+      "kilde": "BR18 § 405, nr. 2, 6 og 9 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/21/krav/403_405/ ; Joukowskys formel Δp = ρ·a·Δv (hydraulik)",
+      "status": "V 2026-10-17"
+    }
+  ]
+}
