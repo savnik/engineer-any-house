@@ -429,7 +429,7 @@
       "facit": null,
       "kriterier": [
         "Understøtningsbetingelser og samlinger skal svare til virkeligheden (fx charnier frem for fast indspænding, eftergivelighed i samlinger).",
-        "Materialeparametre og stivheder skal være realistiske og svare til materialet og fugtklassen.",
+        "Materialeparametre og stivheder skal vurderes, fx E-middelværdi til deformation mod karakteristisk værdi, eller kmod/anvendelsesklasse efter fugtforholdene.",
         "Langtidsvirkninger i træ skal med: kmod for styrke og kdef for krybning efter DS/EN 1995-1-1 med DK NA (BR18 § 348).",
         "Modellen dækker kun det, der er modelleret: lokale forhold som vederlag/kontakttryk og stabilitet (kipning, udknækning) skal eftervises særskilt.",
         "Forudsætningerne skal dokumenteres sammen med resultaterne, så modellens brug og begrænsninger kan vurderes."
