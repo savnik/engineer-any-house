@@ -48,7 +48,10 @@ IFC: byg-sager/<sag-id>/bim/ud/<ejendom-id>.ifc
 Afkodning: byg-sager/<sag-id>/bim/kilder/K<m>/afkodning.yaml · Visning(er): <V1, …>
 Tidligere sammenligninger: <stier til JSON> (kun runde ≥ 2)
 ```
-Giv kun filerne, ikke modellørens ræsonnement. Gem sammenlignerens JSON-blok som `byg-sager/<sag-id>/bim/sammenligning/K<m>-r<n>.json`, og skriv én linje i `…/sammenligning/log.md`: dato · leverance · runde · resultat · åbne væsentlige/mindre · afkodningsfejl.
+Giv kun filerne, ikke modellørens ræsonnement. Gem sammenlignerens JSON-blok som `byg-sager/<sag-id>/bim/sammenligning/K<m>-r<n>.json`, og skriv én linje i `…/sammenligning/log.md` (første linje i en ny log er feltoverskriften):
+```
+dato · leverance · runde · resultat · åbne væsentlige/mindre · afkodningsfejl
+```
 
 ## 3. Retur til modelløren (ved `resultat: ret`)
 ```

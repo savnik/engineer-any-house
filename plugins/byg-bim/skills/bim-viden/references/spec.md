@@ -132,6 +132,15 @@ roer:
 ```
 Et profil i et lokalt plan (`origo`, `x_akse`, `z_akse` = ekstruderingsretning) ekstruderes `dybde`. Standard er lodret ekstrudering fra z = `bund`. Alternativt `mesh: {punkter: [[x,y,z]…], flader: [[0,1,2,3]…]}`. Brug altid den rigtige IFC-klasse. Proxy kun, når ingen klasse passer, og så med `navn`/ObjectType.
 
+## grupper (synlighed pr. fag – vis/skjul i viewer)
+`byg` lægger altid hvert element i præcis én fag-IfcGroup (ObjectType "Disciplin"); etager og rumlig struktur er uændret. Standard: BYGNING, TAG, RUM, INVENTAR, VVS (under: VVS-BV, VVS-VARME, VVS-GAS), KLOAK, VENTILATION, EL, OEVRIGE – efter systemets art, installationens art og ellers IFC-klassen. Et element med `system` følger systemets gruppe. `grupper:` i spec'en tilføjer/omdøber grupper og flytter elementer med glob på id (første match vinder):
+```yaml
+grupper:
+  - {id: TAG, navn: Tag og tagkonstruktion, omfatter: [TAG*, 1-SP-*]}
+  - {id: VVS-KEDEL, navn: VVS – kedel og fordelere, under: VVS, omfatter: [VARME-KEDEL, CV-SPF]}
+```
+Felter: `id`, `navn`, `under` (overgruppe, standard eller egen), `omfatter` (globs på element- eller system-id), `beskrivelse`. En glob uden træf giver ADVARSEL. I Bonsai: Scene › Grouping and Filtering › Groups (øje/HIDE/ISOLATE virker rekursivt). Præsentationslag (IfcPresentationLayer) bruges ikke – Bonsai 0.9 viser dem ikke som lag.
+
 ## Hovedmodel og forslag (én source of truth)
 `bim/model.yaml` er **hovedmodellen** – det eneste sted, husets data står. Den rettes aldrig direkte. Hver ændring (en leverance, en ny radiator, en renoveringsvariant) laves i en **forslagsfil** oven på den og flettes først ind, når den er godkendt:
 ```
