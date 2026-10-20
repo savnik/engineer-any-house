@@ -218,6 +218,9 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROD / "tests" / "test_forsoeg.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Forsøgsloggen, beslutningsreglen eller holdout-vagten fejlede:\n" + r.stdout[-2000:])
+    r = subprocess.run([sys.executable, str(ROD / "tests" / "test_sammenligner_vagt.py")], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Sammenligner-vagten (bim-sammenlignerens tilladte kommandoer) fejlede:\n" + r.stdout[-2000:])
     r = subprocess.run([sys.executable, str(ROD / "tests" / "test_kontrol_ab.py")], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Kontrol-armen (parsing af domme eller opgørelse) fejlede:\n" + r.stdout[-2000:])

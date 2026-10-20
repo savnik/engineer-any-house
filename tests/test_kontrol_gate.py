@@ -463,6 +463,50 @@ def main() -> int:
         forvent("workflow uden for byg-sager påvirkes ikke",
                 kald_raa("workflow", {"session_id": "s-andet", "cwd": str(pathlib.Path(tmp)), "tool_input": {}}, env), "tilladt")
 
+        # Værktøjskontrol (bim): sammenligning ok + rent tjek godkender uden kontrolagent
+        V = {"session_id": "s-vaerk", "cwd": str(cwd)}
+        LV = "2026-09-25-bad/bim/02"
+        forvent("værktøj afvises for vvs", kald_raa("pretool", {**V, "tool_input": {
+            "subagent_type": FAG, "prompt": "LEVERANCE: 2026-09-25-bad/vvs/40\nKONTROLNIVEAU: værktøj"}}, env), "afvist")
+
+        def v_fag(navn, prompt):
+            r = kald_raa("pretool", {**V, "tool_input": {"subagent_type": BF, "prompt": prompt}}, env)
+            forvent(navn, r, "tilladt")
+            kald_raa("subagentstop", {**V, "agent_type": BF, "agent_transcript_path": transkript(prompt)}, env)
+
+        def v_sammen(navn, resultat, tjek):
+            r = kald_raa("pretool", {**V, "tool_input": {"subagent_type": BS, "prompt": f"LEVERANCE: {LV}"}}, env)
+            forvent(navn, r, "tilladt")
+            svar = '```json\n{"resultat": "%s", "tjek": %s, "afvigelser": []}\n```' % (resultat, json.dumps(tjek))
+            kald_raa("subagentstop", {**V, "agent_type": BS, "last_assistant_message": svar,
+                                      "agent_transcript_path": transkript(f"LEVERANCE: {LV}", svar)}, env)
+
+        def v_status():
+            t = json.loads((pathlib.Path(env["CLAUDE_PLUGIN_DATA"]) / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+            return t["leverancer"][LV]
+
+        v_fag("bim-fagkald med KONTROLNIVEAU: værktøj tilladt", f"LEVERANCE: {LV}\nKONTROLNIVEAU: værktøj\nByg")
+        v_sammen("værktøj: sammenligning 1 tilladt", "ok", {"fejl": 0, "advarsler": 3, "sporbarhed": 2})
+        ok = v_status()["status"] == "sammenlignet"
+        print(("OK   " if ok else "FEJL ") + "værktøj: ok med sporbarhedsfund godkendes ikke")
+        if not ok:
+            FEJL.append(f"værktøj sporbarhed: {v_status()}")
+        forvent("værktøj: stop blokeres, til leverancen er godkendt", kald_raa("stop", V, env), "blokeret")
+        v_fag("værktøj: rettelse tilladt", f"LEVERANCE: {LV}\nRet sporbarheden")
+        v_sammen("værktøj: sammenligning 2 tilladt", "ok", {"fejl": 0, "advarsler": 3, "sporbarhed": 0})
+        ev = v_status()
+        ok = ev["status"] == "godkendt" and ev.get("godkendt_af") == "vaerktoej" and ev.get("forsoeg") == 1
+        print(("OK   " if ok else "FEJL ") + "værktøj: ok og rent tjek godkender uden kontrolagent")
+        if not ok:
+            FEJL.append(f"værktøj godkendelse: {ev}")
+        domfiler = list((sag / "kvalitet").glob("*bim__02*vaerktoej.json"))
+        print(("OK   " if domfiler else "FEJL ") + "værktøj: godkendelsen gemmes som dom i kvalitet/")
+        if not domfiler:
+            FEJL.append("værktøj: ingen domfil")
+        forvent("værktøj: stop tilladt efter godkendelse", kald("stop", V, env), "tilladt")
+        forvent("værktøj: ny version kræver nyt ID", kald_raa("pretool", {**V, "tool_input": {
+            "subagent_type": BF, "prompt": f"LEVERANCE: {LV}"}}, env), "afvist")
+
         # Stikprøvekontrol: kun spørgsmål uden FASE, aldrig el/statik; udfaldet er deterministisk pr. leverance-ID
         import hashlib
         stik = REG.get("stikproeve") or {}
