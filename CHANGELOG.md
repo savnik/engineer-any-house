@@ -1,5 +1,21 @@
 # Ændringslog
 
+## 0.12.0 – 2026-10-20
+
+- `byg` 0.9.0 → 0.10.0
+- `byg-bim` 0.5.0 → 0.5.1
+- `byg-el` 0.2.0 → 0.2.1
+- `byg-kontrol` 0.11.0 → 0.12.0
+- `byg-maler` 0.1.9 → 0.1.10
+- `byg-murer` 0.1.9 → 0.1.10
+- `byg-statik` 0.3.3 → 0.3.4
+- `byg-toemrer` 0.1.9 → 0.1.10
+- `byg-ventilation` 0.1.10 → 0.1.11
+- `byg-vvs` 0.2.0 → 0.2.1
+
+### multiagent-forskning (byg, byg-bim, byg-el, byg-kontrol, byg-maler, byg-murer, byg-statik, byg-toemrer, byg-ventilation, byg-vvs)
+Domæneforrang ved konflikter mellem fag (ejerfaget har forrang, ingen mellemløsninger) med to nye eval-cases. Nyt kontrolniveau `stikprøve` for enkeltstående fagspørgsmål uden sag (aldrig el, statik eller sikkerhedsfunktioner): hooken udtager ca. hver tredje. Kildedisciplin i de fælles protokoller: "efterprøvet" kun ved eget opslag, og kontrollen bedømmer reglen, ikke påstanden. Udvikling: kontrol-armen `scripts/kontrol_ab.py`. Baggrund og målinger i ARKITEKTUR.md, "Multi-agent-arkitektur i lyset af forskningen".
+
 ## 0.11.0 – 2026-10-18
 
 - `byg-el` 0.1.14 → 0.2.0
