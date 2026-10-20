@@ -179,7 +179,7 @@ Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigt
 
 **Besluttet (2026-10-20):**
 - `KONTROLNIVEAU: stikprøve` for enkeltstående fagspørgsmål uden sag (`/byg:spoerg`, intet `FASE:`), aldrig el og statik og aldrig ved en sikkerhedsfunktion (`fuld`). Hooken udtager deterministisk ca. hver tredje ud fra leverance-ID'et (`fagregister.json`, `stikproeve`); ikke udtagne afleveres uden kontrol og markeres. Leverancer i en sag kontrolleres altid.
-- Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014).
+- Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014). Målt på F-012's 13 fejlramte opgaver: falske afvisninger 6 → 2,5 pr. kørsel og ingen skadede svar (før 2); kontrollen fanger stadig ingen forkerte svar på eksamen.
 
  Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`forbrug.py`).
 

@@ -1422,10 +1422,14 @@
         "VVS-110",
         "VVS-220"
       ],
-      "status": "aaben",
-      "beslutning": null,
+      "status": "afsluttet",
+      "beslutning": "behold",
       "maalinger": {},
-      "rev_foer": "61c4972"
+      "rev_foer": "61c4972",
+      "laering": "På F-012's 13 fejlramte opgaver, 2 kørsler: falske afvisninger 6 → 2,5 pr. kørsel, og ingen rigtige svar blev skadet af returen (før 2). Kontrollen fanger stadig ingen forkerte svar (overset ca. 3 pr. kørsel). Kildedisciplinen fjerner støjen fra påstande om efterprøvning, men gør ikke kontrollen skarpere på eksamen. NB: rev_foer er registreret efter ændringen; før-målingen er F-012 på eede065.",
+      "slut": "2026-10-20",
+      "vurdering": "uafklaret",
+      "begrundelse": "Målt med kontrol_ab, ikke exam koer; beslutningsreglen gælder ikke direkte"
     }
   ]
 }
