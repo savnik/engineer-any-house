@@ -14,7 +14,7 @@ Fasemodellen følger byggeriets egen faseopdeling. Den bygger på Ydelsesbeskriv
 
 **Regler:**
 - **Navne på hold points fastlægges i fase 0:** `HP-<FAG>-n` pr. fag og HP1–HPn projektfælles. Det står i projektgrundlaget og ændres ikke undervejs.
-- **Grænsefladeregistret** udfyldes af projektlederen ved G1 ud fra fase 1-notaterne: snitflade, fag A, fag B, ejer, hvad der leveres og fase. Det gives med i alle fagforespørgsler i fase 2. Konflikter, fagene melder, afgøres af projektlederen og logges, før returen sendes.
+- **Grænsefladeregistret** udfyldes af projektlederen ved G1 ud fra fase 1-notaterne: snitflade, fag A, fag B, ejer, hvad der leveres og fase. Det gives med i alle fagforespørgsler i fase 2. Konflikter, fagene melder, afgøres af projektlederen efter domæneforrang (`koordinering.md`: ejerfaget har forrang, ingen mellemløsninger) og logges, før returen sendes.
 - **Ingen tidsplan, intet detailbudget og ingen montagerækkefølge før G2.** Før det findes kun milepæle ("tilbud uge 40–41", "montage i fyringssæsonen") i `status.md`.
 - **Planleverancer samles.** Beholderplan, rumsplan og samlet plan skrives som ét dokument (eller ét dokument med delafsnit) med ét leverance-ID, ikke som flere delplaner, der hver skal kontrolleres og revideres.
 - **Sikkerhedskritiske fag** (fuld kontrol i fase 2): vvs ved kedel, fjernvarme eller gas; el; bærende konstruktioner; brand; asbest, PCB og bly. Øvrige får let review i fase 2.
@@ -63,7 +63,7 @@ Godkend ved selv at skrive: **Godkend G2 <sag-id>**. Eller skriv, hvad der skal 
 
 
 - Uafhængige fag rettes parallelt.
-- Fag, der deler en snitflade eller henviser til hinandens hold points, rettes **i rækkefølge**: først ejeren af snitfladen, derefter det fag, der henviser. Projektlederen afgør konflikten først og giver begge fag samme beslutning.
+- Fag, der deler en snitflade eller henviser til hinandens hold points, rettes **i rækkefølge**: først ejeren af snitfladen, derefter det fag, der henviser. Projektlederen afgør konflikten først efter domæneforrang og giver begge fag samme beslutning.
 - Omdøbninger og ID-ændringer foretages aldrig i en retur, mens et andet fag retter parallelt.
 
 ## Tjekliste for tværgående tidsregler (fase 3)

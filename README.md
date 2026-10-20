@@ -93,6 +93,7 @@ versionsnoter/               én note pr. gren: hvilke plugins der ændres (patc
 scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --siden/--til
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
 scripts/eval_fag.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
+scripts/kontrol_ab.py         kontrol-armen: måler kontrollens præcision og nettogevinst på eksamenssættet (koster tokens)
 eksamen/<fag>/               eksamenslaget: officielle læringsmål og opgavesæt med facit (udvikling + holdout)
 scripts/exam.py              tjekker dækningen af læringsmålene og kører eksamen med og uden plugin (koer koster tokens)
 scripts/forsoeg.py           forsøgslog og benchmark for forbedringer (eksamen/forsoeg.json, eksamen/benchmark.json)
@@ -100,6 +101,7 @@ scripts/forsoeg.py           forsøgslog og benchmark for forbedringer (eksamen/
 scripts/hooks/holdout_vagt.py    CI-agentens vagt: holdout-opgaver og -svar kan ikke læses direkte
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
+tests/test_kontrol_ab.py     tests af kontrol-armens parsing og opgørelse
 tests/test_sagsflet.py       tests af skriveret pr. fag, forslag og fletning og git i byg-sager/
 tests/test_exam.py           tests af eksamenslaget (rettelogik, format og dækning)
 tests/test_forsoeg.py        tests af forsøgsloggen, beslutningsreglen og holdout-vagten

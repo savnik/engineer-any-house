@@ -1357,6 +1357,22 @@
       "status": "forslag",
       "beslutning": null,
       "maalinger": {}
+    },
+    {
+      "id": "F-012",
+      "dato": "2026-10-20",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Den uafhængige kontrol tilfører fagagenten netto mindst +2 beståede pr. fag på udviklingssættet, og over halvdelen af dens afvisninger rammer en reel fejl (præcision > 50 %). Ellers kan let kontrol gøres til stikprøve for fag uden sikkerhedsfunktion.",
+      "aendring": "Ny kontrol-arm scripts/kontrol_ab.py: fagagent svarer, kontrolagent dømmer uden facit, én retur ved blokerende fund; begge svar rettes efter facit",
+      "opgaver": [],
+      "status": "aaben",
+      "beslutning": null,
+      "maalinger": {},
+      "rev_foer": "eede065"
     }
   ]
 }
