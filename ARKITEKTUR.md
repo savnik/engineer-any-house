@@ -175,7 +175,13 @@ gennemført (F-001–F-006), og med de åbne idéer som forslag (F-007–F-011).
 
 Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigtige svar. Halvdelen af de falske fund gjaldt fagagentens påstand om, at en regel var "efterprøvet mod sik.dk/bygningsreglementet.dk", som kontrollen ikke kunne efterprøve. Ét fund var en faglig fejl i kontrollen selv (RCD-krav i eksisterende installationer). Forbehold: eksamen er korte opgaver med facit, og kontrollen kørte uden internet. I rigtige sager kan kontrollen efterprøve mod primærkilder og fange fejl i grænseflader, sagsforhold og helhed, som eksamen ikke måler. Næste skridt: sammenlign med returandelen i rigtige sager (`forbrug.py`), og lad fagagenten kun skrive "efterprøvet", når den selv har efterprøvet i denne leverance.
 
-**Konsekvens for kontrolniveauet:** Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`forbrug.py`).
+**Rigtige sager (domme i `byg-sager/*/kvalitet/`, 181 leverancer, oktober 2026):** 56 % blev afvist i forsøg 1, og 94 % endte godkendt. Af de 255 blokerende fund i forsøg 1 handlede ca. 60 % om sammenhængen med sagen (grænseflader, andre fags notater, beslutningslog, ejendomskort), ca. 13 % om tal og beregning, ca. 11 % om kilder og dokumentation og ca. 7 % om sikkerhed og lovkrav (søgeordsbaseret opdeling). Kontrollens værdi ligger altså i sagskonteksten, som eksamen ikke har.
+
+**Besluttet (2026-10-20):**
+- `KONTROLNIVEAU: stikprøve` for enkeltstående fagspørgsmål uden sag (`/byg:spoerg`, intet `FASE:`), aldrig el og statik og aldrig ved en sikkerhedsfunktion (`fuld`). Hooken udtager deterministisk ca. hver tredje ud fra leverance-ID'et (`fagregister.json`, `stikproeve`); ikke udtagne afleveres uden kontrol og markeres. Leverancer i en sag kontrolleres altid.
+- Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014).
+
+ Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`forbrug.py`).
 
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.

@@ -1396,6 +1396,36 @@
       "slut": "2026-10-20",
       "vurdering": "uafklaret",
       "begrundelse": "Kategori prompt for byg måles ikke af eksamen; afgjort på eval-cases med 3 kørsler pr. arm"
+    },
+    {
+      "id": "F-014",
+      "dato": "2026-10-20",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "prompt",
+      "hypotese": "Kildedisciplin om 'efterprøvet' i begge protokoller fjerner de falske afvisninger fra F-012 uden at gøre kontrollen svagere",
+      "aendring": "faelles/protokol.md og kontrolprotokol.md; målt med kontrol_ab på F-012's 13 fejlramte opgaver, 2 kørsler",
+      "opgaver": [
+        "EL-045",
+        "EL-132",
+        "EL-138",
+        "EL-141",
+        "EL-210",
+        "EL-221",
+        "EL-226",
+        "VVS-006",
+        "VVS-030",
+        "VVS-032",
+        "VVS-035",
+        "VVS-110",
+        "VVS-220"
+      ],
+      "status": "aaben",
+      "beslutning": null,
+      "maalinger": {},
+      "rev_foer": "61c4972"
     }
   ]
 }
