@@ -56,6 +56,8 @@ Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 6. Projektlederens egne leverancer (projektgrundlag, samlet plan) kontrolleres af `projekt-kontrol`.
 7. **BIM og tegningsimport:** en tegning afkodes først grundigt (`afkodning.yaml`, kontrolleret mod tegningen selv), derefter bygges modellen. Hjælpeagenten `bim-sammenligner` holder originalen op mod samme visning tegnet fra modellen og sender afvigelser retur til `bim-modelloer` (højst 3 sammenligninger, rettelser bruger ikke af kontrolforsøgene). Til sidst den formelle kontrol med `bim-kontrol`. Se skill `tegningsimport`.
 
+**Stikprøve:** enkeltstående fagspørgsmål uden sag (`/byg:spoerg`) kontrolleres som stikprøve: hooken udtager ca. hver tredje, og de øvrige svar markeres "Ikke kvalitetskontrolleret". El, statik og sikkerhedsfunktioner kontrolleres altid, og det samme gør alle leverancer i en sag (se `ARKITEKTUR.md`, "Multi-agent-arkitektur").
+
 Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe.
 
 **Parallelle fag uden skrivekonflikter:** hver fil i sagen har én ejer. Et fag skriver kun sit eget notat, bilag og sine egne mapper. Ændringer i grænseflader, risici, kontrolplan og ejendomskort lægger faget som forslag i `forslag/`, og hooken fletter dem ind på rækkeniveau, når leverancen godkendes (med konfliktstop, hvis projektlederen har ændret de samme rækker imens). `byg-sager/` er et lokalt git-repo, som hooken committer til ved hver aflevering, dom og fletning. Kontrollens forsøg 2–3 får diffen siden sidste kontrollerede version. Repoet pushes aldrig; slå det fra med `BYG_GIT=0`. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
@@ -93,6 +95,7 @@ versionsnoter/               én note pr. gren: hvilke plugins der ændres (patc
 scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --siden/--til
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
 scripts/eval_fag.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
+scripts/kontrol_ab.py         kontrol-armen: måler kontrollens præcision og nettogevinst på eksamenssættet (koster tokens)
 eksamen/<fag>/               eksamenslaget: officielle læringsmål og opgavesæt med facit (udvikling + holdout)
 scripts/exam.py              tjekker dækningen af læringsmålene og kører eksamen med og uden plugin (koer koster tokens)
 scripts/forsoeg.py           forsøgslog og benchmark for forbedringer (eksamen/forsoeg.json, eksamen/benchmark.json)
@@ -100,6 +103,7 @@ scripts/forsoeg.py           forsøgslog og benchmark for forbedringer (eksamen/
 scripts/hooks/holdout_vagt.py    CI-agentens vagt: holdout-opgaver og -svar kan ikke læses direkte
 tests/test_kontrol_gate.py   tests af kontrol-hooken
 tests/test_tjek_data.py      tests af dataseparationen
+tests/test_kontrol_ab.py     tests af kontrol-armens parsing og opgørelse
 tests/test_sagsflet.py       tests af skriveret pr. fag, forslag og fletning og git i byg-sager/
 tests/test_exam.py           tests af eksamenslaget (rettelogik, format og dækning)
 tests/test_forsoeg.py        tests af forsøgsloggen, beslutningsreglen og holdout-vagten

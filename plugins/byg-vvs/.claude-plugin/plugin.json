@@ -1,7 +1,7 @@
 {
   "name": "byg-vvs",
   "displayName": "Byg · VVS-mester",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "VVS-mester som subagent: vand, afløb, varme og vådrumsinstallationer efter dansk regelgrundlag – med egen videnbase, hukommelse og evals.",
   "author": {
     "name": "Peter Savnik"

@@ -470,6 +470,38 @@ def main() -> int:
         forvent("workflow uden for byg-sager påvirkes ikke",
                 kald_raa("workflow", {"session_id": "s-andet", "cwd": str(pathlib.Path(tmp)), "tool_input": {}}, env), "tilladt")
 
+        # Stikprøvekontrol: kun spørgsmål uden FASE, aldrig el/statik; udfaldet er deterministisk pr. leverance-ID
+        import hashlib
+        stik = REG.get("stikproeve") or {}
+        def udtaget(lev):
+            return int(hashlib.sha256(lev.encode("utf-8")).hexdigest(), 16) % 1000 < round(float(stik.get("andel", 1)) * 1000)
+        kandidater = [f"2026-10-20-spm-{i}/murer/01" for i in range(60)]
+        LI = next(x for x in kandidater if not udtaget(x))
+        LU = next(x for x in kandidater if udtaget(x))
+        MUR, MKON = "byg-murer:murermester", "byg-kontrol:murer-kontrol"
+        forvent("stikprøve afvises for el", kald_raa("pretool", {"session_id": "s-stik0", "cwd": str(cwd), "tool_input": {
+            "subagent_type": "byg-el:el-installatoer", "prompt": "LEVERANCE: 2026-10-20-spm/el/01\nKONTROLNIVEAU: stikprøve"}}, env), "afvist")
+        forvent("stikprøve afvises i en sag med FASE", kald_raa("pretool", {"session_id": "s-stik0", "cwd": str(cwd), "tool_input": {
+            "subagent_type": MUR, "prompt": "LEVERANCE: 2026-09-25-bad/murer/31\nFASE: 1 · KONTROLNIVEAU: stikprøve"}}, env), "afvist")
+        I = {"session_id": "s-stik1", "cwd": str(cwd)}
+        forvent("stikprøve: fagkald tilladt", kald("pretool", {**I, "tool_input": {
+            "subagent_type": MUR, "prompt": f"LEVERANCE: {LI}\nKONTROLNIVEAU: stikprøve"}}, env), "tilladt")
+        tilst = json.loads((pathlib.Path(tmp) / "data" / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+        ok = tilst["leverancer"][LI]["status"] == "ikke_udtaget"
+        print(("OK   " if ok else "FEJL ") + "ikke udtaget: afleveret uden kontrol")
+        if not ok:
+            FEJL.append(f"stikprøve status: {tilst['leverancer'][LI]}")
+        forvent("ikke udtaget: kontrolkald afvises med besked", kald_raa("pretool", {**I, "tool_input": {
+            "subagent_type": MKON, "prompt": f"LEVERANCE: {LI}"}}, env), "afvist")
+        forvent("ikke udtaget: stop blokerer ikke", kald("stop", I, env), "tilladt")
+        forvent("ikke udtaget: ny version kræver nyt ID", kald_raa("pretool", {**I, "tool_input": {
+            "subagent_type": MUR, "prompt": f"LEVERANCE: {LI}"}}, env), "afvist")
+        U = {"session_id": "s-stik2", "cwd": str(cwd)}
+        kald("pretool", {**U, "tool_input": {"subagent_type": MUR, "prompt": f"LEVERANCE: {LU}\nKONTROLNIVEAU: stikprøve"}}, env)
+        forvent("udtaget: stop blokeres, til kontrollen er kørt", kald("stop", U, env), "blokeret")
+        forvent("udtaget: kontrolkald tilladt", kald_raa("pretool", {**U, "tool_input": {
+            "subagent_type": MKON, "prompt": f"LEVERANCE: {LU}"}}, env), "tilladt")
+
     print(f"\n{'ALLE TESTS BESTÅET' if not FEJL else f'{len(FEJL)} FEJL'}")
     return 1 if FEJL else 0
 

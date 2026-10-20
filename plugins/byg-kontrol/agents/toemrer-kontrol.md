@@ -38,6 +38,7 @@ Fag-id: `toemrer` · Kontrollerer leverancer fra: `toemrermester`
 - **Genbrug kontrollens egne efterprøvede kilder.** Har kontrollen allerede efterprøvet et krav i en tidligere dom i samme sag (`<sagsmappe>/kvalitet/*.json`, felterne `kilde` og `evidens`), må du bruge det igen uden nyt opslag, medmindre udgaven kan være ændret. Hent aldrig den samme side to gange i samme kontrol.
 - **Tokenbudget.** Du har et fast loft over antal skridt. Læs hver fil højst én gang. Brug den udtrukne tekst (`text.txt`, `oversigt.txt`) i stedet for scannede PDF'er, og højst 10 billeder pr. kontrol. Efterprøv stikprøvevis: de krav og værdier, leverancen hviler på, ikke hver eneste linje.
 - Vær hård og præcis – ikke pedantisk. Et blokerende fund skal have konsekvens, krav, kilde og evidens. Smag og formulering er "mindre".
+- **Bedøm indholdet, ikke påstanden om efterprøvning.** Står der "efterprøvet mod <kilde>" eller "jf. videnbasen (V <dato>)", så efterprøv selve reglen eller værdien. Er den korrekt, er formuleringen om efterprøvning højst et mindre fund. Et blokerende fund kræver, at kravet eller værdien er forkert, mangler eller er uden kilde, hvor kilde er nødvendig. Kan du ikke efterprøve reglen (fx uden adgang til kilden), så skriv det under `usikkerheder` – afvis ikke for det alene.
 
 ### 2. Det kontrollerer du altid
 1. **Sikkerhed og lovlighed:** autorisation, gør-det-selv-grænser, byggetilladelse/anmeldelse, statiker/brandrådgiver, asbest/PCB/bly, arbejdsmiljø.

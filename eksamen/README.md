@@ -75,6 +75,20 @@ Plugin-armen får læseadgang til sin plugin-kopi (`--add-dir`), men ikke til re
 
 Plugin-armen kører som standard **uden** fagagentens lokale hukommelse (`memory: user` fjernes i kopien). Eksamen måler altså pluginet alene: det, der er forankret i repoet, og ikke erfaringer fra brugerens egne sager i `~/.claude/agent-memory/`. `--med-hukommelse` måler plugin og lokal hukommelse samlet, fx for at se, hvad hukommelsen bidrager med, før den forankres. Agenten har under eksamen kun læseværktøjer, så den kan ikke skrive i hukommelsen.
 
+## Kontrol-armen
+Eksamen måler fagagenten alene. `scripts/kontrol_ab.py` måler, hvad kvalitetskontrollen lægger oven i: fagagenten svarer, fagets kontrolagent dømmer svaret uden at kende facit, og ved afvisning retter fagagenten én gang ud fra de blokerende fund. Både første og rettede svar rettes efter facit.
+
+```
+python3 scripts/kontrol_ab.py koer el --parallel 2                 # hele udviklingssættet (ca. 2–3 × plugin-armen)
+python3 scripts/kontrol_ab.py koer el --id EL-045,EL-221            # udvalgte opgaver
+python3 scripts/kontrol_ab.py koer el --kontrolmodel opus --niveau fuld
+python3 scripts/kontrol_ab.py rapport eksamen/el/results/kontrol/<fil>.json
+```
+
+Rapporten krydser dom og facit: **fanget** (forkert svar afvist, rettet eller ej), **overset** (forkert svar godkendt), **falsk afvisning** (rigtigt svar afvist, bevaret eller skadet af returen) og godkendt korrekt. Dertil præcision (andel afvisninger, der ramte en reel fejl), recall (andel forkerte svar, kontrollen fangede), netto (rettet − skadet) og pris pr. bestået opgave med og uden kontrol. Kun udviklingssættet bruges. Kontrollen kører på en kopi af `byg-kontrol` uden hooks og uden internet, så den kan ikke efterprøve mod primærkilder som i rigtige sager. Resultaterne ligger i `results/kontrol/` og indgår ikke i `exam.py`'s rapporter.
+
+Fortolkning: fagagenten består allerede ca. 90 % eller mere, så der er få forkerte svar at fange, og recall er usikker på ét fag. Præcisionen (falske afvisninger) er det stabile tal. Kør mindst to fag, før kontrolniveauet ændres, og sammenlign med returandelen i rigtige sager.
+
 ## Forbedringsforsøg
 Forbedringer laves som forsøg med CI-agenten (`claude --agent ci-forbedring`) eller i hånden med `scripts/forsoeg.py`.
 Hvert forsøg har én hypotese, én variabel, en måling før og efter, en beslutning og en læring.

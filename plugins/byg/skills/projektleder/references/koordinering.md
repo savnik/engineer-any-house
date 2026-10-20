@@ -40,9 +40,31 @@ Enkelhed: den enkleste sikre standardløsning. Højst ét alternativ. Ekstra kom
 ## Rækkefølge og parallelitet
 - Kald uafhængige fag parallelt. Kald afhængige fag i rækkefølge, og giv det næste fag stien til det forriges godkendte notat.
 - Typiske afhængigheder: konstruktion og fugt (murer/tømrer) → installationer (vvs/el/ventilation) → overflader (maler).
-- Konflikter mellem fag: beskriv konflikten neutralt, spørg de berørte fag med samme spørgsmål, og præsentér brugeren for muligheder med konsekvenser, hvis fagene ikke kan løse den.
+- Konflikter mellem fag afgøres efter **domæneforrang** (næste afsnit), ikke ved at mægle et kompromis.
 - Koordineringsbeslutninger (fx hvem der leverer fald, rækkefølge, manchetfordeling) logføres og sendes eksplicit til **alle** berørte fag samtidig – i nye fagkald og i returer – ikke kun til det fag, der udløste dem.
 - Ændres en grundforudsætning undervejs (fx rummets placering), så suspendér de bindende detaljer, der bygger på den gamle forudsætning, i beslutningsloggen, og revidér alle berørte fagnotater under nye leverance-ID'er.
+
+## Konflikter mellem fag – domæneforrang
+Når to fagnotater er uenige, er den typiske fejl at mægle: at sammensætte en mellemløsning af begge forslag eller tage gennemsnittet af to tal. Hold af sprogmodeller gør netop det og ender under deres bedste ekspert (målt op til 41 % tab, Apple/Stanford 2026). Derfor:
+1. **Find domænet.** Hvilket spørgsmål handler konflikten om, og hvilket fag ejer det? Brug ejeren i `graenseflader.md`, ellers tabellen nedenfor.
+2. **Ejerfaget har forrang i sit domæne.** Det andet fag tilpasser sig og får beslutningen i sin næste retur eller sit næste fagkald.
+3. **Ingen mellemløsning.** Sammensæt aldrig en løsning af dele fra begge forslag, og tag aldrig gennemsnit eller "et sted midt imellem" af dimensioner, mål, luftmængder, budgetter eller tider. Vælg ét fags løsning som helhed med en begrundelse på én linje.
+4. **Uklart eller nyt argument?** Send det andet fags indvending til ejerfaget i ét fagkald. Spørg ikke begge fag om det samme, og lad dem ikke debattere.
+5. **Brugerens beslutning,** når konflikten står mellem to legitime domæner (fx funktion i ét fag mod økonomi eller æstetik i et andet), eller ejerfaget selv markerer sit svar som usikkert (T). Præsentér da ejerfagets løsning og det andet fags løsning hver for sig med konsekvenser, ikke en blanding.
+6. **Sikkerhed og lovkrav går forud** for funktion, æstetik og pris (grundregel 5). En løsning under et lovkrav er aldrig et valg.
+7. **Log** afgørelsen i `beslutningslog.md` som "Domæneforrang: <fag> (<domæne>)".
+
+| Spørgsmålet handler om | Forrang |
+|---|---|
+| Bærende konstruktion: hvad er bærende, laster, bjælker og vederlag, åbninger, fundering, midlertidig understøtning | statik (og ansvarlig statiker for dokumentationen) |
+| Elektrisk sikkerhed: beskyttelse, kabler og dimensionering, el-materiel i vådrumszoner | el |
+| Vand, afløb og fald, tæthed, varmeanlæggets sikkerhed (sikkerhedsventil, ekspansion, dump) | vvs |
+| Luftskifte og luftmængder, trykforhold, erstatningsluft, aftræk, fugtbelastning i luften | ventilation |
+| Vådrumsmembran og fliser, murværk, puds, fugt i murværk og kælder | murer |
+| Klimaskærm i træ: undertag, dampspærre, isolering; træværk inden for statikerens rammer | toemrer |
+| Underlag og overfladebehandling, bly og PCB i maling | maler |
+| Mål og geometri i modellen (ikke fagkrav) | bim |
+| Rækkefølge, tid, budgetsum, ejerskab af snitflader | projektleder |
 
 ## Budget – budget.md
 Projektlederen ejer den samlede budgetsum fra første fagnotat. **Fag uden agent** (screening og analyser, affaldsanmeldelse, kloakmester, ansvarlig statiker, varmetabsberegning, skorstensfejer, servicefirma, midlertidige løsninger) prissættes af PL med skøn [T] ved G1, så R-rammen vurderes på et komplet tal. Fagene angiver kun eget skøn inkl. moms, med grundydelse og optioner adskilt; de vurderer ikke den samlede ramme.
