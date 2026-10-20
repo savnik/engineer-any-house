@@ -1,7 +1,7 @@
 {
   "name": "byg",
   "displayName": "Byg · Projektleder",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "Projektleder (tovholder) for danske bygge- og renoveringsprojekter: interviewer til projektet er veldefineret, opretter sagsmappe, planlægger og koordinerer fagagenter, sikrer uafhængig kvalitetskontrol af hver leverance (højst 2 forsøg, derefter brugerens beslutning) og forankrer erfaringer.",
   "author": {
     "name": "Peter Savnik"
