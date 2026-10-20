@@ -154,6 +154,35 @@ gennemført (F-001–F-006), og med de åbne idéer som forslag (F-007–F-011).
 
 **Læringsløkke:** huller i udviklingssættet → ny tekst i videnbasen via normal forankring (primærkilde, V/T, review) → ny kørsel. Holdout-sættet bruges kun til måling, så forbedringen kan måles på opgaver, videnbasen ikke er skrevet efter. Regressioner (basis består, plugin ikke) peger på tekst i videnbasen, der vildleder.
 
+## Multi-agent-arkitektur i lyset af forskningen (2026-10-20)
+**Grundlag:** Google Research/MIT, "Towards a Science of Scaling Agent Systems" (dec. 2025, 180 konfigurationer): central orkestrator med validering holder fejlforstærkningen på ca. 4,4× mod 17× for uafhængige agenter; multi-agent giver +81 % på opgaver, der kan deles op, men −39 til −70 % på sekventiel planlægning; gevinsten falder, når én agent allerede løser over ca. 45 %, og koordineringen koster mest i værktøjstunge opgaver. Apple/Stanford, "Multi-Agent Teams Hold Experts Back" (ICML 2026): selvorganiserende hold ender op til 41 % under deres bedste ekspert, fordi de mægler kompromiser mellem eksperten og de andre i stedet for at følge eksperten. Apple/EPFL (sep. 2026): en minimal enkeltagent slog fire multi-agent-systemer på MLE-bench.
+
+| Princip fra forskningen | Sådan er byg-eksperter bygget |
+|---|---|
+| Central orkestrator med validering | Projektlederen orkestrerer; fagagenter taler aldrig med hinanden; hver leverance valideres af en uafhængig kontrolagent |
+| Parallelt kun, hvor opgaven kan deles op | Fase 1 og uafhængige fag kører parallelt; afhængige fag og returer på samme snitflade i rækkefølge |
+| Sekventiel planlægning i én agent | Tidsplan, montage, budget og kontrolplan (fase 3) laves af projektlederen alene, ikke af fagene |
+| Følg eksperten, mægl ikke | **Ny:** domæneforrang ved konflikter mellem fag (`koordinering.md`): ejerfaget har forrang i sit domæne, ingen mellemløsninger eller gennemsnit, og indvendinger går til ejerfaget – ikke til debat mellem fagene. Eval-casen `byg/evals/konflikt-domaeneforrang` |
+| Værktøjstunge opgaver i én agent | `statiker` og `bim-modelloer` deles ikke op i flere agenter. Deterministiske værktøjer er kontrollen (`fem.py`/`statik.py`-genkørsel, `bim.py tjek` og `sammenlign`); hjælpeagenter kun til uafhængig verifikation |
+| Ekstra agenter skal fange fejl, den enkelte ikke fanger | **Ny:** kontrol-armen (`scripts/kontrol_ab.py`) måler kontrollens præcision, recall og nettogevinst på eksamenssættet, så kontrolniveauet pr. fag kan sættes efter data |
+
+**Målt (2026-10-20, F-012, én kørsel af udviklingssættet, kontrol på Sonnet uden internet):**
+
+| Fag | Bestået uden → med kontrol | Forkerte svar fanget | Rigtige svar afvist (heraf skadet af returen) | Pris pr. bestået |
+|---|---|---|---|---|
+| el | 72 → 70 af 75 | 0 af 3 | 4 (2) | 0,071 → 0,132 $ |
+| vvs | 68 → 68 af 72 | 0 af 4 | 2 (0) | 0,074 → 0,108 $ |
+
+Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigtige svar. Halvdelen af de falske fund gjaldt fagagentens påstand om, at en regel var "efterprøvet mod sik.dk/bygningsreglementet.dk", som kontrollen ikke kunne efterprøve. Ét fund var en faglig fejl i kontrollen selv (RCD-krav i eksisterende installationer). Forbehold: eksamen er korte opgaver med facit, og kontrollen kørte uden internet. I rigtige sager kan kontrollen efterprøve mod primærkilder og fange fejl i grænseflader, sagsforhold og helhed, som eksamen ikke måler. Næste skridt: sammenlign med returandelen i rigtige sager (`forbrug.py`), og lad fagagenten kun skrive "efterprøvet", når den selv har efterprøvet i denne leverance.
+
+**Rigtige sager (domme i `byg-sager/*/kvalitet/`, 181 leverancer, oktober 2026):** 56 % blev afvist i forsøg 1, og 94 % endte godkendt. Af de 255 blokerende fund i forsøg 1 handlede ca. 60 % om sammenhængen med sagen (grænseflader, andre fags notater, beslutningslog, ejendomskort), ca. 13 % om tal og beregning, ca. 11 % om kilder og dokumentation og ca. 7 % om sikkerhed og lovkrav (søgeordsbaseret opdeling). Kontrollens værdi ligger altså i sagskonteksten, som eksamen ikke har.
+
+**Besluttet (2026-10-20):**
+- `KONTROLNIVEAU: stikprøve` for enkeltstående fagspørgsmål uden sag (`/byg:spoerg`, intet `FASE:`), aldrig el og statik og aldrig ved en sikkerhedsfunktion (`fuld`). Hooken udtager deterministisk ca. hver tredje ud fra leverance-ID'et (`fagregister.json`, `stikproeve`); ikke udtagne afleveres uden kontrol og markeres. Leverancer i en sag kontrolleres altid.
+- Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014).
+
+ Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`forbrug.py`).
+
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
 

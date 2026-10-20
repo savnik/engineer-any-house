@@ -29,6 +29,10 @@ Regler
   er afvist eller ikke er eskaleret til brugeren.
 - Kontrolniveau fuld: et kontrolkald med "KONTROLNIVEAU: fuld" kræver model "opus" i Agent-kaldet
   (kontrolagenterne kører ellers på sonnet).
+- Stikprøvekontrol: et fagkald med "KONTROLNIVEAU: stikprøve" (kun spørgsmål uden FASE og kun fag uden for
+  "stikproeve.aldrig_fag") udtages deterministisk ud fra leverance-ID'et med andelen "stikproeve.andel". Udtaget →
+  normal kontrol. Ikke udtaget → status "ikke_udtaget" ved aflevering: Stop blokerer ikke, og et kontrolkald
+  afvises med besked om at markere svaret som ikke kvalitetskontrolleret.
 - Workflows (PreToolUse Workflow): i byg-sager afvises Workflow-værktøjet, medmindre brugerens seneste besked
   indeholder ordet "workflow".
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
@@ -61,6 +65,7 @@ Regler
   dom skrives diffen siden den kontrollerede version til kvalitet/<leverance>__aendringer.diff (forsøg 2–3 og rettelser).
 Fail-safe: uventede fejl blokerer aldrig – de logges i <data>/kontrol/log.jsonl.
 """
+import hashlib
 import json
 import os
 import pathlib
@@ -79,6 +84,9 @@ REG = json.loads((HER / "fagregister.json").read_text(encoding="utf-8"))
 MAKS = int(REG.get("maks_forsoeg", 3))
 MAKS_RUNDER = int(REG.get("maks_runder", 3))
 MAKS_SAMMEN = int(REG.get("maks_sammenligninger", 3))
+STIK = REG.get("stikproeve") or {}
+STIK_ANDEL = float(STIK.get("andel", 1.0))
+STIK_ALDRIG = set(STIK.get("aldrig_fag") or [])
 RESULTAT_RE = re.compile(r'"resultat"\s*:\s*"(ok|ret)"', re.IGNORECASE)
 FORBEDRING_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECASE)
 HVORFOR_RE = re.compile(r"^\s*\d+\.\s.*\bhvorfor\b", re.IGNORECASE | re.MULTILINE)
@@ -91,6 +99,7 @@ DESIGN_RE = re.compile(r"^\s*DESIGNGRUNDLAG\s*:\s*(.+)$", re.IGNORECASE | re.MUL
 NY_RUNDE_RE = re.compile(r"\bny\s+runde\s+([^\s`'\"<>]+)", re.IGNORECASE)
 WORKFLOW_RE = re.compile(r"\bworkflow", re.IGNORECASE)
 NIVEAU_FULD_RE = re.compile(r"KONTROLNIVEAU\s*:\s*fuld", re.IGNORECASE)
+NIVEAU_STIK_RE = re.compile(r"KONTROLNIVEAU\s*:\s*stikpr(?:ø|oe)ve", re.IGNORECASE)
 GODKEND_G2_RE = re.compile(r"\bgodkend(?:er|t)?\s+G2\s+([A-Za-z0-9ÆØÅæøå._-]+)", re.IGNORECASE)
 NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
 BLOKERENDE = {"kritisk", "væsentlig"}
@@ -209,6 +218,11 @@ def bloker(grund: str) -> None:
     print(json.dumps({"decision": "block", "reason": grund}, ensure_ascii=False))
 
 
+def udtaget(lev: str) -> bool:
+    """Deterministisk stikprøve: samme leverance-ID giver altid samme udfald (kan genskabes og efterprøves)."""
+    return int(hashlib.sha256(lev.encode("utf-8")).hexdigest(), 16) % 1000 < round(STIK_ANDEL * 1000)
+
+
 def runde(e: dict) -> int:
     return int(e.get("runde") or 1)
 
@@ -287,6 +301,10 @@ def naeste_skridt(lev: str, e: dict) -> str:
                 "ny runde, og skriv ingen RCA, før brugeren har valgt.")
     if st == "godkendt":
         return f"Godkendt: ændringer kræver et nyt leverance-ID (fx '{lev}-r2')."
+    if st == "ikke_udtaget":
+        return (f"Ikke udtaget til stikprøvekontrol: {lev} er afleveret uden kontrol. Svar brugeren, og skriv tydeligt "
+                "'Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)'. Skal svaret alligevel kontrolleres, eller "
+                f"ændres det, så brug et nyt leverance-ID (fx '{lev}-r2') med KONTROLNIVEAU: let.")
     return ""
 
 
@@ -350,7 +368,7 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                     gem(d, s)
                     log(d, haendelse="rettelse_efter_sammenligning", leverance=lev, rettelse=e["rettelser"], agent=st)
                     return
-                if status == "godkendt":
+                if status in ("godkendt", "ikke_udtaget"):
                     return afvis_kald(naeste_skridt(lev, e))
                 if status in ("stoppet", "rca_udfoert"):
                     grund = ny_runde_blokeret(inp, e, lev)
@@ -364,8 +382,19 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 else:
                     e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
             else:
+                stik = None
+                if NIVEAU_STIK_RE.search(str(ti.get("prompt") or "")):
+                    if fag in STIK_ALDRIG:
+                        return afvis_kald(f"KONTROLNIVEAU: stikprøve er ikke tilladt for {fag}: brug let (eller fuld ved en "
+                                          "sikkerhedsfunktion) – se skill 'kvalitetskontrol'.")
+                    if fm:
+                        return afvis_kald("KONTROLNIVEAU: stikprøve gælder kun enkeltstående fagspørgsmål uden sag (/byg:spoerg). "
+                                          "Leverancer i en sag (med FASE) kontrolleres altid: brug let eller fuld.")
+                    stik = "udtaget" if udtaget(lev) else "ikke_udtaget"
                 e = L[lev] = {"fag": fag, "type": "fag", "forsoeg": 1, "fag_agent": st,
                               "kontrol_agent": kontrolnavn(fag, pre), "oprettet": nu(), "domme": []}
+                if stik:
+                    e["stikproeve"] = stik
             e.update(status="fagkald_igang", session_id=sid, opdateret=nu())
             gem(d, s)
             log(d, haendelse="fagkald", leverance=lev, runde=runde(e), forsoeg=e["forsoeg"], agent=st)
@@ -431,6 +460,8 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
             if e.get("type") == "ekstern":
                 if e.get("status") != "under_kontrol":
                     e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
+            elif e.get("status") == "ikke_udtaget":
+                return afvis_kald(naeste_skridt(lev, e))
             elif e.get("status") not in ("fagkald_igang", "afventer_kontrol", "under_kontrol", "sammenlignet"):
                 return afvis_kald(f"Leverance {lev} har status '{e.get('status')}' – der er ingen ny fagversion at "
                                   f"kontrollere. {naeste_skridt(lev, e)}")
@@ -615,9 +646,11 @@ def fagaflevering(inp: dict, d: pathlib.Path, fag: str, at: str) -> None:
         for lev in kandidater:
             e = s["leverancer"].get(lev)
             if e and e.get("fag") == fag and e.get("status") == "fagkald_igang":
-                e.update(status="afventer_kontrol", opdateret=nu())
+                ny = "ikke_udtaget" if e.get("stikproeve") == "ikke_udtaget" else "afventer_kontrol"
+                e.update(status=ny, opdateret=nu())
                 gem(d, s)
-                log(d, haendelse="fagaflevering", leverance=lev, forsoeg=e.get("forsoeg"), agent=at)
+                log(d, haendelse="fagaflevering", leverance=lev, forsoeg=e.get("forsoeg"), agent=at,
+                    stikproeve=e.get("stikproeve"))
                 afleveret.append((lev, find_sagsmappe(inp, e, lev), f"runde {runde(e)}, forsøg {e.get('forsoeg')}"))
     # git uden for tilstandslåsen, så parallelle hooks ikke venter på den
     for lev, sm, hvad in afleveret:
@@ -1006,7 +1039,7 @@ def aabne_leverancer(inp: dict, s: dict) -> list:
     sid = str(inp.get("session_id") or "")
     linjer = []
     for lev, e in sorted(s["leverancer"].items()):
-        if not sid or e.get("session_id") != sid or e.get("status") in ("godkendt", "vurderet_ekstern", "rca_udfoert"):
+        if not sid or e.get("session_id") != sid or e.get("status") in ("godkendt", "vurderet_ekstern", "rca_udfoert", "ikke_udtaget"):
             continue
         trin = naeste_skridt(lev, e)
         linjer.append(f"- {lev}: {e.get('status')} (runde {runde(e)}/{MAKS_RUNDER}, forsøg {e.get('forsoeg')}/{MAKS})"
