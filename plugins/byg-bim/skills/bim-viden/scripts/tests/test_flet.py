@@ -97,3 +97,22 @@ def test_dyb_mapping_aendrer_kun_den_naevnte_noegle(tmp_path):
     d = yaml.safe_load(t)["vvs"]
     assert d == {"produkter": {"vvb": {"navn": "VVB 160", "vaegt": 65}, "pumpe": {"navn": "P1"}}, "valg": {"ror": "pex"}}
     assert "    # VVB (kilde V)\n    vvb: {navn: VVB 160, vaegt: 65}" in t
+
+
+def test_forslag_i_branch_mappe_flettes_ind_i_hovedsagen(tmp_path):
+    # hovedsag/bim/model.yaml + branch-sag hovedsag--vvs/bim/forslag (søskendemappe, som en git-branch)
+    hb = tmp_path / "hovedsag" / "bim"
+    hb.mkdir(parents=True)
+    h = _hoved(hb)
+    ud = tmp_path / "hovedsag--vvs" / "bim" / "forslag"
+    assert opret(h, "vvs-1", ud=ud) == 0
+    f = ud / "vvs-1.yaml"
+    assert yaml.safe_load(f.read_text(encoding="utf-8"))["basis"] == "../../../hovedsag/bim/model.yaml"
+    assert not (hb / "forslag" / "vvs-1.yaml").exists()
+    f.write_text(f.read_text(encoding="utf-8") + "vaegge:\n  - {id: S-IV2, kilde: B}\n", encoding="utf-8")
+    forventet = indlaes(f)
+    assert flet(f) == 0
+    efter = indlaes(h)
+    forventet.pop("_sti"), efter.pop("_sti")
+    assert efter == forventet
+    assert not f.exists() and (hb / "historik" / "flettelog.md").exists()

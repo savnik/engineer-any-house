@@ -13,6 +13,7 @@ version, forslaget byggede på (historik/), og fletningen stoppes, hvis de samme
 """
 import datetime
 import hashlib
+import os
 import pathlib
 import re
 import shutil
@@ -286,7 +287,7 @@ def _render(v, liste: bool):
 
 
 # ------------------------------------------------------------------ kommandoer
-def opret(hoved, navn, note=None) -> int:
+def opret(hoved, navn, note=None, ud=None) -> int:
     hoved = pathlib.Path(hoved).resolve()
     if not hoved.exists():
         print(f"Hovedmodellen findes ikke: {hoved}")
@@ -294,20 +295,21 @@ def opret(hoved, navn, note=None) -> int:
     if _laes(hoved).get("basis"):
         print(f"{hoved.name} har selv en basis – et forslag skal bygge direkte på hovedmodellen")
         return 1
-    mappe = hoved.parent / "forslag"
-    mappe.mkdir(exist_ok=True)
+    # ud: en branch-sags egen forslagsmappe (fx <hovedsag>--vvs/bim/forslag); basis peger så relativt på hovedmodellen
+    mappe = pathlib.Path(ud).resolve() if ud else hoved.parent / "forslag"
+    mappe.mkdir(parents=True, exist_ok=True)
     sti = mappe / f"{navn}.yaml"
     if sti.exists():
         print(f"Findes allerede: {sti}")
         return 1
     _gem_version(hoved)
-    rel = pathlib.Path("..") / hoved.name
+    rel = pathlib.Path(os.path.relpath(hoved, mappe))
     sti.write_text(
         f"# Forslag '{navn}' oven på hovedmodellen {hoved.name} ({datetime.date.today()}). Ret KUN her – aldrig i {hoved.name}.\n"
         + (f"# {note}\n" if note else "")
         + "# Skriv kun det, der ændres: elementer med samme id overskriver felterne (null fjerner et felt), nye id'er\n"
           "# tilføjes, 'nedrives: [id, …]' = renovering, 'slet: [id, …]' = modelrettelse. Byg/kontrollér forslaget med\n"
-          f"#   bim.py byg forslag/{navn}.yaml   ·   flet først ind efter godkendelse: bim.py flet forslag/{navn}.yaml\n"
+          f"#   bim.py byg {sti.name}   ·   flet først ind efter godkendelse: bim.py flet {sti.name}\n"
         f"basis: {rel.as_posix()}\n"
         f"basis_sha256: {_sha(hoved)}\n",
         encoding="utf-8")

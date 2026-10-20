@@ -85,6 +85,12 @@ import sagsflet  # noqa: E402
 import sagsgit  # noqa: E402
 
 REG = json.loads((HER / "fagregister.json").read_text(encoding="utf-8"))
+# Midlertidige spørgsmålsmapper ligger uden for byg-sager/ (permanente data): ~/byg-tmp/<dato>-<emne>/
+TMP_NAVN = "byg-tmp"
+
+
+def tmp_rod() -> pathlib.Path:
+    return pathlib.Path(os.environ.get("BYG_TMP") or pathlib.Path.home() / TMP_NAVN)
 MAKS = int(REG.get("maks_forsoeg", 3))
 MAKS_RUNDER = int(REG.get("maks_runder", 3))
 MAKS_SAMMEN = int(REG.get("maks_sammenligninger", 3))
@@ -258,8 +264,10 @@ def find_sagsmappe(inp: dict, e: dict, lev: str):
     sm = sagsmappe_sti(inp, e or {})
     if sm:
         return sm
-    p = pathlib.Path(str(inp.get("cwd") or os.getcwd())) / "byg-sager" / sag_af(lev)
-    return p if p.is_dir() else None
+    for p in (pathlib.Path(str(inp.get("cwd") or os.getcwd())) / "byg-sager" / sag_af(lev), tmp_rod() / sag_af(lev)):
+        if p.is_dir():
+            return p
+    return None
 
 
 def git_commit(d: pathlib.Path, sm, besked: str, stier=None):
@@ -895,7 +903,8 @@ def rca_fil(inp: dict, e: dict, lev: str):
     if sm and (sm / "kvalitet" / navn).exists():
         return sm / "kvalitet" / navn
     cwd = pathlib.Path(str(inp.get("cwd") or os.getcwd()))
-    return next(iter(cwd.glob(f"byg-sager/*/kvalitet/{navn}")), None)
+    return next(iter(cwd.glob(f"byg-sager/*/kvalitet/{navn}")), None) or next(
+        iter(tmp_rod().glob(f"*/kvalitet/{navn}")), None)
 
 
 def rca_findes(inp: dict, e: dict, lev: str) -> bool:
@@ -938,15 +947,17 @@ def alder_sek(e: dict) -> float:
 
 
 def skriveret(inp: dict, fil: str, s: dict):
-    """Én skriver pr. fil: en fagagent må i byg-sager/ kun skrive sine egne filer. Grund til afvisning eller None."""
+    """Én skriver pr. fil: en fagagent må i byg-sager/ (og byg-tmp/) kun skrive sine egne filer. Grund til afvisning
+    eller None."""
     _, base = del_navn(str(inp.get("agent_type") or ""))
     art, fag = klassificer(base)
     if art != "fag":
         return None
     dele = pathlib.Path(fil).parts
-    if "byg-sager" not in dele:
+    roed = [i for i, d in enumerate(dele) if d in ("byg-sager", TMP_NAVN)]
+    if not roed:
         return None
-    i = len(dele) - 1 - dele[::-1].index("byg-sager")
+    i = roed[-1]
     rest = dele[i + 1:]
     tilladt = skrivemoenstre(fag)
     vejledning = (f"Du må kun skrive dine egne filer i sagsmappen: {', '.join(tilladt)}. Skal en fælles fil ændres "
@@ -1072,7 +1083,7 @@ def sessionens_sager(inp: dict, s: dict) -> dict:
         if sager.get(sag) is None:
             p = sagsmappe_sti(inp, e)
             if p is None:
-                for kand in (cwd / "byg-sager" / sag, cwd / sag, cwd):
+                for kand in (cwd / "byg-sager" / sag, cwd / sag, cwd, tmp_rod() / sag):
                     if kand.name == sag and (kand / "status.md").is_file():
                         p = kand
                         break

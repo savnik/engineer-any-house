@@ -12,7 +12,8 @@ import yaml
 SEKTIONER = ("vaegge", "aabninger", "daek", "tage", "trapper", "soejler", "bjaelker", "rum",
              "systemer", "installationer", "roer", "generisk")
 FORSLAGSFELTER = ("basis", "basis_sha256", "nedrives", "slet")
-IDLISTER = (*SEKTIONER, "etager", "fakta")   # lister, hvor elementer flettes på id
+IDLISTER = (*SEKTIONER, "etager", "fakta", "grupper")   # lister, hvor elementer flettes på id
+GRUPPEFELTER = {"id", "navn", "under", "omfatter", "beskrivelse"}
 FAELLES = {"id", "navn", "etage", "status", "kilde", "ref", "usikkerhed", "fakta", "note", "egenskaber",
            "klassifikation", "beskrivelse"}
 FELTER = {
@@ -278,11 +279,37 @@ def normaliser(d: dict) -> dict:
         for el in d[s]:
             if el.get("system") is not None and str(el["system"]) not in sys_ids:
                 fejl.append(f"{s}.{el['id']}.system '{el['system']}' findes ikke")
+    _tjek_grupper(d, fejl)
     from .ejendomskort import tjek_fakta
     fejl += tjek_fakta(d)
     if fejl:
         raise SpecFejl(fejl)
     return d
+
+
+def _tjek_grupper(d, fejl):
+    """grupper: [{id, navn, under, omfatter: [id-mønstre]}] – visningsgrupper (IfcGroup) ud over standardgrupperne."""
+    from .byg import STANDARDGRUPPER
+    g = d.get("grupper") or []
+    if not isinstance(g, list):
+        fejl.append("grupper: skal være en liste")
+        g = []
+    d["grupper"] = [x for x in g if isinstance(x, dict)]
+    ids = set(STANDARDGRUPPER) | {str(x.get("id")) for x in d["grupper"]}
+    for i, x in enumerate(d["grupper"]):
+        x["id"] = str(x.get("id", ""))
+        sti = f"grupper.{x['id'] or i}"
+        if not x["id"]:
+            fejl.append(f"grupper[{i}].id mangler")
+        for k in set(x) - GRUPPEFELTER:
+            fejl.append(f"{sti}: ukendt felt '{k}' (tilladt: {', '.join(sorted(GRUPPEFELTER))})")
+        om = x.get("omfatter") or []
+        if not isinstance(om, list) or not all(isinstance(m, str) for m in om):
+            fejl.append(f"{sti}.omfatter skal være en liste af id'er/mønstre (fx '1-SP-*')")
+        if x.get("under") is not None:
+            x["under"] = str(x["under"])
+            if x["under"] not in ids or x["under"] == x["id"]:
+                fejl.append(f"{sti}.under '{x['under']}' er ikke en gruppe")
 
 
 def _type(d, el, sti, fejl, klasser):

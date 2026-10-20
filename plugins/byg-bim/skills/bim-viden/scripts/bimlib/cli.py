@@ -117,7 +117,7 @@ def _skala(a):
 
 def _forslag(a):
     from .flet import opret
-    return opret(a.hoved, a.navn, a.note)
+    return opret(a.hoved, a.navn, a.note, a.ud)
 
 
 def _flet(a):
@@ -159,7 +159,7 @@ def main(argv):
     x = sp.add_parser("linjer"); x.add_argument("billede"); x.add_argument("--beskaer")
     x.add_argument("--andel", type=float, default=0.5); x.set_defaults(fn=_linjer)
     x = sp.add_parser("skala"); x.add_argument("--kal", required=True); x.add_argument("--maal"); x.set_defaults(fn=_skala)
-    x = sp.add_parser("forslag"); x.add_argument("hoved"); x.add_argument("navn"); x.add_argument("--note")
+    x = sp.add_parser("forslag"); x.add_argument("hoved"); x.add_argument("navn"); x.add_argument("--note"); x.add_argument("--ud")
     x.set_defaults(fn=_forslag)
     x = sp.add_parser("flet"); x.add_argument("forslag"); x.add_argument("--proev", action="store_true")
     x.add_argument("--tving", action="store_true"); x.add_argument("--note"); x.set_defaults(fn=_flet)

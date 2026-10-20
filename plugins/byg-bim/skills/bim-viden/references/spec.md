@@ -132,6 +132,15 @@ roer:
 ```
 Et profil i et lokalt plan (`origo`, `x_akse`, `z_akse` = ekstruderingsretning) ekstruderes `dybde`. Standard er lodret ekstrudering fra z = `bund`. Alternativt `mesh: {punkter: [[x,y,z]…], flader: [[0,1,2,3]…]}`. Brug altid den rigtige IFC-klasse. Proxy kun, når ingen klasse passer, og så med `navn`/ObjectType.
 
+## grupper (synlighed pr. fag – vis/skjul i viewer)
+`byg` lægger altid hvert element i præcis én fag-IfcGroup (ObjectType "Disciplin"); etager og rumlig struktur er uændret. Standard: BYGNING, TAG, RUM, INVENTAR, VVS (under: VVS-BV, VVS-VARME, VVS-GAS), KLOAK, VENTILATION, EL, OEVRIGE – efter systemets art, installationens art og ellers IFC-klassen. Et element med `system` følger systemets gruppe. `grupper:` i spec'en tilføjer/omdøber grupper og flytter elementer med glob på id (første match vinder):
+```yaml
+grupper:
+  - {id: TAG, navn: Tag og tagkonstruktion, omfatter: [TAG*, 1-SP-*]}
+  - {id: VVS-KEDEL, navn: VVS – kedel og fordelere, under: VVS, omfatter: [VARME-KEDEL, CV-SPF]}
+```
+Felter: `id`, `navn`, `under` (overgruppe, standard eller egen), `omfatter` (globs på element- eller system-id), `beskrivelse`. En glob uden træf giver ADVARSEL. I Bonsai: Scene › Grouping and Filtering › Groups (øje/HIDE/ISOLATE virker rekursivt). Præsentationslag (IfcPresentationLayer) bruges ikke – Bonsai 0.9 viser dem ikke som lag.
+
 ## Hovedmodel og forslag (én source of truth)
 `bim/model.yaml` er **hovedmodellen** – det eneste sted, husets data står. Den rettes aldrig direkte. Hver ændring (en leverance, en ny radiator, en renoveringsvariant) laves i en **forslagsfil** oven på den og flettes først ind, når den er godkendt:
 ```
@@ -139,6 +148,7 @@ bim.py forslag bim/model.yaml bim-14          → bim/forslag/bim-14.yaml (basis
 bim.py byg bim/forslag/bim-14.yaml            → byg, tjek, tegn og sammenlign forslaget
 bim.py flet bim/forslag/bim-14.yaml --proev   → hvad ændres i hovedmodellen
 bim.py flet bim/forslag/bim-14.yaml --note "bim/14 godkendt"
+bim.py forslag bim/model.yaml vvs-2 --ud ../<hovedsag>--vvs/bim/forslag   → forslag i en branch-sag (basis relativ)
 ```
 Forslaget indeholder kun det, der ændres – samme regler som projektversionen nedenfor, plus `slet: [id, …]` (fjern et element helt, fx en modelfejl) og `felt: null` (fjern et felt). Topsektioner, der er mappinger (`typer`, `vvs`, `model` …), flettes rekursivt: `typer: {KYV: {beskrivelse: …}}` ændrer kun beskrivelsen, og `vvs: {produkter: {maaler: {ref: …}}}` kun den ene nøgle. Lister og elementfelter (fx `egenskaber` på en væg) erstattes som helhed. `flet` skriver kun de berørte elementer og nøgler om, også inde i undermappinger i blokform (kommentarer og alle andre linjer står urørt; har forslaget kommentarer lige over en nøgle, erstatter de hovedmodellens), kontrollerer, at resultatet giver præcis den model, forslaget gav, og at den validerer, gemmer versionen før og efter i `bim/historik/`, flytter forslaget til `bim/historik/forslag/` og logger i `bim/historik/flettelog.md`. Er hovedmodellen ændret, siden forslaget blev oprettet, stopper `flet`, hvis de samme elementer er ændret begge steder (konflikt) – opdatér forslaget, og lad kontrollen se det igen. Lav aldrig kopier eller snapshots af hovedmodellen ved siden af den.
 

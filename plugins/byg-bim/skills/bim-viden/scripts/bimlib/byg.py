@@ -9,6 +9,8 @@ Regler, der håndhæves her (buildingSMART Validation Service / Implementer Agre
 - Georeference: IfcMapConversion + IfcProjectedCRS (EPSG:25832, DVR90 = EPSG:5799), Scale 0.001 ved mm.
   geo.hoejdesystem (standard DVR90): andet end DVR90 → VerticalDatum $ og højdesystemet i Description.
 - Stabile GlobalId'er: uuid5 af modelnavn + element-id, så id'er overlever en genbygning.
+- Visningsgrupper: hvert element og system tildeles én disciplin-IfcGroup (Bygning, Tag, VVS …) via
+  IfcRelAssignsToGroup – den rumlige struktur (etager) er uændret. Spec'ens `grupper:` overstyrer/udvider.
 """
 import datetime as dt
 import json
@@ -24,6 +26,7 @@ import ifcopenshell.api.context
 import ifcopenshell.api.feature
 import ifcopenshell.api.geometry
 import ifcopenshell.api.georeference
+import ifcopenshell.api.group
 import ifcopenshell.api.material
 import ifcopenshell.api.project
 import ifcopenshell.api.pset
@@ -67,6 +70,32 @@ INSTALLATIONER = {
     "luftventil": ("IfcAirTerminal", "DIFFUSER"), "emhaette": ("IfcAirTerminal", "USERDEFINED"),
     "solcellepanel": ("IfcSolarDevice", "SOLARPANEL"), "skorsten": ("IfcChimney", "NOTDEFINED"),
 }
+# Visningsgrupper (IfcGroup) – id: (navn, overgruppe). Vises i Bonsai under Scene › Groups (vis/skjul/isolér).
+STANDARDGRUPPER = {
+    "BYGNING": ("Bygning", None), "TAG": ("Tag", None), "RUM": ("Rum", None), "INVENTAR": ("Inventar", None),
+    "VVS": ("VVS", None), "VVS-BV": ("VVS – brugsvand", "VVS"), "VVS-VARME": ("VVS – varme", "VVS"),
+    "VVS-GAS": ("VVS – gas", "VVS"), "KLOAK": ("Kloak og afløb", None), "VENTILATION": ("Ventilation", None),
+    "EL": ("El", None), "OEVRIGE": ("Øvrige installationer", None),
+}
+SYSTEMGRUPPE = {"varme": "VVS-VARME", "brugsvand_koldt": "VVS-BV", "brugsvand_varmt": "VVS-BV", "gas": "VVS-GAS",
+                "afloeb": "KLOAK", "regnvand": "KLOAK", "ventilation": "VENTILATION", "el": "EL", "andet": "OEVRIGE"}
+ARTGRUPPE = {  # installationer uden system
+    **dict.fromkeys(("kedel", "pillefyr", "fjernvarmeunit", "varmeveksler", "buffertank", "ekspansionsbeholder",
+                     "radiator", "konvektor", "energimaaler"), "VVS-VARME"),
+    **dict.fromkeys(("beholder", "vandmaaler", "wc", "haandvask", "koekkenvask", "bruser", "badekar"), "VVS-BV"),
+    **dict.fromkeys(("fordeler", "pumpe", "ventil", "blandeventil", "sikkerhedsventil", "kontraventil"), "VVS"),
+    **dict.fromkeys(("gulvafloeb", "broend", "draenpumpe"), "KLOAK"),
+    **dict.fromkeys(("tavle", "stikkontakt", "lampe", "afbryder", "solcellepanel"), "EL"),
+    **dict.fromkeys(("ventilationsaggregat", "ventilator", "luftventil", "emhaette"), "VENTILATION"),
+    "skorsten": "BYGNING",
+}
+KLASSEGRUPPE = (  # (IFC-klasse, gruppe) for elementer uden art/system; første match gælder
+    ("IfcRoof", "TAG"), ("IfcSpace", "RUM"), ("IfcFurnishingElement", "INVENTAR"), ("IfcFurniture", "INVENTAR"),
+    ("IfcWasteTerminal", "KLOAK"), ("IfcAirTerminal", "VENTILATION"), ("IfcFlowMovingDevice", "OEVRIGE"),
+    ("IfcDuctSegment", "VENTILATION"), ("IfcDuctFitting", "VENTILATION"), ("IfcLightFixture", "EL"),
+    ("IfcOutlet", "EL"), ("IfcSwitchingDevice", "EL"), ("IfcElectricDistributionBoard", "EL"),
+    ("IfcDistributionElement", "VVS"), ("IfcBuildingElementProxy", "BYGNING"), ("IfcElement", "BYGNING"),
+)
 MATFARVER = [  # (nøgleord, kategori, rgb, gennemsigtighed)
     (("glas",), "glass", (0.62, 0.80, 0.90), 0.6), (("letbeton", "gasbeton", "leca", "blok"), "block", (0.86, 0.86, 0.82), 0),
     (("beton", "terrazzo"), "concrete", (0.74, 0.74, 0.71), 0), (("tegl", "mursten", "tagsten"), "brick", (0.70, 0.36, 0.26), 0),
@@ -123,6 +152,7 @@ class Bygger:
         self._installationer()
         self._roer()
         self._generisk()
+        self._grupper()
         self._stabile_guids()
         return self.f
 
@@ -1035,6 +1065,81 @@ class Bygger:
             self._farv(rep, g.get("materiale", "generisk"))
             self._materiale_til(ent, g.get("materiale"))
 
+    # ------------------------------------------------------------------ visningsgrupper
+    def _grupper(self):
+        """Én disciplin-IfcGroup pr. element/system (vis/skjul i fx Bonsai). Rækkefølge for tildeling:
+        1) spec'ens grupper[].omfatter (id eller mønster, første match), 2) elementer med system følger systemet,
+        3) systemets art, installationens art eller IFC-klassen (STANDARDGRUPPER)."""
+        import fnmatch
+        spec_g = self.s.get("grupper") or []
+        def_ = {k: {"navn": n, "under": u} for k, (n, u) in STANDARDGRUPPER.items()}
+        for g in spec_g:
+            def_[g["id"]] = {**def_.get(g["id"], {"navn": g["id"], "under": None}),
+                             **{k: g[k] for k in ("navn", "under", "beskrivelse") if k in g}}
+        regler = [(m, g["id"]) for g in spec_g for m in g.get("omfatter") or []]
+        brugt = set()
+
+        def eksplicit(*ids):
+            for m, gid in regler:
+                if any(fnmatch.fnmatchcase(i, m) for i in ids):
+                    brugt.add(m)
+                    return gid
+            return None
+
+        spec_el = {str(e["id"]): e for sek in ("installationer", "roer", "generisk") for e in self.s.get(sek) or []}
+        medlemmer = {}
+        for s in self.s["systemer"]:
+            gid = eksplicit(s["id"]) or SYSTEMGRUPPE.get(s["art"], "OEVRIGE")
+            medlemmer.setdefault(gid, []).append(self.systemer[s["id"]])
+        for noegle, info in self.elementer.items():
+            if noegle.startswith("_") or not isinstance(info, dict) or "guid" not in info:
+                continue
+            sid = noegle.split(".")[0] if info.get("sektion") in ("roer", "vaegge") else noegle
+            el = spec_el.get(sid, {})
+            gid = eksplicit(noegle, sid)
+            if gid is None and el.get("system") and info.get("sektion") in ("installationer", "roer"):
+                info["gruppe"] = "system:" + str(el["system"])
+                continue
+            ent = self.f.by_guid(info["guid"])
+            if gid is None:
+                if info.get("sektion") == "tage":
+                    gid = "TAG"
+                elif el.get("art") in ARTGRUPPE and info.get("sektion") == "installationer":
+                    gid = ARTGRUPPE[el["art"]]
+                else:
+                    gid = next(g for k, g in KLASSEGRUPPE if ent.is_a(k)) if ent.is_a("IfcElement") or \
+                        ent.is_a("IfcSpace") else "BYGNING"
+            info["gruppe"] = gid
+            medlemmer.setdefault(gid, []).append(ent)
+        for m, gid in regler:
+            if m not in brugt:
+                self.adv.append(f"grupper.{gid}.omfatter '{m}' rammer intet element eller system")
+        # opret de brugte grupper og deres overgrupper (topgrupper først, stabil rækkefølge)
+        aktive, kø = [], list(medlemmer)
+        while kø:
+            gid = kø.pop(0)
+            if gid in aktive:
+                continue
+            if gid not in def_:
+                def_[gid] = {"navn": gid, "under": None}
+            aktive.append(gid)
+            if def_[gid].get("under"):
+                kø.append(def_[gid]["under"])
+        orden = list(def_)
+        ents = {}
+        for gid in sorted(aktive, key=orden.index):
+            g = api.group.add_group(self.f, name=def_[gid]["navn"], description=def_[gid].get("beskrivelse"))
+            g.GlobalId = self.guid("gruppe:" + gid)
+            g.ObjectType = "Disciplin"
+            ents[gid] = g
+        for gid in sorted(aktive, key=orden.index):
+            børn = [ents[k] for k in aktive if def_[k].get("under") == gid]
+            prod = medlemmer.get(gid, []) + børn
+            if prod:
+                api.group.assign_group(self.f, products=prod, group=ents[gid])
+        self.elementer["_grupper"] = {gid: {"navn": def_[gid]["navn"], "under": def_[gid].get("under"),
+                                            "antal": len(medlemmer.get(gid, []))} for gid in aktive}
+
     # ------------------------------------------------------------------ afslutning
     def _stabile_guids(self):
         """Relationer o.l. uden spec-id får GlobalId ud fra oprettelsesrækkefølgen, så filen er reproducerbar."""
@@ -1043,7 +1148,7 @@ class Bygger:
         for ent in self.f.by_type("IfcRoot"):
             if ent.GlobalId in kendte or ent.is_a() in ("IfcProject", "IfcSite", "IfcBuilding", "IfcBuildingStorey"):
                 continue
-            if ent.is_a("IfcTypeObject") or ent.is_a("IfcOpeningElement") or ent.is_a("IfcSystem"):
+            if ent.is_a("IfcTypeObject") or ent.is_a("IfcOpeningElement") or ent.is_a("IfcGroup"):
                 continue
             n += 1
             ent.GlobalId = self.guid(f"auto:{ent.is_a()}:{n}")
@@ -1062,7 +1167,7 @@ def byg(spec: dict, ud: pathlib.Path):
                 "spec": spec.get("_sti"), "bygget": dt.datetime.now().isoformat(timespec="seconds"),
                 "etager": {e["id"]: {"navn": e["navn"], "kote": e["kote"], "hoejde": e["hoejde"]} for e in spec["etager"]},
                 "elementer": {k: v for k, v in b.elementer.items() if not k.startswith("_")},
-                "doere": b.elementer.get("_doere", {}), "kontrol": spec["model"].get("kontrol"),
+                "doere": b.elementer.get("_doere", {}), "grupper": b.elementer.get("_grupper", {}), "kontrol": spec["model"].get("kontrol"),
                 "fejl": b.fejl, "advarsler": b.adv}
     ud.with_suffix(".byg.json").write_text(json.dumps(sidevogn, ensure_ascii=False, indent=1, default=float),
                                            encoding="utf-8")

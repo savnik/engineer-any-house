@@ -24,7 +24,7 @@ import sys
 ROD = pathlib.Path(os.environ.get("BYG_REPO_ROD") or pathlib.Path(__file__).resolve().parent.parent)
 HJEM = pathlib.Path.home()
 KONFIG = HJEM / ".config" / "byg-eksperter"
-SPRING_OVER = {".git", "dist", "__pycache__", "results", "node_modules", ".DS_Store"}
+SPRING_OVER = {".git", ".claude", "dist", "__pycache__", "results", "node_modules", ".DS_Store"}  # .claude: lokale worktrees
 TEKST = {".md", ".json", ".py", ".txt", ".yml", ".yaml", ".toml", ".sh", ".html", ".csv", ""}
 
 # Filer, der kun hører hjemme i en sagsmappe eller pluginets datamappe

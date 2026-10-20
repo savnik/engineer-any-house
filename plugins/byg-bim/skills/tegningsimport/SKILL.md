@@ -23,7 +23,7 @@ Hovedtråden (projektlederen eller Claude) orkestrerer. Fagagenter kalder ikke h
 Brug de fulde navne fra din agentliste (`byg-bim:bim-modelloer`, `byg-bim:bim-sammenligner`, `byg-kontrol:bim-kontrol`, eller `byg:…` i den samlede pakke). `BIM="${CLAUDE_PLUGIN_ROOT}/skills/bim-viden/scripts/bim.py"`.
 
 ## 0. Forberedelse (hovedtråden)
-1. Sagsmappe `byg-sager/<sag-id>/` med en kort `projektgrundlag.md` (formål med modellen, LOIN, kilder) – ellers opret den (skill `projektleder`/`spoerg`). Første gang på maskinen: `python3 "$BIM" opsaet`.
+1. Sagsmappe `byg-sager/<sag-id>/` = **ejendommens hovedsag** (BIM-hovedmodellen ligger i hovedsagen, `<sag-id>/bim/model.yaml` – ingen separat BIM-sag) med en kort `projektgrundlag.md` (formål med modellen, LOIN, kilder) – ellers opret den (skill `projektleder`). Undersøger en undersag en ændring af modellen (fx VVS), er den en branch-sag `<sag-id>--<emne>/`, og forslaget oprettes i branchen: `python3 "$BIM" forslag byg-sager/<sag-id>/bim/model.yaml <navn> --ud byg-sager/<sag-id>--<emne>/bim/forslag` (projektleder `references/sagsmappe.md`). Første gang på maskinen: `python3 "$BIM" opsaet`.
 2. Kilder: `python3 "$BIM" pdf <fil.pdf> --oversigt --ud byg-sager/<sag-id>/bim/kilder` og se kontaktarket. Udvælg tegningssiderne, og giv hver tegning et kilde-id (K1, K2 …). Notér dem i projektgrundlaget.
 3. **Én leverance pr. tegning (side) eller pr. etage:** `LEVERANCE: <sag-id>/bim/<nr>`. Rækkefølge: den plan, der fastlægger husets ydre (oftest stueplanen eller kælderplanen) → de øvrige planer → snit → facader. Første leverance fastlægger origo, akser, etager, koter og typer.
 
@@ -58,7 +58,10 @@ IFC: byg-sager/<sag-id>/bim/ud/<ejendom-id>.ifc
 Afkodning: byg-sager/<sag-id>/bim/kilder/K<m>/afkodning.yaml · Visning(er): <V1, …>
 Tidligere sammenligninger: <stier til JSON> (kun runde ≥ 2)
 ```
-Giv kun filerne, ikke modellørens ræsonnement. Gem sammenlignerens JSON-blok som `byg-sager/<sag-id>/bim/sammenligning/K<m>-r<n>.json`, og skriv én linje i `…/sammenligning/log.md`: dato · leverance · runde · resultat · åbne væsentlige/mindre · afkodningsfejl.
+Giv kun filerne, ikke modellørens ræsonnement. Gem sammenlignerens JSON-blok som `byg-sager/<sag-id>/bim/sammenligning/K<m>-r<n>.json`, og skriv én linje i `…/sammenligning/log.md` (første linje i en ny log er feltoverskriften):
+```
+dato · leverance · runde · resultat · åbne væsentlige/mindre · afkodningsfejl
+```
 
 ## 3. Retur til modelløren (ved `resultat: ret`)
 ```
