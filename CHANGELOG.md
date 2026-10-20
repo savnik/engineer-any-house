@@ -1,5 +1,14 @@
 # Ændringslog
 
+## 0.14.0 – 2026-10-20
+
+- `byg` 0.10.1 → 0.11.0
+- `byg-bim` 0.6.0 → 0.7.0
+- `byg-kontrol` 0.13.0 → 0.14.0
+
+### sager-som-branches (byg, byg-bim, byg-kontrol)
+Sager som branches: `byg-sager/` holder kun permanente data (hovedsager, aktive branch-sager `<hovedsag>--<emne>/`, `ejendomme/`, `arkiv/`). Spørgsmål opretter ingen sagsmappe – midlertidige filer i `~/byg-tmp/` (gaten finder sager og RCA'er der og håndhæver én skriver pr. fil). BIM-hovedmodellen ligger i hovedsagen; en branch-sag har sine forslag lokalt (`bim.py forslag … --ud <branch>/bim/forslag`, basis relativ med sha256) og flettes ind ved godkendelse.
+
 ## 0.13.0 – 2026-10-20
 
 - `byg` 0.10.0 → 0.10.1
