@@ -1369,10 +1369,33 @@
       "hypotese": "Den uafhængige kontrol tilfører fagagenten netto mindst +2 beståede pr. fag på udviklingssættet, og over halvdelen af dens afvisninger rammer en reel fejl (præcision > 50 %). Ellers kan let kontrol gøres til stikprøve for fag uden sikkerhedsfunktion.",
       "aendring": "Ny kontrol-arm scripts/kontrol_ab.py: fagagent svarer, kontrolagent dømmer uden facit, én retur ved blokerende fund; begge svar rettes efter facit",
       "opgaver": [],
-      "status": "aaben",
-      "beslutning": null,
+      "status": "afsluttet",
+      "beslutning": "behold",
       "maalinger": {},
-      "rev_foer": "eede065"
+      "rev_foer": "eede065",
+      "laering": "Hypotesen holdt ikke på eksamen: kontrollen fangede 0 af 7 forkerte svar (el 0/3, vvs 0/4) og afviste 6 rigtige svar (el 4, heraf 2 skadet af returen; vvs 2). Netto el -2, vvs 0. Pris pr. bestået +86 % (el) og +46 % (vvs). Falske fund handlede især om fagagentens påstand om at have efterprøvet regler mod sik.dk/BR18 (kan ikke efterprøves uden internet) og én faglig fejl i kontrollen (RCD i eksisterende installationer). Over Googles tærskel (fagagenten består 94-96 %) tilfører let kontrol intet målbart på enkeltfaglige opgaver. Værktøjet beholdes; kontrolniveauet ændres først efter sammenligning med returandelen i rigtige sager.",
+      "slut": "2026-10-20",
+      "vurdering": "manuel",
+      "begrundelse": "Kategori vaerktoej: kontrol-armen beholdes som måleværktøj; resultatet er en nulmåling af kontrollen"
+    },
+    {
+      "id": "F-013",
+      "dato": "2026-10-20",
+      "fag": [
+        "el"
+      ],
+      "kategori": "prompt",
+      "hypotese": "Domæneforrang i projektlederens koordineringsregler får projektlederen til at følge ejerfaget og afvise mellemløsninger oftere end uden reglen (eval-cases konflikt-domaeneforrang og konflikt-kompromispres).",
+      "aendring": "Regel om domæneforrang i byg/skills/projektleder (koordinering.md, faser-og-gates.md, SKILL.md). Målt med claude plugin eval, ikke eksamen: fag-feltet er kun formelt",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {},
+      "rev_foer": "4e2f1cb",
+      "laering": "Ingen målbar effekt: uden skill 3/3 før og 3/3 efter på den klare konflikt, 3/3 mod 2/3 under bygherrens pres (basis uden plugin 2/3). Med skillen tvunget i brug 5/6 før og 6/6 efter – inden for støj. Projektlederskillen indlæses slet ikke ved et enkelt spørgsmål om to notater, og modellen følger i forvejen ejerfaget, når konflikten handler om sikkerhed eller lovkrav. Reglen beholdes som billig rettesnor (læses kun ved konflikter); en mere diskriminerende case kræver en konflikt uden lovkrav, fx fugt og overfladebehandling.",
+      "slut": "2026-10-20",
+      "vurdering": "uafklaret",
+      "begrundelse": "Kategori prompt for byg måles ikke af eksamen; afgjort på eval-cases med 3 kørsler pr. arm"
     }
   ]
 }

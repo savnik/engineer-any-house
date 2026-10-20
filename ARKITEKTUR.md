@@ -166,6 +166,15 @@ gennemført (F-001–F-006), og med de åbne idéer som forslag (F-007–F-011).
 | Værktøjstunge opgaver i én agent | `statiker` og `bim-modelloer` deles ikke op i flere agenter. Deterministiske værktøjer er kontrollen (`fem.py`/`statik.py`-genkørsel, `bim.py tjek` og `sammenlign`); hjælpeagenter kun til uafhængig verifikation |
 | Ekstra agenter skal fange fejl, den enkelte ikke fanger | **Ny:** kontrol-armen (`scripts/kontrol_ab.py`) måler kontrollens præcision, recall og nettogevinst på eksamenssættet, så kontrolniveauet pr. fag kan sættes efter data |
 
+**Målt (2026-10-20, F-012, én kørsel af udviklingssættet, kontrol på Sonnet uden internet):**
+
+| Fag | Bestået uden → med kontrol | Forkerte svar fanget | Rigtige svar afvist (heraf skadet af returen) | Pris pr. bestået |
+|---|---|---|---|---|
+| el | 72 → 70 af 75 | 0 af 3 | 4 (2) | 0,071 → 0,132 $ |
+| vvs | 68 → 68 af 72 | 0 af 4 | 2 (0) | 0,074 → 0,108 $ |
+
+Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigtige svar. Halvdelen af de falske fund gjaldt fagagentens påstand om, at en regel var "efterprøvet mod sik.dk/bygningsreglementet.dk", som kontrollen ikke kunne efterprøve. Ét fund var en faglig fejl i kontrollen selv (RCD-krav i eksisterende installationer). Forbehold: eksamen er korte opgaver med facit, og kontrollen kørte uden internet. I rigtige sager kan kontrollen efterprøve mod primærkilder og fange fejl i grænseflader, sagsforhold og helhed, som eksamen ikke måler. Næste skridt: sammenlign med returandelen i rigtige sager (`forbrug.py`), og lad fagagenten kun skrive "efterprøvet", når den selv har efterprøvet i denne leverance.
+
 **Konsekvens for kontrolniveauet:** Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`forbrug.py`).
 
 ## Videnmodel
