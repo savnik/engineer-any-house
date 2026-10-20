@@ -1,0 +1,1077 @@
+{
+  "opgaver": [
+    {
+      "id": "VENT-001",
+      "maal": [
+        "VENT-KM-25"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal forklare en kunde, hvad bygningsreglementets mindstekrav til udelufttilførsel i en bolig svarer til i luftskifte. Boligen har en rumhøjde på 2,4 m overalt. Hvor mange gange i timen udskiftes luften i boligen, når udelufttilførslen netop er lig med bygningsreglementets mindstekrav pr. m² opvarmet etageareal? Angiv svaret i h⁻¹.",
+      "facit": {
+        "vaerdi": 0.45,
+        "enhed": "h⁻¹",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Mindstekravet er 0,30 l/s pr. m² (BR18 § 443, stk. 1). Pr. m² gulv: 0,30 l/s · 3,6 = 1,08 m³/h; rumfang pr. m² gulv = 2,4 m³. n = 1,08/2,4 = 0,45 h⁻¹.",
+      "kilde": "BR18 § 443, stk. 1 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/; formel n = q/V",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-002",
+      "maal": [
+        "VENT-KM-25"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En cirkulær spirofalset indblæsningskanal med indvendig diameter 160 mm fører 60 l/s til en gren i et enfamiliehus. Beregn middellufthastigheden i kanalen. Se bort fra godstykkelse og falser. Angiv svaret i m/s.",
+      "facit": {
+        "vaerdi": 2.98,
+        "enhed": "m/s",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "A = π · 0,080² = 0,02011 m². v = q/A = 0,060/0,02011 = 2,98 m/s.",
+      "kilde": "Formel: v = q/A, A = π·d²/4 (kontinuitetsligningen)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-003",
+      "maal": [
+        "VENT-KM-25"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et enfamiliehus skal have grundventilationen udført med et mekanisk ventilationsanlæg. Hvordan skal indblæsning og udsugning ifølge bygningsreglementet fordeles i boligen?",
+      "valgmuligheder": {
+        "A": "Indblæsning i beboelsesrummene og udsugning i bad, wc-rum, køkken og bryggers.",
+        "B": "Indblæsning i køkken og beboelsesrum og udsugning i bad, wc-rum og bryggers.",
+        "C": "Indblæsning i entré, gang og trapperum og udsugning i bad, wc-rum, køkken og bryggers.",
+        "D": "Indblæsning i beboelsesrum og bryggers og udsugning i bad, wc-rum og køkken."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 443, stk. 2: et mekanisk anlæg skal have indblæsning i beboelsesrummene og udsugning i bad, wc-rum, køkken og bryggers, og det skal have varmegenvinding, der forvarmer indblæsningsluften.",
+      "kilde": "BR18 § 443, stk. 2 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-004",
+      "maal": [
+        "VENT-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Ved funktionsafprøvningen af et nyt ventilationsaggregat med varmegenvinding, der kun betjener én bolig, måles ved grundluftskiftet en udeluftmængde på 180 m³/h. Den samlede optagne effekt til begge ventilatorer er 52 W. Beregn det specifikke elforbrug til lufttransport (SEL). Angiv svaret i J/m³.",
+      "facit": {
+        "vaerdi": 1040,
+        "enhed": "J/m³",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "q = 180/3600 = 0,050 m³/s. SEL = P/q = 52/0,050 = 1.040 J/m³ (over grænsen på 1.000 J/m³ for anlæg til én bolig).",
+      "kilde": "Formel: SEL = samlet ventilatoreffekt / udeluftmængde; grænseværdi BR18 § 438 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-005",
+      "maal": [
+        "VENT-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et boligventilationsanlæg kører hele året (8.760 h) med en udeluftmængde på 0,050 m³/s og et målt specifikt elforbrug til lufttransport (SEL) på 900 J/m³. Beregn ventilatorernes årlige elforbrug. Angiv svaret i kWh/år.",
+      "facit": {
+        "vaerdi": 394,
+        "enhed": "kWh/år",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "P = SEL · q = 900 · 0,050 = 45 W. E = 45 W · 8.760 h = 394 kWh/år.",
+      "kilde": "Formel: P = SEL · q, E = P · t",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-006",
+      "maal": [
+        "VENT-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En kunde vil have et ventilationsanlæg med varmegenvinding, hvor aggregat og kanalsystem kun betjener hans egen bolig. Hvilket krav stiller bygningsreglementet til anlæggets specifikke elforbrug til lufttransport (SEL)?",
+      "valgmuligheder": {
+        "A": "Højst 800 J/m³ ved grundluftskiftet, og der skal monteres fast elmåler.",
+        "B": "Højst 1.000 J/m³ ved grundluftskiftet, og der skal kunne monteres måler.",
+        "C": "Højst 1.500 J/m³ ved maksimal ydelse, og der skal kunne monteres måler.",
+        "D": "Højst 2.100 J/m³ ved grundluftskiftet, og der skal monteres fast elmåler."
+      },
+      "facit": "B",
+      "begrundelse": "BR18 § 438: højst 1.000 J/m³ ved grundluftskiftet, og anlægget skal tilsluttes, så det er muligt at etablere måler til måling af SEL.",
+      "kilde": "BR18 § 438 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-007",
+      "maal": [
+        "VENT-KM-20"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et kontorventilationsanlæg med EC-ventilatorer kører i dag 6.000 h/år med 100 % luftmængde, hvor ventilatorerne samlet optager 120 W. Efter en indreguleringskontrol viser det sig, at 70 % af luftmængden er tilstrækkelig. Antag, at anlæggets modstand er uændret (fast kanalsystem og faste spjæld), så affinitetslovene gælder, og at virkningsgraden er konstant. Hvor stor bliver den årlige elbesparelse, når luftmængden reduceres til 70 % i alle 6.000 driftstimer? Angiv svaret i kWh/år.",
+      "facit": {
+        "vaerdi": 473,
+        "enhed": "kWh/år",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Affinitetslovene: P ∝ q³. P2 = 120 · 0,7³ = 41,2 W. Besparelse: (120 − 41,2) W · 6.000 h = 473 kWh/år.",
+      "kilde": "Formel: affinitetslovene for ventilatorer (q ∝ n, Δp ∝ n², P ∝ n³)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-008",
+      "maal": [
+        "VENT-KM-20"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et udsugningsanlæg i en bolig skal kombineres med en varmepumpe, der udnytter varmen i udsugningsluften til opvarmning. Hvilket krav stiller bygningsreglementet til varmepumpen?",
+      "valgmuligheder": {
+        "A": "COP på mindst 3,6 i opvarmningstilstand, dokumenteret efter DS/EN 14511.",
+        "B": "COP på mindst 3,0 i opvarmningstilstand, dokumenteret efter DS/EN 14511-3.",
+        "C": "SCOP på mindst 3,6 over fyringssæsonen, dokumenteret efter DS/EN 14825.",
+        "D": "COP på mindst 4,0 i opvarmningstilstand, dokumenteret efter DS/EN 14825."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 434, stk. 2: varmepumper til varmegenvinding eller ved udsugningsanlæg skal have en COP på mindst 3,6 i opvarmningstilstand, dokumenteret efter DS/EN 14511.",
+      "kilde": "BR18 § 434, stk. 2 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-009",
+      "maal": [
+        "VENT-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En boligejer har et 12 år gammelt balanceret ventilationsanlæg med varmegenvinding. Elregningen til anlægget er høj, og huset føles koldt ved indblæsningsventilerne om vinteren. Aggregatet har AC-ventilatorer med trinomskifter, filtrene blev sidst skiftet for to år siden, og anlægget kører altid på højeste trin. Vejled kunden om, hvordan energiforbruget kan nedbringes, og hvilke tekniske løsninger du vil anbefale.",
+      "kriterier": [
+        "Forklarer, at tilstoppede filtre øger tryktabet og dermed ventilatorernes elforbrug.",
+        "Anbefaler filterskift med fast interval, fx hver 3.–6. måned eller efter producentens anvisning.",
+        "Anbefaler at stille anlægget ned på grundventilation og kun forcere ved behov, fx med fugtføler, timer eller behovsstyring, frem for altid at køre højeste trin.",
+        "Nævner mindst ét af: udskiftning til EC-ventilatorer, nyt aggregat med lavere SEL og højere temperaturvirkningsgrad, eller kontrol af varmeveksleren for snavs eller utætheder.",
+        "Anbefaler måling eller indregulering af luftmængder (og gerne SEL), før og efter tiltagene, så besparelsen kan dokumenteres."
+      ],
+      "begrundelse": "Elforbruget bestemmes af luftmængde og tryktab (SEL). Unødig forcering og snavsede filtre øger forbruget, og BR18 kræver, at unødvendigt energiforbrug undgås.",
+      "kilde": "BR18 § 430 og § 438 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-010",
+      "maal": [
+        "VENT-KM-23"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du har monteret og indreguleret et nyt ventilationsanlæg og skal udføre den funktionsafprøvning, som bygningsreglementet kræver før ibrugtagning. Hvad skal funktionsafprøvningen ifølge bygningsreglementet dokumentere?",
+      "valgmuligheder": {
+        "A": "At SEL og luftmængder overholder kravene, og at en eventuel behovsstyring virker efter hensigten.",
+        "B": "At SEL og lydniveau overholder kravene, og at varmegenvinderen har den lovede virkningsgrad.",
+        "C": "At luftmængder og kanalernes tæthedsklasse overholder kravene, og at frostsikringen virker korrekt.",
+        "D": "At luftmængder og lydniveau overholder kravene, og at filtrene er skiftet før afleveringen."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 450: funktionsafprøvningen skal dokumentere, at kravene til specifikt elforbrug til lufttransport og luftmængder overholdes, og at en eventuel behovsstyring fungerer efter hensigten.",
+      "kilde": "BR18 § 450 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/450/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-011",
+      "maal": [
+        "VENT-KM-23"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Du kaldes ud til et parcelhus med et 10 år gammelt balanceret ventilationsanlæg med modstrømsveksler i et uopvarmet tagrum. Beboerne klager over kold træk fra indblæsningsventilerne i stuen, når det fryser udenfor, og over dug på badeværelsesspejlet længe efter bad. Aggregatet viser ingen alarmer. Beskriv, hvordan du fejlfinder systematisk, og hvilke fejl du især vil undersøge.",
+      "kriterier": [
+        "Undersøger filtre og varmeveksler for tilsmudsning eller tilisning.",
+        "Undersøger frostsikringen og bypass-spjældet, fx om bypass står åben (sommerdrift) eller om frostsikringen reducerer indblæsningen, så luften bliver kold eller anlægget kommer i ubalance.",
+        "Måler luftmængder ved ventilerne (indblæsning og udsugning, også i badeværelset) og sammenholder med indreguleringsrapporten for at finde ubalance eller lukkede/forstillede ventiler.",
+        "Kontrollerer isoleringen af kanalerne i det kolde tagrum, fx manglende eller beskadiget isolering på indblæsningskanalerne, der afkøler luften."
+      ],
+      "begrundelse": "Kold indblæsning og dårlig fugtudsugning skyldes typisk bypass/frostsikring, snavsede filtre/vekslere, ubalance eller dårligt isolerede kanaler i kolde rum. BR18 § 451 kræver, at anlægget holdes i teknisk forsvarlig stand og overholder kravene.",
+      "kilde": "BR18 § 451 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/451_452/; DS 452 (princip) via BR18 § 421 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-012",
+      "maal": [
+        "VENT-KM-23"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du indregulerer en kanalgren med fire udsugningsventiler efter proportionalmetoden. Ventilerne er indbyrdes indreguleret og låst, og du drosler nu grenens spjæld for at få den rigtige samlede luftmængde. Antag, at alle modstande i grenen følger kvadratloven (q ∝ √Δp, turbulent strømning), og at trykket ved grenens afslutning er uændret. Hvad sker der med ventilernes luftmængder?",
+      "valgmuligheder": {
+        "A": "Alle fire ventiler ændrer luftmængde i samme forhold, så den indbyrdes fordeling bevares.",
+        "B": "Kun ventilen nærmest spjældet ændrer luftmængde, mens de fjerne ventiler står uændret.",
+        "C": "Den fjerneste ventil ændrer luftmængde mest, så den indbyrdes fordeling skal laves forfra.",
+        "D": "Ventilernes luftmængder ændres ikke, fordi deres indstilling er låst, før spjældet drosles."
+      },
+      "facit": "A",
+      "begrundelse": "Med faste ventilindstillinger nedstrøms ændres tryk og luftmængder i grenen proportionalt (q ∝ √Δp for hver fast modstand). Det er grundlaget for proportionalmetoden: forholdet mellem ventilerne bevares, når grenens spjæld eller ventilatoren ændres.",
+      "kilde": "Formel: q = k·√Δp for faste modstande (proportionalmetoden ved indregulering)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-013",
+      "maal": [
+        "VENT-KM-23"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "En boligforening beder dig lave en plan for service og vedligehold af balancerede ventilationsanlæg i 40 rækkehuse. Anlæggene er 5 år gamle, og der findes en drifts- og vedligeholdelsesmanual fra afleveringen. Beskriv, hvad serviceplanen skal indeholde, og hvordan du dokumenterer servicen.",
+      "kriterier": [
+        "Tager udgangspunkt i drifts- og vedligeholdelsesmanualen og producentens anvisninger for intervaller og opgaver.",
+        "Omfatter faste filterskift og eftersyn/rengøring af varmeveksler, ventilatorer, kondensafløb og ventiler.",
+        "Omfatter kontrol af funktion og luftmængder, fx måling ved ventilerne og kontrol af styring, frostsikring og alarmer, med efterregulering ved afvigelser.",
+        "Omfatter dokumentation af hvert besøg (fx servicerapport pr. bolig med fund, målinger og udskiftede dele), så anlæggenes stand kan følges."
+      ],
+      "begrundelse": "BR18 § 451 kræver rensning, drift, service og vedligehold, så anlægget holdes i teknisk og hygiejnisk forsvarlig stand, som anvist i DS 447. § 452 kræver en D&V-manual med, hvordan og hvor ofte vedligehold skal ske.",
+      "kilde": "BR18 §§ 451–452 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/451_452/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-014",
+      "maal": [
+        "VENT-KM-24"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Du skal programmere CO2-styringen i et nyt behovsstyret anlæg i et klasselokale, hvor eleverne er den væsentligste forureningskilde. Hvilken CO2-koncentration må indeluften ifølge bygningsreglementet ikke overstige ved de dimensionerende forhold?",
+      "valgmuligheder": {
+        "A": "800 ppm",
+        "B": "1.000 ppm",
+        "C": "1.200 ppm",
+        "D": "1.500 ppm"
+      },
+      "facit": "B",
+      "begrundelse": "BR18 § 447, stk. 2: CO2-indholdet må ikke overstige 1.000 ppm for de dimensionerende forhold i undervisningsrum og opholdsrum i daginstitutioner.",
+      "kilde": "BR18 § 447, stk. 2 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/447/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-015",
+      "maal": [
+        "VENT-KM-24"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Ved en støjmåling i et soveværelse bidrager ventilationsaggregatet (gennem loftet) med 38 dB(A) og indblæsningsventilen med 41 dB(A), målt hver for sig med den anden kilde slukket. Beregn det samlede lydtrykniveau, når begge kilder er i drift. Antag, at kilderne er ukorrelerede, og se bort fra baggrundsstøj. Angiv svaret i dB(A).",
+      "facit": {
+        "vaerdi": 42.8,
+        "enhed": "dB(A)",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "L = 10·log(10^3,8 + 10^4,1) = 42,8 dB(A).",
+      "kilde": "Formel: logaritmisk addition af lydtrykniveauer, L = 10·log Σ 10^(Li/10)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-016",
+      "maal": [
+        "VENT-KM-24"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "Et balanceret ventilationsaggregat i et parcelhus stopper hver nat, når udetemperaturen kommer under ca. −5 °C, og starter igen om formiddagen. Displayet viser en frostalarm. Aggregatet har elektrisk forvarmeflade, temperaturfølere i fire luftstrømme og en styring med ugeprogram. Beskriv, hvordan du fejlfinder styringen og de el-tekniske komponenter.",
+      "kriterier": [
+        "Kontrollerer temperaturfølerne (placering, montage og måleværdi), fx ved at sammenligne med et kalibreret termometer eller måle følerens modstand mod datablad.",
+        "Kontrollerer forvarmefladen, fx forsyning, sikring/termosikring (overkogningstermostat), relæ eller styresignal, og at den faktisk varmer.",
+        "Kontrollerer styringens indstillinger og logik, fx frostgrænser, ugeprogram, firmwareversion eller alarmlog.",
+        "Nævner mindst ét af: tilisning af veksleren pga. ubalance, snavsede filtre eller tilstoppet kondensafløb, som kan udløse frostbeskyttelsen."
+      ],
+      "begrundelse": "Frostalarmer skyldes typisk forkert eller defekt føler, svigtende forvarmeflade eller sikringsautomatik, forkerte parametre eller tilisning på grund af ubalance. BR18 § 422, stk. 3 kræver, at følere har fornøden præcision og stabilitet og er placeret korrekt.",
+      "kilde": "BR18 § 422, stk. 3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-017",
+      "maal": [
+        "VENT-KM-24"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et luftindtag/afkast-tagdæksel på et ventilationsanlæg giver 45 dB(A) målt 1 m fra kilden. Det nærmeste vindue til en nabos soveværelse ligger 6 m fra kilden. Antag punktkilde med fri udbredelse (sfærisk), og se bort fra refleksioner, skærme og luftabsorption. Beregn lydtrykniveauet ved vinduet. Angiv svaret i dB(A).",
+      "facit": {
+        "vaerdi": 29.4,
+        "enhed": "dB(A)",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "L2 = L1 − 20·log(r2/r1) = 45 − 20·log(6) = 45 − 15,6 = 29,4 dB(A).",
+      "kilde": "Formel: afstandsdæmpning for punktkilde, ΔL = 20·log(r2/r1)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-018",
+      "maal": [
+        "VENT-KM-24"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et rækkehus (sammenbygget enfamiliehus) i et område med åben og lav boligbebyggelse får en udedel til et ventilations- og varmepumpeanlæg på gavlen. Hvilken grænseværdi for det ækvivalente lydtrykniveau (LAeq) fra bygningens tekniske installationer gælder ifølge bygningsreglementets vejledning om lydforhold umiddelbart uden for vinduerne til beboelsesrum i husets egen bolig og i naboboligen i samme række?",
+      "valgmuligheder": {
+        "A": "≤ 30 dB",
+        "B": "≤ 35 dB",
+        "C": "≤ 40 dB",
+        "D": "≤ 45 dB"
+      },
+      "facit": "B",
+      "begrundelse": "Vejledningens tabel 2.3: udendørs ved vinduer til beboelsesrum og køkken samt på rekreative arealer ≤ 35 dB i åben og lav boligbebyggelse og sommerhusområder (≤ 40 dB i etageboligområder og blandet bolig og erhverv). For sammenbyggede enfamiliehuse gælder grænsen også ved naboboliger (note 3). BR18 § 371 henviser til vejledningen.",
+      "kilde": "BR18 § 371 og vejledning om lydforhold, tabel 2.3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/17/vejledninger/boliger/stoej-fra-tekniske-installationer-i-boliger/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-019",
+      "maal": [
+        "VENT-AK-01"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En bygherre har købt en murermestervilla fra 1932 (140 m², to etager, ingen mekanisk ventilation) og skal energirenovere med nye vinduer og efterisolering af loftet. Hun beder dig rådgive om, hvorvidt hun skal vælge et centralt balanceret anlæg med varmegenvinding eller decentrale rumventilatorer med varmegenvinding i ydervæggene. Giv din rådgivning som installatør.",
+      "kriterier": [
+        "Forklarer, at tættere klimaskærm øger behovet for kontrolleret ventilation af hensyn til fugt og luftkvalitet.",
+        "Sammenligner de to løsninger på mindst to punkter, fx varmegenvinding og SEL, lyd, behov for kanalføring og plads til aggregat, udsugning fra bad og køkken, vedligehold eller pris.",
+        "Nævner, at løsningen uanset type skal kunne opfylde kravene til udelufttilførsel og udsugning fra køkken, bad og wc (BR18 § 443).",
+        "Anbefaler en konkret løsning eller en klar beslutningsregel ud fra husets forhold, fx mulighed for kanalføring på loftet.",
+        "Nævner mindst ét næste skridt, fx opmåling, projektering af luftmængder eller indhentning af tilbud."
+      ],
+      "begrundelse": "Mesteren skal rådgive bygherren om installationsform ud fra krav, energi, lyd, plads og drift. BR18 § 443 stiller funktionskravene til udeluft, udsugning og emhætte.",
+      "kilde": "BR18 § 443 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-020",
+      "maal": [
+        "VENT-AK-01"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En bygherre vil spare energi ved at skrue ned for udelufttilførslen i sit nye enfamiliehus, mens familien er på arbejde og i skole. Huset har et anlæg, der måler fugt og luftkvalitet og regulerer efter målingerne. Hvad tillader bygningsreglementet?",
+      "valgmuligheder": {
+        "A": "Udelufttilførslen må reduceres til 0,15 l/s pr. m², i en længere periode over døgnet, når boligen ikke er i brug.",
+        "B": "Udelufttilførslen må reduceres til 0,20 l/s pr. m², men kun i op til 8 timer i døgnet, når boligen ikke er i brug.",
+        "C": "Udelufttilførslen må slukkes helt, når boligen ikke er i brug, hvis anlægget starter på målt fugt og luftkvalitet.",
+        "D": "Udelufttilførslen må ikke reduceres under 0,30 l/s pr. m², heller ikke når boligen ikke er i brug om dagen."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 443, stk. 1: når ventilationssystemet ved måling kan regulere efter tilfredsstillende luftkvalitet og fugtforhold, må udelufttilførslen reduceres til 0,15 l/s pr. m² i en længere periode over døgnet, hvis boligen ikke er i anvendelse.",
+      "kilde": "BR18 § 443, stk. 1 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-021",
+      "maal": [
+        "VENT-AK-02"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En erhvervsejendom fra 1975 ombygges, så kælderen (520 m²) bliver parkeringskælder for beboere og ansatte. Bygherren foreslår, at kælderen blot får en vægventilator ved indkørslen og åbne riste i ydervæggen. Giv din vurdering og et projekteringsoplæg som installatør.",
+      "kriterier": [
+        "Fastslår, at et garageanlæg over 150 m² skal have fornøden selvstændig ventilation, der kan fjerne eksplosive dampe og kulilte, og at forslaget derfor skal vurderes eller dimensioneres op mod det.",
+        "Foreslår mindst ét af: CO-detektering/gasdetektering med styring af ventilationen (fx trinvis eller behovsstyret), eller udsugning nær gulv og fordelt over arealet, så der ikke dannes døde zoner.",
+        "Placerer afkastet, så det ikke giver gener for omgivelserne eller kan suges ind i luftindtag (BR18 § 424).",
+        "Nævner, at ventilationen kan indgå i røg- og varmeudluftning af garagen, og at det skal afklares med brandrådgiveren."
+      ],
+      "begrundelse": "BR18 § 448: garageanlæg over 150 m² skal have fornøden selvstændig ventilation, der kan fjerne eksplosive dampe og kulilte. § 424 om placering af afkast gælder også. DS 428:2019 omfatter garageanlæg og mekanisk røgudsugning til støtte for redningsberedskabet.",
+      "kilde": "BR18 § 448 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/448_449/; BR18 §§ 421 og 424 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/; Dansk Standard: Har du styr på kravene til brandsikring af ventilationsanlæg i BR18? – https://www.ds.dk/da/nyhedsarkiv/2020/12/har-du-styr-paa-kravene-til-brandsikring-af-ventilationsanlaeg-i-br18",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-022",
+      "maal": [
+        "VENT-AK-01",
+        "VENT-KM-25"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Du er installatør på energirenoveringen af et parcelhus fra 1968. Huset har 165 m² opvarmet etageareal og består af et køkken-alrum, to badeværelser med bruser og wc, et bryggers og fire beboelsesrum (stue og tre værelser). Der etableres et nyt balanceret ventilationsanlæg med varmegenvinding, hvor aggregat og kanaler kun betjener denne bolig. Aggregatet placeres i det uopvarmede tagrum, og indblæst og udsuget luftmængde er lige store. Projekteringsforudsætning: anlægget indreguleres, så grundventilationen (drift uden forcering) samtidig dækker alle rums mindste udsugning efter bygningsreglementet og boligens udeluftkrav. Køkkenets udsugning sker via anlægget; emhætten har eget afkast og regnes ikke med.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Hvor stor skal udelufttilførslen mindst være for boligen samlet efter bygningsreglementet? Angiv svaret i l/s.",
+          "facit": {
+            "vaerdi": 49.5,
+            "enhed": "l/s",
+            "tolerance_pct": 0
+          },
+          "begrundelse": "0,30 l/s pr. m² · 165 m² = 49,5 l/s (BR18 § 443, stk. 1)."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Hvilken luftmængde bliver grundventilationen med projekteringsforudsætningen? Angiv svaret i l/s.",
+          "facit": {
+            "vaerdi": 60,
+            "enhed": "l/s",
+            "tolerance_pct": 0
+          },
+          "begrundelse": "Køkken 20 + 2 bade à 15 + bryggers 10 = 60 l/s, som er større end 49,5 l/s (BR18 § 443, stk. 5)."
+        },
+        {
+          "del": "c",
+          "type": "valg",
+          "spoergsmaal": "Hvilket krav stiller bygningsreglementet til varmegenvindingen i dette anlæg?",
+          "valgmuligheder": {
+            "A": "En tør temperaturvirkningsgrad på mindst 80 %.",
+            "B": "En tør temperaturvirkningsgrad på mindst 85 %.",
+            "C": "En våd temperaturvirkningsgrad på mindst 80 %.",
+            "D": "En tør temperaturvirkningsgrad på mindst 75 %."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 435: anlæg, hvor aggregat og kanalsystem kun betjener én bolig, skal have varmegenvinding med en tør temperaturvirkningsgrad på mindst 80 %."
+        },
+        {
+          "del": "d",
+          "type": "tal",
+          "spoergsmaal": "Hvor stor må ventilatorernes samlede optagne effekt højst være ved grundventilationen i del b, hvis anlægget skal overholde bygningsreglementets krav til specifikt elforbrug til lufttransport? Angiv svaret i W.",
+          "facit": {
+            "vaerdi": 60,
+            "enhed": "W",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "BR18 § 438: SEL ≤ 1.000 J/m³ ved grundluftskiftet. P = 1.000 J/m³ · 0,060 m³/s = 60 W."
+        },
+        {
+          "del": "e",
+          "type": "fri",
+          "spoergsmaal": "Beskriv de vigtigste forhold, du skal tage hensyn til ved placeringen af aggregat og kanaler i det uopvarmede tagrum, og hvad du skal aflevere til bygherren ved ibrugtagning.",
+          "kriterier": [
+            "Kræver, at indblæsnings- og udsugningskanaler i det kolde tagrum isoleres (DS 452), fx for at undgå varmetab og kondens.",
+            "Kræver, at aggregat, filtre og andre komponenter, der skal vedligeholdes, er let og forsvarligt tilgængelige, fx gangbro og plads foran aggregatet.",
+            "Nævner, at kondensafløbet fra aggregatet skal sikres mod frost, fx ved isolering, varmekabel eller føring ind i opvarmet zone.",
+            "Nævner, at der skal udføres og dokumenteres en funktionsafprøvning af luftmængder og SEL før ibrugtagning.",
+            "Nævner, at bygherren skal have en drifts- og vedligeholdelsesmanual, fx med tegninger og vedligeholdsintervaller."
+          ]
+        }
+      ],
+      "begrundelse": "Dimensionering efter BR18 § 443, energikrav efter §§ 435 og 438, tilgængelighed efter § 422, isolering efter DS 452 (§ 421), funktionsafprøvning efter § 450 og D&V-manual efter § 452.",
+      "kilde": "BR18 §§ 422, 435, 438, 443, 450, 452 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/ (samt 430_442, 421_429, 450, 451_452)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-023",
+      "maal": [
+        "VENT-AK-01"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et rækkehus fra 1985 får nyt køkken. Køkkenet er åbent mod stuen, hvor der står en brændeovn, der tager forbrændingsluft fra rummet. Huset har mekanisk udsugning fra køkken, bad og wc og friskluftventiler i beboelsesrummene. Bygherren ønsker en kraftig emhætte, og den nye køkkenplan giver plads til en emhætte over komfuret med afkast gennem taget. Du er ansvarlig for ventilationen i projektet.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvilken løsning opfylder bygningsreglementets krav til emhætten, når der ikke bruges korrektionsfaktorer eller dokumentation for emopfangsevne?",
+          "valgmuligheder": {
+            "A": "Regulerbar mekanisk udsugning på mindst 120 l/s med afkast til det fri.",
+            "B": "Regulerbar mekanisk udsugning på mindst 120 l/s med kulfilter og recirkulation.",
+            "C": "Regulerbar mekanisk udsugning på mindst 90 l/s med afkast til det fri.",
+            "D": "Regulerbar mekanisk udsugning på mindst 150 l/s med afkast til det fri."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 443, stk. 3–4: emhætten skal have regulerbar mekanisk udsugning med afkast til det fri og en luftstrøm på mindst 120 l/s, medmindre korrektionsfaktorer eller emopfangsevne dokumenteres."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Huset skal også have ny overføring af luft mellem rummene. Hvilken løsning er ikke tilladt efter bygningsreglementet?",
+          "valgmuligheder": {
+            "A": "Luft overføres fra stuen til badeværelset gennem en spalte under døren.",
+            "B": "Luft overføres fra badeværelset til et soveværelse gennem en overføringsventil.",
+            "C": "Luft overføres fra et soveværelse til gangen gennem en spalte under døren.",
+            "D": "Luft overføres fra gangen til wc-rummet gennem en overføringsventil i døren."
+          },
+          "facit": "B",
+          "begrundelse": "BR18 § 426: overførsel af luft må ikke ske fra mere til mindre luftforurenede rum. Badeværelset er mere forurenet end soveværelset."
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Vurder risikoen ved den kraftige emhætte i kombination med brændeovnen, og beskriv, hvordan du vil løse det, og hvordan du informerer bygherren.",
+          "kriterier": [
+            "Forklarer, at emhætten (sammen med den mekaniske udsugning) skaber undertryk, der kan give røgudslag eller tilbageslag fra brændeovnen og dermed risiko for røg og kulilte i boligen.",
+            "Foreslår mindst én konkret løsning, fx tilførsel af erstatningsluft (fx motorstyret spjæld eller ventil, der åbner med emhætten), forbrændingsluft til ovnen direkte udefra eller begrænsning af emhættens luftmængde.",
+            "Anbefaler at kontrollere undertrykket i praksis, fx måling af trykforskel eller røgprøve med emhætte på max, og/eller at inddrage skorstensfejeren.",
+            "Formidler risikoen og brugen klart til bygherren, fx skriftlig vejledning om ikke at bruge emhætten på max under optænding og anbefaling af CO-alarm."
+          ]
+        }
+      ],
+      "begrundelse": "Emhættekrav efter BR18 § 443, stk. 3–4, overføring efter § 426, og BR18 § 420, stk. 2 kræver, at ventilationen ikke giver risiko for personers sundhed.",
+      "kilde": "BR18 §§ 420, 426, 443 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/ (samt 421_429)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-024",
+      "maal": [
+        "VENT-AK-01",
+        "VENT-KM-25"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et parcelhus fra 1975 har et balanceret aggregat med modstrømsveksler i det uopvarmede tagrum. Aggregatet blæser 55 l/s ind. Den dimensionerende vintersituation er: indeluft 21 °C og 45 % relativ fugtighed, udeluft −10 °C. Varmevekslerens tørre temperaturvirkningsgrad er 82 %, og indblæsningsluften ønskes 20 °C. Antag luftens densitet 1,2 kg/m³ og varmefylde 1,005 kJ/(kg·K), og se bort fra ventilatorvarme og varmetab fra kanaler. Til dugpunktet bruges Magnus-formlen med a = 17,62 og b = 243,12 °C.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn indeluftens dugpunktstemperatur. Angiv svaret i °C.",
+          "facit": {
+            "vaerdi": 8.6,
+            "enhed": "°C",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "γ = ln(0,45) + 17,62·21/(243,12+21) = 0,6024; Td = 243,12·γ/(17,62 − γ) = 8,6 °C."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn temperaturen på indblæsningsluften efter varmeveksleren. Angiv svaret i °C.",
+          "facit": {
+            "vaerdi": 15.4,
+            "enhed": "°C",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "t = tu + η·(ti − tu) = −10 + 0,82·31 = 15,4 °C."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Hvor stor effekt skal en eftervarmeflade levere for at bringe indblæsningsluften op på 20 °C? Angiv svaret i W.",
+          "facit": {
+            "vaerdi": 304,
+            "enhed": "W",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "P = ρ·cp·q·Δt = 1,2 · 1,005 · 55 · (20 − 15,42) = 304 W."
+        },
+        {
+          "del": "d",
+          "type": "valg",
+          "spoergsmaal": "Udeluftindtaget og afkastet flyttes til facaden ved bryggerset, så både udeluft-, afkast-, indblæsnings- og udsugningskanalen føres et stykke gennem det opvarmede bryggers. Hvilke kanaler skal her have diffusionstæt isolering for at undgå kondens på kanalens yderside om vinteren?",
+          "valgmuligheder": {
+            "A": "Udeluftkanalen og afkastkanalen.",
+            "B": "Indblæsningskanalen og udsugningskanalen.",
+            "C": "Kun afkastkanalen.",
+            "D": "Kun indblæsningskanalen."
+          },
+          "facit": "A",
+          "begrundelse": "I varme rum er udeluft- og afkastkanalen kolde (under indeluftens dugpunkt på ca. 9 °C). Rumluftens fugt vil kondensere på dem, medmindre isoleringen er diffusionstæt. Indblæsnings- og udsugningsluften er varm."
+        },
+        {
+          "del": "e",
+          "type": "fri",
+          "spoergsmaal": "Beskriv, hvordan aggregatets kondensafløb skal udføres, når aggregatet står i det kolde tagrum.",
+          "kriterier": [
+            "Forklarer, at der dannes kondens i veksleren på udsugningssiden om vinteren, som skal ledes bort.",
+            "Kræver, at afløbet sikres mod frost, fx ved isolering, varmekabel eller føring hurtigt ind i opvarmet zone.",
+            "Kræver vandlås eller tørvandlås på afløbet, så aggregatet ikke suger luft eller lugt ind gennem afløbet.",
+            "Kræver, at afløbet føres med fald til et egnet afløb."
+          ]
+        }
+      ],
+      "begrundelse": "Luftens tilstandsændringer: dugpunkt (Magnus), temperaturvirkningsgrad og effekt til opvarmning. Isolering efter DS 452 (BR18 § 421).",
+      "kilde": "Formler: Magnus-formlen; t = tu + η·(ti − tu); P = ρ·cp·q·Δt. DS 452 (princip) via BR18 § 421 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-025",
+      "maal": [
+        "VENT-AK-01",
+        "VENT-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et parcelhus fra 1972 har i dag et ældre mekanisk udsugningsanlæg, der suger 45 l/s fra køkken, bad og bryggers, og hvor ventilatoren optager 85 W. Bygherren overvejer at skifte til et balanceret anlæg med varmegenvinding. Tilbuddet lyder på et aggregat, der ved grundluftskiftet på 48 l/s har et SEL på 850 J/m³ og en tør temperaturvirkningsgrad på 85 %. Anlæggene kører hele året (8.760 h). Antag luftens densitet 1,2 kg/m³, varmefylde 1,005 kJ/(kg·K) og 85.000 gradtimer (Kh) for fyringssæsonen.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn SEL for det eksisterende udsugningsanlæg. Angiv svaret i J/m³.",
+          "facit": {
+            "vaerdi": 1889,
+            "enhed": "J/m³",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "SEL = 85 W / 0,045 m³/s = 1.889 J/m³."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn det nye aggregats årlige elforbrug til lufttransport. Angiv svaret i kWh/år.",
+          "facit": {
+            "vaerdi": 357,
+            "enhed": "kWh/år",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "P = 850 · 0,048 = 40,8 W; E = 40,8 · 8.760 = 357 kWh/år."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Beregn, hvor meget varme det nye aggregat genvinder i løbet af et år. Angiv svaret i kWh/år.",
+          "facit": {
+            "vaerdi": 4182,
+            "enhed": "kWh/år",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "Q = ρ·cp·q·η·Gt = 1,2 · 1,005 · 0,048 · 0,85 · 85.000 = 4.182 kWh/år."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Rådgiv bygherren om, hvad der ud over tallene i a–c skal med i beslutningen, og hvad du vil undersøge, før du giver et endeligt tilbud.",
+          "kriterier": [
+            "Nævner, at besparelsen afhænger af den faktiske varmekilde og prisen pr. kWh varme og el (fx fjernvarme, varmepumpe eller olie), så kr./år og tilbagebetalingstid skal beregnes ud fra husets forhold.",
+            "Nævner indeklimafordele ud over energi, fx kontrolleret fugtfjernelse, filtreret luft eller mindre træk fra friskluftventiler.",
+            "Undersøger mindst ét praktisk forhold i huset, fx plads til aggregat og kanalføring, isolering i kolde rum, kondensafløb eller husets lufttæthed.",
+            "Nævner, at anlægget skal indreguleres og funktionsafprøves (luftmængder og SEL) og have drifts- og vedligeholdelsesmanual, og at der kommer løbende udgifter til filtre og service."
+          ]
+        }
+      ],
+      "begrundelse": "Energiberegning: SEL = P/q, E = P·t, genvundet varme = ρ·cp·q·η·gradtimer. Rådgivning ud fra BR18 §§ 430, 450 og 452.",
+      "kilde": "Formler: SEL = P/q; E = P·t; Q = ρ·cp·q·η·Gt. BR18 §§ 430, 450, 452 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-026",
+      "maal": [
+        "VENT-AK-01"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En andelsboligforening i en etageejendom fra 1934 vil have ét fælles balanceret ventilationsanlæg med varmegenvinding på loftet, der betjener alle 12 lejligheder. Kanalerne føres i en ny lodret skakt gennem alle etager. Hver lejlighed er en selvstændig brandcelle og har sin egen emhætte. Du er installatør og projekterende for ventilationen.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvilken grænse for det specifikke elforbrug til lufttransport (SEL) gælder for dette anlæg?",
+          "valgmuligheder": {
+            "A": "1.000 J/m³ udeluft ved grundluftskiftet.",
+            "B": "1.200 J/m³ udeluft ved grundluftskiftet.",
+            "C": "1.500 J/m³ udeluft ved grundluftskiftet.",
+            "D": "1.800 J/m³ udeluft ved grundluftskiftet."
+          },
+          "facit": "B",
+          "begrundelse": "BR18 § 436, nr. 3: 1.200 J/m³ udeluft ved grundluftskiftet for ventilationsanlæg til etageboliger. Grænsen på 1.000 J/m³ i § 438 gælder kun anlæg, der betjener én bolig."
+        },
+        {
+          "del": "b",
+          "type": "fri",
+          "spoergsmaal": "Beskriv, hvordan du sikrer, at det fælles anlæg ikke overfører lugt og forurening mellem lejlighederne ved normal drift.",
+          "kriterier": [
+            "Forklarer, at et anlæg, der betjener flere boliger, skal udformes, så der er tilfredsstillende luftkvalitet i alle lejligheder.",
+            "Nævner, at lugt kan overføres mellem lejlighederne via fælles kanaler eller via lækage i varmeveksleren.",
+            "Foreslår mindst ét af: trykstabil drift (fx konstanttryk-regulering af ventilatorerne), kontraspjæld eller indregulerede spjæld, så luft ikke kan løbe baglæns mellem lejlighederne.",
+            "Foreslår mindst ét af: veksler med lav intern lækage (fx modstrømsveksler frem for roterende veksler uden rensezone) eller kontrol af vekslerens tæthed."
+          ]
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Hvis det brænder i én lejlighed, må røgen ikke spredes til de andre lejligheder via det fælles anlæg. Beskriv, hvilke principper for anlæggets funktion ved brand du kan vælge imellem, og hvad valget afhænger af.",
+          "kriterier": [
+            "Forklarer, at det fælles anlæg er en mulig vej for røgspredning mellem brandcellerne (DS 428).",
+            "Kræver, at anlægget udformes og styres, så røg ikke spredes fra den brændende lejlighed til de andre via kanalerne.",
+            "Forklarer forskellen mellem et spjældsikret system (anlægget stopper, og spjæld ved brandcellegrænserne lukker automatisk) og et røgventileret system (udsugningen fortsætter, eller en røgventilator overtager, og suger røgen ud af bygningen).",
+            "Nævner, at styringen ved brand skal fastlægges, fx hvordan brand detekteres (brandtermostat, røgdetektor eller brandalarmanlæg), og hvordan ventilatorerne styres i branddrift.",
+            "Nævner, at valget skal fastlægges i samarbejde med brandrådgiveren eller ud fra bygningens brandstrategi."
+          ]
+        }
+      ],
+      "begrundelse": "SEL-krav til etageboliger efter BR18 § 436, nr. 3, flere boliger på samme anlæg efter § 427 og brandsikring efter § 420, stk. 2 og § 421 (DS 428), som skal forhindre røgspredning fra rum til rum. DS 428 opererer med spjældsikrede og røgventilerede systemer.",
+      "kilde": "BR18 § 436, nr. 3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/; BR18 §§ 420, 421, 427 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/; Dansk Standard: Har du styr på kravene til brandsikring af ventilationsanlæg i BR18? – https://www.ds.dk/da/nyhedsarkiv/2020/12/har-du-styr-paa-kravene-til-brandsikring-af-ventilationsanlaeg-i-br18; Systemair: Brandsikring af ventilationsanlæg – vejledning til standardløsninger iht. DS428:2019 + Till.1 + Till.2:2021 – https://www.byggematerialer.dk/brandsikring-af-ventilationsanlaeg-1288399/fil-files/Brandsikring_af_ventilationanlaeg.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-027",
+      "maal": [
+        "VENT-AK-01"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et enfamiliehus fra 1955 på 110 m² har naturlig ventilation med aftrækskanaler fra køkken og bad i en gammel skorstensblok og spalteventiler i vinduerne. Ejeren vil renovere badeværelse og køkken, men ønsker ikke et balanceret anlæg. Han spørger, om han kan beholde den naturlige ventilation og eventuelt supplere med et centralt udsugningsanlæg uden mekanisk tilførsel af udeluft, der suger fra køkken, bad og wc.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvad siger bygningsreglementet om ventilationsformen i dette hus?",
+          "valgmuligheder": {
+            "A": "Enfamiliehuse kan ventileres naturligt eller kombineret, og kravene til udeluft og emhætte gælder fortsat.",
+            "B": "Enfamiliehuse skal ved ombygning af både bad og køkken altid have balanceret ventilation med varmegenvinding.",
+            "C": "Enfamiliehuse kan ventileres naturligt eller kombineret, og så gælder kravene til emhætte ikke.",
+            "D": "Enfamiliehuse kan kun ventileres naturligt, hvis udelufttilførslen er mindst 0,5 l/s pr. m²."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 446: enfamiliehuse kan ventileres ved naturlig ventilation eller en kombination af naturlig og mekanisk ventilation; for naturlig ventilation gælder § 443, stk. 1, 3 og 4 (udeluft og emhætte)."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Hvis løsningen med et centralt udsugningsanlæg vælges: Hvilket krav stiller bygningsreglementet til dets specifikke elforbrug til lufttransport?",
+          "valgmuligheder": {
+            "A": "Højst 600 J/m³ ved maksimalt tryktab.",
+            "B": "Højst 1.000 J/m³ ved grundluftskiftet.",
+            "C": "Højst 800 J/m³ ved maksimalt tryktab.",
+            "D": "Højst 1.500 J/m³ ved konstant ydelse."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 436, nr. 4: 600 J/m³ ved maksimalt tryktab for udsugningsanlæg uden mekanisk udelufttilførsel."
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Hvis udsugningsanlægget etableres: Beskriv, hvad du skal gøre med de eksisterende aftrækskanaler i skorstensblokken, og hvor afkastet skal placeres.",
+          "kriterier": [
+            "Kræver, at de naturlige aftrækskanaler fra køkken og bad blændes, lukkes eller adskilles fra det nye anlæg, så de ikke kortslutter udsugningen eller trækker luft ned.",
+            "Kræver, at gamle aftrækskanaler, der genbruges (fx til føring af ny udsugning eller afkast), først kontrolleres for tæthed og brugbarhed, eller at ubrugte kanaler lukkes i begge ender.",
+            "Placerer afkastet over tag eller på anden måde, så det ikke giver gener for omgivelserne, fx ikke tæt ved vinduer eller naboens luftindtag (BR18 § 424)."
+          ]
+        }
+      ],
+      "begrundelse": "Naturlig og kombineret ventilation i enfamiliehuse efter BR18 § 446, SEL for udsugningsanlæg efter § 436, nr. 4, og aftræk/afkast efter § 424.",
+      "kilde": "BR18 § 446 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/443_446/; BR18 § 436, nr. 4 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/; BR18 § 424 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-028",
+      "maal": [
+        "VENT-AK-02",
+        "VENT-KM-20"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En kontorbygning fra 1988 på 480 m² ombygges. Der installeres et nyt ventilationsaggregat med indblæsning, udsugning og roterende varmeveksler. Anlægget kører med konstant luftydelse på 0,7 m³/s udeluft i brugstiden (kl. 7–18 på hverdage). Ved funktionsafprøvningen måles den samlede optagne effekt til ventilatorerne til 0,95 kW. Efter varmeveksleren er indblæsningsluften 15 °C ved den dimensionerende udetemperatur, og den skal indblæses med 18 °C. Antag luftens densitet 1,2 kg/m³ og varmefylde 1,005 kJ/(kg·K).",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn anlæggets specifikke elforbrug til lufttransport (SEL). Angiv svaret i J/m³.",
+          "facit": {
+            "vaerdi": 1357,
+            "enhed": "J/m³",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "SEL = 950 W / 0,7 m³/s = 1.357 J/m³."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Overholder anlægget bygningsreglementets krav til SEL?",
+          "valgmuligheder": {
+            "A": "Ja, kravet er højst 1.500 J/m³ for anlæg med konstant luftydelse.",
+            "B": "Nej, kravet er højst 1.000 J/m³ for anlæg med konstant luftydelse.",
+            "C": "Nej, kravet er højst 1.250 J/m³ for anlæg med konstant luftydelse.",
+            "D": "Ja, kravet er højst 2.100 J/m³ for anlæg med konstant luftydelse."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 436, nr. 1: højst 1.500 J/m³ udeluft for anlæg med konstant luftydelse. 1.357 < 1.500."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Beregn den effekt, eftervarmefladen skal kunne levere ved den dimensionerende udetemperatur. Angiv svaret i kW.",
+          "facit": {
+            "vaerdi": 2.53,
+            "enhed": "kW",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "P = ρ·cp·q·Δt = 1,2 · 1,005 · 0,7 · 3 = 2,53 kW."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Bygherren vil lade anlægget køre døgnet rundt på fuld ydelse for at være på den sikre side. Rådgiv om styring og drift ud fra krav og energiforbrug.",
+          "kriterier": [
+            "Forklarer, at tilførslen af udeluft i andre bygninger end boliger skal kunne begrænses i perioder med reduceret behov, så længe luftkvaliteten i brugstiden er acceptabel.",
+            "Foreslår mindst én konkret styring, fx tidsstyring efter brugstid, behovsstyring med CO2- eller tilstedeværelsesfølere og VAV-spjæld, eller natsænkning.",
+            "Forklarer, at døgndrift på fuld ydelse giver unødvendigt el- og varmeforbrug, fordi både ventilatorernes elforbrug og eftervarmen falder, når luftmængden reduceres uden for brugstiden."
+          ]
+        }
+      ],
+      "begrundelse": "SEL efter BR18 § 436, nr. 1; varmeeffekt P = ρ·cp·q·Δt; begrænsning af udeluft uden for brugstid efter § 431 og § 430.",
+      "kilde": "BR18 §§ 430, 431, 436 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/; formel P = ρ·cp·q·Δt",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-029",
+      "maal": [
+        "VENT-AK-02",
+        "VENT-KM-24"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et klasselokale på 62 m² i en skole fra 1962 skal have nyt mekanisk ventilationsanlæg. Lokalet dimensioneres til 28 elever og 1 lærer. Antag en CO2-produktion på 18 l/h pr. person, udeluftens CO2-koncentration 415 ppm, fuld opblanding og stationære forhold. Anlægget udføres med behovsstyring.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn den udeluftmængde, der er nødvendig, for at CO2-koncentrationen i lokalet ikke overstiger bygningsreglementets grænse ved de dimensionerende forhold. Angiv svaret i l/s.",
+          "facit": {
+            "vaerdi": 248,
+            "enhed": "l/s",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "Grænsen er 1.000 ppm (BR18 § 447, stk. 2). q = G/(ci − cu) = 29 · 0,018 m³/h / (585 · 10⁻⁶) = 892 m³/h = 248 l/s."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Hvad er den mindste ventilation, behovsstyringen må regulere ned til i brugstiden, når der er få elever? Angiv svaret i l/s.",
+          "facit": {
+            "vaerdi": 21.7,
+            "enhed": "l/s",
+            "tolerance_pct": 0
+          },
+          "begrundelse": "BR18 § 447, stk. 3: ventilationen i brugstiden må ikke være mindre end 0,35 l/s pr. m². 0,35 · 62 = 21,7 l/s."
+        },
+        {
+          "del": "c",
+          "type": "valg",
+          "spoergsmaal": "Hvad skal et mekanisk ventilationsanlæg i et undervisningsrum ifølge bygningsreglementet omfatte?",
+          "valgmuligheder": {
+            "A": "Indblæsning og udsugning samt varmegenvinding, der forvarmer indblæsningsluften.",
+            "B": "Udsugning og behovsstyring samt friskluftventiler med radiator, der forvarmer udeluften.",
+            "C": "Indblæsning og udsugning samt køling, der holder rummet under 26 °C.",
+            "D": "Indblæsning og udsugning samt befugtning, der holder fugten over 30 %."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 447, stk. 1: et mekanisk anlæg i undervisningsrum skal omfatte både indblæsning og udsugning samt varmegenvinding, der forvarmer indblæsningsluften."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Beskriv opbygningen af behovsstyringen (følere, reguleringsorganer og ventilatorstyring), og hvordan du sikrer, at den virker efter hensigten.",
+          "kriterier": [
+            "Placerer CO2-føleren, så den måler rummets luftkvalitet i opholdszonen eller i udsugningen, og ikke tæt ved indblæsning, vinduer eller døre.",
+            "Beskriver et reguleringsorgan for lokalet, fx VAV-spjæld eller spjæld med motor styret af CO2-signalet, eventuelt kombineret med tilstedeværelsesføler eller tidsprogram.",
+            "Beskriver, at ventilatorerne reguleres efter behovet, fx konstanttryk- eller spjældoptimeret styring af EC-ventilatorer eller frekvensomformere.",
+            "Kræver funktionsafprøvning og dokumentation af, at behovsstyringen virker (fx afprøvning af min/max luftmængde og føler-kalibrering) før ibrugtagning."
+          ]
+        }
+      ],
+      "begrundelse": "CO2-krav og mindste ventilation efter BR18 § 447; massebalance q = G/(ci − cu); funktionsafprøvning efter § 450 og følere efter § 422, stk. 3.",
+      "kilde": "BR18 § 447 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/447/; BR18 § 450 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/450/; formel q = G/(ci − cu)",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-030",
+      "maal": [
+        "VENT-AK-02",
+        "VENT-KM-24"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En etage i en erhvervsejendom fra 1960 ombygges til mødecenter. I et mødelokale er der fire ens indblæsningsarmaturer, som hver giver 27 dB(A) i lokalet, og støj fra aggregatet gennem kanalsystemet giver 25 dB(A). Lokalet grænser op til flugtvejsgangen, som er en selvstændig brandcelle, og indblæsningskanalen føres gennem væggen mod gangen. Armaturer, kanaler og aggregat er dele af samme ventilationsinstallation. Bygherren har bedt om, at bygningsreglementets vejledende projekteringsværdier for lyd i kontorbyggeri overholdes.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn det samlede lydtrykniveau i mødelokalet fra ventilationen. Antag ukorrelerede kilder. Angiv svaret i dB(A).",
+          "facit": {
+            "vaerdi": 33.7,
+            "enhed": "dB(A)",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "L = 10·log(4 · 10^2,7 + 10^2,5) = 33,7 dB(A)."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Overholder lokalet bygningsreglementets vejledende projekteringsværdi for støj fra tekniske installationer i møderum?",
+          "valgmuligheder": {
+            "A": "Ja, projekteringsværdien for møderum er LAeq ≤ 35 dB.",
+            "B": "Nej, projekteringsværdien for møderum er LAeq ≤ 30 dB.",
+            "C": "Ja, projekteringsværdien for møderum er LAeq ≤ 40 dB.",
+            "D": "Nej, projekteringsværdien for møderum er LAeq ≤ 25 dB."
+          },
+          "facit": "B",
+          "begrundelse": "Vejledning om lydforhold, tabel 5.3: møderum, videokonferencerum og auditorier LAeq ≤ 30 dB. 33,7 dB overskrider."
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Foreslå tiltag, der kan bringe støjen ned, og forklar, hvad de gør.",
+          "kriterier": [
+            "Foreslår mindst ét tiltag ved armaturerne, fx armaturer med lavere lydeffekt, flere armaturer med lavere luftmængde hver eller lavere tryk foran armaturerne.",
+            "Foreslår mindst ét tiltag i kanalsystemet, fx lyddæmper efter aggregatet eller før lokalet, lavere lufthastighed eller færre regulerings- og drøvlingstab tæt på lokalet.",
+            "Kræver, at virkningen eftervises, fx ved ny beregning af det samlede niveau ud fra producentdata eller ved måling i det færdige lokale."
+          ]
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Beskriv de brandmæssige krav til kanalens gennemføring i væggen mod flugtvejsgangen, og hvordan du sikrer, at løsningen virker i driften.",
+          "kriterier": [
+            "Forklarer, at gennemføringen ikke må svække brandcellevæggens brandmodstand, og at kanalsystemet ikke må sprede brand og røg til flugtvejen (DS 428).",
+            "Foreslår en anerkendt løsning, fx brandspjæld i væggen eller brandisolering af kanalen, monteret efter producentens godkendte montagevejledning.",
+            "Kræver, at spjæld er tilgængelige for eftersyn, fx via inspektionslem.",
+            "Kræver, at spjældene funktionsafprøves ved ibrugtagning og indgår i drifts- og vedligeholdelsesplanen."
+          ]
+        }
+      ],
+      "begrundelse": "Logaritmisk addition; projekteringsværdi for møderum 30 dB efter vejledningen til BR18 § 368; brandsikring efter BR18 § 420, stk. 2 og § 421 (DS 428).",
+      "kilde": "Vejledning om lydforhold, tabel 5.3 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/17/vejledninger/kontorbygninger/stoej-fra-tekniske-installationer-i-kontorbyggeri/; BR18 §§ 420–421 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/; Systemair: Brandsikring af ventilationsanlæg – vejledning til standardløsninger iht. DS428:2019 + Till.1 + Till.2:2021 – https://www.byggematerialer.dk/brandsikring-af-ventilationsanlaeg-1288399/fil-files/Brandsikring_af_ventilationanlaeg.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-031",
+      "maal": [
+        "VENT-AK-02",
+        "VENT-KM-20"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et nyt ventilationsanlæg med variabel luftydelse (VAV) installeres ved ombygning af en eksisterende kontorbygning. Ved funktionsafprøvningen måles det specifikke elforbrug til lufttransport til 1.690 J/m³ ved maksimal luftydelse og maksimalt tryktab. Over året er den gennemsnitlige ventilatoreffekt 2,1 kW i 2.800 driftstimer. Varmefladen forventes at bruge ca. 14.000 kWh varme om året. Kontorerne har stillesiddende arbejde ved skriveborde tæt på indblæsningsarmaturerne.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvilken SEL-grænse gælder for anlægget, og overholdes den?",
+          "valgmuligheder": {
+            "A": "1.500 J/m³ ved maksimalt tryktab; grænsen overskrides.",
+            "B": "1.800 J/m³ ved maksimalt tryktab; grænsen overholdes.",
+            "C": "2.100 J/m³ ved maksimalt tryktab; grænsen overholdes.",
+            "D": "1.200 J/m³ ved grundluftskiftet; grænsen overskrides."
+          },
+          "facit": "B",
+          "begrundelse": "BR18 § 436, nr. 2: højst 1.800 J/m³ udeluft ved maksimalt tryktab for anlæg med variabel luftydelse. 1.690 < 1.800."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Bygherren overvejer at begrænse driftstiden. Ved hvor mange driftstimer om året (med den oplyste gennemsnitseffekt) når ventilatorernes elforbrug den grænse, hvor bygningsreglementet kræver måler på elforbruget? Angiv svaret i h/år.",
+          "facit": {
+            "vaerdi": 1429,
+            "enhed": "h/år",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "BR18 § 439: måler kræves, når elforbruget til ventilatorer overstiger 3.000 kWh/år. t = 3.000 kWh / 2,1 kW = 1.429 h/år."
+        },
+        {
+          "del": "c",
+          "type": "valg",
+          "spoergsmaal": "Hvilke målere kræver bygningsreglementet på anlægget med de oplyste 2.800 driftstimer og 14.000 kWh varme?",
+          "valgmuligheder": {
+            "A": "Måler på ventilatorernes elforbrug og måler på varmefladens varmeforbrug.",
+            "B": "Kun måler på ventilatorernes elforbrug, fordi varmen måles i bygningens hovedmåler.",
+            "C": "Kun måler på varmefladens varmeforbrug, fordi elforbruget er under kravgrænsen.",
+            "D": "Ingen målere, fordi kravet kun gælder ved nybyggeri og ikke ved ombygning."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 439: 2,1 kW · 2.800 h = 5.880 kWh > 3.000 kWh, så elforbruget skal måles; § 441: varmeforbrug til varmeflader over 10.000 kWh/år skal måles. Begge gælder også ved nyinstallation i eksisterende byggeri."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Beskriv, hvordan du sikrer og dokumenterer, at der ikke opstår træk ved skrivebordene.",
+          "kriterier": [
+            "Nævner eftervisning af, at trækrisikoen (draught rate) ikke overstiger 20 %, som én anerkendt dokumentation ved stillesiddende aktivitet.",
+            "Nævner mindst ét projekteringstiltag, fx valg og placering af armaturer ud fra kastelængde og lufthastighed i opholdszonen, indblæsningstemperatur eller hensyn til VAV-drift ved lav luftmængde (fx kaldluftsnedfald).",
+            "Nævner verifikation i det færdige byggeri, fx måling af lufthastighed og temperatur i opholdszonen eller røgprøve."
+          ]
+        }
+      ],
+      "begrundelse": "SEL efter BR18 § 436, nr. 2; målerkrav efter §§ 439 og 441; træk efter § 425.",
+      "kilde": "BR18 §§ 436, 439, 441 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/; BR18 § 425 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "VENT-032",
+      "maal": [
+        "VENT-AK-02"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et snedkeri i en ældre industribygning får nyt lakeringsrum. Rummet ventileres med 3,0 m³/s udsugning og samme luftmængde i indblæsning. Udsugningsluften indeholder opløsningsmiddeldampe, som ikke må nå indblæsningsluften, heller ikke ved lækage i genvindingen. Aggregaterne for indblæsning og udsugning står i hver sin ende af bygningen.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvilken løsning for varmegenvinding er bedst begrundet her, og hvorfor tillader bygningsreglementet den?",
+          "valgmuligheder": {
+            "A": "Væskekoblede batterier; de må bruges her, fordi luftstrømmene skal holdes helt adskilt.",
+            "B": "Roterende veksler med rensezone; den må bruges her, fordi rensezonen fjerner overføring.",
+            "C": "Krydsveksler i aluminium; den må bruges her, fordi pladerne holder luftstrømmene tætte.",
+            "D": "Ingen genvinding; det må man her, fordi kravet ikke gælder anlæg til industriprocesser."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 433: væskekoblede batterier kan kun benyttes, hvis adskillelse af luftstrømmene er afgørende for rummenes funktion, hvilket er tilfældet her (og aggregaterne står adskilt). Kravet om varmegenvinding (§ 432) gælder stadig; § 437 undtager kun SEL-kravet."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Eftervarmefladen i indblæsningsaggregatet forsynes fra en frostsikret væskekreds med glykolblanding og skal levere 52 kW ved den dimensionerende situation. Glykolblandingen har varmefylde 3,6 kJ/(kg·K) og densitet 1.040 kg/m³, og temperaturforskellen mellem frem- og returløb i kredsen er 6 K. Beregn den nødvendige volumenstrøm i væskekredsen til dimensionering af pumpen. Angiv svaret i m³/h.",
+          "facit": {
+            "vaerdi": 8.33,
+            "enhed": "m³/h",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "m = P/(cp·Δt) = 52/(3,6 · 6) = 2,407 kg/s. V = 2,407/1.040 = 0,002315 m³/s = 8,33 m³/h."
+        },
+        {
+          "del": "c",
+          "type": "valg",
+          "spoergsmaal": "Gælder bygningsreglementets grænser for specifikt elforbrug til lufttransport (SEL) for procesudsugningen fra lakeringsrummet?",
+          "valgmuligheder": {
+            "A": "Nej, SEL-grænserne gælder ikke for anlæg knyttet til industrielle processer.",
+            "B": "Ja, grænsen er 1.500 J/m³, fordi anlægget har konstant luftydelse.",
+            "C": "Ja, grænsen er 600 J/m³, fordi der er tale om et udsugningsanlæg.",
+            "D": "Nej, SEL-grænserne gælder kun for anlæg i boliger, skoler og daginstitutioner."
+          },
+          "facit": "A",
+          "begrundelse": "BR18 § 437: § 436 gælder ikke for anlæg knyttet til industrielle processer."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Beskriv de vigtigste forhold ved projektering af udsugningen og afkastet fra lakeringsrummet.",
+          "kriterier": [
+            "Foreslår, at forureningen fjernes tæt ved kilden, fx med sprøjtevæg/sprøjtekabine med udsugning eller punktudsugning, og væk fra medarbejderens indåndingszone.",
+            "Kræver tilstrækkelig og tempereret erstatningsluft, så rummet holder et passende undertryk i forhold til tilstødende rum.",
+            "Placerer afkastet, så udsugningsluften ikke suges ind i luftindtag eller giver gener for omgivelserne, fx afkast over tag med god afstand til indtag.",
+            "Nævner brand- eller eksplosionsrisikoen ved opløsningsmiddeldampe, fx at ventilatorer og komponenter skal være egnet til eksplosionsfarlig atmosfære efter brandrådgivers eller myndighedens krav."
+          ]
+        }
+      ],
+      "begrundelse": "Væskekoblede batterier efter BR18 § 433, varmegenvinding efter § 432, SEL-undtagelse efter § 437 og afkast efter § 424. Pumpeflow efter P = m·cp·Δt. DS 428:2019 omfatter også udsugning fra industrielle processer.",
+      "kilde": "BR18 §§ 432, 433, 437 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/430_442/; BR18 § 424 – https://www.bygningsreglementet.dk/tekniske-bestemmelser/22/krav/421_429/; formel P = m·cp·Δt; Dansk Standard: Har du styr på kravene til brandsikring af ventilationsanlæg i BR18? – https://www.ds.dk/da/nyhedsarkiv/2020/12/har-du-styr-paa-kravene-til-brandsikring-af-ventilationsanlaeg-i-br18",
+      "status": "V 2026-10-18"
+    }
+  ]
+}

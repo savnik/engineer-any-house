@@ -79,6 +79,22 @@ def main() -> int:
                 forvent(f"{navn}: værdien udskrives ikke", NOEGLE not in ud and "A1b2A1b2" not in ud, ud)
             f.unlink()
 
+        # Tekst, der allerede står på origin/main, stammer fra pluginet – en sag, der kopierer den, er ikke et læk.
+        def git(*a):
+            subprocess.run(["git", "-C", str(repo), *a], capture_output=True, check=True)
+        git("init", "-q")
+        (repo / "plugins" / "p" / "praksis.md").write_text(f"- {LINJE}\n", encoding="utf-8")
+        git("add", "-A")
+        git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "main")
+        git("update-ref", "refs/remotes/origin/main", "HEAD")
+        kode, ud = kør(hjem, repo)
+        forvent("sagstekst, der allerede står på origin/main, godkendes", kode == 0, ud)
+        (repo / "plugins" / "p" / "ny.md").write_text(f"- {EJENDOMSLINJE}\n", encoding="utf-8")
+        kode, ud = kør(hjem, repo)
+        forvent("ny kopieret sagstekst afvises stadig med git", kode == 1 and "ny.md" in ud, ud)
+        (repo / "plugins" / "p" / "ny.md").unlink()
+        (repo / "plugins" / "p" / "praksis.md").unlink()
+
         kode, ud = kør(pathlib.Path(tmp) / "tomt-hjem", repo)
         forvent("uden lokale data (CI) køres strukturtjek alene", kode == 0 and "0 private termer" in ud, ud)
 

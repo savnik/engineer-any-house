@@ -113,6 +113,47 @@ Måling af 437 transskripter: subagenter 59 %, hovedtråd 35 %, workflows 6 % (m
 
 **Fravalgt:** fillåse under hele fagkaldet (serialiserer det, vi ville parallelisere) og en tabel pr. fag (fragmenterer registrene, som projektlederen og kontrollen skal se samlet). Kun-tilføj-logge for beslutningslog og kontrollog er ikke nødvendige, så længe kun hovedtråden skriver dem.
 
+## Eksamenslag (2026-10-17)
+**Problem:** fagviden blev kun testet med 1–2 scenarie-evals pr. fag. Der var ingen måling af bredde og intet grundlag for at sige, hvor videnbasen mangler noget, eller hvor den vildleder.
+
+**Valg:** Uddannelsesmaterialet gemmes ikke som videnbase. Det ville fylde konteksten og bringe forældede lærebogsværdier og ophavsretligt stof ind i et repo, der skal offentliggøres. I stedet bruges de **officielle læringsmål** som dækningskort, og hvert mål får egne eksamensopgaver med efterprøvet facit. Officielle prøvesæt er ikke offentlige (EVU's prøvebank og autorisationsprøverne er fortrolige). Opgaverne er derfor skrevet til repoet ud fra prøveformerne.
+
+| Komponent | Design |
+|---|---|
+| `eksamen/<fag>/laeringsmaal.json` | Kompetencemål ordret fra uddannelsesordningen (STIL, gældende fra 1/8-2026; målene er flyttet fra bekendtgørelsen til uddannelsesordningen), el: EVU's 11 el-teoretiske temaer, mesterniveau: autorisationsprøvens indhold (el: Sikkerhedsstyrelsens tre hovedområder; vvs: de kompetencegivende AK-fagelementer). Mål uden for rollen har en begrundelse |
+| `opgaver*.json` | `valg`, `tal` og `fri` med facit, kilde og V/T. Hvert mål i rollen har opgaver i både `udvikling` og `holdout` |
+| `scripts/exam.py` | `tjek` (format og dækning, i `valider.py`), `vis` (sæt og dækningskort som markdown), `koer` (headless `claude -p` i tom mappe, uden brugerens plugins og internet; arm `basis` mod `plugin` med `--agent`), `rapport` (gevinst, huller og regressioner, tid, tokens og pris pr. bestået opgave) |
+| Rettelse | `valg` og `tal` deterministisk fra linjen `SVAR:`; `fri` af en censor-LLM efter opgavens kriterier |
+| Placering | Uden for `plugins/`, så facit hverken pakkes eller kan læses af agenten |
+| Kun pluginet | Plugin-armen fjerner `memory: user` i plugin-kopien, så målingen dækker det, der er forankret i repoet, og ikke agenthukommelsen med erfaringer fra brugerens sager. `--med-hukommelse` er et tilvalg. Agenten har kun læseværktøjer under eksamen |
+
+**Målt effekt (2026-10-18, én kørsel, før `0a506d5` og efter `dce258f`):**
+
+| Fag | Bestået, hele sættet | Holdout | Pris pr. bestået opgave | Ture pr. opgave |
+|---|---|---|---|---|
+| el | 80 % → 94 % (basis 82 %) | 77 % → 87 % (basis 71 %) | 0,086 → 0,077 $ | 2,0 → 2,1 |
+| vvs | 86 % → 94 % (basis 81 %) | 86 % → 89 % (basis 86 %) | 0,074 → 0,072 $ | 1,9 → 2,2 |
+
+Videnbasen voksede ca. 9 KB pr. fag (ca. 7 % dyrere pr. kald), men prisen pr. rigtigt svar faldt. I sagerne ligger gevinsten i undgåede returer fra kontrollen. Den måles med `forbrug.py --til/--siden` omkring udgivelsen.
+
+**Installatøruddannelsen (AK) og ventilation (2026-10-18, én kørsel, basis mod plugin):** el AK 27 opgaver, 93 % mod 93 %. Vvs AK 22 opgaver, 86 % mod 86 %. Ventilation 32 opgaver, 91 % mod 94 %. Mesteropgaverne ligger tæt på loftet for begge arme. Modellen klarer projektering og ansvar godt, og hullerne er få, enkelte kriterier i fri-opgaver (tegningssymboler, P2X-tab). De er ikke lukket i videnbasen, fordi der ikke var en efterprøvelig primærkilde, og gevinsten er for lille til at betale for mere kontekst. AK-sættene bruges som regressionsværn: de skal blive ved med at bestå, når videnbasen ændres.
+
+**Effektiv drift:** `koer` kører som standard kun plugin-armen og genbruger det nyeste basis-svar. Holdout kræver `--udgivelse`. `--kun-fejlede` kører kun de opgaver, der fejlede. `--gentag-fri` gentager fri-opgaverne for at dæmpe støj. Rapporten viser tid, ture, input-tokens, videnbasens størrelse og pris pr. bestået opgave.
+
+**Kendt faldgrube:** I `dontAsk`-tilstand afviser `claude -p` Read og Grep uden for arbejdsmappen. Uden `--add-dir` til plugin-kopien kan agenten ikke læse sin egen videnbase. De første målinger målte derfor kun agentprompten.
+
+**Konklusion og erfaringer:** Pluginet betaler sig gennem videnbasens konkrete danske regler, ikke gennem agentprompten og ikke på mesterniveau. Fremgangsmåde og faldgruber ved udbygning og måling står i `eksamen/README.md`, afsnittet "Erfaringer".
+
+**CI-agent og forsøgslog (2026-10-18):** Forbedringerne var blevet komplicerede at holde styr på: hvad er afprøvet,
+på hvilken revision, og hvad gav det? Projektagenten `.claude/agents/ci-forbedring.md` laver derfor ét forsøg ad gangen
+efter en fast cyklus: vælg, formulér hypotesen, mål før, ændr, mål efter (billigt først), afgør og aflevér som
+draft-PR. `scripts/forsoeg.py` fører forsøgslog og benchmark i repoet og anvender beslutningsreglen. Agenten er ikke
+et plugin, fordi den arbejder på repoet og ikke i sagerne. Den ser aldrig holdout: en PreToolUse-hook afviser direkte
+adgang, og alle sammendrag gemmer holdout kun som antal og hash. Loggen er indledt med de forsøg, der allerede var
+gennemført (F-001–F-006), og med de åbne idéer som forslag (F-007–F-011).
+
+**Læringsløkke:** huller i udviklingssættet → ny tekst i videnbasen via normal forankring (primærkilde, V/T, review) → ny kørsel. Holdout-sættet bruges kun til måling, så forbedringen kan måles på opgaver, videnbasen ikke er skrevet efter. Regressioner (basis består, plugin ikke) peger på tekst i videnbasen, der vildleder.
+
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
 
@@ -164,7 +205,7 @@ De lokale kilder findes ikke i CI. Der kører kun strukturtjek og nøglemønstre
 
 ## Roadmap
 1. Verificér T-punkter (murer: KC-recepter, DS/EN-udgaver, riller, kvartsstøv; tømrer: C18/C24, NTR, vinduesmontage, brand i småhuse; netselskab; skorstensfejer) og markér V med dato.
-2. Kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
+2. Forbedringer via CI-agenten (`claude --agent ci-forbedring`), først F-007 (mål støjen, så beslutningsreglens grænser bliver empiriske). Udbyg eksamenslaget til de øvrige fag; kør evals for alle plugins og loop-evalen med `byg-team` installeret; tilføj eval-cases fra første RCA'er.
 3. Test hooks i Cowork med den samlede pakke.
 4. Kalibrér kontrollen: mål afvisningsrate, antal runder og kontrolsvigt pr. fag; justér rubric-versioner.
 5. Nye fag via `scripts/nyt_fag.py` (fx kloak, tag, gulv) – altid med kontrolagent.

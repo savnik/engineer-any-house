@@ -1,0 +1,1362 @@
+{
+  "forsoeg": [
+    {
+      "id": "F-001",
+      "dato": "2026-10-18",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Konkrete danske regler fra primærkilder løfter plugin-armen på de huller, udviklingssættet viser",
+      "aendring": "BR18 kap. 12-aftræk, BEK 247/2018 gaseftersyn, BEK 240/2017 jordvarme, BEK 1082-tabel, Fællesregulativets Ik-krav, gør-det-selv efter BEK 560/2017 (dce258f)",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "el": {
+          "foer": {
+            "rev": "0a506d5",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-085056-plugin-alle-0a506d5.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 16,
+                  "bestaaet": 10,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.302,
+                  "pris_pr_bestaaet": 0.1302,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 11,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.314,
+                  "pris_pr_bestaaet": 0.1194,
+                  "sek_pr_opgave": null
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0934,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.033,
+                  "pris_pr_bestaaet": 0.0794,
+                  "sek_pr_opgave": null
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 29,
+                  "bestaaet": 24,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.117,
+                  "pris_pr_bestaaet": 0.0882,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-001",
+                    "EL-008",
+                    "EL-015",
+                    "EL-028",
+                    "EL-042"
+                  ]
+                },
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 23,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.861,
+                  "pris_pr_bestaaet": 0.0809,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-001",
+                    "EL-008",
+                    "EL-015",
+                    "EL-028",
+                    "EL-042",
+                    "EL-045"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 2.053,
+                  "pris_pr_bestaaet": 0.079,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-136"
+                  ]
+                },
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 23,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.786,
+                  "pris_pr_bestaaet": 0.0776,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-136",
+                    "EL-139",
+                    "EL-141",
+                    "EL-142"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "dce258f",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-090250-plugin-alle-dce258f.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 16,
+                  "bestaaet": 10,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.302,
+                  "pris_pr_bestaaet": 0.1302,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.319,
+                  "pris_pr_bestaaet": 0.1015,
+                  "sek_pr_opgave": null
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0934,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.082,
+                  "pris_pr_bestaaet": 0.0773,
+                  "sek_pr_opgave": null
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 29,
+                  "bestaaet": 24,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.117,
+                  "pris_pr_bestaaet": 0.0882,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-001",
+                    "EL-008",
+                    "EL-015",
+                    "EL-028",
+                    "EL-042"
+                  ]
+                },
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 29,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.05,
+                  "pris_pr_bestaaet": 0.0707,
+                  "sek_pr_opgave": null,
+                  "fejlede": []
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 2.053,
+                  "pris_pr_bestaaet": 0.079,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-136"
+                  ]
+                },
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 27,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.91,
+                  "pris_pr_bestaaet": 0.0707,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-142"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "vvs": {
+          "foer": {
+            "rev": "0a506d5",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-082716-plugin-alle-0a506d5.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 1.014,
+                  "pris_pr_bestaaet": 0.0724,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 0.796,
+                  "pris_pr_bestaaet": 0.0568,
+                  "sek_pr_opgave": null
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 1.015,
+                  "pris_pr_bestaaet": 0.1015,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 0.845,
+                  "pris_pr_bestaaet": 0.0845,
+                  "sek_pr_opgave": null
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 27,
+                  "bestaaet": 23,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.558,
+                  "pris_pr_bestaaet": 0.1112,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-006",
+                    "VVS-030",
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                },
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 1.884,
+                  "pris_pr_bestaaet": 0.0754,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-006",
+                    "VVS-030"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 30,
+                  "bestaaet": 22,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.271,
+                  "pris_pr_bestaaet": 0.1032,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-109",
+                    "VVS-110",
+                    "VVS-119",
+                    "VVS-127",
+                    "VVS-134",
+                    "VVS-135",
+                    "VVS-139"
+                  ]
+                },
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 24,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 1.847,
+                  "pris_pr_bestaaet": 0.0769,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-109",
+                    "VVS-110",
+                    "VVS-119",
+                    "VVS-134",
+                    "VVS-142"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "dce258f",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-083907-plugin-alle-dce258f.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 1.014,
+                  "pris_pr_bestaaet": 0.0724,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 15,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 0.873,
+                  "pris_pr_bestaaet": 0.0582,
+                  "sek_pr_opgave": null
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 1.015,
+                  "pris_pr_bestaaet": 0.1015,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 0.876,
+                  "pris_pr_bestaaet": 0.0876,
+                  "sek_pr_opgave": null
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 27,
+                  "bestaaet": 23,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.558,
+                  "pris_pr_bestaaet": 0.1112,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-006",
+                    "VVS-030",
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                },
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 26,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.009,
+                  "pris_pr_bestaaet": 0.0773,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 30,
+                  "bestaaet": 22,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.271,
+                  "pris_pr_bestaaet": 0.1032,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-109",
+                    "VVS-110",
+                    "VVS-119",
+                    "VVS-127",
+                    "VVS-134",
+                    "VVS-135",
+                    "VVS-139"
+                  ]
+                },
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 29,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.041,
+                  "pris_pr_bestaaet": 0.0704,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-119"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "0a506d5",
+      "laering": "Gevinsten kom fra konkrete tal, paragraffer og gør-det-selv-grænser, som basis gætter forkert. Gasreglerne blev først brugt, da agentprompten og SKILL.md pegede på dem. Videnbasen voksede ca. 9 KB pr. fag, men prisen pr. bestået faldt.",
+      "slut": "2026-10-18",
+      "vurdering": "behold",
+      "rev_efter": "dce258f",
+      "pr": "#6"
+    },
+    {
+      "id": "F-002",
+      "dato": "2026-10-18",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "prompt",
+      "hypotese": "Agentprompten alene (uden adgang til videnbasen) løfter scoren over basis",
+      "aendring": "Utilsigtet: plugin-armen kunne ikke læse sin videnbase i dontAsk uden --add-dir",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "forkast",
+      "maalinger": {
+        "el": {
+          "efter": {
+            "rev": "0a506d5",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-081214-plugin-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 16,
+                  "bestaaet": 10,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.302,
+                  "pris_pr_bestaaet": 0.1302,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.127,
+                  "pris_pr_bestaaet": 0.0939,
+                  "sek_pr_opgave": null
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0934,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 0.928,
+                  "pris_pr_bestaaet": 0.0714,
+                  "sek_pr_opgave": null
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 29,
+                  "bestaaet": 24,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.117,
+                  "pris_pr_bestaaet": 0.0882,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-001",
+                    "EL-008",
+                    "EL-015",
+                    "EL-028",
+                    "EL-042"
+                  ]
+                },
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 23,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.67,
+                  "pris_pr_bestaaet": 0.0726,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-001",
+                    "EL-008",
+                    "EL-015",
+                    "EL-028",
+                    "EL-042",
+                    "EL-045"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 2.053,
+                  "pris_pr_bestaaet": 0.079,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-136"
+                  ]
+                },
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.435,
+                  "pris_pr_bestaaet": 0.0552,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-136",
+                    "EL-139"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "vvs": {
+          "efter": {
+            "rev": "0a506d5",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-080007-plugin-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 1.014,
+                  "pris_pr_bestaaet": 0.0724,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 15,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 0.849,
+                  "pris_pr_bestaaet": 0.0566,
+                  "sek_pr_opgave": null
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 1.015,
+                  "pris_pr_bestaaet": 0.1015,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 0.798,
+                  "pris_pr_bestaaet": 0.0798,
+                  "sek_pr_opgave": null
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 27,
+                  "bestaaet": 23,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.558,
+                  "pris_pr_bestaaet": 0.1112,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-006",
+                    "VVS-030",
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                },
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 23,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 1.7,
+                  "pris_pr_bestaaet": 0.0739,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-006",
+                    "VVS-032",
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 30,
+                  "bestaaet": 22,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.271,
+                  "pris_pr_bestaaet": 0.1032,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-109",
+                    "VVS-110",
+                    "VVS-119",
+                    "VVS-127",
+                    "VVS-134",
+                    "VVS-135",
+                    "VVS-139"
+                  ]
+                },
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 23,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 1.799,
+                  "pris_pr_bestaaet": 0.0782,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-109",
+                    "VVS-110",
+                    "VVS-119",
+                    "VVS-134",
+                    "VVS-135",
+                    "VVS-139"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "0a506d5",
+      "laering": "Agentprompten alene giver næsten intet. Gevinsten kræver, at agenten kan læse videnbasen; tjek altid --add-dir og at agenten faktisk læser references/.",
+      "slut": "2026-10-18",
+      "vurdering": "uafklaret",
+      "begrundelse": "Målt med plugin uden adgang til videnbasen: el 74/88 mod basis 72/88, vvs 71/85 mod 69/85 – inden for støj."
+    },
+    {
+      "id": "F-003",
+      "dato": "2026-10-18",
+      "fag": [
+        "el",
+        "vvs",
+        "ventilation"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Pluginet giver også gevinst på installatørniveau (AK) og i ventilation",
+      "aendring": "",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "vvs": {
+          "efter": {
+            "rev": "dce258f",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-113257-begge-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-c": {
+                "basis": {
+                  "n": 7,
+                  "bestaaet": 6,
+                  "opgaver_hash": "b9bd83a2853a",
+                  "pris_usd": 0.579,
+                  "pris_pr_bestaaet": 0.0966,
+                  "sek_pr_opgave": 17.9
+                },
+                "plugin": {
+                  "n": 7,
+                  "bestaaet": 5,
+                  "opgaver_hash": "b9bd83a2853a",
+                  "pris_usd": 0.509,
+                  "pris_pr_bestaaet": 0.1019,
+                  "sek_pr_opgave": 22.9
+                }
+              },
+              "udvikling/opgaver-c": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.375,
+                  "pris_pr_bestaaet": 0.1057,
+                  "sek_pr_opgave": 20.4,
+                  "fejlede": [
+                    "VVS-213",
+                    "VVS-220"
+                  ]
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.107,
+                  "pris_pr_bestaaet": 0.0791,
+                  "sek_pr_opgave": 23.5,
+                  "fejlede": [
+                    "VVS-220"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "el": {
+          "efter": {
+            "rev": "dce258f",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-114510-begge-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-c": {
+                "basis": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.765,
+                  "pris_pr_bestaaet": 0.0956,
+                  "sek_pr_opgave": 22.2
+                },
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.698,
+                  "pris_pr_bestaaet": 0.0872,
+                  "sek_pr_opgave": 24.6
+                }
+              },
+              "udvikling/opgaver-c": {
+                "basis": {
+                  "n": 18,
+                  "bestaaet": 17,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.471,
+                  "pris_pr_bestaaet": 0.0865,
+                  "sek_pr_opgave": 19.6,
+                  "fejlede": [
+                    "EL-226"
+                  ]
+                },
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 17,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.369,
+                  "pris_pr_bestaaet": 0.0805,
+                  "sek_pr_opgave": 22.2,
+                  "fejlede": [
+                    "EL-221"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "ventilation": {
+          "efter": {
+            "rev": "dce258f",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-114646-begge-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 12,
+                  "bestaaet": 10,
+                  "opgaver_hash": "3e5aa905784e",
+                  "pris_usd": 1.047,
+                  "pris_pr_bestaaet": 0.1047,
+                  "sek_pr_opgave": 24.2
+                },
+                "plugin": {
+                  "n": 12,
+                  "bestaaet": 10,
+                  "opgaver_hash": "3e5aa905784e",
+                  "pris_usd": 1.04,
+                  "pris_pr_bestaaet": 0.104,
+                  "sek_pr_opgave": 25.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 20,
+                  "bestaaet": 19,
+                  "opgaver_hash": "c3afdee0b82e",
+                  "pris_usd": 1.759,
+                  "pris_pr_bestaaet": 0.0926,
+                  "sek_pr_opgave": 23.6,
+                  "fejlede": [
+                    "VENT-030"
+                  ]
+                },
+                "plugin": {
+                  "n": 20,
+                  "bestaaet": 20,
+                  "opgaver_hash": "c3afdee0b82e",
+                  "pris_usd": 1.982,
+                  "pris_pr_bestaaet": 0.0991,
+                  "sek_pr_opgave": 27.1,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "dce258f",
+      "laering": "Basis og plugin ligger ens på mesterniveau (el AK 25/27 begge, vvs AK 19/22 mod 19/22, ventilation 29/32 mod 30/32). Byg ikke videnbase til mesterniveauet; AK-sættene er regressionsværn.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling til benchmark for AK-sættene og ventilation.",
+      "pr": "#6"
+    },
+    {
+      "id": "F-004",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Plugin-armen kan læse sin videnbase i dontAsk med --add-dir",
+      "aendring": "exam.py: --add-dir til plugin-kopien, test_plugin_arm_can_read_its_plugin (104ba31)",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "laering": "Mål aldrig plugin-armen uden at tjekke, at den læser references/. Ugyldige resultater flyttes til results/ugyldig-*/.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Fejl i måleopsætningen: de første plugin-målinger testede kun prompten.",
+      "rev_efter": "104ba31"
+    },
+    {
+      "id": "F-005",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Facit kan aflæses af formen (oftest B, længst)",
+      "aendring": "Valgmuligheder blandes ved kørsel; tjek advarer om længdebias over 40 %",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "laering": "Skriv distraktorer med samme længde og form som facit; kør tjek før måling.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Kvalitetssikring af prøven, ikke af pluginet."
+    },
+    {
+      "id": "F-006",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "rettemaske",
+      "hypotese": "Censor-LLMen dumper fagligt gode svar uden paragrafcitater",
+      "aendring": "Censorprompten forbyder krav om citater; rebedoem; ét krav pr. kriterium",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "laering": "Afgør altid først, om et hul er et reelt videnshul eller en fejl i rettemasken. Brug rebedoem efter ændret rettemaske.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Ca. halvdelen af hullerne i fri-opgaver var fejl i rettemasken."
+    },
+    {
+      "id": "F-007",
+      "dato": "2026-10-18",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Måle støjen: hvor meget svinger fri-opgaverne mellem kørsler",
+      "aendring": "koer --gentag-fri 3 på udviklingssættet; fastlæg NOISE_TASKS empirisk",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "el": {
+          "efter": {
+            "rev": "4ab0e22",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-114510-begge-alle.json",
+              "20261018-131402-plugin-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 16,
+                  "bestaaet": 10,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.302,
+                  "pris_pr_bestaaet": 0.1302,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.28,
+                  "pris_pr_bestaaet": 0.0984,
+                  "sek_pr_opgave": 29.4
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0934,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.105,
+                  "pris_pr_bestaaet": 0.085,
+                  "sek_pr_opgave": 25.9
+                }
+              },
+              "holdout/opgaver-c": {
+                "basis": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.765,
+                  "pris_pr_bestaaet": 0.0956,
+                  "sek_pr_opgave": 22.2
+                },
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.727,
+                  "pris_pr_bestaaet": 0.0909,
+                  "sek_pr_opgave": 28.2
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 29,
+                  "bestaaet": 24,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.117,
+                  "pris_pr_bestaaet": 0.0882,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-001",
+                    "EL-008",
+                    "EL-015",
+                    "EL-028",
+                    "EL-042"
+                  ]
+                },
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.967,
+                  "pris_pr_bestaaet": 0.0702,
+                  "sek_pr_opgave": 23.7,
+                  "fejlede": [
+                    "EL-045"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 2.053,
+                  "pris_pr_bestaaet": 0.079,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-136"
+                  ]
+                },
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 28,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.762,
+                  "pris_pr_bestaaet": 0.0629,
+                  "sek_pr_opgave": 23.3,
+                  "fejlede": []
+                }
+              },
+              "udvikling/opgaver-c": {
+                "basis": {
+                  "n": 18,
+                  "bestaaet": 17,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.471,
+                  "pris_pr_bestaaet": 0.0865,
+                  "sek_pr_opgave": 19.6,
+                  "fejlede": [
+                    "EL-226"
+                  ]
+                },
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.425,
+                  "pris_pr_bestaaet": 0.089,
+                  "sek_pr_opgave": 25.2,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "vvs": {
+          "efter": {
+            "rev": "4ab0e22",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261017-235900-basis-alle.json",
+              "20261018-113257-begge-alle.json",
+              "20261018-134220-plugin-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 1.014,
+                  "pris_pr_bestaaet": 0.0724,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 14,
+                  "opgaver_hash": "f4de3958682c",
+                  "pris_usd": 0.878,
+                  "pris_pr_bestaaet": 0.0627,
+                  "sek_pr_opgave": 24.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 1.015,
+                  "pris_pr_bestaaet": 0.1015,
+                  "sek_pr_opgave": null
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "48c952ebd6dd",
+                  "pris_usd": 0.834,
+                  "pris_pr_bestaaet": 0.0834,
+                  "sek_pr_opgave": 25.8
+                }
+              },
+              "holdout/opgaver-c": {
+                "basis": {
+                  "n": 7,
+                  "bestaaet": 6,
+                  "opgaver_hash": "b9bd83a2853a",
+                  "pris_usd": 0.579,
+                  "pris_pr_bestaaet": 0.0966,
+                  "sek_pr_opgave": 17.9
+                },
+                "plugin": {
+                  "n": 7,
+                  "bestaaet": 6,
+                  "opgaver_hash": "b9bd83a2853a",
+                  "pris_usd": 0.421,
+                  "pris_pr_bestaaet": 0.0702,
+                  "sek_pr_opgave": 19.3
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 27,
+                  "bestaaet": 23,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.088,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-006",
+                    "VVS-030",
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                },
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 26,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 1.876,
+                  "pris_pr_bestaaet": 0.0722,
+                  "sek_pr_opgave": 25.7,
+                  "fejlede": [
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 30,
+                  "bestaaet": 22,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.271,
+                  "pris_pr_bestaaet": 0.1032,
+                  "sek_pr_opgave": null,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-109",
+                    "VVS-110",
+                    "VVS-119",
+                    "VVS-127",
+                    "VVS-134",
+                    "VVS-135",
+                    "VVS-139"
+                  ]
+                },
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 28,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.081,
+                  "pris_pr_bestaaet": 0.0743,
+                  "sek_pr_opgave": 25.7,
+                  "fejlede": [
+                    "VVS-119",
+                    "VVS-139"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "basis": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.375,
+                  "pris_pr_bestaaet": 0.1057,
+                  "sek_pr_opgave": 20.4,
+                  "fejlede": [
+                    "VVS-213",
+                    "VVS-220"
+                  ]
+                },
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.02,
+                  "pris_pr_bestaaet": 0.0785,
+                  "sek_pr_opgave": 24.7,
+                  "fejlede": [
+                    "VVS-212",
+                    "VVS-220"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "ventilation": {
+          "efter": {
+            "rev": "4ab0e22",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-114646-begge-alle.json",
+              "20261018-161430-plugin-alle.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 12,
+                  "bestaaet": 10,
+                  "opgaver_hash": "3e5aa905784e",
+                  "pris_usd": 1.047,
+                  "pris_pr_bestaaet": 0.1047,
+                  "sek_pr_opgave": 24.2
+                },
+                "plugin": {
+                  "n": 12,
+                  "bestaaet": 11,
+                  "opgaver_hash": "3e5aa905784e",
+                  "pris_usd": 1.171,
+                  "pris_pr_bestaaet": 0.1064,
+                  "sek_pr_opgave": 29.1
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 20,
+                  "bestaaet": 19,
+                  "opgaver_hash": "c3afdee0b82e",
+                  "pris_usd": 1.759,
+                  "pris_pr_bestaaet": 0.0926,
+                  "sek_pr_opgave": 23.6,
+                  "fejlede": [
+                    "VENT-030"
+                  ]
+                },
+                "plugin": {
+                  "n": 20,
+                  "bestaaet": 19,
+                  "opgaver_hash": "c3afdee0b82e",
+                  "pris_usd": 1.918,
+                  "pris_pr_bestaaet": 0.1009,
+                  "sek_pr_opgave": 28.7,
+                  "fejlede": [
+                    "VENT-029"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "4ab0e22",
+      "laering": "Fri-opgaver svinger op til 6 beståede mellem enkeltkørsler (el 19/22/22 af 30, vvs 19/16/22 af 28, ventilation stabil). NOISE_TASKS = 2 holder kun med flertal af 3 kørsler: mål altid før og efter med --gentag-fri 3. Pris pr. bestået ca. 0,07–0,10 $ uændret; ca. 25 s og 2,5 ture pr. opgave. Kontogrænsen rammes efter ca. 2 fag med --gentag-fri 3: kør ét fag ad gangen.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling efter merge af #5–#7: ny baseline på main. Alle fag inden for støj af det gamle benchmark (el 106 mod 108/115, vvs 97 mod 99/107, ventilation 30 mod 30/32).",
+      "rev_efter": "4ab0e22"
+    },
+    {
+      "id": "F-008",
+      "dato": "2026-10-18",
+      "fag": [
+        "el"
+      ],
+      "kategori": "rettemaske",
+      "hypotese": "EL-142 har et sammensat kriterium, der dumper fagligt gode svar",
+      "aendring": "",
+      "opgaver": [
+        "EL-142"
+      ],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-009",
+      "dato": "2026-10-18",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Lukke de sidste AK-huller (DS/EN 60617-symboler, P2X-tab)",
+      "aendring": "Kun med efterprøvelig primærkilde; F-003 viser lille gevinst på mesterniveau",
+      "opgaver": [
+        "EL-221",
+        "VVS-220"
+      ],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-010",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "opgaver",
+      "hypotese": "Eksamenssæt for projektlederen (koordinering, grænseflader, tidsplan)",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-011",
+      "dato": "2026-10-18",
+      "fag": [
+        "el",
+        "vvs"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Slanke videnbasen: fjerne tekst, der aldrig læses eller ikke flytter opgaver, giver lavere pris pr. bestået ved samme kvalitet",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    }
+  ]
+}

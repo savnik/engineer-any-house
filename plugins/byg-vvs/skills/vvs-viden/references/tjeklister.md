@@ -5,11 +5,12 @@
 - [ ] Varmtvandsbehov og løsning (beholder, veksler, varmepumpe) samt cirkulation
 - [ ] Rørføring som rør-i-rør med tilgængelige samlinger; fordeler med drypbakke/lækagealarm
 - [ ] Afløb: fald, dimension, udluftning, renseadgang; snitflade og kote til kloakmester
-- [ ] Vådrum: gulvafløb godkendt til gulvopbygning og membransystem; fald; få gennemføringer
+- [ ] Vådrum: gulvafløb godkendt til gulvopbygning og membransystem; fald; ingen rørgennemføringer i gulvet i den vandbelastede del (BR18 §339 stk. 3)
 - [ ] Tilbagestrømningssikring vurderet efter DS/EN 1717
 - [ ] Isolering (DS 452), frostsikring, kondens
 - [ ] Varmeanlæg: varmetab, fremløbstemperatur, indregulering; varmepumpens støj og placering
 - [ ] Ændres varmekilde eller kedelsikkerhed: fejltilstandstabel (drift, dump, strømsvigt, fastlåst ventil, lækage), uafhængige barrierer, funktionstjek af sikkerhedskæden (tryk og flow til afløbssikring, intet luftgab), ekspansion efter DS/EN 12828
+- [ ] Fyringsanlæg/kedelskift: forbrændingsluft, undertryk, aftrækkets T- og G-klasse, lysningsareal (normgrundlag, "Fyringsanlæg og aftræk"); jordvarme: anmeldelse/tilladelse og afstande (normgrundlag, "Jordvarme")
 - [ ] Autorisation, tilladelser og forsyningernes bestemmelser afklaret
 - [ ] Grænseflader aftalt med el, tømrer, murer/flisemurer og ventilation
 
@@ -38,3 +39,10 @@
 - [ ] Sikkerhedsventiler, afspærringer og stophane funktionstestet
 - [ ] Som-udført-tegning, D&V-materiale, datablade og godkendelser (VA/MK)
 - [ ] Brugerinstruktion: fordeler, afspærring, varmepumpe/fjernvarmeunit, service
+
+## Eftersyn af gasinstallation (BEK 247/2018, se normgrundlag)
+- [ ] Tæthedsprøve af hele installationen; visuel gennemgang af hele den tilgængelige installation, også dele andre har udført, inkl. aftræk og friskluft
+- [ ] Forbrændingsmålinger (CO2/O2, CO korrigeret, røggastemperatur, tryk) og flammebillede; indreguleret efter fabrikantens anvisning; CO ≤ 500 ppm
+- [ ] Sikkerhedskomponenter, termostater, hovedhane og ventiler funktionskontrolleret
+- [ ] Fejl udbedret, før eftersynet afsluttes; mindre fejl uden sikkerhedsrisiko meddelt ejer/bruger
+- [ ] Attest/rapport med måleværdier til ejeren og i KLS; næste eftersyn efter fabrikantens anvisning
