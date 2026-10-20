@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """PreToolUse (Bash): bim-sammenligner må kun køre læsende bim.py-kommandoer.
 
-Tilladt: [BIM=<sti>; ] python3 <…/bim.py | "$BIM"> sammenlign|gitter|linjer|tegn|vis|find|info|skala|afkod tjek …
+Tilladt: [BIM=<sti>; ] python3 <…/bim.py | "$BIM"> sammenlign|gitter|linjer|tegn|vis|find|info|skala|tjek|afkod tjek …
 Alt andet (flere kommandoer, omdirigering, rm/mv/cp, redigering) afvises. Andre agenter påvirkes ikke.
 Fail-safe: en uventet fejl blokerer ikke.
 """
@@ -10,7 +10,7 @@ import re
 import shlex
 import sys
 
-TILLADT = {"sammenlign", "gitter", "linjer", "tegn", "vis", "find", "info", "skala", "afkod"}
+TILLADT = {"sammenlign", "gitter", "linjer", "tegn", "vis", "find", "info", "skala", "afkod", "tjek"}
 AGENT = "bim-sammenligner"
 
 
@@ -37,6 +37,12 @@ def tjek(cmd: str) -> str | None:
         return f"kommandoen '{dele[2]}' er ikke læsende – tilladt: {', '.join(sorted(TILLADT))}"
     if dele[2] == "afkod" and (len(dele) < 4 or dele[3] != "tjek"):
         return "kun 'afkod tjek'"
+    if dele[2] == "tjek":
+        ud = dele[dele.index("--ud") + 1] if "--ud" in dele[:-1] else ""
+        if "/bim/sammenligning/" not in ud.replace("\\", "/") + "/":
+            return "'tjek' kun med --ud under <sagsmappe>/bim/sammenligning/"
+        if "--tegn" in dele:
+            return "'tjek' uden --tegn (brug 'tegn' til tegninger)"
     return None
 
 

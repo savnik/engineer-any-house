@@ -40,7 +40,8 @@
       "git_ekstra": [
         "bim/historik/*",
         "bim/sammenligning/*"
-      ]
+      ],
+      "vaerktoejskontrol": true
     },
     "statik": {
       "agent": "statiker",
