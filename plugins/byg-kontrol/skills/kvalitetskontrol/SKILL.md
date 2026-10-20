@@ -66,7 +66,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
 ```
 LEVERANCE: <id>
 Runde: <r> af 2 · Forsøg: <n> af 2
-FASE: <0-4> · KONTROLNIVEAU: <let|fuld>
+FASE: <0-4> · KONTROLNIVEAU: <let|fuld|stikprøve>
 DESIGNGRUNDLAG: <kun for projektleverancer i fase 3+: godkendte fagleverance-ID'er>
 Opgave: <den oprindelige opgave til fagagenten, ordret>
 Leverance: <sti til fagnotat>
@@ -79,7 +79,7 @@ Tidligere domme: <stier eller "ingen">
 Sagsmappe: <sti>
 Udfør et review på det angivne kontrolniveau efter din kontrolprotokol (forsøg 1: fuldt review; forsøg 2 og senere: kun lukning af fund og regressioner i ændrede afsnit), og afslut med JSON-dommen.
 ```
-- **FASE og KONTROLNIVEAU** følger `faser-og-gates.md` i projektlederens skill. Niveauet sættes efter **opgavens risiko**, ikke kun efter faget. `fuld` gælder design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3. Ellers er niveauet `let`, også for indkøb, priser, sortiment, materialelister og styklister til et godkendt design.
+- **FASE og KONTROLNIVEAU** følger `faser-og-gates.md` i projektlederens skill. Niveauet sættes efter **opgavens risiko**, ikke kun efter faget. `fuld` gælder design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3. Ellers er niveauet `let`, også for indkøb, priser, sortiment, materialelister og styklister til et godkendt design. `stikprøve` bruges kun til enkeltstående fagspørgsmål uden sag (ingen `FASE:`) uden sikkerhedsfunktion og aldrig for el og statik: niveauet skrives i **fagkaldet**, og hooken udtager ca. hver tredje. Afviser hooken kontrolkaldet med "ikke udtaget", er svaret afleveret uden kontrol og skal markeres "Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)".
 - **Model:** kontrolagenterne kører på Sonnet. Ved `KONTROLNIVEAU: fuld` kaldes de med `model: "opus"` i Agent-kaldet (hooken afviser ellers kaldet). `bim-sammenligner` kører på Sonnet.
 - **Giv kun det nødvendige med:** henvis til de relevante afsnit i andre fagnotater (fil og afsnit) frem for hele filer.
 - **Projektkontrol** kræver `FASE:`. I fase 3+ kræver den også `DESIGNGRUNDLAG:` med godkendte fagleverancer (hooken håndhæver det).

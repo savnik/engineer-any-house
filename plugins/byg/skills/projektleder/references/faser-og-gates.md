@@ -82,6 +82,9 @@ Den samlede plan tjekkes mod alle tidsregler i fagnotater og projektgrundlag, f�
 |---|---|---|
 | `let` | Tjekker sikkerhed og lovkrav, afgørende fejl og om opgaven er besvaret. Kun kritiske fund og væsentlige fund med sikkerheds- eller lovkonsekvens blokerer | Fase 0 og 1, ikke-sikkerhedskritiske fag i fase 2, og opgaver uden ændring af en sikkerhedsfunktion (indkøb, priser, sortiment, materialelister, styklister) |
 | `fuld` | Hele kontrolprotokollen, alle punkter og fejlkataloget | Design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3 |
+| `stikprøve` | Som `let`, men kun for ca. hver tredje leverance. Hooken udtager ud fra leverance-ID'et; ikke udtagne svar markeres "Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)" | Kun enkeltstående fagspørgsmål uden sag (`/byg:spoerg`, intet `FASE:`) uden sikkerhedsfunktion. Aldrig el og statik. Leverancer i en sag kontrolleres altid |
+
+**Hvorfor stikprøve kun uden sag (F-012, 2026-10-20):** På eksamenssættets enkeltstående spørgsmål fangede `let` kontrol 0 af 7 forkerte svar og afviste 6 rigtige. I rigtige sager blev 56 % af leverancerne afvist i forsøg 1, og ca. 60 % af de blokerende fund handlede om sammenhængen med sagen: grænseflader, andre fags notater, beslutningslog og ejendomskort. Den værdi findes kun, når der er en sag.
 
 **Fund-fastlåsning (alle niveauer):** Forsøg 1 er det fulde review. I forsøg 2 og 3 tjekker kontrollen kun, om fundene er lukket, og om de ændrede afsnit har skabt regressioner. Et nyt blokerende fund skal have `nyt_grundlag` (`regression`, `aendret_tekst` eller `kritisk_sikkerhed`). Ellers sender hooken dommen retur.
 
