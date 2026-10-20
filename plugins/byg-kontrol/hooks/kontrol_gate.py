@@ -33,6 +33,10 @@ Regler
   "stikproeve.aldrig_fag") udtages deterministisk ud fra leverance-ID'et med andelen "stikproeve.andel". Udtaget →
   normal kontrol. Ikke udtaget → status "ikke_udtaget" ved aflevering: Stop blokerer ikke, og et kontrolkald
   afvises med besked om at markere svaret som ikke kvalitetskontrolleret.
+- Værktøjskontrol (fagregister "vaerktoejskontrol", i dag bim): et fagkald med "KONTROLNIVEAU: værktøj" godkendes
+  uden kontrolagent, når hjælpeagentens sammenligning ender med "resultat": "ok" og "tjek": {"fejl": 0,
+  "sporbarhed": 0} (bim.py tjek). Ellers kaldes kontrolagenten som normalt. Godkendelsen gemmes som en dom
+  med "godkendt_af": "vaerktoej".
 - Workflows (PreToolUse Workflow): i byg-sager afvises Workflow-værktøjet, medmindre brugerens seneste besked
   indeholder ordet "workflow".
 - Kontrolkald med et ukendt ID behandles som gennemgang af eksternt materiale (uden loop).
@@ -105,6 +109,8 @@ DESIGN_RE = re.compile(r"^\s*DESIGNGRUNDLAG\s*:\s*(.+)$", re.IGNORECASE | re.MUL
 NY_RUNDE_RE = re.compile(r"\bny\s+runde\s+([^\s`'\"<>]+)", re.IGNORECASE)
 WORKFLOW_RE = re.compile(r"\bworkflow", re.IGNORECASE)
 NIVEAU_FULD_RE = re.compile(r"KONTROLNIVEAU\s*:\s*fuld", re.IGNORECASE)
+NIVEAU_VAERKTOEJ_RE = re.compile(r"KONTROLNIVEAU\s*:\s*v(?:æ|ae)rkt(?:ø|oe)j", re.IGNORECASE)
+TJEK_RE = re.compile(r'"tjek"\s*:\s*(\{[^{}]*\})')
 NIVEAU_STIK_RE = re.compile(r"KONTROLNIVEAU\s*:\s*stikpr(?:ø|oe)ve", re.IGNORECASE)
 GODKEND_G2_RE = re.compile(r"\bgodkend(?:er|t)?\s+G2\s+([A-Za-z0-9ÆØÅæøå._-]+)", re.IGNORECASE)
 NYT_GRUNDLAG = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
@@ -399,10 +405,16 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                         return afvis_kald("KONTROLNIVEAU: stikprøve gælder kun enkeltstående fagspørgsmål uden sag (/byg:spoerg). "
                                           "Leverancer i en sag (med FASE) kontrolleres altid: brug let eller fuld.")
                     stik = "udtaget" if udtaget(lev) else "ikke_udtaget"
+                vaerktoej = bool(NIVEAU_VAERKTOEJ_RE.search(str(ti.get("prompt") or "")))
+                if vaerktoej and not REG["fag"].get(fag, {}).get("vaerktoejskontrol"):
+                    return afvis_kald(f"KONTROLNIVEAU: værktøj findes kun for fag med deterministisk kontrol og "
+                                      f"sammenligning (bim). Brug let eller fuld for {fag}.")
                 e = L[lev] = {"fag": fag, "type": "fag", "forsoeg": 1, "fag_agent": st,
                               "kontrol_agent": kontrolnavn(fag, pre), "oprettet": nu(), "domme": []}
                 if stik:
                     e["stikproeve"] = stik
+                if vaerktoej:
+                    e["kontrolniveau"] = "vaerktoej"
             e.update(status="fagkald_igang", session_id=sid, opdateret=nu())
             gem(d, s)
             log(d, haendelse="fagkald", leverance=lev, runde=runde(e), forsoeg=e["forsoeg"], agent=st)
@@ -744,14 +756,49 @@ def hjaelperaflevering(inp: dict, d: pathlib.Path, fag: str, at: str) -> None:
     lev = m.group(1).rstrip(".,;:)")
     tekst = (inp.get("last_assistant_message") or "") + "\n" + laes_transkript(inp.get("agent_transcript_path"), 1)
     r = RESULTAT_RE.findall(tekst)
+    dom, flettede, e = None, [], None
     with Laas(d):
         s = indlaes(d)
         e = s["leverancer"].get(lev)
         if e and e.get("fag") == fag and e.get("status") == "under_sammenligning":
             e.update(status="sammenlignet", opdateret=nu(), sammenligning_resultat=(r[-1].lower() if r else None))
+            tj = None
+            for blok in TJEK_RE.findall(tekst)[::-1]:
+                try:
+                    tj = json.loads(blok)
+                    break
+                except json.JSONDecodeError:
+                    continue
+            vaerktoej_ok = (e.get("kontrolniveau") == "vaerktoej" and e["sammenligning_resultat"] == "ok"
+                            and isinstance(tj, dict) and tj.get("fejl") == 0 and tj.get("sporbarhed") == 0)
+            dom = None
+            if vaerktoej_ok:
+                dom = {"leverance_id": lev, "fag": fag, "forsoeg": e.get("forsoeg"), "dom": "godkendt",
+                       "godkendt_af": "vaerktoej", "rubric_version": "vaerktoej@1",
+                       "sammenligninger": e.get("sammenligninger"), "tjek": tj, "fund": []}
+                e.setdefault("domme", []).append({"runde": runde(e), "forsoeg": e.get("forsoeg"), "dom": "godkendt",
+                                                  "af": "vaerktoej", "aabne_fund": {}, "tid": nu()})
+                e.update(status="godkendt", godkendt_af="vaerktoej")
+                if e.get("fag_sha"):
+                    e["kontrolleret_sha"] = e["fag_sha"]
+                flettede = flet_forslag(inp, d, e, lev)
             gem(d, s)
             log(d, haendelse="sammenligning_afleveret", leverance=lev, nr=e.get("sammenligninger"),
-                resultat=e.get("sammenligning_resultat"), agent=at)
+                resultat=e.get("sammenligning_resultat"), agent=at, tjek=tj, godkendt_af_vaerktoej=vaerktoej_ok)
+    if dom:
+        sm = find_sagsmappe(inp, e, lev)
+        try:
+            if sm:
+                kv = sm / "kvalitet"
+                kv.mkdir(exist_ok=True)
+                (kv / f"{sikkert(lev)}__forsoeg-{e.get('forsoeg')}__vaerktoej.json").write_text(
+                    json.dumps(dom, ensure_ascii=False, indent=2), encoding="utf-8")
+        except Exception:
+            log(d, haendelse="domfil_fejl", fejl=traceback.format_exc()[-400:])
+        if sm:
+            git_commit(d, sm, f"{lev}: godkendt af værktøj (sammenligning ok, tjek rent)"
+                       + (f", {len(flettede)} forslag flettet" if flettede else ""),
+                       [f"{sm.name}/kvalitet/**", f"{sm.name}/forslag/**"])
 
 
 def subagentstop(inp: dict, d: pathlib.Path) -> None:

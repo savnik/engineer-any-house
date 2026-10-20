@@ -1,5 +1,14 @@
 # Ændringslog
 
+## 0.13.0 – 2026-10-20
+
+- `byg` 0.10.0 → 0.10.1
+- `byg-bim` 0.5.1 → 0.6.0
+- `byg-kontrol` 0.12.0 → 0.13.0
+
+### bim-kontrol-slank (byg, byg-bim, byg-kontrol)
+BIM: `bim.py tjek` kontrollerer sporbarhed (kilde uden reference, K uden leverance-ID, A uden usikkerhed, `--notat` for modelnotatets andel af kilde A). Nyt kontrolniveau `værktøj` for ren tegningsimport og geometri: hooken godkender leverancen, når bim-sammenligneren melder `resultat: ok` og et rent `tjek`, uden bim-kontrol. bim-kontrol bruges, når modellen indarbejder andre fags indhold eller er beslutningsgrundlag.
+
 ## 0.12.0 – 2026-10-20
 
 - `byg` 0.9.0 → 0.10.0

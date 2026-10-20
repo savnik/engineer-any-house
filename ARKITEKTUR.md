@@ -83,6 +83,8 @@ Måling af 437 transskripter: subagenter 59 %, hovedtråd 35 %, workflows 6 % (m
 | Hook (`kontrol_gate.py`) | Hjælpekald kræver en afleveret fagversion og sætter `under_sammenligning` → `sammenlignet`. Et fagkald efter en sammenligning er en **rettelse**, som ikke bruger kontrolforsøg. Højst `maks_sammenligninger` (3). Kontrollen kan kaldes efter sammenligningen, og Stop minder om uafsluttede sammenligninger |
 | `bim-kontrol` | Kun læse- og søgeværktøjer som de øvrige kontrolagenter. Hovedtråden kører `bim.py tjek` (deterministisk) før kontrolkaldet, og kontrollen efterprøver IFC-filen med Grep og PNG'erne |
 
+**Værktøjskontrol (2026-10-20):** BIM-faget havde den laveste afvisningsrate i rigtige sager (22 % i forsøg 1, ingen kritiske fund). Af de 13 blokerende fund var ca. 8 kildemærkning (kilde uden reference, K uden leverance-ID, A uden usikkerhed, notatets andel af kilde A) og ca. 4 modstrid med godkendte fagnotater. Kildemærkningen kontrolleres nu deterministisk i `bim.py tjek` (kategori `sporbarhed`, `--notat` for notatets andel), og sammenligneren kører `tjek` og melder tallene i sin JSON. `KONTROLNIVEAU: værktøj` (fagregister `vaerktoejskontrol`) lader hooken godkende en ren geometrileverance, når sammenligningen er `ok`, og `tjek` har 0 fejl og 0 sporbarhed – uden `bim-kontrol`. `bim-kontrol` bruges kun, når modellen indarbejder andre fags indhold eller er beslutningsgrundlag (skill `tegningsimport`). Det følger Googles fund om værktøjstunge opgaver: deterministiske værktøjer er kontrollen, og en ekstra agent gentager arbejdet.
+
 **Uafhængighed:** sammenligneren ser kun filerne (original, afkodning, IFC), ikke modellørens ræsonnement, og tegner selv modellen fra IFC-filen. Afkodningsfejl er en egen kategori, fordi en model, der svarer til en fejllæst afkodning, ellers ville bestå.
 
 **Miljø:** værktøjet kører i sit eget venv (`~/.local/share/byg-bim/venv`, fastlåste versioner i `requirements.txt`). `bim.py` skifter selv til det. Kendte fejl i IfcOpenShell 0.9.0 er omgået og dokumenteret i `erfaringsblade.md` (EB-BIM-02).
@@ -179,7 +181,7 @@ Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigt
 
 **Besluttet (2026-10-20):**
 - `KONTROLNIVEAU: stikprøve` for enkeltstående fagspørgsmål uden sag (`/byg:spoerg`, intet `FASE:`), aldrig el og statik og aldrig ved en sikkerhedsfunktion (`fuld`). Hooken udtager deterministisk ca. hver tredje ud fra leverance-ID'et (`fagregister.json`, `stikproeve`); ikke udtagne afleveres uden kontrol og markeres. Leverancer i en sag kontrolleres altid.
-- Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014).
+- Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014). Målt på F-012's 13 fejlramte opgaver: falske afvisninger 6 → 2,5 pr. kørsel og ingen skadede svar (før 2); kontrollen fanger stadig ingen forkerte svar på eksamen.
 
  Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`forbrug.py`).
 

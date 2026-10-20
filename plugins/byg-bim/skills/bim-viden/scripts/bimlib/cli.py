@@ -40,7 +40,7 @@ def _byg(a):
 
 def _tjek(a):
     from .tjek import tjek
-    return tjek(pathlib.Path(a.ifc), ids=a.ids, ud=a.ud, tegn=a.tegn)
+    return tjek(pathlib.Path(a.ifc), ids=a.ids, ud=a.ud, tegn=a.tegn, notat=a.notat)
 
 
 def _afkod(a):
@@ -135,6 +135,7 @@ def main(argv):
     sp = p.add_subparsers(dest="cmd", required=True)
     x = sp.add_parser("byg"); x.add_argument("spec"); x.add_argument("--ud"); x.set_defaults(fn=_byg)
     x = sp.add_parser("tjek"); x.add_argument("ifc"); x.add_argument("--ids"); x.add_argument("--ud")
+    x.add_argument("--notat", help="modelnotatet: andelen af kilde A skal passe med modellen")
     x.add_argument("--tegn", action="store_true"); x.set_defaults(fn=_tjek)
     x = sp.add_parser("tegn"); x.add_argument("ifc"); x.add_argument("hvad", choices=["plan", "snit", "facade", "3d", "alle"])
     x.add_argument("--etage"); x.add_argument("--linje"); x.add_argument("--side"); x.add_argument("--fra", default="sv")

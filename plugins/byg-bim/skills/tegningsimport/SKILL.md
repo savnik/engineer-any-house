@@ -18,7 +18,7 @@ Hovedtråden (projektlederen eller Claude) orkestrerer. Fagagenter kalder ikke h
 | Orkestrator | hovedtråden | Leverancer, kald i forgrunden, gemmer sammenligninger, stopper loopet, viser brugeren resultatet |
 | Modellør | `bim-modelloer` | Afkoder tegningen grundigt, bygger/udvider modellen, retter efter afvigelser |
 | Sammenligner | `bim-sammenligner` | Uafhængig: original mod model, finder alle afvigelser og afkodningsfejl. Skrivebeskyttet |
-| Kontrol | `bim-kontrol` | Formel, uafhængig kvalitetskontrol af den samlede leverance (skill `kvalitetskontrol`) |
+| Kontrol | `bim-kontrol` | Formel, uafhængig kvalitetskontrol – kun når modellen indarbejder andre fags indhold eller er beslutningsgrundlag (se afsnit 5) |
 
 Brug de fulde navne fra din agentliste (`byg-bim:bim-modelloer`, `byg-bim:bim-sammenligner`, `byg-kontrol:bim-kontrol`, eller `byg:…` i den samlede pakke). `BIM="${CLAUDE_PLUGIN_ROOT}/skills/bim-viden/scripts/bim.py"`.
 
@@ -27,9 +27,19 @@ Brug de fulde navne fra din agentliste (`byg-bim:bim-modelloer`, `byg-bim:bim-sa
 2. Kilder: `python3 "$BIM" pdf <fil.pdf> --oversigt --ud byg-sager/<sag-id>/bim/kilder` og se kontaktarket. Udvælg tegningssiderne, og giv hver tegning et kilde-id (K1, K2 …). Notér dem i projektgrundlaget.
 3. **Én leverance pr. tegning (side) eller pr. etage:** `LEVERANCE: <sag-id>/bim/<nr>`. Rækkefølge: den plan, der fastlægger husets ydre (oftest stueplanen eller kælderplanen) → de øvrige planer → snit → facader. Første leverance fastlægger origo, akser, etager, koter og typer.
 
+## Kontrolniveau – vælg ved første fagkald
+| Leverancen | Niveau | Kontrol |
+|---|---|---|
+| Ren tegningsimport og geometri (vægge, åbninger, rum, trapper, koter fra tegning, foto eller opmåling) | `KONTROLNIVEAU: værktøj` | Sammenligneren og `bim.py tjek`. Hooken godkender, når sammenligningen er `ok`, og `tjek` har 0 fejl og 0 sporbarhed. Ingen `bim-kontrol` |
+| Modellen indarbejder andre fags indhold (rør, el, ventilation, bærende dele fra et godkendt fagnotat, kilde K) | `KONTROLNIVEAU: let` | Som værktøj + `bim-kontrol`, som tjekker modellen mod de godkendte fagnotater (rørføring, udeladelser) |
+| Modellen er beslutningsgrundlag: arealer til byggesag eller BBR, geometri til statikeren, mængder til tilbud | `KONTROLNIVEAU: let` (`fuld` ved en sikkerhedsfunktion) | Som ovenfor |
+
+Begrundelse (ARKITEKTUR.md, "Multi-agent-arkitektur"): bim-kontrollens fund i rigtige sager var overvejende kildemærkning, som `bim.py tjek` nu kontrollerer deterministisk, og modstrid med andre fags notater. Geometrien kontrolleres allerede af sammenligneren og `tjek`.
+
 ## 1. Fagkald: afkodning og modelbygning (forgrund)
 ```
 LEVERANCE: <sag-id>/bim/<nr>
+KONTROLNIVEAU: <værktøj|let|fuld>
 OPGAVE: Tegningsimport af K<m> – trin 1 afkodning, trin 2 modelbygning (se "Tegningsimport" i din agentbeskrivelse).
 Sagsmappe: byg-sager/<sag-id>/ · Ejendomskort: byg-sager/ejendomme/<ejendom-id>.md
 Kilde: <sti til pdf> side <n> → byg-sager/<sag-id>/bim/kilder/K<m>/
@@ -70,7 +80,8 @@ Send ikke de mindre afvigelser retur, medmindre de er trivielle at lukke. Kald d
 - **3 sammenligninger nået** (hooken afviser den 4.): stop loopet. Resterende afvigelser skal stå i modelnotatet under "Afvigelser og usikkerheder" med status. Afvigelser af typen `tegning_inkonsistent` eller ulæselige steder går på **opmålingslisten**: spørg brugeren, om de kan måles på stedet, i stedet for at gætte. Er den samme afvigelse ikke blevet lukket i 3 runder, så skriv en kort årsagsnote (værktøj, afkodning eller tegning) og en kandidat til `references/erfaringsblade.md`.
 - **Bestridt afvigelse:** sammenligneren tager stilling i næste runde. Er den stadig bestridt, så vis brugeren udsnittet fra originalen og modellen, og lad brugeren afgøre den.
 
-## 5. Formel kontrol
+## 5. Formel kontrol (kun `let`/`fuld`)
+Ved `KONTROLNIVEAU: værktøj` er leverancen godkendt, når hooken har registreret sammenligningen med `resultat: ok` og et rent `tjek` – gå direkte til afsnit 6. Når 3 sammenligninger er brugt uden et rent resultat, eller modellen undervejs har fået andre fags indhold, så kør den formelle kontrol nedenfor.
 1. Kør selv den deterministiske kontrol i hovedtråden: `python3 "$BIM" tjek <ifc> --tegn --ud byg-sager/<sag-id>/kvalitet/bim-<nr>-tjek`.
 2. Kald `bim-kontrol` efter skill `kvalitetskontrol`: `LEVERANCE: <id>`, modelnotatet, tjek-rapporten, sammenligningernes JSON, afkodningen og forslagsfilen (`bim/forslag/bim-<nr>.yaml`, bygget oven på `model.yaml`). `KONTROLNIVEAU: let`, medmindre modellen fastlægger en sikkerhedsfunktion.
 3. Afvisning følger kvalitetskontrollens loop. Kør kun en ny sammenligning, hvis rettelsen ændrer geometri eller afkodede mål. Rene egenskabsrettelser (kilde, IsExternal, typenavne, notat) kræver ingen ny sammenligning. Kontrollen ser dem i `tjek` og modelnotatet.

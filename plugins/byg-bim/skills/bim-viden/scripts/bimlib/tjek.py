@@ -9,6 +9,7 @@ import datetime as dt
 import json
 import logging
 import pathlib
+import re
 
 import numpy as np
 import ifcopenshell
@@ -200,6 +201,54 @@ def semantik(f, r, sidevogn):
             r.add("ADVARSEL", "byg", x)
 
 
+# ------------------------------------------------------------------ sporbarhed
+# Leverance-ID: <sag>/<fag>/<nr> eller kortformen <fag>-<nr> (fx "vvs-13", "el-02-r2")
+LEVERANCE_REF = re.compile(r"[\w.-]+/[a-z]+/\d+|\b(?:vvs|el|murer|ventilation|maler|toemrer|tømrer|statik|bim|projekt)[-/ ]?\d+",
+                           re.IGNORECASE)
+NOTAT_A_ANDEL = re.compile(r"[Kk]ilde\s*A\b[^\n%]{0,60}?(\d{1,3})(?:[,.]\d+)?\s*%")
+
+
+def sporbarhed(f, r, notat=None):
+    """Deterministisk del af kildekontrollen (tidligere bim-kontrollens hyppigste fund):
+    kilde ≠ A kræver en reference, K (godkendt fagnotat) kræver et leverance-ID, A kræver en usikkerhed,
+    og modelnotatets oplyste andel af antagelser skal passe med modellen."""
+    egne = any(p.Name == "Byg_Kilde" for p in f.by_type("IfcPropertySet"))
+    if not egne:
+        return
+    kilder = collections.Counter()
+    mangler = collections.defaultdict(list)
+    for e in f.by_type("IfcElement"):
+        if e.is_a("IfcFeatureElement"):
+            continue
+        bk = ue.get_psets(e).get("Byg_Kilde") or {}
+        k = str(bk.get("Kilde") or "")[:1].upper()
+        if not k:
+            continue
+        kilder[k] += 1
+        ref = str(bk.get("Reference") or "").strip()
+        if k != "A" and not ref:
+            mangler["kilde uden reference"].append(_navn(e))
+        if k == "K" and ref and not LEVERANCE_REF.search(ref):
+            mangler["kilde K uden leverance-ID (fx <sag>/vvs/13 eller vvs-13) i reference"].append(_navn(e))
+        if k == "A" and bk.get("Usikkerhed_mm") is None:
+            mangler["antagelse (A) uden usikkerhed"].append(_navn(e))
+    for hvad, navne in mangler.items():
+        r.add("ADVARSEL", "sporbarhed", f"{len(navne)} elementer med {hvad}: " + ", ".join(navne[:12])
+              + (" …" if len(navne) > 12 else ""))
+    if notat and kilder:
+        sti = pathlib.Path(notat)
+        if sti.is_file():
+            m = NOTAT_A_ANDEL.search(sti.read_text(encoding="utf-8"))
+            andel = 100 * kilder.get("A", 0) / sum(kilder.values())
+            if m and abs(int(m.group(1)) - andel) > 2:
+                r.add("ADVARSEL", "sporbarhed", f"Modelnotatet oplyser kilde A {m.group(1)} %, men modellen har {andel:.0f} % "
+                      "– ret notatet eller mærkningen")
+            elif not m:
+                r.add("INFO", "sporbarhed", f"{sti.name} oplyser ikke andelen af kilde A (modellen: {andel:.0f} %)")
+        else:
+            r.add("ADVARSEL", "sporbarhed", f"Modelnotatet findes ikke: {sti}")
+
+
 # ------------------------------------------------------------------ geometri, kollisioner, arealer
 def geometri(f, r, former_ud):
     fejl = []
@@ -322,7 +371,7 @@ def ids_tjek(f, sti, r):
 
 
 # ------------------------------------------------------------------ indgang
-def tjek(ifc, ids=None, ud=None, tegn=False):
+def tjek(ifc, ids=None, ud=None, tegn=False, notat=None):
     ifc = pathlib.Path(ifc)
     f = ifcopenshell.open(str(ifc))
     sv_sti = ifc.with_suffix(".byg.json")
@@ -331,6 +380,7 @@ def tjek(ifc, ids=None, ud=None, tegn=False):
     skema(f, r)
     regler(f, r)
     semantik(f, r, sidevogn)
+    sporbarhed(f, r, notat)
     former = []
     geometri(f, r, former)
     arealer(f, r, former, sidevogn)
@@ -341,8 +391,9 @@ def tjek(ifc, ids=None, ud=None, tegn=False):
     ud.mkdir(parents=True, exist_ok=True)
     rap = ud / f"{ifc.stem}.tjek.md"
     nf, na = r.antal("FEJL"), r.antal("ADVARSEL")
+    ns = sum(1 for p in r.punkter if p[1] == "sporbarhed" and p[0] != "INFO")
     lin = [f"# Tjek – {ifc.name}", f"**Dato:** {dt.datetime.now():%Y-%m-%d %H:%M} · **Skema:** {f.schema} · "
-           f"**Resultat:** {nf} fejl, {na} advarsler", ""]
+           f"**Resultat:** {nf} fejl, {na} advarsler, {ns} sporbarhed", ""]
     for niveau in ("FEJL", "ADVARSEL", "INFO"):
         pk = [p for p in r.punkter if p[0] == niveau]
         if pk:
@@ -356,7 +407,7 @@ def tjek(ifc, ids=None, ud=None, tegn=False):
         lin.append("## Tegninger")
         lin += [f"- {p}" for p in filer]
     rap.write_text("\n".join(lin) + "\n", encoding="utf-8")
-    print(f"TJEK {ifc.name}: {nf} fejl, {na} advarsler → {rap}")
+    print(f"TJEK {ifc.name}: {nf} fejl, {na} advarsler, {ns} sporbarhed → {rap}")
     vist = 0
     for niveau in ("FEJL", "ADVARSEL"):
         for _, k, t in [p for p in r.punkter if p[0] == niveau]:
