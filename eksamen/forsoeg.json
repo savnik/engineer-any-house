@@ -1561,6 +1561,78 @@
       "vurdering": "manuel",
       "begrundelse": "Nulmåling: ingen ændring i plugins/. 4ab0e22 og HEAD 8940f20 målt samme dag under samme vilkår (--parallel 3, uden web) giver samme kvalitet (66/72 begge, alle grupper inden for støj) og samme tid og pris. Udviklingsgrupperne i benchmarket opdateres til HEAD, så F-016 måler mod et friskt udgangspunkt. Holdout er ikke målt (brugerens grænse).",
       "rev_efter": "8940f20"
+    },
+    {
+      "id": "F-016",
+      "dato": "2026-10-22",
+      "fag": [
+        "vvs"
+      ],
+      "kategori": "model",
+      "hypotese": "vvs-mester med effort: medium i stedet for high giver lavere sek/opgave og tokens_ud og lavere pris pr. bestået (over 10 %) ved samme kvalitet inden for NOISE_TASKS pr. gruppe, også på AK-sættet, hvor ræsonnement fylder mest. Forventet: valg- og talopgaver uændrede, fri og case kan svinge inden for støj.",
+      "aendring": "plugins/byg-vvs/agents/vvs-mester.md: effort: high til effort: medium. Intet andet. Før er HEAD-målingen fra F-015 (8940f20).",
+      "opgaver": [],
+      "status": "aaben",
+      "beslutning": null,
+      "maalinger": {
+        "vvs": {
+          "foer": {
+            "rev": "8940f20",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-183734-plugin-udvikling-8940f20.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.02,
+                  "pris_pr_bestaaet": 0.0808,
+                  "sek_pr_opgave": 21.5,
+                  "tokens_ud_pr_opgave": 1403,
+                  "fejlede": [
+                    "VVS-032",
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 29,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.06,
+                  "pris_pr_bestaaet": 0.071,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1543,
+                  "fejlede": [
+                    "VVS-133"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.005,
+                  "pris_pr_bestaaet": 0.0837,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1517,
+                  "fejlede": [
+                    "VVS-213",
+                    "VVS-220",
+                    "VVS-222"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "7620d1a"
     }
   ]
 }

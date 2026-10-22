@@ -8,7 +8,7 @@ description: >-
   og når projektlederen koordinerer tværfaglige byggeopgaver.
 tools: Read, Write, Edit, Glob, Grep, WebSearch, WebFetch
 model: opus
-effort: high
+effort: medium
 maxTurns: 150
 color: blue
 memory: user
