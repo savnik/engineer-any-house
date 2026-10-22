@@ -129,13 +129,14 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
         groups: dict[str, dict] = {}
         for (tid, arm), rows in sorted(latest.items()):
             g = groups.setdefault(f"{rows[0]['saet']}/{where.get(tid, 'ukendt')}", {}).setdefault(
-                arm, {"ids": [], "failed": [], "cost": 0.0, "secs": []})
+                arm, {"ids": [], "failed": [], "cost": 0.0, "secs": [], "toks": []})
             g["ids"].append(tid)
             if sum(r["bestaaet"] for r in rows) * 2 <= len(rows):
                 g["failed"].append(tid)
             # Mean per task, so repeats (--gentag-fri) do not make an arm look more expensive.
             g["cost"] += sum(r.get("pris_usd") or 0 for r in rows) / len(rows)
             g["secs"] += [r["sek"] for r in rows if r.get("sek") is not None]
+            g["toks"] += [r["tokens_ud"] for r in rows if r.get("tokens_ud") is not None]
         summary = {}
         for name, arms in sorted(groups.items()):
             summary[name] = {}
@@ -143,7 +144,8 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
                 n, ok = len(g["ids"]), len(g["ids"]) - len(g["failed"])
                 s = {"n": n, "bestaaet": ok, "opgaver_hash": id_hash(g["ids"]), "pris_usd": round(g["cost"], 3),
                      "pris_pr_bestaaet": round(g["cost"] / ok, 4) if ok else None,
-                     "sek_pr_opgave": round(sum(g["secs"]) / len(g["secs"]), 1) if g["secs"] else None}
+                     "sek_pr_opgave": round(sum(g["secs"]) / len(g["secs"]), 1) if g["secs"] else None,
+                     "tokens_ud_pr_opgave": round(sum(g["toks"]) / len(g["toks"])) if g["toks"] else None}
                 if name.startswith("udvikling/"):
                     s["fejlede"] = sorted(g["failed"])  # holdout task ids are never stored
                 summary[name][arm] = s
@@ -293,7 +295,14 @@ def cmd_show(args) -> int:
                 s = m[side]
                 print(f"  {trade} {side} (plugin {s['rev']}, {s['dato']}):")
                 for g, arms in s["grupper"].items():
-                    print("    " + g + ": " + " · ".join(f"{arm} {a['bestaaet']}/{a['n']}" for arm, a in arms.items()))
+                    p = arms.get("plugin") or {}
+                    cost = f"{p['pris_pr_bestaaet']:.3f} $/bestået" if p.get("pris_pr_bestaaet") else ""
+                    extra = ", ".join(x for x in (
+                        cost,
+                        f"{p['sek_pr_opgave']} s/opgave" if p.get("sek_pr_opgave") else "",
+                        f"{p['tokens_ud_pr_opgave']} tokens_ud/opgave" if p.get("tokens_ud_pr_opgave") else "") if x)
+                    print("    " + g + ": " + " · ".join(f"{arm} {a['bestaaet']}/{a['n']}" for arm, a in arms.items())
+                          + (f" ({extra})" if extra else ""))
     if e.get("maalinger"):
         suggestion, notes = assess(e["kategori"], e["maalinger"])
         print(f"  vurdering: {suggestion}")

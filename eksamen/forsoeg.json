@@ -1430,6 +1430,21 @@
       "slut": "2026-10-20",
       "vurdering": "uafklaret",
       "begrundelse": "Målt med kontrol_ab, ikke exam koer; beslutningsreglen gælder ikke direkte"
+    },
+    {
+      "id": "F-015",
+      "dato": "2026-10-22",
+      "fag": [
+        "vvs"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Eksamen genfinder forsinkelsen fra rigtige sager efter 20/10: vvs-mester på HEAD bruger flere sek/opgave og tokens_ud end på benchmark-revisionen 4ab0e22 målt samme dag, uden kvalitetsforskel ud over støj. Genfindes den ikke, ligger årsagen uden for det, eksamen måler (web-opslag, Write af notater, kontrol-loop, koordinering), eller i miljøet (CLI eller model). Det sidste ses som en stigning fra benchmarkets ca. 25 s/opgave på begge revisioner.",
+      "aendring": "Ingen ændring i plugins/. Før er --plugin-rev 4ab0e22, efter er HEAD 8940f20. Udviklingssættet inkl. AK, --parallel 3. Mellem revisionerne er byg-vvs kun ændret med én linje (kildedisciplin om efterprøvet, 61c4972). 0f6ba67 og dce258f berører ikke byg-vvs efter 4ab0e22.",
+      "opgaver": [],
+      "status": "aaben",
+      "beslutning": null,
+      "maalinger": {},
+      "rev_foer": "8940f20"
     }
   ]
 }
