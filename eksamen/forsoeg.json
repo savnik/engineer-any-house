@@ -1572,8 +1572,8 @@
       "hypotese": "vvs-mester med effort: medium i stedet for high giver lavere sek/opgave og tokens_ud og lavere pris pr. bestået (over 10 %) ved samme kvalitet inden for NOISE_TASKS pr. gruppe, også på AK-sættet, hvor ræsonnement fylder mest. Forventet: valg- og talopgaver uændrede, fri og case kan svinge inden for støj.",
       "aendring": "plugins/byg-vvs/agents/vvs-mester.md: effort: high til effort: medium. Intet andet. Før er HEAD-målingen fra F-015 (8940f20).",
       "opgaver": [],
-      "status": "aaben",
-      "beslutning": null,
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
       "maalinger": {
         "vvs": {
           "foer": {
@@ -1629,10 +1629,97 @@
                 }
               }
             }
+          },
+          "efter": {
+            "rev": "041997c",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-185212-plugin-udvikling-041997c.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 26,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 1.952,
+                  "pris_pr_bestaaet": 0.0751,
+                  "sek_pr_opgave": 20.0,
+                  "tokens_ud_pr_opgave": 1400,
+                  "fejlede": [
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 27,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 1.955,
+                  "pris_pr_bestaaet": 0.0724,
+                  "sek_pr_opgave": 20.4,
+                  "tokens_ud_pr_opgave": 1488,
+                  "fejlede": [
+                    "VVS-119",
+                    "VVS-127",
+                    "VVS-139"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.073,
+                  "pris_pr_bestaaet": 0.0825,
+                  "sek_pr_opgave": 21.4,
+                  "tokens_ud_pr_opgave": 1585,
+                  "fejlede": [
+                    "VVS-212",
+                    "VVS-220"
+                  ]
+                }
+              }
+            }
           }
         }
       },
-      "rev_foer": "7620d1a"
+      "rev_foer": "7620d1a",
+      "laering": "Eksamen kan ikke måle effort. claude -p --agent ignorerer effort i agentens frontmatter, så plugin-armen kører altid med modellens standard (Opus 5.5: medium), mens rigtige sager kører fagagenten som subagent med frontmatter-effort (vvs-mester: high). Eksamens tal for tid og pris svarer derfor til medium, ikke til det, sagerne kører. Tre kørsler under samme reelle betingelser (4ab0e22, HEAD high, HEAD medium) gav opgaver-a 25/25/26, opgaver-b 28/29/27 og opgaver-c 13/12/13, 20,5-21,3 s og ca. 1.480 tokens_ud pr. opgave. Én gruppe kan altså falde 2 alene ved støj, og reglen giver så et falsk forkast. Næste skridt: exam.py skal sende frontmatter-effort videre som --effort (vaerktoej), og først derefter skal high og medium måles igen. Én prompt svingede fra 1,6k til 68k tokens_ud ved low effort: lange kald er en hale, som kun ses over mange opgaver.",
+      "slut": "2026-10-22",
+      "vurdering": "forkast",
+      "begrundelse": "Reglen foreslår forkast (opgaver-b 29 til 27), men målingen testede ikke variablen. Frontmatter-effort virker ikke i claude -p --agent, som eksamen bruger. Sonde 22/10 med Opus på et regnestykke gav agent-frontmatter low og max begge ca. 100-140 tokens_ud, mens CLI-flaget --effort gav low ca. 100 og max ca. 400. Uden flag var det ca. 100-140. Begge arme kørte derfor med Opus 5.5's standard-effort (medium). Faldet på 2 i opgaver-b er støj mellem to ens betingelser. Ændringen rulles tilbage. Holdout er ikke kørt (brugerens grænse) og ville ikke kunne afgøre noget.",
+      "rev_efter": "041997c"
+    },
+    {
+      "id": "F-017",
+      "dato": "2026-10-22",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "exam.py sender agentens frontmatter-effort videre som --effort i plugin-armen, så eksamen måler fagagenten med den effort, den kører med i rigtige sager. Forventet for vvs (high): flere tokens_ud og mere tid pr. opgave end ved nuværende standard (medium), mens kvaliteten er inden for støj.",
+      "aendring": "arm_args i exam.py læser effort fra agentfilens frontmatter i plugin-kopien og tilføjer --effort. Test, der sikrer flaget. Efterfølgende nulmåling pr. fag.",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-018",
+      "dato": "2026-10-22",
+      "fag": [
+        "vvs"
+      ],
+      "kategori": "model",
+      "hypotese": "Gentagelse af F-016 efter værktøjsrettelsen: vvs-mester med effort medium i stedet for high giver lavere sek/opgave, færre tokens_ud og over 10 % lavere pris pr. bestået ved samme kvalitet inden for støj. Målt med --gentag-fri 3 på begge arme.",
+      "aendring": "plugins/byg-vvs/agents/vvs-mester.md: effort high til medium. Forudsætter, at exam.py sender frontmatter-effort videre.",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }
