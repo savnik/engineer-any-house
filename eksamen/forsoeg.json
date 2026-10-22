@@ -1441,10 +1441,126 @@
       "hypotese": "Eksamen genfinder forsinkelsen fra rigtige sager efter 20/10: vvs-mester på HEAD bruger flere sek/opgave og tokens_ud end på benchmark-revisionen 4ab0e22 målt samme dag, uden kvalitetsforskel ud over støj. Genfindes den ikke, ligger årsagen uden for det, eksamen måler (web-opslag, Write af notater, kontrol-loop, koordinering), eller i miljøet (CLI eller model). Det sidste ses som en stigning fra benchmarkets ca. 25 s/opgave på begge revisioner.",
       "aendring": "Ingen ændring i plugins/. Før er --plugin-rev 4ab0e22, efter er HEAD 8940f20. Udviklingssættet inkl. AK, --parallel 3. Mellem revisionerne er byg-vvs kun ændret med én linje (kildedisciplin om efterprøvet, 61c4972). 0f6ba67 og dce258f berører ikke byg-vvs efter 4ab0e22.",
       "opgaver": [],
-      "status": "aaben",
-      "beslutning": null,
-      "maalinger": {},
-      "rev_foer": "8940f20"
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "vvs": {
+          "foer": {
+            "rev": "4ab0e22",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-182700-plugin-udvikling-4ab0e22.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.077,
+                  "pris_pr_bestaaet": 0.0831,
+                  "sek_pr_opgave": 22.2,
+                  "tokens_ud_pr_opgave": 1460,
+                  "fejlede": [
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 28,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.043,
+                  "pris_pr_bestaaet": 0.073,
+                  "sek_pr_opgave": 20.8,
+                  "tokens_ud_pr_opgave": 1502,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-139"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.01,
+                  "pris_pr_bestaaet": 0.0777,
+                  "sek_pr_opgave": 20.7,
+                  "tokens_ud_pr_opgave": 1570,
+                  "fejlede": [
+                    "VVS-212",
+                    "VVS-220"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "8940f20",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-183734-plugin-udvikling-8940f20.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.02,
+                  "pris_pr_bestaaet": 0.0808,
+                  "sek_pr_opgave": 21.5,
+                  "tokens_ud_pr_opgave": 1403,
+                  "fejlede": [
+                    "VVS-032",
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 29,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.06,
+                  "pris_pr_bestaaet": 0.071,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1543,
+                  "fejlede": [
+                    "VVS-133"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.005,
+                  "pris_pr_bestaaet": 0.0837,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1517,
+                  "fejlede": [
+                    "VVS-213",
+                    "VVS-220",
+                    "VVS-222"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "8940f20",
+      "laering": "Eksamen genfinder ikke forsinkelsen fra rigtige sager. 4ab0e22 mod HEAD: 21,3 mod 20,9 s/opgave, 1500 mod 1485 tokens_ud/opgave, 0,078 mod 0,077 $/bestået, 2,1 mod 2,2 ture. Begge er hurtigere end benchmarkets ca. 25 s fra 18/10, så model, API og CLI er ikke blevet langsommere på enkeltspørgsmål. byg-vvs er kun ændret med én linje siden benchmarket: dce258f ligger før 4ab0e22, og 0f6ba67 rører kun projektlederen. Forsinkelsen må ligge i det, eksamen ikke måler: lange Write-blokke (notater), web-opslag (eksamen kører uden web, og 61c4972 kræver et opslag i kaldet for at skrive efterprøvet), kontrol-loop og returer, projektlederens koordinering og lang sagskontekst. Hastighed i sager skal måles med forbrug.py før og efter, eller med en eksamensvariant med --web og en skriveopgave. Rapporten og forsøgsloggen viser nu output-tokens pr. opgave.",
+      "slut": "2026-10-22",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling: ingen ændring i plugins/. 4ab0e22 og HEAD 8940f20 målt samme dag under samme vilkår (--parallel 3, uden web) giver samme kvalitet (66/72 begge, alle grupper inden for støj) og samme tid og pris. Udviklingsgrupperne i benchmarket opdateres til HEAD, så F-016 måler mod et friskt udgangspunkt. Holdout er ikke målt (brugerens grænse).",
+      "rev_efter": "8940f20"
     }
   ]
 }
