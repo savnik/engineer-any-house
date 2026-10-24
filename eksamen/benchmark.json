@@ -441,13 +441,13 @@
         }
       },
       "kilder": {
-        "holdout/opgaver-a": "F-021 @ 5213943",
-        "holdout/opgaver-b": "F-021 @ 5213943",
-        "udvikling/opgaver-a": "F-021 @ 5213943",
-        "udvikling/opgaver-b": "F-021 @ 5213943"
+        "holdout/opgaver-a": "F-028 @ 5213943",
+        "holdout/opgaver-b": "F-028 @ 5213943",
+        "udvikling/opgaver-a": "F-028 @ 5213943",
+        "udvikling/opgaver-b": "F-028 @ 5213943"
       },
       "opdateret": "2026-10-19",
-      "forsoeg": "F-021"
+      "forsoeg": "F-028"
     }
   }
 }
