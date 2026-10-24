@@ -25,3 +25,10 @@ Nogle rækker har nu en primærkilde (V 2026-10-24): Egernsund tegloverliggere, 
 14. **Ikke-bærende væg (R-STAT-04):** Hvornår godkender I, at en væg er ikke-bærende ud fra en screening uden at åbne? Hvilke indikatorer er afgørende?
 15. **Dokumentation i KK1 (R-STAT-01):** Vejledningen til BR18 kap. 28 § 3.1 siger, at dokumentationen ikke alene må bygge på produktspecifik dokumentation. Hvad er det mindste, I vil levere for en standardåbning i et parcelhus ud over producentens tabel?
 16. **Grænsen:** Hvilke situationer i parcelhuse ser I oftest blive overdimensioneret eller overregnet – og hvilke bliver undervurderet?
+
+## Sådan tilføjes eller opdateres en række
+Rammerne virker, selv om rækker mangler: en række med **T** eller **P – mangler** er ikke en ramme, og agenten bruger da den normale arbejdsgang. Rækker kan derfor udfyldes én ad gangen.
+- **P** skrives kun efter svar fra en fagperson, aldrig af en agent alene: `P – <rolle>, <ÅÅÅÅ-MM-DD>` (fx `P – murermester, 2026-11-02`), eventuelt efterfulgt af kilden.
+- **V** kræver en primærkilde og dato: `V <ÅÅÅÅ-MM-DD> – <kilde>`.
+- Ny standardsituation: tilføj en række med næste ledige ID. ID'er omnummereres aldrig, og en udgået række får status `P – mangler` i stedet for at blive slettet. Agenternes videnslog foreslår kandidater som "Ramme-kandidat: …".
+- Kør `python3 scripts/tjek_rammer.py` (indgår i `scripts/valider.py`). Det tjekker format, status og ID'er.

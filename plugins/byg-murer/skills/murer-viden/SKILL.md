@@ -23,4 +23,4 @@ description: >-
 Kører du ikke som `murermester`-agenten (fx i claude.ai eller i hovedtråden), så læs agentdefinitionen `${CLAUDE_PLUGIN_ROOT}/agents/murermester.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol.
 
 ## Statusmærker
-**V** = verificeret mod kilde (dato). **T** = typisk værdi eller udgave, der skal verificeres før brug som krav. **P** = anerkendt praksis godkendt af en fagperson (dato) – kun i `rammer.md`, se dér.
+**V** = verificeret mod kilde (dato). **T** = typisk værdi eller udgave, der skal verificeres før brug som krav. **P** = anerkendt praksis godkendt af en fagperson (dato) – kun i `rammer.md`, se dér. **P – mangler** = ikke udfyldt endnu; brug den normale arbejdsgang.

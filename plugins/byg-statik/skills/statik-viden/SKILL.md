@@ -30,4 +30,4 @@ description: >-
 Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. Tjek først `references/rammer.md`: inden for en ramme regnes der ikke. Ellers: **snitkræfter, reaktioner og nedbøjninger regnes i FEM-modellen (`scripts/fem.py`), al anden regning med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn ikke selv; opstil lastopgørelsen som input og overlad tallene til værktøjet eller statikeren.
 
 ## Statusmærker
-**V** = verificeret mod kilde (dato). **T** = skal verificeres før brug som krav. **P** = anerkendt praksis godkendt af en fagperson (dato) – kun i `rammer.md`, se dér.
+**V** = verificeret mod kilde (dato). **T** = skal verificeres før brug som krav. **P** = anerkendt praksis godkendt af en fagperson (dato) – kun i `rammer.md`, se dér. **P – mangler** = ikke udfyldt endnu; brug den normale arbejdsgang.
