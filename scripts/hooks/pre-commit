@@ -7,6 +7,12 @@ python3 "$(git rev-parse --show-toplevel)/scripts/tjek_data.py" || {
   exit 1
 }
 
+# Protokoller: det committede indhold skal være i synk med faelles/ (ikke kun arbejdskopien).
+python3 "$(git rev-parse --show-toplevel)/scripts/sync_protokol.py" --staged || {
+  echo "Commit afvist: protokollerne er ude af synk i det, der committes. Kør scripts/sync_protokol.py og git add." >&2
+  exit 1
+}
+
 # Parallel udvikling: versioner hæves kun ved udgivelse på main (scripts/udgiv.py), aldrig i en feature-gren.
 gren=$(git symbolic-ref --short -q HEAD)
 if [ "$gren" != "main" ] && [ -z "$BYG_UDGIV" ] && \
