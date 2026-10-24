@@ -98,8 +98,10 @@ def test_efficiency_helpers():
             write("1-basis.json", [{**row, "id": "X-1", "arm": "basis", "bestaaet": False}])
             write("2-basis.json", [{**row, "id": "X-1", "arm": "basis", "bestaaet": True},
                                    {**row, "id": "X-2", "arm": "basis", "bestaaet": True, "fejl": True}])
-            write("3-plugin.json", [{**row, "id": "X-1", "arm": "plugin", "bestaaet": False, "sek": 12.0},
-                                    {**row, "id": "X-3", "arm": "plugin", "bestaaet": True, "sek": 8.0}])
+            write("3-plugin.json", [{**row, "id": "X-1", "arm": "plugin", "bestaaet": False, "sek": 12.0,
+                                     "tokens_ud": 300},
+                                    {**row, "id": "X-3", "arm": "plugin", "bestaaet": True, "sek": 8.0,
+                                     "tokens_ud": 100}])
             write("9-ugyldig.json", [{**row, "id": "X-3", "arm": "plugin", "bestaaet": False}], res / "ugyldig")
             basis, sources = exam.latest_basis("el", {"X-1", "X-2"})
             expect("nyeste basis genbruges", len(basis) == 1 and basis[0]["bestaaet"] and sources == {"2-basis.json"})
@@ -108,6 +110,7 @@ def test_efficiency_helpers():
             text = exam.report([res / "3-plugin.json"], basis, sources)
             expect("rapport med genbrugt basis viser regression", "## Regressioner" in text and "- X-1" in text)
             expect("rapport viser tid pr. opgave", "| Tid pr. opgave (s) |" in text and "10.0" in text)
+            expect("rapport viser output-tokens pr. opgave", "| Output-tokens pr. opgave |" in text and "| 200 |" in text)
             expect("rapport nævner genbrugt basis", "Basis er genbrugt fra: 2-basis.json" in text)
     finally:
         exam.EXAM_DIR = original

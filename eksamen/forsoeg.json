@@ -1430,6 +1430,296 @@
       "slut": "2026-10-20",
       "vurdering": "uafklaret",
       "begrundelse": "Målt med kontrol_ab, ikke exam koer; beslutningsreglen gælder ikke direkte"
+    },
+    {
+      "id": "F-015",
+      "dato": "2026-10-22",
+      "fag": [
+        "vvs"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Eksamen genfinder forsinkelsen fra rigtige sager efter 20/10: vvs-mester på HEAD bruger flere sek/opgave og tokens_ud end på benchmark-revisionen 4ab0e22 målt samme dag, uden kvalitetsforskel ud over støj. Genfindes den ikke, ligger årsagen uden for det, eksamen måler (web-opslag, Write af notater, kontrol-loop, koordinering), eller i miljøet (CLI eller model). Det sidste ses som en stigning fra benchmarkets ca. 25 s/opgave på begge revisioner.",
+      "aendring": "Ingen ændring i plugins/. Før er --plugin-rev 4ab0e22, efter er HEAD 8940f20. Udviklingssættet inkl. AK, --parallel 3. Mellem revisionerne er byg-vvs kun ændret med én linje (kildedisciplin om efterprøvet, 61c4972). 0f6ba67 og dce258f berører ikke byg-vvs efter 4ab0e22.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "vvs": {
+          "foer": {
+            "rev": "4ab0e22",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-182700-plugin-udvikling-4ab0e22.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.077,
+                  "pris_pr_bestaaet": 0.0831,
+                  "sek_pr_opgave": 22.2,
+                  "tokens_ud_pr_opgave": 1460,
+                  "fejlede": [
+                    "VVS-035",
+                    "VVS-036"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 28,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.043,
+                  "pris_pr_bestaaet": 0.073,
+                  "sek_pr_opgave": 20.8,
+                  "tokens_ud_pr_opgave": 1502,
+                  "fejlede": [
+                    "VVS-103",
+                    "VVS-139"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.01,
+                  "pris_pr_bestaaet": 0.0777,
+                  "sek_pr_opgave": 20.7,
+                  "tokens_ud_pr_opgave": 1570,
+                  "fejlede": [
+                    "VVS-212",
+                    "VVS-220"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "8940f20",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-183734-plugin-udvikling-8940f20.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.02,
+                  "pris_pr_bestaaet": 0.0808,
+                  "sek_pr_opgave": 21.5,
+                  "tokens_ud_pr_opgave": 1403,
+                  "fejlede": [
+                    "VVS-032",
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 29,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.06,
+                  "pris_pr_bestaaet": 0.071,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1543,
+                  "fejlede": [
+                    "VVS-133"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.005,
+                  "pris_pr_bestaaet": 0.0837,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1517,
+                  "fejlede": [
+                    "VVS-213",
+                    "VVS-220",
+                    "VVS-222"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "8940f20",
+      "laering": "Eksamen genfinder ikke forsinkelsen fra rigtige sager. 4ab0e22 mod HEAD: 21,3 mod 20,9 s/opgave, 1500 mod 1485 tokens_ud/opgave, 0,078 mod 0,077 $/bestået, 2,1 mod 2,2 ture. Begge er hurtigere end benchmarkets ca. 25 s fra 18/10, så model, API og CLI er ikke blevet langsommere på enkeltspørgsmål. byg-vvs er kun ændret med én linje siden benchmarket: dce258f ligger før 4ab0e22, og 0f6ba67 rører kun projektlederen. Forsinkelsen må ligge i det, eksamen ikke måler: lange Write-blokke (notater), web-opslag (eksamen kører uden web, og 61c4972 kræver et opslag i kaldet for at skrive efterprøvet), kontrol-loop og returer, projektlederens koordinering og lang sagskontekst. Hastighed i sager skal måles med forbrug.py før og efter, eller med en eksamensvariant med --web og en skriveopgave. Rapporten og forsøgsloggen viser nu output-tokens pr. opgave.",
+      "slut": "2026-10-22",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling: ingen ændring i plugins/. 4ab0e22 og HEAD 8940f20 målt samme dag under samme vilkår (--parallel 3, uden web) giver samme kvalitet (66/72 begge, alle grupper inden for støj) og samme tid og pris. Udviklingsgrupperne i benchmarket opdateres til HEAD, så F-016 måler mod et friskt udgangspunkt. Holdout er ikke målt (brugerens grænse).",
+      "rev_efter": "8940f20"
+    },
+    {
+      "id": "F-016",
+      "dato": "2026-10-22",
+      "fag": [
+        "vvs"
+      ],
+      "kategori": "model",
+      "hypotese": "vvs-mester med effort: medium i stedet for high giver lavere sek/opgave og tokens_ud og lavere pris pr. bestået (over 10 %) ved samme kvalitet inden for NOISE_TASKS pr. gruppe, også på AK-sættet, hvor ræsonnement fylder mest. Forventet: valg- og talopgaver uændrede, fri og case kan svinge inden for støj.",
+      "aendring": "plugins/byg-vvs/agents/vvs-mester.md: effort: high til effort: medium. Intet andet. Før er HEAD-målingen fra F-015 (8940f20).",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "vvs": {
+          "foer": {
+            "rev": "8940f20",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-183734-plugin-udvikling-8940f20.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 25,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 2.02,
+                  "pris_pr_bestaaet": 0.0808,
+                  "sek_pr_opgave": 21.5,
+                  "tokens_ud_pr_opgave": 1403,
+                  "fejlede": [
+                    "VVS-032",
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 29,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 2.06,
+                  "pris_pr_bestaaet": 0.071,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1543,
+                  "fejlede": [
+                    "VVS-133"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.005,
+                  "pris_pr_bestaaet": 0.0837,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1517,
+                  "fejlede": [
+                    "VVS-213",
+                    "VVS-220",
+                    "VVS-222"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "041997c",
+            "dato": "2026-10-22",
+            "filer": [
+              "20261022-185212-plugin-udvikling-041997c.json"
+            ],
+            "grupper": {
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 27,
+                  "bestaaet": 26,
+                  "opgaver_hash": "ce81fbe07308",
+                  "pris_usd": 1.952,
+                  "pris_pr_bestaaet": 0.0751,
+                  "sek_pr_opgave": 20.0,
+                  "tokens_ud_pr_opgave": 1400,
+                  "fejlede": [
+                    "VVS-035"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 30,
+                  "bestaaet": 27,
+                  "opgaver_hash": "a5a09aa1be98",
+                  "pris_usd": 1.955,
+                  "pris_pr_bestaaet": 0.0724,
+                  "sek_pr_opgave": 20.4,
+                  "tokens_ud_pr_opgave": 1488,
+                  "fejlede": [
+                    "VVS-119",
+                    "VVS-127",
+                    "VVS-139"
+                  ]
+                }
+              },
+              "udvikling/opgaver-c": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "e3767a0d28df",
+                  "pris_usd": 1.073,
+                  "pris_pr_bestaaet": 0.0825,
+                  "sek_pr_opgave": 21.4,
+                  "tokens_ud_pr_opgave": 1585,
+                  "fejlede": [
+                    "VVS-212",
+                    "VVS-220"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "7620d1a",
+      "laering": "Eksamen kan ikke måle effort. claude -p --agent ignorerer effort i agentens frontmatter, så plugin-armen kører altid med modellens standard (Opus 5.5: medium), mens rigtige sager kører fagagenten som subagent med frontmatter-effort (vvs-mester: high). Eksamens tal for tid og pris svarer derfor til medium, ikke til det, sagerne kører. Tre kørsler under samme reelle betingelser (4ab0e22, HEAD high, HEAD medium) gav opgaver-a 25/25/26, opgaver-b 28/29/27 og opgaver-c 13/12/13, 20,5-21,3 s og ca. 1.480 tokens_ud pr. opgave. Én gruppe kan altså falde 2 alene ved støj, og reglen giver så et falsk forkast. Næste skridt: exam.py skal sende frontmatter-effort videre som --effort (vaerktoej), og først derefter skal high og medium måles igen. Én prompt svingede fra 1,6k til 68k tokens_ud ved low effort: lange kald er en hale, som kun ses over mange opgaver.",
+      "slut": "2026-10-22",
+      "vurdering": "forkast",
+      "begrundelse": "Reglen foreslår forkast (opgaver-b 29 til 27), men målingen testede ikke variablen. Frontmatter-effort virker ikke i claude -p --agent, som eksamen bruger. Sonde 22/10 med Opus på et regnestykke gav agent-frontmatter low og max begge ca. 100-140 tokens_ud, mens CLI-flaget --effort gav low ca. 100 og max ca. 400. Uden flag var det ca. 100-140. Begge arme kørte derfor med Opus 5.5's standard-effort (medium). Faldet på 2 i opgaver-b er støj mellem to ens betingelser. Ændringen rulles tilbage. Holdout er ikke kørt (brugerens grænse) og ville ikke kunne afgøre noget.",
+      "rev_efter": "041997c"
+    },
+    {
+      "id": "F-017",
+      "dato": "2026-10-22",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "exam.py sender agentens frontmatter-effort videre som --effort i plugin-armen, så eksamen måler fagagenten med den effort, den kører med i rigtige sager. Forventet for vvs (high): flere tokens_ud og mere tid pr. opgave end ved nuværende standard (medium), mens kvaliteten er inden for støj.",
+      "aendring": "arm_args i exam.py læser effort fra agentfilens frontmatter i plugin-kopien og tilføjer --effort. Test, der sikrer flaget. Efterfølgende nulmåling pr. fag.",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-018",
+      "dato": "2026-10-22",
+      "fag": [
+        "vvs"
+      ],
+      "kategori": "model",
+      "hypotese": "Gentagelse af F-016 efter værktøjsrettelsen: vvs-mester med effort medium i stedet for high giver lavere sek/opgave, færre tokens_ud og over 10 % lavere pris pr. bestået ved samme kvalitet inden for støj. Målt med --gentag-fri 3 på begge arme.",
+      "aendring": "plugins/byg-vvs/agents/vvs-mester.md: effort high til medium. Forudsætter, at exam.py sender frontmatter-effort videre.",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }

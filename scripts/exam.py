@@ -771,6 +771,7 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
     out.append("| Tid pr. opgave (s) | " + " | ".join(per_arm(lambda s: mean(s, "sek"))) + " |")
     out.append("| Ture pr. opgave | " + " | ".join(per_arm(lambda s: mean(s, "ture"))) + " |")
     out.append("| Input-tokens pr. opgave | " + " | ".join(per_arm(lambda s: mean(s, "tokens_ind", 0))) + " |")
+    out.append("| Output-tokens pr. opgave | " + " | ".join(per_arm(lambda s: mean(s, "tokens_ud", 0))) + " |")
     if kb_sizes:
         out += ["", "Videnbasens størrelse (references + agentprompt): "
                 + ", ".join(f"{rev}: {size / 1024:.1f} KB" for rev, size in kb_sizes.items())]
