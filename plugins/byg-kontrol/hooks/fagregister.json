@@ -60,6 +60,14 @@
           "skabelon": ""
         }
       }
+    },
+    "arkitekt": {
+      "agent": "arkitekt",
+      "kontrol": "arkitekt-kontrol"
+    },
+    "anlaeg": {
+      "agent": "anlaegsgartner",
+      "kontrol": "anlaeg-kontrol"
     }
   },
   "skriv_alle": [

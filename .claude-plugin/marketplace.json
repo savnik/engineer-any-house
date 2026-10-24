@@ -67,6 +67,16 @@
       "name": "byg-statik",
       "source": "./plugins/byg-statik",
       "description": "Statiker: hvad er bærende, vægfjernelse, bjælker og vederlag, tag og bjælkelag, fundering, revner og sætninger – overslag og review af statisk dokumentation (rådgivende)."
+    },
+    {
+      "name": "byg-arkitekt",
+      "source": "./plugins/byg-arkitekt",
+      "description": "Arkitekt: planløsning og disposition, tilbygning, kvist og facade, myndighedsscreening (byggetilladelse, bebyggelsesprocent, afstand til skel, lokalplan, bevaring) – skitser og BIM-forslag (rådgivende)."
+    },
+    {
+      "name": "byg-anlaeg",
+      "source": "./plugins/byg-anlaeg",
+      "description": "Anlægsgartner: belægning og terrasser, regnvand og faskiner, omfangsdræn og terrænfald, terrænregulering og støttemure, hegn, træer og beplantning."
     }
   ]
 }
