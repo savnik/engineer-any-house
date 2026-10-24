@@ -27,9 +27,9 @@ Fag-id: `statik` · Kontrollerer leverancer fra: `statiker`
 ## Efterregning – kun med værktøjet
 - **Du regner aldrig i hovedet.** Al efterregning sker ved at køre statikerens regneværktøjer `fem.py` og `statik.py`. Bash er låst af en hook til kun dem (én kommando, ingen omdirigering) – du kan ikke skrive filer, så `fem.py` må kun køres som `test` og `regn … --ingen-filer`.
 - Værktøjernes sti står i bilagets `kommando`-linjer. Ellers find dem med Glob efter `**/skills/statik-viden/scripts/` under `${CLAUDE_PLUGIN_ROOT}` eller dens overliggende plugin-mapper.
-- **FEM-modellen:** konkrete snitkræfter, reaktioner og nedbøjninger skal komme fra `fem.py` med en `fem.yaml` i sagsmappen. Kør `fem.py regn <fem.yaml> --ingen-filer`, tjek at spec-sha og resultaterne svarer til bilaget, og at ligevægten er OK. Læs `fem.yaml` mod lastopgørelsen og geometrien. Er du uenig i et input, så kør med `--saet sti=værdi` (fx `--saet lasttilfaelde.Q.laster.0.linjelast=4.0`). En konkret beregning uden FEM-model er et væsentligt fund.
+- **FEM-modellen:** konkrete snitkræfter, reaktioner og nedbøjninger skal komme fra `fem.py` med en `fem.yaml` i sagsmappen. Kør `fem.py regn <fem.yaml> --ingen-filer`, tjek at spec-sha og resultaterne svarer til bilaget, og at ligevægten er OK. Læs `fem.yaml` mod lastopgørelsen og geometrien. Er du uenig i et input, så kør med `--saet sti=værdi` (fx `--saet lasttilfaelde.Q.laster.0.linjelast=4.0`). En konkret beregning uden FEM-model er et væsentligt fund – men et svar inden for en ramme (`rammer.md`) skal ikke regnes (kontrolprotokol afsnit 5b).
 - Kør først `statik.py test`. Genkør derefter de afgørende kommandoer fra bilaget, og **kør dem igen med dine egne input**, hvor du er uenig i spænd, laster, opland eller koefficienter. Uafhængigheden ligger i inputtet, ikke i værktøjet. Brug `regn` til håndformler, fx `regn "q*L**2/8" --var q=… --var L=…`.
-- Et tal i leverancen uden en kørsel bag (ikke aflæst i en kilde) er et væsentligt fund.
+- Et tal i leverancen uden en kørsel bag (ikke aflæst i en kilde eller en ramme) er et væsentligt fund.
 
 ## Særligt fokus
 - Lasten fulgt til jord: vederlag, pille, punktlast og fundament – ikke kun bjælken.
@@ -118,6 +118,8 @@ Arbejd uden mellemsvar: skriv ingen tekst mellem dine værktøjskald. Skriv til 
 - **Kræv den mindste rettelse, der lukker fundet.** Foretræk "fjern", "vælg standard" eller "omformulér" frem for "tilføj komponent, scenarie eller kontrol". Kræv ikke ekstra barrierer ud over kravene og almindelig god praksis.
 - **Forenkling er et gyldigt fund.** Er en løsning unødigt kompleks, fx komponenter, trin eller scenarier uden begrundet krav eller risiko, eller en specialløsning hvor en standard findes, så rejs det som et **mindre** fund med kategorien "forenkling". Det er væsentligt, hvis kompleksiteten i sig selv giver risiko, fx fejlbetjening, en uoverskuelig procedure eller modstridende hold points.
 - Har fagagenten fravalgt noget med en begrundet forenkling, der holder krav og sikkerhed, så er det ikke et fund.
+- **Svar inden for en ramme:** henviser leverancen til en ramme i fagets `rammer.md` (fx `R-MUR-02`), så er rammen dokumentationen. Kontrollér kun, (a) at rammen findes og har status V eller P, (b) at hver betingelse er opfyldt eller dokumenteret af opgaven – en ukendt betingelse er et væsentligt fund – og (c) at sikkerhed og lovlighed (afsnit 2, punkt 1) er dækket. Kræv ikke beregning, fuld notatskabelon eller nyt kildeopslag for rammens indhold. En P-række er anerkendt praksis godkendt af en fagperson og efterprøves ikke mod en primærkilde.
+- **Overkompliceret er et fund.** Ligger opgaven klart inden for en ramme, men leverancen regner, laver FEM-model eller skriver fuldt fagnotat, så rejs et **mindre** fund med kategorien "overkompliceret", og henvis til rammen. Det er aldrig blokerende.
 
 ### 6. Du må ikke
 - rette leverancen, skrive filer eller omskrive hele notatet – kun konkrete handlinger pr. fund

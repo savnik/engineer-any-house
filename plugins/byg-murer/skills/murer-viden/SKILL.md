@@ -13,6 +13,7 @@ description: >-
 
 | Fil | Indhold | Læs når |
 |---|---|---|
+| `references/rammer.md` | Standardløsninger inden for rammer (hvad en mester gør uden ingeniør), status V/T/P | **Først – før henvisning til statiker** |
 | `references/normgrundlag.md` | Kilder, bindende krav, mørtelbetegnelser, status | Krav, normer, myndighed |
 | `references/faglig-praksis.md` | Mørtelvalg, omfugning, puds, fugt, kældre, revner, bærende indgreb, vådrum | Projektering, vurdering, fejlfinding |
 | `references/tjeklister.md` | Forundersøgelse, projektering, hold points, aflevering | KS, tilbudsgennemgang, aflevering |
@@ -22,4 +23,4 @@ description: >-
 Kører du ikke som `murermester`-agenten (fx i claude.ai eller i hovedtråden), så læs agentdefinitionen `${CLAUDE_PLUGIN_ROOT}/agents/murermester.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol.
 
 ## Statusmærker
-**V** = verificeret mod kilde (dato). **T** = typisk værdi eller udgave, der skal verificeres før brug som krav.
+**V** = verificeret mod kilde (dato). **T** = typisk værdi eller udgave, der skal verificeres før brug som krav. **P** = anerkendt praksis godkendt af en fagperson (dato) – kun i `rammer.md`, se dér.

@@ -1,6 +1,6 @@
 # Statiker – FEM-model (`fem.py`)
 
-**Alle konkrete beregninger af snitkræfter, reaktioner og nedbøjninger laves i en FEM-model**, også en simpel bjælke over en åbning (én bjælke, to understøtninger). Modellen er dokumentationen: den ligger i sagsmappen, kan genkøres af kontrollen og åbnes af bygherren. `statik.py` bruges til det, FEM-modellen ikke gør: lastopgørelse (`last`), tværsnitsværdier, udnyttelse efter Eurocode (`bjaelke`, `tryk`), anden aritmetik (`regn`) og som uafhængig håndkontrol af FEM-resultatet.
+**Alle konkrete beregninger af snitkræfter, reaktioner og nedbøjninger laves i en FEM-model**, også en simpel bjælke over en åbning (én bjælke, to understøtninger). Undtagelse: situationer inden for en ramme i `rammer.md` regnes ikke. Modellen er dokumentationen: den ligger i sagsmappen, kan genkøres af kontrollen og åbnes af bygherren. `statik.py` bruges til det, FEM-modellen ikke gør: lastopgørelse (`last`), tværsnitsværdier, udnyttelse efter Eurocode (`bjaelke`, `tryk`), anden aritmetik (`regn`) og som uafhængig håndkontrol af FEM-resultatet.
 
 Værktøjet bygger på PyNite (MIT-licens): lineær-elastisk 3D-analyse af stangelementer og flader (vægge, dæk som skalelementer, MITC4) med lastkombinationer og valgfri andenordensanalyse (P-Δ). Det kører i sit eget Python-miljø (`~/.local/share/byg-statik/venv`).
 
