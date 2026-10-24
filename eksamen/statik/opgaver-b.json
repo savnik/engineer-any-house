@@ -1,0 +1,1038 @@
+{
+  "opgaver": [
+    {
+      "id": "STAT-101",
+      "maal": [
+        "STAT-BK-01",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En ny bjælke i et enfamiliehus (CC2) bærer et bjælkelag over et boligrum med en lastopland på 3,0 m. Karakteristisk permanent last er 2,0 kN/m² inkl. lette skillevægge; nyttelasten er boliglast (kategori A1). Der er ingen andre variable laster. Beregn den regningsmæssige linjelast på bjælken i lastkombination 2 (formel 6.10b, STR) efter DS/EN 1990 DK NA. Se bort fra bjælkens egenlast. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 12.75,
+        "enhed": "kN/m",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "CC2: KFI = 1,0. 6.10b: 1,0·Gk + 1,5·Qk. qk(A1) = 1,5 kN/m². pd = 1,0·2,0·3,0 + 1,5·1,5·3,0 = 6,0 + 6,75 = 12,75 kN/m.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-102",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Et tungt betondæk i en bolig (CC2) har en karakteristisk permanent last på 12,0 kN/m² og boliglast 1,5 kN/m² som eneste variable last. Bestem den dimensionerende regningsmæssige fladelast i STR efter DS/EN 1990 DK NA (lastkombination 1 og 2). Angiv svaret i kN/m².",
+      "facit": {
+        "vaerdi": 14.4,
+        "enhed": "kN/m²",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "LK1 (6.10a): 1,2·12,0 = 14,4 kN/m². LK2 (6.10b): 1,0·12,0 + 1,5·1,5 = 14,25 kN/m². Den største er dimensionerende: 14,4 kN/m². Ved stor egenlast kan 6.10a bestemme, så begge skal kontrolleres.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-103",
+      "maal": [
+        "STAT-CERT-2b",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En stålbjælke med flangebredde 100 mm hviler direkte (uden vederlagsplade) på en 228 mm tyk murværksvæg med en vederlagslængde på 150 mm. Den regningsmæssige reaktion er 60 kN. Beregn det gennemsnitlige regningsmæssige kontakttryk under flangen, når trykket regnes jævnt fordelt over kontaktfladen. Angiv svaret i MPa (N/mm²).",
+      "facit": {
+        "vaerdi": 4.0,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Kontaktfladen er flangebredde × vederlagslængde = 100 · 150 = 15 000 mm², ikke vægtykkelsen. σ = 60 000 / 15 000 = 4 MPa. Regnes med vægtykkelsen 228 mm, undervurderes trykket mere end dobbelt.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-104",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En bjælke hviler på en 228 mm tyk bærende væg med en vederlagslængde på 100 mm målt fra væggens indvendige side. Den regningsmæssige reaktion er 50 kN. Antag, at reaktionen virker i afstanden 1/3 af vederlagslængden fra den indvendige vægflade. Beregn det bøjningsmoment, som reaktionens excentricitet i forhold til vægmidten påfører væggen. Angiv svaret i kNm.",
+      "facit": {
+        "vaerdi": 4.033,
+        "enhed": "kNm",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "e = 228/2 − 100/3 = 114 − 33,3 = 80,7 mm. M = N·e = 50 · 0,0807 = 4,03 kNm. Momentet skal med i eftervisningen af væggen; centrisk last er ikke en sikker antagelse.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-105",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2a"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En stiv bjælke understøttes af to lige lange stolper, der står side om side og får samme sammentrykning: en stålstolpe med tværsnitsareal 2000 mm² og E = 210 000 MPa og en træstolpe 100 × 100 mm med E = 10 000 MPa. Samlet last er 100 kN. Hvor stor en del af lasten tager stålstolpen ved elastisk fordeling? Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 80.769,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Lasten fordeles efter aksialstivhed E·A. Stål: 2000·210 000 = 4,2·10⁸ N. Træ: 10 000·10 000 = 1,0·10⁸ N. Andel stål = 4,2/5,2 = 0,808. N_stål = 100 · 0,808 = 80,8 kN. Fordeling efter areal alene eller ligelig fordeling er forkert.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-106",
+      "maal": [
+        "STAT-BK-01",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En simpelt understøttet bjælke med spændvidde 5,0 m har en jævnt fordelt last på 4 kN/m og en punktlast på 40 kN placeret 1,5 m fra venstre understøtning. Beregn reaktionen ved venstre understøtning. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 38.0,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "R_V = 40·(5,0 − 1,5)/5,0 + 4·5,0/2 = 28 + 10 = 38 kN. (Højre: 60 − 38 = 22 kN.) Lasten fordeles ikke ligeligt, når punktlasten sidder skævt.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-107",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "I en betonsøjle i et boligbyggeri er trykspændingen fra den karakteristiske permanente last 5,0 MPa og fra den karakteristiske boliglast (kategori A) 3,0 MPa. Ved vurdering af krybning skal spændingen i den kvasi-permanente lastkombination bruges. Beregn den. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 5.6,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Kvasi-permanent kombination: G + ψ2·Q. ψ2 for kategori A er 0,2. σ = 5,0 + 0,2·3,0 = 5,6 MPa. Den regningsmæssige brudlast (fx 5,0 + 1,5·3,0 = 9,5 MPa) er forkert her.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; kombinationsreglen G + ψ2·Q: DS/EN 1990, 6.5.3 (ikke efterprøvet i grundstandarden)",
+      "status": "T"
+    },
+    {
+      "id": "STAT-108",
+      "maal": [
+        "STAT-BK-04",
+        "STAT-CERT-4b"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Under udskiftning af en bærende væg opsamles væggens last midlertidigt af stålstempler med 1,2 m afstand. Lasten på væggen er karakteristisk 15 kN/m permanent og 3 kN/m nyttelast (eneste variable last). Byggeriet er i CC2. Beregn den regningsmæssige last pr. stempel (STR, lastkombination 2), som stemplernes bæreevne skal eftervises for. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 23.4,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "pd = 1,0·15 + 1,5·3 = 19,5 kN/m. Pr. stempel: 19,5 · 1,2 = 23,4 kN. Stemplets bæreevne sammenlignes med den regningsmæssige last, ikke den karakteristiske.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-109",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et sadeltag med 30° hældning ligger i normal topografi (hverken vindblæst eller afskærmet). Formfaktor μ1 = 0,8, termisk faktor Ct = 1,0 og Cs = 1,0. Spærene står med 0,9 m afstand. Beregn den karakteristiske snelast pr. løbende meter spær, målt på vandret projektion, efter DS/EN 1991-1-3 med DK NA. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 0.72,
+        "enhed": "kN/m",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "sk = 1,0 kN/m², Ctop = 1,0 (normal), Ce = Ctop·Cs = 1,0. s = μ1·Ce·Ct·sk = 0,8·1,0·1,0·1,0 = 0,8 kN/m². Pr. spær: 0,8 · 0,9 = 0,72 kN/m.",
+      "kilde": "DS/EN 1991-1-3 DK NA:2024, 4.1(1) og 5.2(7), https://www.bygningsreglementet.dk/media/acwmshr5/ds-en-199113-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-110",
+      "maal": [
+        "STAT-CERT-2c",
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Uarmeret murværk udført på stedet med byggesten i kategori II har en karakteristisk trykstyrke fk = 5,1 MPa. Beregn den regningsmæssige trykstyrke efter DS/EN 1996-1-1 DK NA, når γ0 = 1,0 og γ3 = 1,0. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 3.0,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Tabel 2.4.3a DK NA: in situ, trykstyrke, kategori II: γc = 1,70. fd = 5,1/1,70 = 3 MPa.",
+      "kilde": "DS/EN 1996-1-1 DK NA:2019, Tabel 2.4.3a DK NA, https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-111",
+      "maal": [
+        "STAT-CERT-2b",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "I en 108 mm formur skal der laves en ny åbning helt ude ved murens fri ende, så der ikke er murværk på den ene side af åbningen. Over åbningen står 1,5 m murværk op til en rem. Murværkets tyngde er 18 kN/m³. Vurdér, hvilken del af murværket overliggeren skal bære, og beregn den karakteristiske linjelast på overliggeren fra murværket. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 2.916,
+        "enhed": "kN/m",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Uden hvælvirkning bærer overliggeren hele murværket over sig (rektangulær lastflade): g = 18 · 0,108 · 1,5 = 2,916 kN/m. Hvælvirkning (trekantlast) kræver murværk på begge sider til at optage hvælvets vandrette tryk.",
+      "kilde": "Mekanik; forudsætningen om hvælvirkning ved åbningskant er praksis (ikke efterprøvet mod primærkilde).",
+      "status": "T"
+    },
+    {
+      "id": "STAT-112",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En bjælke af konstruktionstræ C24 har den karakteristiske bøjningsstyrke fm,k = 24 MPa. kmod = 0,8. Beregn den regningsmæssige bøjningsstyrke efter DS/EN 1995-1-1 DK NA for konstruktionstræ, når γ0 = γ3 = 1,0. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 14.222,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "γM for konstruktionstræ = 1,35. fm,d = kmod·fm,k/γM = 0,8·24/1,35 = 14,22 MPa.",
+      "kilde": "DS/EN 1995-1-1 DK NA:2024, 2.4.1, tabel for γM, https://www.bygningsreglementet.dk/media/bntpjiqk/ds-en-1995-1-1-dk-na-2024_01-07-2024-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-113",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En bærende væg i et enfamiliehus (CC2) får karakteristisk 20 kN/m permanent last, 6 kN/m boliglast (kategori A) og 4 kN/m snelast. Beregn den dimensionerende regningsmæssige linjelast i lastkombination 2 (6.10b) efter DS/EN 1990 DK NA. Prøv begge variable laster som dominerende. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 30.8,
+        "enhed": "kN/m",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Nyttelast dominerende: 20 + 1,5·6 + 1,5·0,3·4 = 30,8 kN/m (ψ0 sne = 0,3). Sne dominerende: 20 + 1,5·4 + 1,5·0,5·6 = 30,5 kN/m (ψ0 bolig = 0,5). Dimensionerende: 30,8 kN/m.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.1 og A1.2(B+C) DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-114",
+      "maal": [
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En simpelt understøttet stålbjælke med spændvidde 4,0 m har inertimoment I = 8,69·10⁶ mm⁴ og E = 210 000 MPa. Den karakteristiske jævnt fordelte last er 5,0 kN/m. Beregn den elastiske nedbøjning på midten. Angiv svaret i mm.",
+      "facit": {
+        "vaerdi": 9.133,
+        "enhed": "mm",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "δ = 5·q·L⁴/(384·E·I) = 5·5,0·4000⁴/(384·210 000·8,69·10⁶) = 9,13 mm (q = 5,0 N/mm).",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-115",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En bjælke ligger af på to understøtninger A og B med 4,0 m imellem og fortsætter 1,0 m ud over B som udkrager. Hele bjælken (5,0 m) har en jævnt fordelt last på 10 kN/m. Beregn reaktionen i B. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 31.25,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Moment om A: R_B·4,0 = 10·5,0·2,5 → R_B = 31,25 kN. R_A = 50 − 31,25 = 18,75 kN. Udkrageren gør fordelingen usymmetrisk.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-116",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2b",
+        "STAT-BK-02"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "I et enfamiliehus (CC2) erstattes en bærende væg af en stålbjælke med spændvidde 4,2 m, simpelt understøttet. Bjælken bærer et bjælkelag over boligrum med lastopland 2,5 m. Karakteristisk permanent last er 4,0 kN/m² (inkl. bjælkens egenlast og lette skillevægge), nyttelasten er boliglast kategori A1. Bjælken hviler i hver ende på en vederlagsplade 150 × 200 mm på murværk. Brug lastkombination 2 (6.10b); 6.10a er ikke dimensionerende her.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn den regningsmæssige linjelast på bjælken. Angiv svaret i kN/m.",
+          "facit": {
+            "vaerdi": 15.625,
+            "enhed": "kN/m",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "1,0·4,0·2,5 + 1,5·1,5·2,5 = 10,0 + 5,625 = 15,625 kN/m."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn det største regningsmæssige bøjningsmoment i bjælken. Angiv svaret i kNm.",
+          "facit": {
+            "vaerdi": 34.453,
+            "enhed": "kNm",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "M = q·L²/8 = 15,625·4,2²/8 = 34,45 kNm."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Beregn det gennemsnitlige regningsmæssige kontakttryk under én vederlagsplade. Angiv svaret i MPa.",
+          "facit": {
+            "vaerdi": 1.094,
+            "enhed": "MPa",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "R = q·L/2 = 32,81 kN. σ = 32,81·10³/(150·200) = 1,09 MPa."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Hvad skal ud over bjælken og kontakttrykket eftervises, før løsningen kan godkendes?",
+          "kriterier": [
+            "Murværket under vederlaget skal eftervises for koncentreret last efter DS/EN 1996-1-1 med DK NA (BR18 § 349), ikke kun selve pladen.",
+            "Lastvejen skal følges ned gennem væg/pille til fundamentet, og fundamentet skal kunne optage den nye koncentrerede reaktion.",
+            "Bjælken skal eftervises for nedbøjning i anvendelsesgrænsetilstanden.",
+            "Bjælken skal eftervises for kipning/stabilitet, hvis den ikke er fastholdt."
+          ],
+          "begrundelse": "Lastvej, koncentreret last på murværk, fundament og anvendelsesgrænsetilstand."
+        }
+      ],
+      "begrundelse": "Lastopstilling, moment, kontakttryk og lastvej for en bjælke, der erstatter en bærende væg.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf; Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-117",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2a",
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et stribefundament er 0,5 m bredt. Den regningsmæssige lodrette last fra væggen er 60 kN pr. m fundament og virker 0,06 m fra fundamentets midte, fordi væggen står skævt på fundamentet. Regn med lineær jordtryksfordeling pr. løbende meter.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn bøjningsmomentet pr. m om fundamentets midte fra excentriciteten. Angiv svaret i kNm/m.",
+          "facit": {
+            "vaerdi": 3.6,
+            "enhed": "kNm/m",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "M = N·e = 60·0,06 = 3,6 kNm/m."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn det største jordtryk under fundamentet. Angiv svaret i kPa (kN/m²).",
+          "facit": {
+            "vaerdi": 206.4,
+            "enhed": "kPa",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "σmax = N/b + 6M/b² = 120 + 6·3,6/0,25 = 120 + 86,4 = 206,4 kPa."
+        },
+        {
+          "del": "c",
+          "type": "valg",
+          "spoergsmaal": "Hvad gælder for trykfordelingen under fundamentet?",
+          "valgmuligheder": {
+            "A": "Hele fundamentbredden er i tryk, fordi e < b/6.",
+            "B": "En del af fundamentet løfter, fordi e > b/6.",
+            "C": "Trykket er jævnt fordelt, da lasten er lodret.",
+            "D": "Trykket er nul ved den mest belastede kant."
+          },
+          "facit": "A",
+          "begrundelse": "b/6 = 0,083 m > e = 0,06 m, så resultanten ligger i kernen, og σmin = 120 − 86,4 = 33,6 kPa > 0."
+        }
+      ],
+      "begrundelse": "Excentrisk last på fundament: M = N·e og lineær trykfordeling (Naviers formel).",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-118",
+      "maal": [
+        "STAT-CERT-2c",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Der skal vurderes langtidsnedbøjning af en betonbjælke på grund af krybning. Hvilken lastkombination bruges?",
+      "valgmuligheder": {
+        "A": "Lastkombination 2 i brudgrænsetilstanden (6.10b)",
+        "B": "Den karakteristiske kombination",
+        "C": "Den kvasi-permanente kombination",
+        "D": "Ulykkeskombinationen"
+      },
+      "facit": "C",
+      "begrundelse": "Krybning afhænger af den last, der virker i lang tid. Derfor bruges den kvasi-permanente kombination (G + ψ2·Q), ikke en regningsmæssig brudlast.",
+      "kilde": "DS/EN 1990, 6.5.3, og DS/EN 1992-1-1, 7.4.3 (grundstandard, ikke efterprøvet); ψ2: DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "T"
+    },
+    {
+      "id": "STAT-119",
+      "maal": [
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En kollega har lavet en FEM-model (rammeprogram) af et nyt træbjælkelag med en stålbjælke under og vil bruge resultaterne direkte til dimensioneringen. Hvilke begrænsninger og antagelser i modellen skal du som kontrollant være opmærksom på?",
+      "facit": null,
+      "kriterier": [
+        "Understøtningsbetingelser og samlinger skal svare til virkeligheden (fx charnier frem for fast indspænding, eftergivelighed i samlinger).",
+        "Materialeparametre og stivheder skal vurderes, fx E-middelværdi til deformation mod karakteristisk værdi, eller kmod/anvendelsesklasse efter fugtforholdene.",
+        "Langtidsvirkninger i træ skal med: kmod for styrke og kdef for krybning efter DS/EN 1995-1-1 med DK NA (BR18 § 348).",
+        "Modellen dækker kun det, der er modelleret: lokale forhold som vederlag/kontakttryk og stabilitet (kipning, udknækning) skal eftervises særskilt.",
+        "Forudsætningerne skal dokumenteres sammen med resultaterne, så modellens brug og begrænsninger kan vurderes."
+      ],
+      "fail_hvis": [
+        "Accepterer programmets resultater som tilstrækkelig dokumentation uden at vurdere antagelserne."
+      ],
+      "begrundelse": "Certificeringskravet omfatter redegørelse for simuleringsmodellers brug og begrænsninger (BEK 1693/2023 § 12, stk. 1, nr. 3, litra c).",
+      "kilde": "BEK nr. 1693/2023, § 12, stk. 1, nr. 3, litra c, https://www.retsinformation.dk/eli/lta/2023/1693/pdf; BR18 kap. 15, § 348, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf; kmod/kdef: DS/EN 1995-1-1, 2.3.2.2 og 3.1.3 (grundstandard, ikke efterprøvet)",
+      "status": "T"
+    },
+    {
+      "id": "STAT-120",
+      "maal": [
+        "STAT-CERT-2c",
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En dør­overligger i et enfamiliehus må henføres til konsekvensklasse CC1. Den karakteristiske last er 3 kN/m permanent og 2 kN/m nyttelast (eneste variable last). Beregn den regningsmæssige linjelast i lastkombination 2 (6.10b) efter DS/EN 1990 DK NA. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 5.4,
+        "enhed": "kN/m",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "CC1: KFI = 0,9. 6.10b: 1,0·KFI·Gk + 1,5·KFI·Qk = 0,9·3 + 1,35·2 = 2,7 + 2,7 = 5,4 kN/m.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA med NOTE 4 og Tabel B1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-122",
+      "maal": [
+        "STAT-CERT-4b",
+        "STAT-BK-04"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Under en eksisterende bjælke, der skal have nyt vederlag, sættes hydrauliske donkrafte med 1,5 m afstand. Bjælken bærer karakteristisk 15 kN/m permanent last og 2 kN/m nyttelast. Donkraftene skal forspændes, så de netop overtager den permanente last uden at løfte konstruktionen. Hvilken kraft skal hver donkraft forspændes til? Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 22.5,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Forspændingen skal svare til den faktiske (karakteristiske) permanente last, ellers løftes konstruktionen og kan revne: 15 · 1,5 = 22,5 kN. Regningsmæssige laster bruges til at eftervise donkraftens og understøtningens bæreevne, ikke til forspændingen.",
+      "kilde": "Mekanik og praksis for aktivering af midlertidige understøtninger (ikke efterprøvet mod primærkilde).",
+      "status": "T"
+    },
+    {
+      "id": "STAT-123",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et sadeltag ligger afskærmet i en skov, omgivet af høje træer. Formfaktor μ1 = 0,8, Ct = 1,0 og Cs = 1,0. Spærene står med 1,2 m afstand. Beregn den karakteristiske snelast pr. løbende meter spær, målt på vandret projektion, efter DS/EN 1991-1-3 med DK NA. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 1.2,
+        "enhed": "kN/m",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Afskærmet: Ctop = 1,25. Ce = 1,25·1,0. s = 0,8·1,25·1,0·1,0 = 1,0 kN/m². Pr. spær: 1,0·1,2 = 1,2 kN/m.",
+      "kilde": "DS/EN 1991-1-3 DK NA:2024, 4.1(1) og 5.2(7), https://www.bygningsreglementet.dk/media/acwmshr5/ds-en-199113-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-124",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Et armeret betondæk støbes på stedet med fck = 25 MPa. Beregn den regningsmæssige trykstyrke fcd = fck/γc efter DS/EN 1992-1-1 DK NA med γ0 = γ3 = 1,0 (se bort fra αcc). Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 17.241,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "In situ, armeret beton: γc = 1,45. fcd = 25/1,45 = 17,24 MPa.",
+      "kilde": "DS/EN 1992-1-1 DK NA:2024, 2.4.2.4, tabel for γc, https://www.bygningsreglementet.dk/media/rtdfjh4m/ds-en-1992-1-1-dk-na-2024_2024-07-01-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-125",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En stålbjælke S235 (fy = 235 MPa) indgår i en bolig i CC2 med normal kontrolklasse. Bjælken er ikke påvirket af geotekniske laster. Beregn den regningsmæssige flydespænding fy/γM0 efter DS/EN 1993-1-1 DK NA. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 213.636,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "γM0 = 1,1·γ0·γ3 = 1,1·1,0·1,0 = 1,10. fyd = 235/1,10 = 213,6 MPa.",
+      "kilde": "DS/EN 1993-1-1 DK NA:2019, 6.1(1), https://www.bygningsreglementet.dk/media/cbckb4eq/ds-en-1993-1-1-dk-na-2019_2024-07-01-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-126",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En limtræsbjælke GL30h har fm,k = 30 MPa. kmod = 0,8. Beregn den regningsmæssige bøjningsstyrke efter DS/EN 1995-1-1 DK NA, når γ0 = γ3 = 1,0. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 18.462,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "γM for limtræ = 1,30. fm,d = 0,8·30/1,30 = 18,46 MPa.",
+      "kilde": "DS/EN 1995-1-1 DK NA:2024, 2.4.1, tabel for γM, https://www.bygningsreglementet.dk/media/bntpjiqk/ds-en-1995-1-1-dk-na-2024_01-07-2024-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-127",
+      "maal": [
+        "STAT-BK-03",
+        "STAT-CERT-3c"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En søjle i stueetagen af en kontorbygning i Danmark bærer nyttelast fra 4 kontoretager (kategori B) over sig. DK NA gælder. Hver etage giver 25 kN karakteristisk nyttelast på søjlen. Beregn den samlede karakteristiske nyttelast på søjlen med reduktionsfaktoren for etageantal efter DS/EN 1991-1-1 DK NA. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 70.0,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "αn = (1 + (n−1)·ψ0)/n med n = 4 og ψ0 = 0,6 (kategori B): αn = (1 + 3·0,6)/4 = 0,7. Q = 4·25·0,7 = 70 kN. (Med ψ0 = 0,7 giver samme formel 77,5 kN; grundstandardens formel αn = (2 + (n − 2)·ψ0)/n med ψ0 = 0,6 giver 80 kN.)",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, 6.3.1.2(11), https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf; ψ0: DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-128",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2c"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En udkraget altan (CC2) skal eftervises for væltning (EQU) om en vipkant. Stabiliserende: egenlast 20 kN med arm 1,0 m. Destabiliserende: egenlast 5 kN med arm 1,2 m og nyttelast 3 kN med arm 1,5 m. Beregn det regningsmæssige stabiliserende moment minus det regningsmæssige destabiliserende moment efter DS/EN 1990 DK NA, Tabel A1.2(A). Angiv svaret i kNm.",
+      "facit": {
+        "vaerdi": 4.65,
+        "enhed": "kNm",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "EQU: gunstig G·0,9, ugunstig G·1,1·KFI, Q·1,5·KFI, KFI = 1,0. Stab = 0,9·20·1,0 = 18 kNm. Destab = 1,1·5·1,2 + 1,5·3·1,5 = 6,6 + 6,75 = 13,35 kNm. Forskel = 4,65 kNm (> 0: ligevægt eftervist).",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(A) DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-129",
+      "maal": [
+        "STAT-CERT-2b",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En bjælke lægger en regningsmæssig reaktion på 70 kN på en murpille mellem to vinduer. Pillen er 500 mm bred og 228 mm tyk. Væggen, pillen sidder i, er 4,0 m lang. Beregn den gennemsnitlige regningsmæssige trykspænding i pillen fra reaktionen, når den regnes jævnt fordelt over pillens tværsnit. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 0.614,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "A = 500·228 = 114 000 mm². σ = 70 000/114 000 = 0,614 MPa. Vinduerne afbryder væggen, så hele vægbredden må ikke medregnes.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-130",
+      "maal": [
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En bjælke er ført ind på siden af en stålsøjle med en konsolplade. Bjælkens regningsmæssige reaktion er 40 kN og virker 150 mm fra søjlens tyngdeakse. Beregn det bøjningsmoment, som tilslutningen påfører søjlen. Angiv svaret i kNm.",
+      "facit": {
+        "vaerdi": 6.0,
+        "enhed": "kNm",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "M = N·e = 40 · 0,150 = 6 kNm. Søjlen skal eftervises for normalkraft og moment samtidig.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-131",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2a"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En træstolpe 100 × 100 mm (E = 11 000 MPa) forstærkes med to stålflader 10 × 100 mm (E = 210 000 MPa), som er forbundet til stolpen, så alle dele får samme tøjning. Samlet aksiallast er 50 kN. Beregn trykspændingen i træet. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 1.038,
+        "enhed": "MPa",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "E·A stål = 2·1000·210 000 = 4,2·10⁸ N; træ = 10 000·11 000 = 1,1·10⁸ N. N_træ = 50·1,1/5,3 = 10,38 kN. σ = 10,38·10³/10 000 = 1,038 MPa.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-132",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "I en betonsøjle i et kontorbyggeri (fck = 20 MPa) er trykspændingen fra den karakteristiske permanente last 7,0 MPa, fra kontornyttelast (kategori B) 4,0 MPa og fra snelast 2,0 MPa. Ikke-lineær krybning skal medregnes, hvis trykspændingen i den kvasi-permanente kombination overstiger 0,45·fck. Beregn forholdet mellem den kvasi-permanente spænding og 0,45·fck (udnyttelse, dimensionsløs).",
+      "facit": {
+        "vaerdi": 0.867,
+        "enhed": "-",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Kvasi-permanent: 7,0 + 0,2·4,0 + 0·2,0 = 7,8 MPa (ψ2 kontor 0,2, ψ2 sne 0). Grænse 0,45·20 = 9,0 MPa. Forhold 7,8/9,0 = 0,867.",
+      "kilde": "ψ2: DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; grænsen 0,45·fck: DS/EN 1992-1-1, 3.1.4(4) (grundstandard, ikke efterprøvet)",
+      "status": "T"
+    },
+    {
+      "id": "STAT-133",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2b",
+        "STAT-BK-02"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En stålbjælke med flangebredde 120 mm spænder 4,0 m mellem understøtning A og B og ligger vinkelret på begge vægge, så vederlagslængden måles i vægtykkelsens retning, og flangens 120 mm ligger langs væggen. Bjælken har en regningsmæssig jævnt fordelt last på 15 kN/m og en regningsmæssig punktlast på 30 kN fra en stolpe 1,0 m fra A. Ved A hviler bjælken på en 348 mm tyk murpille, ved B på en 108 mm tyk væg. Murværkets regningsmæssige styrke for koncentreret last er 3,0 MPa. Bjælken lægges direkte på murværket uden plade.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn reaktionen ved A. Angiv svaret i kN.",
+          "facit": {
+            "vaerdi": 52.5,
+            "enhed": "kN",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "R_A = 15·4/2 + 30·3/4 = 30 + 22,5 = 52,5 kN."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn den nødvendige vederlagslængde ved A. Angiv svaret i mm.",
+          "facit": {
+            "vaerdi": 145.83,
+            "enhed": "mm",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "Kontaktbredde = flangen 120 mm langs væggen. L = 52,5·10³/(120·3,0) = 145,8 mm ≤ 348 mm."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Beregn den nødvendige vederlagslængde ved B. Angiv svaret i mm.",
+          "facit": {
+            "vaerdi": 104.17,
+            "enhed": "mm",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "R_B = 15·4 + 30 − 52,5 = 37,5 kN. Kontaktbredde = flangen 120 mm langs væggen. L = 37,5·10³/(120·3,0) = 104,2 mm, dvs. næsten hele vægtykkelsen på 108 mm."
+        },
+        {
+          "del": "d",
+          "type": "fri",
+          "spoergsmaal": "Hvad bør du anbefale om udformningen af vederlaget ved B?",
+          "kriterier": [
+            "Anbefaler en vederlagsplade, betonbjælke eller udstøbning under bjælken ved B, der fordeler lasten over et større areal.",
+            "Begrunder det med, at den nødvendige vederlagslængde ved B er næsten hele vægtykkelsen, så lasten går helt ud til væggens kant med risiko for kantknusning.",
+            "Påpeger, at reaktionen ved B virker excentrisk på den tynde væg og giver et moment, som væggen skal eftervises for."
+          ],
+          "begrundelse": "Smal væg: vederlag på hele tykkelsen, kantknusning og excentricitet."
+        }
+      ],
+      "begrundelse": "Usymmetriske reaktioner og kontaktbredde begrænset af den smalleste del.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-134",
+      "maal": [
+        "STAT-CERT-2a",
+        "STAT-CERT-2b",
+        "STAT-CERT-3c"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "I et 1½-plans hus vil ejeren fjerne hanebåndene for at få fuld rumhøjde op til kip. Spærene har en vandret spændvidde på 8,0 m mellem murremmene og en højde på 3,0 m fra rem til kip. Der er ingen bærende kip- eller ås-konstruktion. Regn spærparret som et trechaniers-system med jævnt fordelt last 2,0 kN/m målt vandret over hele spændvidden.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvad sker der statisk, når hanebåndene fjernes og der ingen anden trækforbindelse er?",
+          "valgmuligheder": {
+            "A": "Spærfødderne skubber vandret udad på murremme og ydervægge.",
+            "B": "Spærene bliver blot lidt mere bøjede, men lasterne er de samme.",
+            "C": "Der sker intet, da hanebåndene kun er afstivning mod vind.",
+            "D": "Lasten flyttes til indervæggene i stueetagen."
+          },
+          "facit": "A",
+          "begrundelse": "Uden trækbånd skal den vandrette reaktion i spærfoden optages af remme og vægge, som presses udad."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn den vandrette kraft ved hver spærfod. Angiv svaret i kN.",
+          "facit": {
+            "vaerdi": 5.333,
+            "enhed": "kN",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "Trechaniersbue: H = q·L²/(8·h) = 2,0·8,0²/(8·3,0) = 5,33 kN."
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Hvilke løsninger kan bruges, hvis ejeren vil fjerne hanebåndene?",
+          "kriterier": [
+            "Peger på en løsning, der optager kraften, fx en bærende kipbjælke/ås, så spærene bliver understøttet foroven, eller nye trækforbindelser i et lavere niveau (fx i bjælkelaget/remniveau).",
+            "Kræver, at løsningen eftervises af en statiker, og at hanebåndene først fjernes, når den nye konstruktion virker."
+          ],
+          "begrundelse": "Spærfodens vandrette kraft skal optages på anden måde."
+        }
+      ],
+      "begrundelse": "Hanebånd som trækbånd og konsekvensen af at fjerne dem.",
+      "kilde": "Teknisk mekanik (statisk bestemte bjælker, Naviers formel, elastisk bjælketeori); beregnet med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-135",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-4a"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du kontrollerer en udskrift fra et bjælkeprogram for en simpelt understøttet bjælke på 6,0 m med en regningsmæssig jævnt fordelt last på 10 kN/m. Programmet angiver reaktionerne 25 kN og 25 kN og et maksimalmoment på 37,5 kNm. Hvad er din vurdering?",
+      "facit": null,
+      "kriterier": [
+        "Kontrollerer ligevægt: summen af reaktionerne (50 kN) skal svare til den samlede last (60 kN), så der mangler 10 kN i modellen.",
+        "Kontrollerer momentet med et håndoverslag (q·L²/8 = 45 kNm) og konstaterer, at programmets moment er for lavt.",
+        "Peger på mulige årsager (fx forkert spændvidde, last eller lastbredde i modellen) og kræver, at modellen rettes og bjælke, vederlag og understøtninger eftervises igen, før resultatet bruges."
+      ],
+      "fail_hvis": [
+        "Godkender udskriften."
+      ],
+      "begrundelse": "Samlet last 10·6,0 = 60 kN, men reaktionerne summer til 50 kN; håndoverslag M = 10·6,0²/8 = 45 kNm mod programmets 37,5 kNm. Modellens input er forkert og skal rettes, før resultatet bruges.",
+      "kilde": "BEK nr. 1693/2023, § 12, stk. 1, nr. 3, litra c, https://www.retsinformation.dk/eli/lta/2023/1693/pdf; BR18 kap. 30, § 523, stk. 2, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-136",
+      "maal": [
+        "STAT-CERT-2b",
+        "STAT-CERT-3c"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Et etagedæk af træbjælker i en ældre villa hviler på en hulmur, der består af en 108 mm formur, et 132 mm hulrum og en 108 mm bagmur. Bjælkerne er lagt op på bagmuren, og formuren er kun forbundet med murbindere. Den regningsmæssige lodrette linjelast fra dækket og den bærende væg over er 35 kN/m; formurens egenlast er ikke medregnet heri. Beregn den gennemsnitlige regningsmæssige trykspænding i det murværk, der bærer lasten lige under bjælkelaget. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 0.324,
+        "enhed": "MPa",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Kun bagmuren bærer: binderne overfører ikke lodret last til formuren, og hulrummet bærer intet. σ = 35·10³/(108·1000) = 0,324 MPa. Hele vægtykkelsen (348 mm) giver 0,101 MPa og begge vanger (216 mm) 0,162 MPa – begge undervurderer trykket.",
+      "kilde": "Teknisk mekanik (σ = N/A, ligevægt); beregnet to gange med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-137",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-BK-03"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En stålbjælke hviler midt på en 228 mm massiv murstensvæg på en vederlagsplade, der er 150 mm lang langs væggen og dækker hele vægtykkelsen. Den regningsmæssige reaktion er 45 kN. Regn med, at lasten spredes i murværket under en vinkel på 60° med vandret til begge sider, og at der ikke er åbninger eller vægender i nærheden. Beregn den gennemsnitlige regningsmæssige trykspænding i væggen 0,6 m under pladen. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 0.2342,
+        "enhed": "MPa",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Spredning pr. side: 600/tan 60° = 346,4 mm. Effektiv længde: 150 + 2·346,4 = 842,8 mm. σ = 45·10³/(842,8·228) = 0,234 MPa. Uden spredning (kun pladen) fås 1,32 MPa, som kun gælder lige under pladen.",
+      "kilde": "Mekanik med opgiven spredningsvinkel (jf. princippet i DS/EN 1996-1-1, 6.1.3, ikke efterprøvet); beregnet to gange med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-138",
+      "maal": [
+        "STAT-BK-04",
+        "STAT-CERT-4b"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et midlertidigt stålstempel (rør) med længde 2,6 m, charnierlejret i begge ender, bærer en regningsmæssig last på 30 kN fra et åg. Åget er ikke centreret over stempelhovedet, så lasten virker med en excentricitet på 35 mm. Stemplets tværsnit har I = 3,0·10⁵ mm⁴ og E = 210 000 MPa.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn stemplets Euler-kritiske last Ncr med knæklængde lig stemplets længde. Angiv svaret i kN.",
+          "facit": {
+            "vaerdi": 91.98,
+            "enhed": "kN",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "Ncr = π²·E·I/L² = π²·210 000·3,0·10⁵/2600² = 91 980 N = 92,0 kN."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn det regningsmæssige moment i stemplet fra excentriciteten inklusive 2. ordens virkning, når 1. ordens momentet forstørres konservativt med faktoren 1/(1 − N/Ncr). Angiv svaret i kNm.",
+          "facit": {
+            "vaerdi": 1.558,
+            "enhed": "kNm",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "M1 = N·e = 30·0,035 = 1,05 kNm. N/Ncr = 30/91,98 = 0,326. M = 1,05/(1 − 0,326) = 1,56 kNm – ca. 50 % mere end 1. ordens momentet."
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Hvad bør der gøres ved stemplet på byggepladsen?",
+          "kriterier": [
+            "Anbefaler at centrere lasten over stempelhovedet (flytte eller kile åget), så excentriciteten fjernes.",
+            "Påpeger, at stemplets tabel- eller producentbæreevne forudsætter centrisk last og lodret stempel og derfor ikke kan bruges uændret ved excentrisk last.",
+            "Kræver, at stemplet eftervises for kombineret tryk og moment, eller at der sættes flere eller kraftigere stempler, hvis excentriciteten ikke kan fjernes."
+          ],
+          "fail_hvis": [
+            "Godkender stemplet, alene fordi lasten er mindre end stemplets tabelbæreevne."
+          ],
+          "begrundelse": "Excentrisk last på et slankt stempel giver et moment, der forstørres af normalkraften; arbejdsgiveren skal sikre mod midlertidig ustabilitet (BEK 2107/2021 § 40)."
+        }
+      ],
+      "begrundelse": "2. ordens virkning af excentrisk last på et midlertidigt stempel og håndtering på pladsen.",
+      "kilde": "Teknisk mekanik (Euler, forstørrelsesfaktor 1/(1 − N/Ncr)); beregnet to gange med Python. BEK nr. 2107/2021 § 40, https://www.retsinformation.dk/eli/lta/2021/2107/pdf; del c er praksis (ikke efterprøvet mod primærkilde).",
+      "status": "T"
+    },
+    {
+      "id": "STAT-139",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2a"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "To bjælker krydser hinanden midt på deres spænd og er forbundet i krydset, så de får samme nedbøjning der. En regningsmæssig punktlast på 30 kN virker i krydset. Bjælke A er af stål, simpelt understøttet, med spændvidde 4,0 m, E = 210 000 MPa og I = 10·10⁶ mm⁴. Bjælke B er af limtræ, fast indspændt i begge ender, med spændvidde 3,0 m, E = 13 000 MPa og I = 80·10⁶ mm⁴. Se bort fra egenlast. Beregn den del af punktlasten, som bjælke A bærer. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 5.267,
+        "enhed": "kN",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Fjederstivheder: k_A = 48·E·I/L³ = 48·2,1·10¹²/4000³ = 1575 N/mm. k_B = 192·E·I/L³ = 192·1,04·10¹²/3000³ = 7396 N/mm. P_A = 30·1575/(1575 + 7396) = 5,27 kN. Ligelig fordeling (15 kN) eller at regne B simpelt understøttet (13,8 kN) er forkert.",
+      "kilde": "Teknisk mekanik (elastisk bjælketeori, ens nedbøjning i krydset); beregnet to gange med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-140",
+      "maal": [
+        "STAT-CERT-2c",
+        "STAT-CERT-3c"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En kældervæg af uarmeret murværk, udført på stedet (in situ) med byggesten i kategori II, påvirkes af jordtryk. Bygningen er en boligblok, hvor gulvet i øverste etage ligger 14 m over terræn. Der er normal kontrolklasse. Murværkets karakteristiske trykstyrke er fk = 6,0 MPa. Beregn den regningsmæssige trykstyrke fd, der skal bruges ved eftervisning af murværket (STR) i lastkombination 5 efter DS/EN 1990 DK NA og DS/EN 1996-1-1 DK NA. Angiv svaret i MPa.",
+      "facit": {
+        "vaerdi": 2.674,
+        "enhed": "MPa",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Gulv i øverste etage over 12 m i en bolig → CC3 (Tabel B1 DK NA), KFI = 1,1. I lastkombination 5 (STR for konstruktionsmaterialer i geotekniske konstruktioner) er γ0 = 1,2·KFI = 1,32 (Tabel A1.2(B+C) DK NA, NOTE 3). Byggesten kategori II, in situ: γc = 1,70·γ0·γ3 = 1,70·1,32·1,0 = 2,244. fd = 6,0/2,244 = 2,67 MPa. Kategori I (1,60) giver 2,84, uden γ0 fås 3,53, med γ0 = KFI (LK3/4) 3,21 og med γ0 = 1,2 uden KFI 2,94 MPa.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel B1 DK NA og Tabel A1.2(B+C) DK NA, NOTE 3–4, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; DS/EN 1996-1-1 DK NA:2019, Tabel 2.4.3a og 2.4.3c DK NA, https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-141",
+      "maal": [
+        "STAT-CERT-2b",
+        "STAT-CERT-3c"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En 228 mm bærende væg har to åbninger ved siden af hinanden med lysvidde 1,0 m og 1,6 m, adskilt af en 480 mm bred murpille. Væggen får en regningsmæssig jævnt fordelt linjelast på 30 kN/m (inklusive murværket over åbningerne). Overliggerne er simpelt understøttede, så lasten over hver åbning går ligeligt til de to sider. Murværkets regningsmæssige trykstyrke i pillen er fd = 2,2 MPa. Se bort fra excentricitet og slankhed. Beregn pillens udnyttelsesgrad σ/fd. Angiv svaret som et dimensionsløst tal.",
+      "facit": {
+        "vaerdi": 0.2218,
+        "enhed": "-",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "Lastopland for pillen: 0,48 + 1,0/2 + 1,6/2 = 1,78 m. N = 30·1,78 = 53,4 kN. σ = 53,4·10³/(480·228) = 0,488 MPa. Udnyttelse = 0,488/2,2 = 0,222. Kun pillens egen bredde (14,4 kN) undervurderer lasten.",
+      "kilde": "Teknisk mekanik (σ = N/A, ligevægt); beregnet to gange med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-142",
+      "maal": [
+        "STAT-BR26"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En eksisterende etageboligbygning i CC3 har 5 etager over terræn; gulvet i øverste etage ligger 13,5 m over terræn, og spændvidderne er højst 4,5 m. Der skal laves en ny døråbning med overligger i en bærende væg. Både den eksisterende konstruktion og ombygningen er simpel og traditionel. Hvilken er den laveste konstruktionsklasse, ombygningen må indplaceres i efter BR18 § 489?",
+      "valgmuligheder": {
+        "A": "Konstruktionsklasse 1",
+        "B": "Konstruktionsklasse 3",
+        "C": "Ombygningen er undtaget fra indplacering",
+        "D": "Konstruktionsklasse 2"
+      },
+      "facit": "D",
+      "begrundelse": "Hovedreglen (§ 489, stk. 2) er den eksisterende konstruktions klasse, KK3. Den laveste lovlige klasse følger af § 489, stk. 2, nr. 2: Simple og traditionelle ombygninger i eksisterende simple og traditionelle konstruktioner i CC3 i etagebyggeri til længere ophold (fx beboelse) i højst 6 etager over terræn med spændvidde højst 8 m kan indplaceres i KK2. Nr. 1 (KK1) gælder kun CC2, og undtagelsen i stk. 3, nr. 3, gælder kun enfamilie-, dobbelt-, række- og sommerhuse.",
+      "kilde": "BR18 kap. 26, § 489, stk. 2–3, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-143",
+      "maal": [
+        "STAT-BK-01",
+        "STAT-CERT-3c"
+      ],
+      "saet": "holdout",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et bjælkelag af træ er kontinuerligt over en bærende midtervæg og har to lige store fag på 4,0 m; ved ydervæggene er det simpelt understøttet. Den karakteristiske egenlast er 1,8 kN/m², jævnt fordelt. Regn bjælkerne med konstant stivhed og understøtningerne som ueftergivelige. Beregn den karakteristiske linjelast på midtervæggen fra egenlasten. Angiv svaret i kN/m.",
+      "facit": {
+        "vaerdi": 9.0,
+        "enhed": "kN/m",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Kontinuerlig bjælke over to lige fag med jævn last: midterreaktion = 1,25·q·L = 1,25·1,8·4,0 = 9,0 kN/m. To simpelt understøttede fag (bjælker stødt over væggen) ville give q·L = 7,2 kN/m; kontinuiteten øger lasten på midtervæggen med 25 %.",
+      "kilde": "Teknisk mekanik (statisk ubestemt bjælke, kraftmetoden); beregnet to gange med Python.",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-144",
+      "maal": [
+        "STAT-CERT-4a"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "I et kontorbyggeri i konstruktionsklasse 2 har den rådgiver, der har lavet de statiske beregninger, selv gennemregnet dem en gang til og noteret det som »uafhængig kontrol«. I den statiske kontrolplan står der kun »Statik – kontrolleret – OK«. Bygherren spørger, om kontrollen opfylder BR18. Hvad svarer du?",
+      "facit": null,
+      "kriterier": [
+        "Påpeger, at rådgiverens gennemregning af sit eget arbejde er egenkontrol, ikke uafhængig kontrol (BR18 § 526, nr. 1).",
+        "Forklarer, at uafhængig kontrol skal udføres af en person, der for byggeriet ikke har medvirket ved projekteringen af de bærende konstruktioner (BR18 § 526, nr. 2).",
+        "Nævner, at den uafhængige kontrollant skal have den fornødne kompetence og overblik inden for det faglige område (BR18 § 528, stk. 1).",
+        "Påpeger, at kontrolplanen for hver kontrol skal angive kontroltype, kontrolniveau, omfang og dokumentationskrav samt hvem der udfører kontrollen, og løbende ajourføres (BR18 § 523, stk. 3)."
+      ],
+      "fail_hvis": [
+        "Accepterer rådgiverens egen gennemregning som uafhængig kontrol.",
+        "Accepterer kontrolplanen, som den er."
+      ],
+      "begrundelse": "Kontroltyper er defineret i § 526, kompetencekravet i § 528, og kontrolplanens indhold i § 523, stk. 3.",
+      "kilde": "BR18 kap. 30, §§ 523, stk. 3, 526 og 528, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-145",
+      "maal": [
+        "STAT-CERT-4b",
+        "STAT-BK-02"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "I et byggeri i konstruktionsklasse 2 skal en ny stålbjælke lægges op på to murede vederlag efter et færdigt projekt. Du skal lave den del af kontrolplanen, der gælder udførelsen af bjælken og vederlagene. Hvad skal den indeholde?",
+      "facit": null,
+      "kriterier": [
+        "Nævner konkrete kontrolpunkter for bjælken: at profil og stålkvalitet svarer til projektet (fx kontrol mod følgeseddel eller mærkning).",
+        "Nævner konkrete kontrolpunkter for vederlagene: vederlagslængde, vederlagsplade/udstøbning og placering som projekteret.",
+        "Angiver for hver kontrol kontroltypen for udførelse – egenkontrol, uafhængig kontrol eller tredjepartskontrol (BR18 § 526 a).",
+        "Angiver kontrolniveauet for udførelsen, fastlagt efter bilag 3, tabel 2b, og DS 1140 (BR18 § 527).",
+        "Angiver, at kontrollen af udførelsen dokumenteres i kontrolrapporter (BR18 § 523, stk. 4)."
+      ],
+      "fail_hvis": [
+        "Nøjes med en generel bemærkning om, at »udførelsen kontrolleres«, uden kontrolpunkter."
+      ],
+      "begrundelse": "Udførelseskontrol skal ske på basis af en fyldestgørende kontrolplan med kontroltype (§ 526 a) og kontrolniveau (§ 527) og dokumenteres i kontrolrapporter (§ 523, stk. 4).",
+      "kilde": "BR18 kap. 30, §§ 523, stk. 4, 526 a og 527, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf; kontrolpunkterne er praksis (ikke efterprøvet mod primærkilde).",
+      "status": "T"
+    }
+  ]
+}

@@ -1720,6 +1720,943 @@
       "status": "forslag",
       "beslutning": null,
       "maalinger": {}
+    },
+    {
+      "id": "F-019",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Nulmåling: statik-eksamenssættet (79 opgaver) måles første gang for plugin byg-statik @ 9ea2a8e (alle sæt, --gentag-fri 3) som udgangspunkt for benchmarket. Ingen ændring.",
+      "aendring": "ingen",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "9ea2a8e",
+      "laering": "Statik @ 9ea2a8e: plugin udvikling 59/63 opgaver, holdout 11/16, 0.104 USD pr. bestået, 21.5 s pr. opgave. Basis på udvikling/opgaver-a 26/32 mod plugin 30/32 – gevinsten ligger i fri-opgaverne (basis 1/7), valg og tal er ens. Udviklingssættets talopgaver er næsten mættede. Svaghederne ligger i holdout og i fri-opgaver, hvor 3 af 4 udviklingshuller er for snævre kriterier i rettemasken (STAT-010 K2, STAT-016 K1, STAT-119 K2). STAT-123 er et reelt videnshul: eksponeringsfaktor for afskærmet terræn efter DK NA til EN 1991-1-3 (agenten bruger grundstandardens Ce=1,2). Basis for udvikling/opgaver-b og holdout mangler og bør køres.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling uden ændring: første måling af statik-sættet sættes som benchmark. Plugin på alle sæt med --gentag-fri 3, basis kun udvikling/opgaver-a pga. rundens budget på 15 USD."
+    },
+    {
+      "id": "F-020",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "prompt",
+      "hypotese": "I eksamen (og overalt uden Bash) har statikeren kun Read/Glob/Grep/Skill, men agentprompt og SKILL.md siger 'regn ikke selv' og 'aldrig hovedregning'. Agenten svarer så med forbehold eller springer mellemtrin over, hvilket giver regnefejl i indgreb (tryk under formur/bagmur, spredning, excentricitet, E-forhold, asymmetrisk understøtning). Ændring: når værktøjerne ikke kan køres, regnes i hånden trin for trin (formel → indsatte tal med enheder → resultat), med lastvej/hvilken del der bærer og enhedskontrol, og et overslag som kontrol. Forventning: tal-opgaver +2 eller flere på samme opgaver (især STAT-123 og holdout-talopgaver), ingen gruppe ned ≥2, pris pr. bestået højst +10 % (lidt flere output-tokens).",
+      "aendring": "agents/statiker.md (Regneværktøj) og skills/statik-viden/SKILL.md (Brug uden subagent): regel for håndregning uden Python i stedet for 'regn ikke selv'",
+      "opgaver": [
+        "STAT-123"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "9ea2a8e",
+      "laering": "Billigt tjek (--kun-fejlede, 5 opgaver, 0.80 USD): 0/5 flyttede sig. Ændringen virker på adfærden: uden Bash regner agenten nu i hånden trin for trin med enhedskontrol i stedet for at tage forbehold. Men udviklingssættets eneste fejlede talopgave (STAT-123) skyldes en normværdi (eksponeringsfaktor for afskærmet terræn i DK NA til EN 1991-1-3), ikke regning, og de øvrige huller er fri-opgaver med for snævre kriterier i rettemasken. Udviklingssættet kan derfor ikke vise en effekt på regnefejl, kun holdout kan. Fuld eftermåling plus holdout (ca. 9 USD) var ikke inden for rundens budget. Næste gang: kør hele forsøget med fuld eftermåling og holdout, eller tilføj først flere talopgaver om indgreb til udviklingssættet (opgaver-forsøg), så effekten kan måles uden holdout. Ændringen er rullet tilbage.",
+      "slut": "2026-10-18",
+      "vurdering": "uafklaret"
+    },
+    {
+      "id": "F-021",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "rettemaske",
+      "hypotese": "Tre fri-kriterier i udviklingssættet er for snævre og dumper fagligt gode svar (F-019). STAT-010 K2 kræver eksplicit KFI, ψ og tabelnumre. STAT-016 K1 kræver netop formuleringen om, at rust udvider sig og sprænger dæklaget. STAT-119 K2 afviser svar, der dækker E-middelværdi mod karakteristisk værdi og kmod/anvendelsesklasse. Ændring: STAT-010 K2 kræver kontrol af, at lastkombinationer og partialkoefficienter følger DK NA. STAT-016 K1 opfyldes af en korrekt beskrivelse af korrosionsmekanismen eller afskalningen. STAT-119 K2 opfyldes af en vurdering af stivhed/E-værdi (middel mod karakteristisk) eller kmod/anvendelsesklasse. Forventning ved rebedoem af F-012s svar: 2-3 af de tre opgaver består, øvrige opgaver uændrede ud over censorstøj (±2 fri), ingen merpris for agenten.",
+      "aendring": "eksamen/statik opgavefiler: STAT-010 K2, STAT-016 K1 og STAT-119 K2 løsnet",
+      "opgaver": [
+        "STAT-010",
+        "STAT-016",
+        "STAT-119"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "4ecb7f3",
+      "laering": "Rettemaske- og opgaveforsøg kan i dag ikke gennemføres af CI-agenten. Instruksen siger, at rettelser uddeles til en underagent, men holdout-vagten (PreToolUse i ci-forbedring) arver til underagenter og blokerer alle veje til opgavefilerne. Det kræver et vaerktoej-forsøg, fx en snæver underkommando 'exam.py ret-kriterium FAG ID NR TEKST', der afviser holdout-opgaver og ikke udskriver andre opgaver, eller at brugeren retter i en session uden vagten. Selve rettelserne står fortsat. STAT-010 K2 skal kræve kontrol af, at lastkombinationer og partialkoefficienter følger DK NA, uden krav om KFI, ψ eller tabelnumre. STAT-016 K1 skal kunne opfyldes af en korrekt beskrivelse af korrosionsmekanismen eller afskalningen. STAT-119 K2 skal kunne opfyldes af E-middelværdi mod karakteristisk værdi eller kmod/anvendelsesklasse. Bemærk også, at STAT-010 K1 dumpede ved en streng læsning, fordi der ikke stod 'komplet fra alle etager'. Kriteriet er formentlig også for snævert. Kør rebedoem på 20261018-194220-plugin-alle-9ea2a8e.json efter rettelsen.",
+      "slut": "2026-10-18",
+      "vurdering": "manuel",
+      "begrundelse": "Ændringen kunne ikke udføres. Holdout-vagten sidder i ci-forbedrings frontmatter og gælder også de underagenter, den starter. Den general-purpose-agent, der skulle rette kriterierne, blev afvist ved Read, Edit og Bash på opgavefilerne og omgik den med rette ikke. Der er ingen ændring og ingen eftermåling."
+    },
+    {
+      "id": "F-022",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "CI-agenten kan ikke gennemføre rettemaske- og opgaveforsøg (F-021), fordi holdout-vagten også blokerer de underagenter, rettelsen uddeles til. En snæver underkommando 'exam.py ret-kriterium FAG ID NR TEKST' (afviser holdout-opgaver, ændrer kun den ene streng, udskriver intet fra andre opgaver), som vagten tillader, gør forsøgene mulige uden at svække holdout. Kræver brugerens godkendelse.",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-023",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Agenten bruger grundstandardens eksponeringsfaktor (Ce = 1,2 for afskærmet) til snelast, fordi videnbasen kun har s_k. DS/EN 1991-1-3 DK NA:2024 5.2(7) fastsætter Ce = Ctop·Cs med Ctop 0,8/1,0/1,25 (vindblæst/normal/afskærmet) og Cs efter bygningens størrelse (afskærmet 1,0). Ændring: én V-mærket række om Ce i normgrundlag.md (Laster) og 'snelast (Ce)' i SKILL.md-indgangen. Forventning: STAT-123 består (tal), ingen gruppe ned 2 eller flere, holdout-tal uændrede eller bedre, pris pr. bestået uændret inden for 10 % (ca. 300 B ekstra tekst).",
+      "aendring": "skills/statik-viden/references/normgrundlag.md: række om Ce efter DK NA 5.2(7). SKILL.md: indgang nævner snelast (Ce)",
+      "opgaver": [
+        "STAT-123"
+      ],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "5213943",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-195918-basis-udvikling.json",
+              "20261018-220541-plugin-alle-5213943.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.291,
+                  "pris_pr_bestaaet": 0.097,
+                  "sek_pr_opgave": 30.6
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.913,
+                  "pris_pr_bestaaet": 0.1142,
+                  "sek_pr_opgave": 23.5
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.466,
+                  "pris_pr_bestaaet": 0.0822,
+                  "sek_pr_opgave": 22.3,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.875,
+                  "pris_pr_bestaaet": 0.0647,
+                  "sek_pr_opgave": 18.9,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-132"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "b845df7",
+      "laering": "Ce for snelast i DK NA (Ctop·Cs, afskærmet 1,25) afløser grundstandardens tabel 5.1. Agenten brugte 1,2, indtil én V-mærket række i normgrundlag.md og en henvisning i SKILL.md kom ind. Herefter er svaret rigtigt, og prisen er uændret (+0,7 KB). Holdout flyttede sig ikke, så holdout-hullerne ligger ikke i snelast. Ny faldgrube: exam.py parse_number læser et dansk decimaltal med præcis tre decimaler (0,867) som 867. Talopgaver med facit under 1 og tre decimaler dumper derfor tilfældigt, alt efter hvor mange decimaler agenten skriver. Det skal rettes i et vaerktoej-forsøg, før talopgaver sammenlignes. Næste: F-020 (regn i hånden) oven på denne revision.",
+      "slut": "2026-10-18",
+      "vurdering": "uafklaret",
+      "begrundelse": "Reglen giver uafklaret (+0). Jeg afviger, fordi STAT-123 er en deterministisk tal-opgave, der gik fra 1,15 til 1,2 kN/m (facit) både i --kun-fejlede og i fuld eftermåling. Det er ikke støj fra fri-opgaver. Det eneste fald (STAT-132) er en parserfejl i exam.py: 'SVAR: 0,867' læses som 867, fordi parse_number tolker et dansk decimaltal med tre decimaler som engelsk tusindtalsadskillelse. Agentens svar var korrekt. Korrigeret er udvikling +1. Holdout er uændret (11/16), ingen gruppe faldt, og prisen pr. bestået er uændret. Reglen er verificeret mod primærkilden (DK NA:2024 5.2(7))."
+    },
+    {
+      "id": "F-024",
+      "dato": "2026-10-18",
+      "fag": [
+        "alle"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "exam.py parse_number tolker et dansk decimaltal med præcis tre decimaler (fx 0,867) som engelsk tusindtal (867), så korrekte talsvar dumper (STAT-132 i F-023). Rettelse: et komma efter et indledende 0 eller et enkelt ciffer er decimaltegn, og et tal med tusindtalskomma kræver et førende ciffer forskelligt fra 0. Tilføj en test. Kør rebedoem på seneste resultater. Forventning: STAT-132 og eventuelle holdout-tal består ved rebedoem, ingen andre ændringer.",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-025",
+      "dato": "2026-10-18",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "prompt",
+      "hypotese": "Gentagelse af F-020 med ny begrundelse: F-020 blev uafklaret alene fordi fuld eftermåling og holdout ikke var inden for rundens budget. Udviklingssættet kan ikke vise effekten, kun holdout kan (F-020-læring), og brugeren har nu godkendt holdout. Uden Bash har statikeren kun læseværktøjer, men agentprompt og SKILL.md siger 'regn ikke selv' og 'aldrig hovedregning', så agenten tager forbehold eller springer mellemtrin over i indgrebsberegninger. Ændring (én variabel, oven på F-023): når værktøjerne ikke kan køres, regnes i hånden trin for trin (formel, indsatte tal med enheder, resultat), med lastvej og enhedskontrol samt et overslag som kontrol. Tallet mærkes som håndregnet overslag. Forventning: holdout-tal +1 til +2, udvikling uændret (mættet), ingen gruppe ned 2 eller flere, pris pr. bestået højst +10 %.",
+      "aendring": "agents/statiker.md (Regneværktøj) og skills/statik-viden/SKILL.md (Brug uden subagent): håndregning trin for trin uden Python i stedet for 'regn ikke selv'",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "5213943",
+            "dato": "2026-10-18",
+            "filer": [
+              "20261018-195918-basis-udvikling.json",
+              "20261018-220541-plugin-alle-5213943.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.291,
+                  "pris_pr_bestaaet": 0.097,
+                  "sek_pr_opgave": 30.6
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.913,
+                  "pris_pr_bestaaet": 0.1142,
+                  "sek_pr_opgave": 23.5
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.466,
+                  "pris_pr_bestaaet": 0.0822,
+                  "sek_pr_opgave": 22.3,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.875,
+                  "pris_pr_bestaaet": 0.0647,
+                  "sek_pr_opgave": 18.9,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-132"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "725adea",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-222424-plugin-alle-725adea.json",
+              "20261019-002400-plugin-alle-725adea.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.252,
+                  "pris_pr_bestaaet": 0.0841,
+                  "sek_pr_opgave": 31.2
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 1.056,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 23.6
+                }
+              },
+              "udvikling/opgaver-a": {
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 29,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.442,
+                  "pris_pr_bestaaet": 0.0842,
+                  "sek_pr_opgave": 21.9,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.9,
+                  "pris_pr_bestaaet": 0.0655,
+                  "sek_pr_opgave": 19.4,
+                  "fejlede": [
+                    "STAT-112",
+                    "STAT-119"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "e738e5f",
+      "laering": "Håndregning trin for trin gav +2 i holdout/opgaver-b, begge deterministiske talopgaver (fejl → bestået), uden merpris. Det er netop indgrebsregningen, hypotesen sigtede på. Nettoresultatet er dog kun +1: udviklingssættet faldt med én fri-opgave (støj) og én reel talopgave (STAT-112). I STAT-112 regnede agenten rigtigt, men tog γM = 1,3 'efter hukommelsen' i stedet for at slå 1,35 op i normgrundlag.md. Håndregningsprompten får altså agenten til at springe opslaget af normværdier over. STAT-132's skift er parserfejlen fra F-024 og tæller ikke. Næste skridt: samme ændring plus et krav om at slå hver normværdi (γ, kmod, ψ, Ce osv.) op i normgrundlag.md og citere rækken, før den indsættes (forslag F-026). Plugin-ændringen er rullet tilbage.",
+      "slut": "2026-10-19",
+      "vurdering": "uafklaret",
+      "rev_efter": "725adea"
+    },
+    {
+      "id": "F-026",
+      "dato": "2026-10-19",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "prompt",
+      "hypotese": "F-025 viste +2 holdout-tal ved håndregning trin for trin, men STAT-112 faldt, fordi agenten tog γM efter hukommelsen. Ændring: F-025's håndregning plus et krav om at slå hver normværdi op i normgrundlag.md og citere rækken, før den indsættes. Forventning: holdout-tal +2 som i F-025, STAT-112 består igen, ingen gruppe ned 2, pris pr. bestået højst +10 %. Kør efter F-024 (parserfejl), så talopgaver kan sammenlignes.",
+      "aendring": "",
+      "opgaver": [
+        "STAT-112"
+      ],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
+    },
+    {
+      "id": "F-027",
+      "dato": "2026-10-19",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "rettemaske",
+      "hypotese": "Gentagelse af F-021 med ny begrundelse: F-021 kunne ikke udføres, fordi holdout-vagten blokerede underagenten. Rettelsen laves nu i hovedsessionen uden vagt. Kriterierne er for snævre: STAT-010 K1 (kræver 'alle etager') og K2 (kræver eksplicit KFI og ψ), STAT-016 K1 (kræver netop formuleringen om rustens udvidelse) og STAT-119 K2 (afviser E-middel/karakteristisk og kmod). Ændring: kriterierne kræver fagindholdet, ikke ordlyden. Forventning ved rebedoem af F-019's og F-025's svar: 2-3 af de tre opgaver består, øvrige uændrede ud over censorstøj.",
+      "aendring": "eksamen/statik/opgaver-a.json og opgaver-b.json: STAT-010 K1+K2, STAT-016 K1, STAT-119 K2",
+      "opgaver": [
+        "STAT-010",
+        "STAT-016",
+        "STAT-119"
+      ],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e.json",
+              "20261018-195918-basis-udvikling.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.272,
+                  "pris_pr_bestaaet": 0.0908,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.896,
+                  "pris_pr_bestaaet": 0.112,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 26,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.71,
+                  "pris_pr_bestaaet": 0.1042,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-012",
+                    "STAT-013",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 30,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.61,
+                  "pris_pr_bestaaet": 0.087,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": [
+                    "STAT-010",
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.781,
+                  "pris_pr_bestaaet": 0.0614,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-119",
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "9ea2a8e",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-194220-plugin-alle-9ea2a8e-rebedoemt.json",
+              "20261018-195918-basis-udvikling-rebedoemt.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.313,
+                  "pris_pr_bestaaet": 0.1045,
+                  "sek_pr_opgave": 30.3
+                }
+              },
+              "holdout/opgaver-b": {
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.938,
+                  "pris_pr_bestaaet": 0.1173,
+                  "sek_pr_opgave": 23.8
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 28,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.872,
+                  "pris_pr_bestaaet": 0.1026,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-012",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 32,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.779,
+                  "pris_pr_bestaaet": 0.0868,
+                  "sek_pr_opgave": 21.6,
+                  "fejlede": []
+                }
+              },
+              "udvikling/opgaver-b": {
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 30,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.822,
+                  "pris_pr_bestaaet": 0.0607,
+                  "sek_pr_opgave": 18.5,
+                  "fejlede": [
+                    "STAT-123"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "f91fcf4",
+      "laering": "Kriterier, der kræver en bestemt ordlyd eller en udtømmende opremsning ('alle etager', 'KFI og ψ eksplicit', 'rust udvider sig'), dumper fagligt rigtige svar. Skriv kriterier som det faglige indhold, der skal være til stede, og giv eksempler med 'fx'. Censorstøj på fri-opgaver er stor: rebedoem af F-025's svar med uændrede kriterier for STAT-013, -021 og -033 vendte tre opgaver til ikke bestået. Sammenlign derfor aldrig fri-opgaver på tværs af to bedømmelser uden --gentag-fri 3. Rettemaske- og opgaveforsøg skal laves i en session uden holdout-vagt (F-021/F-015). Udestående: holdout-kriterierne er ikke gennemgået for samme fejltype.",
+      "slut": "2026-10-19",
+      "vurdering": "manuel",
+      "begrundelse": "Rettemaske-forsøg afgøres manuelt. Ved rebedoem af F-019's svar består alle tre målopgaver (STAT-010, -016, -119), og STAT-012 skifter som censorstøj. Kriterierne kræver nu fagindholdet i stedet for ordlyden. Basis stiger tilsvarende (+2), så plugin-gevinsten i udviklingssættet er ikke pustet op."
+    },
+    {
+      "id": "F-028",
+      "dato": "2026-10-19",
+      "fag": [
+        "statik"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Komplet benchmark for statik efter F-023 og F-027: plugin 5213943 med den løsnede rettemaske (rebedoem) samt basis på alle sæt (udvikling A rebedoemt, B og holdout nykørt med --gentag-fri 3).",
+      "aendring": "ingen – kun måling",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "statik": {
+          "foer": {
+            "rev": "5213943",
+            "dato": "2026-10-19",
+            "filer": [
+              "20261018-195918-basis-udvikling-rebedoemt.json",
+              "20261018-220541-plugin-alle-5213943-rebedoemt.json",
+              "20261019-003911-basis-udvikling.json",
+              "20261019-004310-basis-holdout.json"
+            ],
+            "grupper": {
+              "holdout/opgaver-a": {
+                "basis": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.294,
+                  "pris_pr_bestaaet": 0.098,
+                  "sek_pr_opgave": 27.7
+                },
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.327,
+                  "pris_pr_bestaaet": 0.1091,
+                  "sek_pr_opgave": 30.6
+                }
+              },
+              "holdout/opgaver-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 9,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.971,
+                  "pris_pr_bestaaet": 0.1079,
+                  "sek_pr_opgave": 21.0
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.946,
+                  "pris_pr_bestaaet": 0.1182,
+                  "sek_pr_opgave": 23.5
+                }
+              },
+              "udvikling/opgaver-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 28,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.872,
+                  "pris_pr_bestaaet": 0.1026,
+                  "sek_pr_opgave": 19.7,
+                  "fejlede": [
+                    "STAT-012",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 31,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.597,
+                  "pris_pr_bestaaet": 0.0838,
+                  "sek_pr_opgave": 22.3,
+                  "fejlede": [
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/opgaver-b": {
+                "basis": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.92,
+                  "pris_pr_bestaaet": 0.0662,
+                  "sek_pr_opgave": 15.3,
+                  "fejlede": [
+                    "STAT-123",
+                    "STAT-132"
+                  ]
+                },
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 30,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.906,
+                  "pris_pr_bestaaet": 0.0635,
+                  "sek_pr_opgave": 18.9,
+                  "fejlede": [
+                    "STAT-132"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "1aaa4ce",
+      "laering": "Med fuld basis viser statik-pluginet kun en lille gevinst: udvikling A 31 mod 28, udvikling B 30 mod 29 og holdout 11/16 mod 12/16. På holdout er basis altså mindst lige så god. Gevinsten ligger i fri-opgaverne i udviklingssættet, mens talopgaverne er ens (33/37 begge). Pluginet koster 0,103 $ pr. bestået mod basis 0,094 $ og 3 gange så mange input-tokens. Holdout-hullerne, som er kælderens fejlmønstre, lukkes altså ikke af den nuværende videnbase. Det næste skridt er indgrebsregning (F-025/F-019), ikke mere normtekst.",
+      "slut": "2026-10-19",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling, ingen ændring – sætter benchmarket."
     }
   ]
 }

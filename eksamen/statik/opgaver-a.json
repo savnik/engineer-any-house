@@ -1,0 +1,794 @@
+{
+  "opgaver": [
+    {
+      "id": "STAT-001",
+      "maal": [
+        "STAT-BR15",
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En ny stålbjælke i et parcelhus skal dimensioneres efter bygningsreglementet. Hvilket grundlag skal beregningen følge?",
+      "valgmuligheder": {
+        "A": "Den relevante Eurocode sammen med det danske nationale anneks.",
+        "B": "Den relevante Eurocode uden anneks, da annekset kun er vejledende.",
+        "C": "Leverandørens tabeller alene, så længe bjælken er CE-mærket.",
+        "D": "Fri metode, når blot sikkerhedsfaktoren mindst er 2 overalt."
+      },
+      "facit": "A",
+      "begrundelse": "BR18 § 344, stk. 2, og § 346 kræver projektering efter DS/EN 1990, DS/EN 1991 og DS/EN 1993 med tilhørende DK NA. Annekset er bindende, ikke vejledende.",
+      "kilde": "BR18 kap. 15, § 344, stk. 2, og § 346, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-002",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et enfamiliehus er i konsekvensklasse CC2. Der skal dimensioneres en ny vinduesoverligger, som kun bærer den murflade, der ligger lige over vinduet. Hvilken er den laveste KFI, overliggeren må regnes med i lastkombination 1 og 2 (STR) efter DS/EN 1990 DK NA, og hvorfor?",
+      "valgmuligheder": {
+        "A": "1,0, fordi overliggeren skal regnes i husets konsekvensklasse CC2",
+        "B": "0,9, fordi alle dele i et enfamiliehus hører til konsekvensklasse CC1",
+        "C": "1,1, fordi en overligger bærer en koncentreret last fra muren",
+        "D": "0,9, fordi overliggeren som sekundær del må henføres til CC1"
+      },
+      "facit": "D",
+      "begrundelse": "Tabel B1 DK NA, note (2): vindues- og døroverliggere er eksempel på sekundære dele, der kan henføres til CC1, hvor KFI = 0,9 (Tabel A1.2(B+C), NOTE 4). Huset som helhed er CC2 (B er forkert begrundet), og A er ikke den laveste værdi.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel B1 DK NA med note (2) og Tabel A1.2(B+C) DK NA, NOTE 4, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-003",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvad er kombinationsfaktoren ψ0 for nyttelast i kategori A (boliger) efter DS/EN 1990 DK NA?",
+      "valgmuligheder": {
+        "A": "0,2",
+        "B": "0,3",
+        "C": "0,7",
+        "D": "0,5"
+      },
+      "facit": "D",
+      "begrundelse": "Tabel A1.1 DK NA: kategori A har ψ0 = 0,5, ψ1 = 0,3 og ψ2 = 0,2.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-004",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "Et opholdsrum i en bolig måler 4,0 m × 5,0 m. Hvor stor er den samlede karakteristiske, jævnt fordelte nyttelast på gulvet efter DS/EN 1991-1-1 DK NA? Se bort fra skillevægge og egenlast. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 30.0,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Kategori A1 (boligrum): qk = 1,5 kN/m². Areal 4,0 · 5,0 = 20 m². Last 1,5 · 20 = 30 kN.",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA, kategori A1, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-005",
+      "maal": [
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et etageadskillelse i en bolig får lette, ikke-bærende skillevægge af gips på stålskelet. Væggene vejer meget lidt. Hvilken øvre karakteristisk værdi skal mindst bruges for den ækvivalente fladelast fra lette skillevægge efter DS/EN 1991-1-1 DK NA?",
+      "valgmuligheder": {
+        "A": "0 kN/m², når væggene er lette",
+        "B": "0,2 kN/m²",
+        "C": "0,5 kN/m²",
+        "D": "1,0 kN/m²"
+      },
+      "facit": "C",
+      "begrundelse": "Den øvre karakteristiske værdi er mindst den største af 0,5 kN/m², væggenes last pr. m² vægflade og den samlede vægtyngde divideret med gulvarealet. Dermed mindst 0,5 kN/m².",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, 5.2.2(2)P, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-006",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvilken karakteristisk terrænsnelast sk gælder i Danmark efter DS/EN 1991-1-3 DK NA?",
+      "valgmuligheder": {
+        "A": "0,5 kN/m²",
+        "B": "0,75 kN/m²",
+        "C": "1,0 kN/m²",
+        "D": "1,5 kN/m²"
+      },
+      "facit": "C",
+      "begrundelse": "DK NA fastsætter sk = 1,0 kN/m² for hele landet.",
+      "kilde": "DS/EN 1991-1-3 DK NA:2024, pkt. 4.1(1), https://www.bygningsreglementet.dk/media/acwmshr5/ds-en-199113-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-007",
+      "maal": [
+        "STAT-BR26"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "I et eksisterende enfamiliehus skal en bærende indervæg delvis fjernes og erstattes af en stålbjælke. Etagearealet og anvendelsen ændres ikke. Hvordan behandler BR18 kap. 26 arbejdet med hensyn til konstruktionsklasse?",
+      "valgmuligheder": {
+        "A": "Det skal altid i konstruktionsklasse 2, fordi en bærende væg fjernes.",
+        "B": "Det er undtaget fra indplacering i konstruktionsklasse.",
+        "C": "Det skal i konstruktionsklasse 3, fordi indgrebet er en ombygning.",
+        "D": "Det skal i konstruktionsklasse 1 med starterklæring fra statiker."
+      },
+      "facit": "B",
+      "begrundelse": "§ 489, stk. 3, nr. 3: Ombygninger og andre forandringer af enfamiliehuse, dobbelthuse, rækkehuse og sommerhuse er undtaget, når de ikke medfører væsentlig anvendelsesændring eller udvidelse af etagearealet. Kap. 15 (bæreevnen) gælder stadig.",
+      "kilde": "BR18 kap. 26, § 489, stk. 3, nr. 3, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-008",
+      "maal": [
+        "STAT-BR26"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Ved indplacering i konstruktionsklasse er det uklart, om en konstruktion skal regnes som simpel eller kompleks. Hvad siger BR18 kap. 26?",
+      "valgmuligheder": {
+        "A": "Den regnes som simpel, indtil det modsatte er påvist.",
+        "B": "Bygherren vælger selv, da han bærer ansvaret.",
+        "C": "Den regnes som kompleks.",
+        "D": "Kommunen afgør det i byggetilladelsen."
+      },
+      "facit": "C",
+      "begrundelse": "§ 487, stk. 2: Er der tvivl om, hvorvidt en konstruktion er simpel eller kompleks, regnes den som kompleks.",
+      "kilde": "BR18 kap. 26, § 487, stk. 2, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-009",
+      "maal": [
+        "STAT-CERT-4a"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et byggeri er i konstruktionsklasse 2. Hvilken kontroltype skal mindst gælde for projektgrundlaget efter DS/EN 1990 DK NA, Tabel B4b?",
+      "valgmuligheder": {
+        "A": "Kun egenkontrol",
+        "B": "Ingen kontrol",
+        "C": "Kontrol ved kommunen",
+        "D": "Uafhængig kontrol"
+      },
+      "facit": "D",
+      "begrundelse": "Tabel B4b DK NA: KK2 kræver uafhængig kontrol, og fodnoten begrænser det i KK2 til projektgrundlaget. Egenkontrol skal altid udføres (Tabel B4a) og er ikke nok alene.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel B4a og B4b DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-010",
+      "maal": [
+        "STAT-CERT-4a",
+        "STAT-CERT-3c"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En husejer har fået en statisk beregning fra en rådgiver på en ny stålbjælke, der erstatter en bærende væg i stueetagen. Husejeren beder dig gennemgå beregningen, før arbejdet sættes i gang. Hvad kontrollerer du, og hvordan rapporterer du resultatet?",
+      "facit": null,
+      "kriterier": [
+        "Kontrollerer, at lastgrundlaget er komplet, dvs. at egenlast, nyttelast og snelast fra det, bjælken bærer, er medtaget.",
+        "Kontrollerer, at lastkombinationer og partialkoefficienter følger de danske nationale annekser (DS/EN 1990 DK NA).",
+        "Kontrollerer, at reaktionerne følges hele vejen ned: vederlag, punktlast på murværk eller søjle og videre til fundament, og ikke kun selve bjælken.",
+        "Kontrollerer, at forudsætningerne (spændvidde, understøtninger, materialer og profil) passer med tegninger og de faktiske forhold på stedet.",
+        "Rapporterer fundne fejl og mangler skriftligt og konkret med henvisning til beregningens sted, og fastholder, at afvigelser skal rettes, før beregningen bruges."
+      ],
+      "fail_hvis": [
+        "Godkender beregningen uden at se på vederlag og lastvejen ned til fundament.",
+        "Anbefaler at gå i gang med nedrivningen, før fundne fejl er afklaret."
+      ],
+      "begrundelse": "En gennemgang skal dække lastgrundlag, lastvej og forudsætninger, og afvigelser skal håndteres, før dokumentationen bruges videre (BR18 § 523, stk. 2).",
+      "kilde": "BR18 kap. 30, § 523, stk. 2–4, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf; BR18 kap. 15, § 344",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-011",
+      "maal": [
+        "STAT-CERT-3b",
+        "STAT-BK-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Den statiske dokumentation efter BR18 kap. 28 er delt i konstruktionsdokumentation (A) og projektdokumentation (B). Hvad er dokumentet B2?",
+      "valgmuligheder": {
+        "A": "Statiske beregninger for bygværket",
+        "B": "Statisk projektredegørelse",
+        "C": "Statisk kontrolplan",
+        "D": "Konstruktionsgrundlaget"
+      },
+      "facit": "C",
+      "begrundelse": "§ 502: B1 statisk projektredegørelse, B2 statisk kontrolplan, B3 statisk kontrolrapport. Konstruktionsgrundlag (A1) og statiske beregninger (A2) hører til A-delen (§ 501).",
+      "kilde": "BR18 kap. 28, §§ 501–502, https://www.bygningsreglementet.dk/media/gc0nas1o/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-012",
+      "maal": [
+        "STAT-BK-05",
+        "STAT-CERT-3a"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "I en villa fra 1930'erne i 1½ plan vil ejeren fjerne en indervæg i stueetagen mellem køkken og stue. Der findes ingen tegninger. Hvordan afgør du, om væggen er bærende eller stabiliserende, før der tages stilling til indgrebet? Henvis til det relevante krav i regelgrundlaget.",
+      "facit": null,
+      "kriterier": [
+        "Undersøger bjælkelagets retning over væggen (fx ved at åbne gulv eller loft eller se på gulvbrædders retning).",
+        "Undersøger, om bjælkerne hviler af eller er stødt over væggen.",
+        "Undersøger, om væggen fortsætter i etagen over eller under (væg, skillevæg eller fundament i kælder/krybekælder).",
+        "Undersøger, om der står laster fra tag, hanebånd eller skunkvægge på væggen.",
+        "Vurderer, om væggen bidrager til stabiliteten (afstiver facader eller gavle eller optager vandrette kræfter), også selv om den ikke bærer lodret last.",
+        "Begrunder stabilitetsvurderingen med, at konstruktionen fortsat skal kunne modstå de normalt forekommende påvirkninger, herunder vind (BR18 § 344, stk. 1).",
+        "Konkluderer, at tvivl skal afklares ved åbning eller af en statiker, og at væggen behandles som bærende, indtil det modsatte er vist."
+      ],
+      "fail_hvis": [
+        "Konkluderer, at væggen ikke er bærende, alene fordi den er tynd eller lyder hul.",
+        "Anbefaler at fjerne væggen uden forudgående undersøgelse."
+      ],
+      "begrundelse": "Registrering af eksisterende forhold: lastvej, gennemgående vægge og stabilitet afgør, om en væg er bærende eller stabiliserende.",
+      "kilde": "BR18 kap. 15, §§ 340 og 344, stk. 1, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "status": "T"
+    },
+    {
+      "id": "STAT-013",
+      "maal": [
+        "STAT-BK-04",
+        "STAT-CERT-4b"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "I en bærende formuret indervæg skal der skæres en ny døråbning og indsættes en overligger. Etagen over bærer på væggen. Beskriv, hvordan væggen understøttes midlertidigt under arbejdet. Henvis til det relevante krav i regelgrundlaget.",
+      "facit": null,
+      "kriterier": [
+        "Laster fra etagen over opsamles midlertidigt på begge sider af væggen (fx stålstempler med åg/planker under bjælkelaget eller nåle gennem muren).",
+        "Den midlertidige understøtning er etableret, før der skæres i muren.",
+        "Stempler stilles på et underlag, der kan bære lasten (fordeling på gulvet), ikke direkte på et svagt gulv.",
+        "Lasten føres videre ned til et bæredygtigt underlag, evt. med stempling også i etagen under.",
+        "Stemplerne dimensioneres efter den last, de skal bære.",
+        "Stemplerne spændes til, så lasten er overført, før muren fjernes.",
+        "Den midlertidige understøtning bliver stående, til overliggeren er sat, har fuldt vederlag og er kilet eller understoppet.",
+        "Stemplerne fjernes først derefter og gradvist.",
+        "Begrunder kravet om midlertidig understøtning med arbejdsgiverens pligt til at sikre mod sammenstyrtning og midlertidig ustabilitet (BEK 2107/2021 § 40)."
+      ],
+      "fail_hvis": [
+        "Anbefaler at skære åbningen uden midlertidig understøtning, fordi murværket 'bærer sig selv'.",
+        "Anbefaler at stille stempler direkte på et trægulv uden at vurdere, hvad der bærer gulvet."
+      ],
+      "begrundelse": "Midlertidig understøtning skal opsamle lasten før indgrebet, føre den ned til et bæredygtigt underlag og blive stående, til den nye konstruktion virker. Arbejdsgiveren skal sikre mod sammenstyrtning (BEK 2107/2021 § 40).",
+      "kilde": "BEK nr. 2107/2021 § 40, https://www.retsinformation.dk/eli/lta/2021/2107/pdf; BR18 kap. 15, § 340, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "status": "T"
+    },
+    {
+      "id": "STAT-014",
+      "maal": [
+        "STAT-BR15"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "En husejer udskifter selv en bærende indervæg med en limtræsbjælke i sit enfamiliehus. Arbejdet er undtaget fra indplacering i konstruktionsklasse. Hvad gælder for bæreevnen?",
+      "valgmuligheder": {
+        "A": "Der stilles ingen krav, fordi arbejdet er undtaget.",
+        "B": "Kun kommunen kan stille krav, hvis den beder om det.",
+        "C": "Kravene gælder kun, hvis en håndværker udfører det.",
+        "D": "Kravene i kap. 15 gælder stadig fuldt ud."
+      },
+      "facit": "D",
+      "begrundelse": "Undtagelsen i § 489, stk. 3, gælder kun indplacering i konstruktionsklasse og dermed dokumentations- og kontrolkravene. § 344 om at modstå de normalt forekommende påvirkninger gælder for alle konstruktioner, uanset hvem der udfører dem.",
+      "kilde": "BR18 kap. 15, § 344, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf; BR18 kap. 26, § 489, stk. 3, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-015",
+      "maal": [
+        "STAT-BK-05",
+        "STAT-CERT-2b"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "svend",
+      "spoergsmaal": "I gavlen på et murstenshus fra 1950 ses en trappeformet revne, der går skråt op fra et hjørne af kældervinduet mod gavlens hjørne. Revnen er bredest foroven. Hvad kan revnen tyde på, og hvad bør der gøres? Henvis til det relevante krav i regelgrundlaget.",
+      "facit": null,
+      "kriterier": [
+        "Peger på differenssætning af fundamentet som sandsynlig årsag (fx at gavlhjørnet sætter sig mere end resten).",
+        "Forklarer, at revnebilledet (skrå, bredest foroven mod hjørnet) viser bevægelsens retning.",
+        "Anbefaler at måle og overvåge revnen over tid (fx revnemåler, gipsmærker eller målte afstande med dato), så man ser, om den er aktiv.",
+        "Nævner mulige årsager, der skal undersøges, fx utilstrækkelig funderingsdybde, blød bund, utætte kloakker/dræn, træer tæt på eller udgravning.",
+        "Anbefaler, at en statiker/geotekniker vurderer revnen, før der repareres, hvis den er aktiv eller bred.",
+        "Advarer mod blot at fuge revnen til uden at kende og afhjælpe årsagen.",
+        "Begrunder det med, at fundamentet skal sikre mod skadelige bevægelser i jorden (BR18 § 342)."
+      ],
+      "fail_hvis": [
+        "Afviser revnen som rent kosmetisk svind uden at foreslå overvågning.",
+        "Anbefaler at fuge eller pudse revnen og betragte sagen som løst uden at undersøge årsagen."
+      ],
+      "begrundelse": "Skrå, trappeformede revner, der åbner mod et hjørne, er det typiske tegn på differenssætning. Først årsag og aktivitet, så reparation.",
+      "kilde": "BR18 kap. 15, §§ 342 og 357, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "status": "T"
+    },
+    {
+      "id": "STAT-016",
+      "maal": [
+        "STAT-BK-05",
+        "STAT-CERT-3a"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "I en kælder fra 1960'erne er betonen i en bærende søjle skallet af, og der ses rustne armeringsjern med synligt tab af tværsnit. Hvordan vurderer og håndterer du skaden?",
+      "facit": null,
+      "kriterier": [
+        "Beskriver skadesmekanismen korrekt: armeringen korroderer, og korrosionsprodukterne får dæklaget til at revne eller skalle af.",
+        "Forklarer, at årsagen typisk er karbonatisering eller klorider kombineret med fugt.",
+        "Anbefaler at registrere omfanget (afbankning, måling af restdiameter på jernene, karbonatiseringsdybde og dæklag) før reparationen vælges.",
+        "Vurderer, om tværsnitstabet kræver en statisk eftervisning af søjlens bæreevne efter DS/EN 1992-1-1 med DK NA (BR18 § 345).",
+        "Vurderer, om søjlen skal understøttes midlertidigt, før der hugges frit.",
+        "Beskriver en konstruktiv reparation: frihugning bag jernene, rensning eller supplering af armering, korrosionsbeskyttelse og et reparationssystem til konstruktiv reparation.",
+        "Anbefaler, at fugtkilden fjernes, så skaden ikke vender tilbage."
+      ],
+      "fail_hvis": [
+        "Anbefaler kun at pudse eller male over skaden.",
+        "Overser, at tab af armeringstværsnit kan svække bæreevnen."
+      ],
+      "begrundelse": "Konstruktiv betonreparation kræver registrering af årsag og omfang, vurdering af bæreevne og et reparationsprincip efter DS/EN 1504.",
+      "kilde": "BR18 kap. 15, §§ 345 og 357, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf; DS/EN 1504-serien (ikke efterprøvet)",
+      "status": "T"
+    },
+    {
+      "id": "STAT-017",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Hvilke laster indgår i formel 6.10a (lastkombination 1, STR) efter DS/EN 1990 DK NA, Tabel A1.2(B+C)?",
+      "valgmuligheder": {
+        "A": "Kun permanente laster",
+        "B": "Permanente laster og én dominerende variabel last",
+        "C": "Alle variable laster med ψ0",
+        "D": "Kun variable laster"
+      },
+      "facit": "A",
+      "begrundelse": "NOTE 1 til Tabel A1.2(B+C) DK NA: I formel 6.10a indgår kun permanente laster. De variable laster har faktoren 0 i lastkombination 1.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA, NOTE 1, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-018",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvad er den kvasi-permanente faktor ψ2 for snelast på bygninger i Danmark efter DS/EN 1990 DK NA?",
+      "valgmuligheder": {
+        "A": "0",
+        "B": "0,2",
+        "C": "0,3",
+        "D": "0,5"
+      },
+      "facit": "A",
+      "begrundelse": "Tabel A1.1 DK NA: ψ2 = 0 for snelast i alle tilfælde.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-019",
+      "maal": [
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "En ny fælles trappe i en etageboligbygning forbinder flere boligenheder. Trappen har en repos på 1,2 m × 2,0 m. Hvor stor er den samlede karakteristiske, jævnt fordelte nyttelast på reposen efter DS/EN 1991-1-1 DK NA? Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 7.2,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Tabel 6.2 DK NA, NOTE 1: trapper, der forbinder mere end én boligenhed, henføres til kategori A4: qk = 3,0 kN/m². (En intern trappe i den enkelte boligenhed er A1, 1,5 kN/m².) Areal 1,2 · 2,0 = 2,4 m². Last 3,0 · 2,4 = 7,2 kN.",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA, kategori A1/A4 og NOTE 1, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-020",
+      "maal": [
+        "STAT-BR26",
+        "STAT-CERT-4a",
+        "STAT-CERT-5"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En kontorbygning i to etager er i konsekvensklasse CC2. Den eksisterende bærende konstruktion er simpel og traditionel. I stueetagen skal én bærende indervæg erstattes af en stålbjælke på to søjler; ombygningen er også simpel og traditionel.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "valg",
+          "spoergsmaal": "Hvilken er den laveste konstruktionsklasse, ombygningen må indplaceres i efter BR18 § 489?",
+          "valgmuligheder": {
+            "A": "Konstruktionsklasse 1",
+            "B": "Konstruktionsklasse 2",
+            "C": "Konstruktionsklasse 3",
+            "D": "Ombygningen er undtaget fra indplacering"
+          },
+          "facit": "A",
+          "begrundelse": "§ 489, stk. 2, nr. 1: Simple og traditionelle ombygninger i eksisterende simple og traditionelle konstruktioner i CC2 kan indplaceres i KK1, såfremt dokumentationen kontrolleres svarende til KK2. Undtagelsen i stk. 3, nr. 3, gælder kun enfamiliehuse, dobbelthuse, rækkehuse og sommerhuse."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Hvordan skal den statiske dokumentation kontrolleres?",
+          "valgmuligheder": {
+            "A": "Den kontrolleres ikke.",
+            "B": "Den kontrolleres som for konstruktionsklasse 2.",
+            "C": "Den kontrolleres af kommunen ved byggetilladelsen.",
+            "D": "Den kontrolleres kun ved egenkontrol hos den projekterende."
+          },
+          "facit": "B",
+          "begrundelse": "§ 489, stk. 2, nr. 1, og § 523, stk. 5: Ved en simpel og traditionel ombygning i CC2, der indplaceres i KK1, skal dokumentationen kontrolleres svarende til KK2."
+        },
+        {
+          "del": "c",
+          "type": "fri",
+          "spoergsmaal": "Hvilke dele af den statiske dokumentation skal mindst foreligge for den konstruktionsklasse, ombygningen er indplaceret i?",
+          "kriterier": [
+            "Nævner de relevante dele af konstruktionsdokumentationen: konstruktionsgrundlag, statiske beregninger, konstruktionstegninger/modeller og konstruktionsændringer (A1–A4).",
+            "Nævner den statiske projektredegørelse (B1).",
+            "Nævner, at dokumentationen også skal indeholde grundlaget for indplaceringen i konstruktionsklasse."
+          ],
+          "begrundelse": "§ 504: KK1 omfatter de relevante dele af A1–A4 og B1. § 503, stk. 1: grundlaget for indplacering."
+        }
+      ],
+      "begrundelse": "Indplacering, kontrol og dokumentation for en simpel ombygning i CC2 uden for undtagelsen for enfamiliehuse.",
+      "kilde": "BR18 kap. 26, § 489, stk. 2–3, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf; BR18 kap. 28, §§ 503–504, https://www.bygningsreglementet.dk/media/gc0nas1o/krav.pdf; BR18 kap. 30, § 523, stk. 5, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-021",
+      "maal": [
+        "STAT-CERT-2a"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En tværvæg i et 2-etagers murstenshus bærer ingen lodret last fra bjælkelaget, som spænder parallelt med væggen. Ejeren vil derfor fjerne den helt. Forklar, hvilken rolle væggen kan have, og hvad der skal undersøges. Henvis til det relevante krav i regelgrundlaget.",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at væggen kan være stabiliserende: den kan afstive facaderne mod udknækning og optage vandret last (vind) som skive.",
+        "Forklarer, at vandret last fra facaden føres via etageadskillelsen (skive) til de stabiliserende vægge, og at fjernelse ændrer bygningens stabilitetssystem.",
+        "Kræver, at stabiliteten eftervises for den nye situation, eller at der indbygges en erstatning (fx stålramme eller andre vægge), før væggen fjernes.",
+        "Begrunder det med, at konstruktionen skal modstå de normalt forekommende påvirkninger, herunder vind efter DS/EN 1991-1-4 med DK NA (BR18 § 344, stk. 1–2)."
+      ],
+      "fail_hvis": [
+        "Konkluderer, at væggen kan fjernes uden videre, fordi den ikke bærer lodret last."
+      ],
+      "begrundelse": "En væg uden lodret last kan stadig være en del af stabilitetssystemet. Konstruktionen skal kunne modstå de normalt forekommende påvirkninger, herunder vind (§ 344).",
+      "kilde": "BR18 kap. 15, § 344, stk. 1–2, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-022",
+      "maal": [
+        "STAT-BK-04"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Under en ombygning bliver en del af en bygning midlertidigt ustabil, og der er risiko for sammenstyrtning. Hvem skal efter Arbejdstilsynets bekendtgørelse om bygge- og anlægsarbejde træffe foranstaltninger som afstivning eller afspærring for at beskytte de ansatte?",
+      "valgmuligheder": {
+        "A": "Bygherren",
+        "B": "Arbejdsgiveren",
+        "C": "Kommunen",
+        "D": "Den enkelte ansatte"
+      },
+      "facit": "B",
+      "begrundelse": "BEK 2107/2021 § 40: Arbejdsgiveren skal træffe de nødvendige foranstaltninger mod risikoen fra et bygningsværks tilstand eller midlertidige ustabilitet, fx afstivning eller afspærring.",
+      "kilde": "BEK nr. 2107 af 12/11/2021, § 40, https://www.retsinformation.dk/eli/lta/2021/2107/pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-023",
+      "maal": [
+        "STAT-CERT-2c",
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "En boligblok har gulv i øverste etage 15 m over terræn. En søjle i hovedkonstruktionen har en karakteristisk permanent last på 100 kN. Beregn den regningsmæssige last på søjlen i lastkombination 1 (formel 6.10a, STR) efter DS/EN 1990 DK NA, når permanent last virker til ugunst. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 132.0,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Gulv i øverste etage over 12 m i en bolig → CC3 (Tabel B1), KFI = 1,1. Lastkombination 1: γG = 1,2 · KFI. Nd = 1,2 · 1,1 · 100 = 132 kN.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel B1 DK NA og Tabel A1.2(B+C) DK NA, NOTE 4, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-024",
+      "maal": [
+        "STAT-BK-01"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Hvad er kombinationsfaktoren ψ0 for nyttelast i kategori B (kontorer) efter DS/EN 1990 DK NA?",
+      "valgmuligheder": {
+        "A": "0,3",
+        "B": "0,5",
+        "C": "0,6",
+        "D": "0,8"
+      },
+      "facit": "C",
+      "begrundelse": "Tabel A1.1 DK NA: kategori B har ψ0 = 0,6, ψ1 = 0,4 og ψ2 = 0,2.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-025",
+      "maal": [
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "svend",
+      "spoergsmaal": "På et fladt tag over en stue i et enfamiliehus etableres en tagterrasse på 3,0 m × 5,0 m med adgang fra soveværelset. Hvor stor er den samlede karakteristiske, jævnt fordelte nyttelast på terrassen efter DS/EN 1991-1-1 DK NA? Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 37.5,
+        "enhed": "kN",
+        "tolerance_pct": 2
+      },
+      "begrundelse": "Tagterrasser henføres til de tilstødende lokalers kategori, dog mindst A5: qk = 2,5 kN/m² (indeholder samtidig sne). Areal 15 m². Last 2,5 · 15 = 37,5 kN.",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA med NOTE 1 NA, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-026",
+      "maal": [
+        "STAT-BK-03"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et tagrum med gitterspær er uden adgang. Ved tagfoden er afstanden fra oversiden af loftsisoleringen til undersiden af spærene 30 cm. Hvilken værdi må den jævnt fordelte nyttelast sættes til på denne del af tagrummet efter DS/EN 1991-1-1 DK NA?",
+      "valgmuligheder": {
+        "A": "0 kN/m²",
+        "B": "0,5 kN/m²",
+        "C": "1,0 kN/m²",
+        "D": "1,5 kN/m²"
+      },
+      "facit": "A",
+      "begrundelse": "NOTE 3 NA til Tabel 6.2: For tagrum med gitterspær kan den jævnt fordelte last sættes til 0, hvor afstanden fra underliggende loft til underside tag er under 40 cm.",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA, NOTE 3 NA, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-027",
+      "maal": [
+        "STAT-BR26"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "En bærende konstruktion i et nyt byggeri projekteres med en metode, der afviger fra Eurocodes, og afvigelsen dokumenteres som forsvarlig efter BR18 § 356. Hvordan skal konstruktionen regnes ved indplacering i konstruktionsklasse?",
+      "valgmuligheder": {
+        "A": "Som traditionel, når dokumentationen er godkendt.",
+        "B": "Som utraditionel.",
+        "C": "Som simpel, hvis spændvidden er lille.",
+        "D": "Den indplaceres ikke i en klasse."
+      },
+      "facit": "B",
+      "begrundelse": "§ 488, stk. 2: Konstruktioner, der dokumenteres efter § 352 eller § 356, regnes som utraditionelle.",
+      "kilde": "BR18 kap. 26, § 488, stk. 2, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-028",
+      "maal": [
+        "STAT-BR26"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et nyt dobbelthus i to etager uden kælder har én bolig i stueetagen og én på 1. sal, altså med vandret lejlighedsskel. Det er i CC2 og opføres traditionelt. Hvilken konstruktionsklasse kommer det i?",
+      "valgmuligheder": {
+        "A": "Konstruktionsklasse 1",
+        "B": "Konstruktionsklasse 2",
+        "C": "Konstruktionsklasse 3",
+        "D": "Konstruktionsklasse 4"
+      },
+      "facit": "B",
+      "begrundelse": "§ 489, stk. 1: KK1 omfatter bl.a. dobbelthuse i CC2 uden vandret lejlighedsskel. Med vandret lejlighedsskel falder det uden for KK1, og et traditionelt CC2-byggeri, der ikke er i KK1 eller KK3, er i KK2.",
+      "kilde": "BR18 kap. 26, § 489, stk. 1, https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-029",
+      "maal": [
+        "STAT-CERT-4a"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et byggeri er i konstruktionsklasse 4. Hvilke kontroltyper skal mindst indgå i kontrollen af projekteringen efter DS/EN 1990 DK NA, Tabel B4b (ud over egenkontrol)?",
+      "valgmuligheder": {
+        "A": "Kun uafhængig kontrol",
+        "B": "Kun tredjepartskontrol",
+        "C": "Uafhængig kontrol og tredjepartskontrol",
+        "D": "Ingen ud over egenkontrol"
+      },
+      "facit": "C",
+      "begrundelse": "Tabel B4b: KK4 kræver uafhængig kontrol og tredjepartskontrol. Tabel B4a: tredjepartskontrol erstatter ikke uafhængig kontrol. BR18 § 528, stk. 2: tredjepartskontrol udføres af en certificeret person.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel B4a og B4b DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; BR18 kap. 30, § 528, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-030",
+      "maal": [
+        "STAT-BR15",
+        "STAT-CERT-2b"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En husejer vil grave en ny kælder ud 2,5 m under terræn tæt ved skellet. Nabohuset står 1,5 m fra udgravningen på et fundament, der kun går ca. 0,9 m ned. Hvilke statiske forhold skal håndteres?",
+      "facit": null,
+      "kriterier": [
+        "Påpeger, at udgravningen under nabofundamentets niveau kan fjerne jordens understøtning og give sætninger eller brud i nabohuset.",
+        "Anbefaler en sikring af nabofundamentet eller udgravningen, fx understøbning i korte etaper, spuns eller afstivet byggegrube, projekteret af statiker/geotekniker.",
+        "Anbefaler registrering af nabohusets tilstand før arbejdet og overvågning (fx nivellement og revnemålere) under arbejdet.",
+        "Nævner, at dokumentationen skal redegøre for, hvordan nabobyggeriet sikres, og at bygherren skal undgå skade på nabogrunden."
+      ],
+      "fail_hvis": [
+        "Anbefaler at grave ud i fuld længde langs nabofundamentet uden sikring."
+      ],
+      "begrundelse": "§ 340: ingen skade på bygninger på nabogrunde. § 503, stk. 4: ved byggeri nær eksisterende byggeri skal dokumentationen redegøre for, hvordan det sikres.",
+      "kilde": "BR18 kap. 15, § 340, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf; BR18 kap. 28, § 503, stk. 4, https://www.bygningsreglementet.dk/media/gc0nas1o/krav.pdf",
+      "status": "T"
+    },
+    {
+      "id": "STAT-031",
+      "maal": [
+        "STAT-BK-05",
+        "STAT-CERT-3a"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "En kældervæg af murværk i et hus fra 1920 har en vandret revne ca. midt på højden langs det meste af væggen, og væggen buler indad. Bag væggen er der jord til ca. 1,8 m over kældergulvet. Hvordan vurderer du situationen?",
+      "facit": null,
+      "kriterier": [
+        "Forklarer, at revnen og udbøjningen skyldes jordtryk på væggen (evt. forstærket af vand eller frost), og at væggen er ved at svigte ved bøjning.",
+        "Vurderer det som en sikkerhedsrisiko, der kræver hurtig vurdering af en statiker, og evt. midlertidig afstivning, hvis udbøjningen er stor eller voksende.",
+        "Anbefaler at måle udbøjning og revnevidde og overvåge udviklingen over tid.",
+        "Nævner relevante permanente løsninger, fx forstærkning eller ny væg dimensioneret for jordtryk efter DS/EN 1997-1 med DK NA (BR18 § 350), afstivning mod dækket og aflastning ved dræn eller afgravning."
+      ],
+      "fail_hvis": [
+        "Behandler revnen som en ren fugtrevne eller kosmetisk skade.",
+        "Anbefaler kun indvendig puds eller maling."
+      ],
+      "begrundelse": "Vandret revne og indadgående bule i en jordfyldt kældervæg er tegn på bøjningsbrud fra jordtryk og er en kritisk tilstand.",
+      "kilde": "BR18 kap. 15, §§ 340, 344, 350 og 357, https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "status": "T"
+    },
+    {
+      "id": "STAT-032",
+      "maal": [
+        "STAT-CERT-4b",
+        "STAT-BK-04"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "På en byggeplads skal midlertidige stålstempler under en betondæk-forskalling monteres og senere demonteres. Hvilket krav stiller Arbejdstilsynets bekendtgørelse om bygge- og anlægsarbejde til arbejdet?",
+      "valgmuligheder": {
+        "A": "Det skal godkendes af kommunen før montage.",
+        "B": "Det skal ske under tilsyn af en særligt udpeget og instrueret person.",
+        "C": "Det må kun udføres af en certificeret statiker.",
+        "D": "Der stilles ingen særlige krav til midlertidige stempler."
+      },
+      "facit": "B",
+      "begrundelse": "BEK 2107/2021 § 27: Bærende konstruktioner i metal eller beton, forskallinger, midlertidige understøtninger og afstivninger må kun monteres og demonteres under tilsyn af en person, der er specielt udpeget hertil og har fået den fornødne instruktion og oplæring.",
+      "kilde": "BEK nr. 2107 af 12/11/2021, § 27, https://www.retsinformation.dk/eli/lta/2021/2107/pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-033",
+      "maal": [
+        "STAT-CERT-4a",
+        "STAT-CERT-3c",
+        "STAT-BK-02"
+      ],
+      "saet": "udvikling",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du gennemgår en beregning af et eksisterende fladt tag med træbjælker, som skal laves om til tagterrasse for en bolig. Rådgiveren har regnet med nyttelast for tagrum uden adgang og har lagt snelast oveni. Bjælkerne er kun eftervist for brud. Hvad er dine bemærkninger?",
+      "facit": null,
+      "kriterier": [
+        "Påpeger, at en tagterrasse skal regnes med nyttelast som tilstødende lokaler, dog mindst kategori A5 (2,5 kN/m²), ikke med lasten for tagrum.",
+        "Påpeger, at nyttelasten på tagterrassen indeholder samtidig sne, så sne ikke lægges oveni.",
+        "Påpeger, at snelast med ophobning kan blive dimensionerende og skal kontrolleres for sig.",
+        "Påpeger, at bjælkerne også skal eftervises i anvendelsesgrænsetilstanden (nedbøjning og evt. svingninger) og for vederlag/understøtninger.",
+        "Påpeger, at lastvejen videre ned (vægge og fundament) skal eftervises for den øgede last.",
+        "Påpeger, at fejlene skal rettes, før beregningen bruges (BR18 § 523, stk. 2)."
+      ],
+      "fail_hvis": [
+        "Godkender beregningen."
+      ],
+      "begrundelse": "DK NA til DS/EN 1991-1-1, NOTE 1 NA til Tabel 6.2: tagterrasser mindst A5, nyttelasten indeholder sne. Kontrol af dokumentation efter BR18 § 523.",
+      "kilde": "DS/EN 1991-1-1 DK NA:2024, Tabel 6.2 DK NA, NOTE 1 NA, https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf; BR18 kap. 30, § 523, https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-034",
+      "maal": [
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Hvad er partialkoefficienten γc for trykstyrken af uarmeret murværk udført på stedet (in situ) med byggesten i kategori I efter DS/EN 1996-1-1 DK NA? Sæt γ0 = 1,0 og γ3 = 1,0.",
+      "valgmuligheder": {
+        "A": "1,35",
+        "B": "1,45",
+        "C": "1,60",
+        "D": "2,00"
+      },
+      "facit": "C",
+      "begrundelse": "Tabel 2.4.3a DK NA: in situ, trykstyrke, byggesten kategori I: γc = 1,60 · γ0 · γ3 = 1,60.",
+      "kilde": "DS/EN 1996-1-1 DK NA:2019, 2.4.3(1)P, Tabel 2.4.3a DK NA, https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf",
+      "status": "V 2026-10-18"
+    },
+    {
+      "id": "STAT-035",
+      "maal": [
+        "STAT-CERT-5",
+        "STAT-CERT-3b"
+      ],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Under udførelsen ændres et vederlag og et bjælkeprofil i forhold til projektet. Hvad kræver BR18 kap. 28 af den statiske dokumentation, når byggeriet er færdigt?",
+      "valgmuligheder": {
+        "A": "Den skal stemme med det færdige byggeri, inklusive ændringerne.",
+        "B": "Den skal arkiveres som projekteret; ændringer noteres i dagbogen.",
+        "C": "Den kan erstattes af en erklæring fra entreprenøren.",
+        "D": "Den skal kun opdateres, hvis kommunen beder om det."
+      },
+      "facit": "A",
+      "begrundelse": "§ 494, stk. 3, nr. 6: Dokumentationen skal være i overensstemmelse med det færdige byggeri inklusive ændringer under projektering og udførelse.",
+      "kilde": "BR18 kap. 28, § 494, stk. 3, nr. 6, https://www.bygningsreglementet.dk/media/gc0nas1o/krav.pdf",
+      "status": "V 2026-10-18"
+    }
+  ]
+}
