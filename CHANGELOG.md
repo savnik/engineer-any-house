@@ -1,5 +1,31 @@
 # Ændringslog
 
+## 0.15.0 – 2026-10-24
+
+- `byg` 0.11.0 → 0.12.0
+- `byg-bim` 0.7.0 → 0.7.1
+- `byg-el` 0.2.1 → 0.2.2
+- `byg-kontrol` 0.14.0 → 0.15.0
+- `byg-maler` 0.1.10 → 0.1.11
+- `byg-murer` 0.1.10 → 0.2.0
+- `byg-statik` 0.3.4 → 0.4.0
+- `byg-team` 0.3.0 → 0.4.0
+- `byg-toemrer` 0.1.10 → 0.1.11
+- `byg-ventilation` 0.1.11 → 0.1.12
+- `byg-vvs` 0.2.1 → 0.2.2
+
+### anlaeg (byg, byg-kontrol, byg-team)
+Ny fagagent `anlaegsgartner` (plugin `byg-anlaeg` 0.1.0): belægning og terrasser (opbygning, fald væk fra huset, fri sokkel, træterrasser), regnvand og LAR (faskine, nedsivningstest, afstandskrav og tilladelse), terrænfald og omfangsdræn, terrænregulering og støttemure, hegn og hække (hegnsloven), træer, beplantning og pleje. Kloakarbejde henvises til autoriseret kloakmester. Ny kontrolagent `anlaeg-kontrol` med rubric `kontrol-anlaeg@1.0`, hold points HP-ANL, projektlederens fagvalg, koordinering og definition of ready udvidet, og `byg-team` installerer anlægsgartneren.
+
+### arkitekt (byg, byg-kontrol, byg-team)
+Ny fagagent `arkitekt` (plugin `byg-arkitekt` 0.1.0): rådgivende om planløsning og disposition, tilbygning, kvist, tagetage og facade samt myndighedsscreening (byggetilladelse eller undtagelse efter BR18 § 5, byggeret, etageareal og bebyggelsesprocent, højde og afstand til skel, lokalplan, servitutter, bevaring). Beskriver planen til BIM-forslag via `bim-modelloer`. Ny kontrolagent `arkitekt-kontrol` med rubric `kontrol-arkitekt@1.0`, hold points HP-ARK, projektlederens fagvalg og definition of ready udvidet, og `byg-team` installerer arkitekten.
+
+### forsoeg-F-023-ce-snelast (byg-statik)
+Statik-videnbasen har nu eksponeringsfaktoren C_e for snelast efter DS/EN 1991-1-3 DK NA:2024 5.2(7): C_e = C_top·C_s, og afskærmet terræn giver 1,25. Den erstatter grundstandardens tabel 5.1 (F-023).
+
+### rammer-standardloesninger (byg, byg-bim, byg-el, byg-kontrol, byg-maler, byg-murer, byg-statik, byg-toemrer, byg-ventilation, byg-vvs)
+Rammer for standardløsninger (pilot på murer og statik): ny `rammer.md` i murer-viden og statik-viden med standardsituationer, betingelser og kildestatus V/T/P (P = anerkendt praksis godkendt af en fagperson). Fælles protokol har fået triage som første skridt: inden for en ramme svarer fagagenten kort uden beregning og uden fuldt fagnotat. Statikerens FEM-krav gælder kun på grænsen af eller uden for en ramme. Kontrollen godtager en ramme som dokumentation, når betingelserne er opfyldt, og rejser "overkompliceret" som mindre fund. Spørgeliste til fagfolk i `faelles/rammer-spoergeliste.md`. Rammerne er udfyldt med primærkilder, hvor de findes (V 2026-10-24): Egernsund tegloverliggere, nyt armeret stik med Sika Murma (R-MUR-09), EN 1996-1-1 § 8.6 for riller med alle noter, Lilleheden limtræ GL30c, ny H+H porebetonbjælke (R-STAT-08), Doka-stempler og BEK 2107 om midlertidig understøtning. Vejledningen til BR18 kap. 28 § 3.1 er skrevet ind: en producenttabel er ikke alene dokumentation, men kræver en redegørelse for, at forudsætningerne passer. Uarmeret stik, kerneboring, understøbning, stempelafstand, C24 og IPE/HEB er fortsat P – mangler. Rammerne virker med huller: rækker med T eller P – mangler er ikke rammer, og agenten bruger den normale arbejdsgang uden at nævne det. Manglende ramme er aldrig et kontrolfund, og "overkompliceret" rejses kun ved V- og P-rækker. Agenten skriver "Ramme-kandidat: …" i videnslog, når en standardsituation mangler en række. Nyt `scripts/tjek_rammer.py` (i `valider.py`) tjekker format, status og ID'er, så rækker kan tilføjes over tid.
+
 ## 0.14.0 – 2026-10-20
 
 - `byg` 0.10.1 → 0.11.0
