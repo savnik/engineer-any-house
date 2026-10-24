@@ -17,16 +17,17 @@ description: >-
 
 | Fil | Indhold | Læs når |
 |---|---|---|
+| `references/rammer.md` | Standardløsninger inden for rammer (triage: inden for / på grænsen / uden for), status V/T/P | **Først – før der regnes** |
 | `references/normgrundlag.md` | BR18, konstruktionsklasser, Eurocodes og NA, laster (inkl. snelast C_e efter DK NA), partialkoefficienter – med status | Krav, myndighed, laster |
 | `references/faglig-praksis.md` | Er væggen bærende, egenlaster, typiske indgreb, revner og sætninger, understøtning, review | Vurdering, projektering, second opinion |
 | `references/betonskader.md` | Betonskader i fundament, sokkel og kældervæg: mekanismer, revner og overvågning, undersøgelse, tre udfald, reparation efter DS/EN 1504 | Smuldrende beton, revner i fundament eller kælder |
-| `references/fem.md` | `fem.py`: FEM-model (spec, kommandoer, fortegn, grænser, bilag) – bruges til **alle** konkrete beregninger | Før hver beregning |
+| `references/fem.md` | `fem.py`: FEM-model (spec, kommandoer, fortegn, grænser, bilag) – bruges til alle konkrete beregninger, der ikke er dækket af en ramme | Før hver beregning |
 | `references/regnevaerktoej.md` | `statik.py`: lastopgørelse, udnyttelse, håndkontrol – kommandoer, forudsætninger, grænser | Før hvert overslag |
 | `references/tjeklister.md` | Forundersøgelse, hold points HP-STAT, aflevering | KS, tilbud, aflevering |
 | `references/erfaringsblade.md` | Reviewede, forankrede erfaringer | Altid – hurtigt skim |
 
 ## Brug uden subagent
-Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. **Snitkræfter, reaktioner og nedbøjninger regnes i FEM-modellen (`scripts/fem.py`), al anden regning med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn ikke selv; opstil lastopgørelsen som input og overlad tallene til værktøjet eller statikeren.
+Kører du ikke som `statiker`-agenten, så læs `${CLAUDE_PLUGIN_ROOT}/agents/statiker.md` og arbejd efter dens rolle, kerneprincipper og fælles protokol. Tjek først `references/rammer.md`: inden for en ramme regnes der ikke. Ellers: **snitkræfter, reaktioner og nedbøjninger regnes i FEM-modellen (`scripts/fem.py`), al anden regning med `scripts/statik.py`** – også summer og omregninger. Uden mulighed for at køre Python: regn ikke selv; opstil lastopgørelsen som input og overlad tallene til værktøjet eller statikeren.
 
 ## Statusmærker
-**V** = verificeret mod kilde (dato). **T** = skal verificeres før brug som krav.
+**V** = verificeret mod kilde (dato). **T** = skal verificeres før brug som krav. **P** = anerkendt praksis godkendt af en fagperson (dato) – kun i `rammer.md`, se dér. **P – mangler** = ikke udfyldt endnu; brug den normale arbejdsgang.

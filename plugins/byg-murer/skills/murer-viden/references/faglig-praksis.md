@@ -52,8 +52,9 @@ Revnearmering: rustfri, profileret armering i vandrette fuger på tværs af stab
 **Hulmursisolering (granulat):** forudsætter intakte fuger, fugtig facade er kontraindikation (slagregnsudsatte gavle), rene hulrum og murbindere i orden (T). Kan være rentabel; kræver ikke fugtspærre, men vurdering af slagregn og binderes tilstand.
 
 ## 6. Bærende indgreb
-- Nye åbninger, fjernelse af vægge og ændret last → statiker med beregning efter Eurocode 6; midlertidig understøtning (stempler, nåle), overligger (stål, beton, præfabrikeret tegloverligger) med tilstrækkeligt vederlag.
-- **Riller i bærende vægge:** vandrette og skrå riller svækker væggen markant; lodrette riller begrænses i dybde og placering (T – grænser i Eurocode 6 NA). Koordinér el- og vvs-føringer før udførelse, og brug overflademonterede eller forsatte føringer, hvor det er nødvendigt.
+- Standardsituationer (tegloverligger efter producentens tabel, riller inden for DS/EN 1996-1-1 tabel 8.2/8.3): se `rammer.md`.
+- Øvrige nye åbninger, fjernelse af vægge og ændret last → statiker med beregning efter Eurocode 6; midlertidig understøtning (stempler, nåle), overligger (stål, beton, præfabrikeret tegloverligger) med tilstrækkeligt vederlag.
+- **Riller i bærende vægge:** vandrette og skrå riller svækker væggen markant; lodrette riller begrænses i dybde og placering (grænser: `rammer.md` R-MUR-05/06). Koordinér el- og vvs-føringer før udførelse, og brug overflademonterede eller forsatte føringer, hvor det er nødvendigt.
 - Kontrollér, om en væg er bærende (bjælkelag/spær, etageadskillelser, tegninger); tvivl = statiker.
 
 ## 7. Vådrum og gulve (flisemurerdelen)
