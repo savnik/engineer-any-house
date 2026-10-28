@@ -48,7 +48,7 @@ model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7
 IFC4 built with <code>bim.py byg</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
 exported with <code>bim.py eksport</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
 <model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
-  camera-orbit="-35deg 75deg 80%" shadow-intensity="0.6" exposure="0.85" tone-mapping="neutral" environment-image="neutral"></model-viewer>
+  camera-orbit="-35deg 75deg auto" shadow-intensity="0.6" exposure="0.85" tone-mapping="neutral" environment-image="neutral"></model-viewer>
 </body></html>
 """
 
@@ -105,7 +105,7 @@ def build(out: pathlib.Path):
 
 
 def thumbnails(out: pathlib.Path):
-    """Screenshots of the two viewers, served over http (model-viewer won't load a .glb from file://)."""
+    """Screenshots of the two viewers and the plumbing diagram, served over http (model-viewer won't load a .glb from file://)."""
     import functools
     import http.server
     import threading
@@ -131,11 +131,14 @@ def thumbnails(out: pathlib.Path):
         pg.wait_for_selector("#fem .main-svg", timeout=30000)
         pg.wait_for_timeout(2500)
         pg.locator("#fem").screenshot(path=str(IMG / "fem.png"))
+        pg.set_viewport_size({"width": 1400, "height": 1040})
+        pg.goto(f"{base}/vvs/principdiagram.svg")
+        pg.screenshot(path=str(IMG / "vvs.png"))
         b.close()
     srv.shutdown()
     for name in ("bim.png", "fem.png"):
         shutil.copy(IMG / name, out / name)
-    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png")
+    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png, {IMG}/vvs.png")
 
 
 def main():
