@@ -15,7 +15,9 @@ Eksempelhuset fra repoet, bygget og regnet af værktøjerne i CI. Klik på et bi
 | [![BIM-model af eksempelhuset](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM-model med von Mises-spændinger](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
 | Bygget med `bim.py byg`, eksporteret til glTF med `bim.py eksport` | Regnet med `fem.py regn`, vist med `fem.py vis`: vælg lastkombination og resultat |
 
-VVS-agenten tegner samme hus' installation som et [principdiagram](https://savnik.github.io/engineer-any-house/vvs/principdiagram.svg) ([kilde](plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg)).
+VVS-agenten tegner samme hus' installation som et principdiagram ([SVG-kilde](plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg), metode i [principdiagram.md](plugins/byg-vvs/skills/vvs-viden/references/principdiagram.md)). Klik for at åbne det i fuld størrelse.
+
+[![Principdiagram for eksempelhusets VVS](docs/img/vvs.png)](https://savnik.github.io/engineer-any-house/vvs/principdiagram.svg)
 
 ## Plugins
 | Plugin | Indhold |
