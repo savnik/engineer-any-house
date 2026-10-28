@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+"""Demo site for GitHub Pages: the BIM and FEM examples in interactive 3D viewers.
+
+Builds the example house with bim.py, exports it to glTF and shows it in <model-viewer>; computes the FEM example
+with fem.py and writes its plotly viewer (plotly.js from the CDN, so the page stays small).
+
+Usage:  python3 scripts/demo_site.py [--ud _site]       build the site (CI: .github/workflows/pages.yml)
+        python3 scripts/demo_site.py --billeder          also refresh the README thumbnails in docs/img (needs Playwright)
+"""
+import argparse
+import pathlib
+import shutil
+import subprocess
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+BIM = ROOT / "plugins/byg-bim/skills/bim-viden/scripts/bim.py"
+FEM = ROOT / "plugins/byg-statik/skills/statik-viden/scripts/fem.py"
+BIM_SPEC = ROOT / "plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml"
+FEM_SPEC = ROOT / "plugins/byg-statik/skills/statik-viden/assets/fem-eksempel-flader.yaml"
+IMG = ROOT / "docs/img"
+REPO = "https://github.com/savnik/engineer-any-house"
+MODEL_VIEWER = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"
+
+STYLE = """
+:root { color-scheme: light dark; --bg: #f6f7f9; --fg: #1d2330; --muted: #5b6474; --card: #fff; --line: #dde1e7; }
+@media (prefers-color-scheme: dark) { :root { --bg: #14171c; --fg: #e6e8ec; --muted: #9aa3b2; --card: #1d2128; --line: #2c323c; } }
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+header { padding: 16px; border-bottom: 1px solid var(--line); }
+header h1 { margin: 0; font-size: 1.15rem; }
+header p { margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
+a { color: inherit; }
+"""
+
+BIM_PAGE = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BIM model – Engineer Any House</title>
+<script type="module" src="{mv}"></script>
+<style>{style}
+body {{ display: flex; flex-direction: column; height: 100vh; }}
+model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7f9); }}
+@media (prefers-color-scheme: dark) {{ model-viewer {{ background: linear-gradient(#232a33, #14171c); }} }}
+</style></head><body>
+<header><h1>BIM model of the example house</h1>
+<p>IFC4 built with <code>bim.py byg</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
+exported with <code>bim.py eksport</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
+<model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
+  camera-orbit="-35deg 65deg auto" shadow-intensity="0.6" exposure="1.05" environment-image="neutral"></model-viewer>
+</body></html>
+"""
+
+INDEX_PAGE = """<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Engineer Any House – 3D examples</title>
+<style>{style}
+main {{ max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }}
+.card {{ background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; text-decoration: none; }}
+.card img {{ display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: var(--line); }}
+.card div {{ padding: 12px 14px; }} .card h2 {{ margin: 0; font-size: 1.05rem; }} .card p {{ margin: 4px 0 0; color: var(--muted); font-size: .9rem; }}
+</style></head><body>
+<header><h1>Engineer Any House – 3D examples</h1>
+<p>Generated in CI from the examples in the repository. · <a href="{repo}">GitHub</a></p></header>
+<main>
+<a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house model in its own colours (glTF in model-viewer).</p></div></a>
+<a class="card" href="fem/"><img src="fem.png" alt=""><div><h2>FEM model</h2><p>Walls and slabs as shell elements: stresses, forces and deflection per load combination (Danish UI).</p></div></a>
+</main></body></html>
+"""
+
+
+def run(*cmd):
+    print("$", " ".join(str(c) for c in cmd), flush=True)
+    subprocess.run([sys.executable, *map(str, cmd)], check=True)
+
+
+def build(out: pathlib.Path):
+    if out.exists():
+        shutil.rmtree(out)
+    work = out / "_work"
+    (out / "bim").mkdir(parents=True)
+    run(BIM, "byg", BIM_SPEC, "--ud", work / "hus.ifc")
+    run(BIM, "eksport", work / "hus.ifc", "--ud", out / "bim/hus.glb")
+    (out / "bim/index.html").write_text(BIM_PAGE.format(mv=MODEL_VIEWER, style=STYLE, repo=REPO), encoding="utf-8")
+    shutil.copy(FEM_SPEC, work / "fem.yaml")
+    run(FEM, "regn", work / "fem.yaml", "--ud", work)
+    run(FEM, "vis", work / "fem.yaml", "--ud", work, "--cdn")
+    html = sorted(work.glob("*.html"))
+    if len(html) != 1:
+        sys.exit(f"Forventede én HTML fra fem.py vis i {work}, fandt {len(html)}")
+    (out / "fem").mkdir()
+    shutil.copy(html[0], out / "fem/index.html")
+    (out / "index.html").write_text(INDEX_PAGE.format(style=STYLE, repo=REPO), encoding="utf-8")
+    for name in ("bim.png", "fem.png"):
+        if (IMG / name).exists():
+            shutil.copy(IMG / name, out / name)
+    shutil.rmtree(work)
+    (out / ".nojekyll").touch()
+    print(f"SIDE {out}")
+
+
+def thumbnails(out: pathlib.Path):
+    """Screenshots of the two viewers, served over http (model-viewer won't load a .glb from file://)."""
+    import functools
+    import http.server
+    import threading
+
+    from playwright.sync_api import sync_playwright
+
+    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(out))
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    base = f"http://127.0.0.1:{srv.server_address[1]}"
+    IMG.mkdir(parents=True, exist_ok=True)
+    with sync_playwright() as p:
+        try:
+            b = p.chromium.launch()
+        except Exception:  # no Playwright browser downloaded: use an installed Chrome
+            b = p.chromium.launch(channel="chrome")
+        pg = b.new_page(viewport={"width": 1200, "height": 750}, color_scheme="light")
+        pg.goto(f"{base}/bim/")
+        pg.wait_for_function("document.querySelector('model-viewer')?.loaded === true", timeout=30000)
+        pg.wait_for_timeout(1500)
+        pg.locator("model-viewer").screenshot(path=str(IMG / "bim.png"))
+        pg.goto(f"{base}/fem/")
+        pg.wait_for_selector("#fem .main-svg", timeout=30000)
+        pg.wait_for_timeout(2500)
+        pg.locator("#fem").screenshot(path=str(IMG / "fem.png"))
+        b.close()
+    srv.shutdown()
+    for name in ("bim.png", "fem.png"):
+        shutil.copy(IMG / name, out / name)
+    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png")
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--ud", default=str(ROOT / "_site"))
+    ap.add_argument("--billeder", action="store_true")
+    a = ap.parse_args()
+    out = pathlib.Path(a.ud).resolve()
+    build(out)
+    if a.billeder:
+        thumbnails(out)
+
+
+if __name__ == "__main__":
+    main()

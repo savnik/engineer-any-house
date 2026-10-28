@@ -17,9 +17,10 @@ Kør altid med:  python3 fem.py <kommando> ...   (scriptet skifter selv til sit 
                                             resultatet, hvis fem.yaml er ændret siden (spec-sha) eller regnet med --saet
   tegn  <fem.yaml> [model|deformation|M|V|N|spaending|n_u|n_v|pladmoment|flytning|alle] [--kombi <navn>] [--ud <mappe>]
                                             PNG til notatet og til din egen kontrol af modellen (model viser lasterne)
-  vis   <fem.yaml> [--ud <mappe>]           Interaktiv HTML (åbnes i browseren): drej/zoom, laster som pile, vælg
+  vis   <fem.yaml> [--ud <mappe>] [--cdn]   Interaktiv HTML (åbnes i browseren): drej/zoom, laster som pile, vælg
                                             kombination og størrelse (M, V, N, deformation; på flader spænding,
-                                            membrankræfter, pladmoment, flytning), skjul flader, værdier ved musen
+                                            membrankræfter, pladmoment, flytning), skjul flader, værdier ved musen.
+                                            --cdn: plotly hentes fra nettet – lille fil til en hjemmeside
   test                                      Selvtest mod håndformler (bjælker, ramme, plade, vægskive, bjælke på væg)
 
 Enheder: længder i m, kræfter i kN, momenter i kNm; profiler og tværsnit i mm; nedbøjning vises i mm.

@@ -21,6 +21,15 @@ Most houses come with little more than a few old drawings, a public building rec
 - **BIM from old drawings.** Scanned drawings are decoded, modelled in IFC4 with IfcOpenShell and compared view by view against the original by a separate agent until they match.
 - **Structural calculations** run in deterministic tools (a FEM model with PyNite and hand checks), not in the language model. Results are always labelled as estimates.
 
+## See it in 3D
+
+The example house from the repository, built and computed by the tools in CI. Click a picture to open the interactive viewer.
+
+| BIM model (IFC4) | FEM model (walls and slabs as shells) |
+|---|---|
+| [![BIM model of the example house](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM model with von Mises stresses](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
+| Built with `bim.py byg`, exported to glTF with `bim.py eksport` | Computed with `fem.py regn`, shown with `fem.py vis`: pick a load combination and a result |
+
 ## Plugins
 
 | Plugin | Contents |

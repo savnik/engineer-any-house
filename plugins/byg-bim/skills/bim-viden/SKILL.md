@@ -32,6 +32,7 @@ Er `${CLAUDE_PLUGIN_ROOT}` ikke udfoldet, så find scriptet med Glob `**/bim-vid
 | `tjek <fil.ifc> [--tegn]` | Skema/EXPRESS, buildingSMART-regler, geometri, kollisioner, Status/materialer, kildefordeling, arealer mod BBR, IDS. Skriver `<navn>.tjek.md` | 1–3 s |
 | `sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>]` | Modellen tegnet i tegningens pixelramme: original · model · overlay (hele visningen og fliser) + automatisk sammenligning af alle afkodede mål, rum, åbninger og vægtykkelser med modellen | 3–10 s |
 | `tegn <fil.ifc> plan|snit|facade|3d|alle [--etage] [--linje] [--side] [--id] [--maal]` | Plan (snit +1 m), lodret snit, facader, 3D | 2–8 s |
+| `eksport <fil.ifc> [--ud <fil.glb>]` | 3D til webvisning (model-viewer, three.js): glTF i modellens farver, uden rum og huller | 1–3 s |
 | `maal <fil.ifc|model.yaml> <id> [<id2>]` · `--rum <navn>` · `--etage <navn>` | Mål i mm i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger), rum (indvendige mål, areal), fri afstand mellem to elementer, alle vægge på en etage – altid med kilden. En `model.yaml` bygges først, så målet er fra den aktuelle model | < 1 s |
 | `info` · `vis <id>` · `find "<selector>"` · `diff <gammel> <ny>` | Inspektion og ændringer | < 5 s |
 

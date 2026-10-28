@@ -6,6 +6,15 @@ Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projek
 
 > Agenterne rådgiver og planlægger. De erstatter ikke autoriserede håndværkere, certificerede rådgivere, lovpligtige kontroller eller kommunens byggesagsbehandling. Viden markeret **T** skal verificeres, før den bruges som krav.
 
+## Se det i 3D
+
+Eksempelhuset fra repoet, bygget og regnet af værktøjerne i CI. Klik på et billede for at åbne den interaktive visning.
+
+| BIM-model (IFC4) | FEM-model (vægge og dæk som skaller) |
+|---|---|
+| [![BIM-model af eksempelhuset](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM-model med von Mises-spændinger](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
+| Bygget med `bim.py byg`, eksporteret til glTF med `bim.py eksport` | Regnet med `fem.py regn`, vist med `fem.py vis`: vælg lastkombination og resultat |
+
 ## Plugins
 | Plugin | Indhold |
 |---|---|

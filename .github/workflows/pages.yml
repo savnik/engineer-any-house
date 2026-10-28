@@ -1,0 +1,50 @@
+name: Pages
+
+# Builds the 3D demo site (BIM in model-viewer, FEM in plotly) from the examples and deploys it to GitHub Pages.
+# Requires Settings → Pages → Source: GitHub Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      BYG_BIM_VENV: ${{ runner.temp }}/byg-bim-venv
+      BYG_STATIK_VENV: ${{ runner.temp }}/byg-statik-venv
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tool environments
+        run: |
+          python plugins/byg-bim/skills/bim-viden/scripts/bim.py opsaet
+          python plugins/byg-statik/skills/statik-viden/scripts/fem.py opsaet
+      - name: Build site
+        run: python scripts/demo_site.py --ud _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
