@@ -1,4 +1,4 @@
-# Arkitektur – byg-eksperter
+# Arkitektur – Engineer Any House
 
 ## Krav → design
 | Krav | Design |
@@ -178,7 +178,7 @@ gennemført (F-001–F-006), og med de åbne idéer som forslag (F-007–F-011).
 ## Multi-agent-arkitektur i lyset af forskningen (2026-10-20)
 **Grundlag:** Google Research/MIT, "Towards a Science of Scaling Agent Systems" (dec. 2025, 180 konfigurationer): central orkestrator med validering holder fejlforstærkningen på ca. 4,4× mod 17× for uafhængige agenter; multi-agent giver +81 % på opgaver, der kan deles op, men −39 til −70 % på sekventiel planlægning; gevinsten falder, når én agent allerede løser over ca. 45 %, og koordineringen koster mest i værktøjstunge opgaver. Apple/Stanford, "Multi-Agent Teams Hold Experts Back" (ICML 2026): selvorganiserende hold ender op til 41 % under deres bedste ekspert, fordi de mægler kompromiser mellem eksperten og de andre i stedet for at følge eksperten. Apple/EPFL (sep. 2026): en minimal enkeltagent slog fire multi-agent-systemer på MLE-bench.
 
-| Princip fra forskningen | Sådan er byg-eksperter bygget |
+| Princip fra forskningen | Sådan er Engineer Any House bygget |
 |---|---|
 | Central orkestrator med validering | Projektlederen orkestrerer; fagagenter taler aldrig med hinanden; hver leverance valideres af en uafhængig kontrolagent |
 | Parallelt kun, hvor opgaven kan deles op | Fase 1 og uafhængige fag kører parallelt; afhængige fag og returer på samme snitflade i rækkefølge |
@@ -218,7 +218,7 @@ Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver
 **Lagdeling uden ekstra mekanik (vurderet 2026-10-04):** kun indekset (agentens `MEMORY.md`, skill-indgangen) ligger i konteksten; resten læses afsnitsvis. Platformen giver hver fagagent sin egen hukommelsesmappe, og et fag læser kun sit eget afsnit af ejendomskortet. En fuld lagmodel med budgetter, forfremmelse og hook-håndhævelse blev fravalgt: hukommelse er 3–5k tokens pr. fagkørsel, og der var ingen krydslæsninger mellem fag. Den bygges først, hvis `scripts/forbrug.py` viser et reelt problem. Gevinsten ligger i korrekthed: husets fakta ét sted og fast erfaringshøst, når en sag afsluttes.
 
 ## Dataseparation
-Repoet er privat indtil videre (GitHub: `savnik/byg-eksperter`), men det skal offentliggøres på sigt, og hele historikken følger med. Reglerne gælder derfor allerede nu, som var det offentligt. Konkrete sager, brugerens data og hemmeligheder må aldrig komme i det.
+Repoet er privat indtil videre (GitHub: `savnik/engineer-any-house`), men det skal offentliggøres på sigt, og hele historikken følger med. Reglerne gælder derfor allerede nu, som var det offentligt. Konkrete sager, brugerens data og hemmeligheder må aldrig komme i det.
 
 | Zone | Hvor | Må indeholde | Må aldrig |
 |---|---|---|---|
@@ -231,8 +231,8 @@ Repoet er privat indtil videre (GitHub: `savnik/byg-eksperter`), men det skal of
 **Håndhævelse:** `scripts/tjek_data.py` kører i `valider.py` og som git pre-commit-hook (`git config core.hooksPath scripts/hooks`). Den afviser:
 - sagsmapper, sagsfiler, rapporter og PDF'er i repoet
 - API-nøgler (den lokale nøgle og generiske mønstre)
-- sag-id'er fra den lokale videnbank og termer fra `~/.config/byg-eksperter/private-termer.txt`
-- tekstlinjer kopieret fra de sagsmapper, der er registreret i videnbankens `sager.md` (kolonnen Sti) eller i `~/.config/byg-eksperter/sagsmapper.txt`
+- sag-id'er fra den lokale videnbank og termer fra `~/.config/engineer-any-house/private-termer.txt`
+- tekstlinjer kopieret fra de sagsmapper, der er registreret i videnbankens `sager.md` (kolonnen Sti) eller i `~/.config/engineer-any-house/sagsmapper.txt`
 
 De lokale kilder findes ikke i CI. Der kører kun strukturtjek og nøglemønstre. Tjek derfor altid lokalt før push.
 

@@ -1,4 +1,4 @@
-# byg-eksperter
+# Engineer Any House
 
 Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projektleder**, der interviewer, planlægger og koordinerer, **fagagenter på mesterniveau** (vvs, el, murer, ventilation, maler, tømrer, statiker, arkitekt, anlægsgartner, BIM) og en **uafhængig kvalitetskontrol** med én kontrolagent pr. fag. Hver leverance kontrolleres hårdt og kildebaseret. Afviste leverancer sendes retur med fund, og efter 3 afviste forsøg stoppes der med root cause-analyse.
 
@@ -23,10 +23,10 @@ Fag-plugins og `byg` afhænger af `byg-kontrol`, så kontrollen altid følger me
 
 **Claude Code (anbefalet)** – fra en lokal mappe eller et git-repo:
 ```
-/plugin marketplace add ./byg-eksperter
-/plugin install byg-team@byg-eksperter
+/plugin marketplace add ./engineer-any-house
+/plugin install byg-team@engineer-any-house
 ```
-eller i terminalen: `claude plugin marketplace add ./byg-eksperter` og `claude plugin install byg-team@byg-eksperter`. Genstart sessionen efter installation.
+eller i terminalen: `claude plugin marketplace add ./engineer-any-house` og `claude plugin install byg-team@engineer-any-house`. Genstart sessionen efter installation.
 
 **Claude Cowork** – upload den samlede pakke `byg.plugin` (bygges med `python3 scripts/pak.py`). Den indeholder alle agenter, skills og hooks i ét plugin ved navn `byg`, så navnene bliver `byg:vvs-mester`, `byg:vvs-kontrol` og kommandoerne `/byg:nyt-projekt` osv.
 
@@ -66,7 +66,7 @@ Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol)
 
 I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar som "IKKE UAFHÆNGIGT KVALITETSKONTROLLERET".
 
-**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <byg-eksperter>/scripts/forbrug.py --siden <dato>` fra din arbejdsmappe.
+**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <engineer-any-house>/scripts/forbrug.py --siden <dato>` fra din arbejdsmappe.
 
 ## Viden og forankring
 1. **Kanon** i pluginenes `references/` (normgrundlag med status V/T, faglig praksis, tjeklister, erfaringsblade) og kontrolviden i `byg-kontrol`.

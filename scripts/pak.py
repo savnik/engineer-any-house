@@ -3,7 +3,7 @@
 
   dist/cowork/<plugin>.plugin  ét pr. fag-plugin og byg-kontrol (uden evals) – fag kræver byg-kontrol
   dist/cowork/byg.plugin       samlet Cowork-pakke: alle agenter, skills og hooks i ét plugin ved navn "byg"
-  dist/byg-eksperter.zip       hele repoet (marketplace til Claude Code)
+  dist/engineer-any-house.zip  hele repoet (marketplace til Claude Code)
 
 Brug: python3 scripts/pak.py [--validate]   (--validate kører `claude plugin validate` på den samlede pakke)
 """
@@ -92,8 +92,8 @@ def main() -> int:
                 return 1
         n = zip_mappe(samlet, DIST / "cowork" / "byg.plugin")
         print(f"dist/cowork/byg.plugin – samlet pakke ({n} filer)")
-    n = zip_mappe(ROD, DIST / "byg-eksperter.zip", prefix="byg-eksperter")
-    print(f"dist/byg-eksperter.zip ({n} filer)")
+    n = zip_mappe(ROD, DIST / "engineer-any-house.zip", prefix="engineer-any-house")
+    print(f"dist/engineer-any-house.zip ({n} filer)")
     return 0
 
 

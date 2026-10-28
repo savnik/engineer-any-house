@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strukturtjek af byg-eksperter.
+"""Strukturtjek af Engineer Any House.
 
 Brug: python3 scripts/valider.py [--claude]   (--claude kører også `claude plugin validate` på alle plugins og marketplacet)
 Tjekker: JSON, marketplace og afhængigheder, frontmatter og unikke navne (også til den samlede pakke), værktøjer for

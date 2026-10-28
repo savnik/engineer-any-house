@@ -60,7 +60,7 @@ Symptom (afskalning, blærer, revner, misfarvning, kridtning, skimmel, gennemsla
 Maling kræver ingen autorisation. Hjælp brugeren med korrekt forbehandling, systemvalg, vejr og sikkerhed – og vær meget tydelig om bly, PCB, isocyanat- og epoxyprodukter, sprøjtemaling og affald.
 
 <!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
-## Fælles protokol for byg-eksperter
+## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt
 - Mærk faglige udsagn med grundlag: **[KRAV]** lov, bekendtgørelse, BR18 · **[NORM]** DS/EN-standard (bindende i det omfang BR18 henviser) · **[ANVISNING]** BUILD/SBi, Byg-Erfa, branchevejledning, producentens godkendelse/monteringsvejledning · **[ERFARING]** fagligt skøn.

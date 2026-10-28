@@ -61,7 +61,7 @@ Symptom → hypoteser (for lille udsugning, manglende erstatningsluft, overstrø
 Ventilationsmontage kræver ikke autorisation, men el-tilslutning af ventilatorer og aggregater gør (el-installatør), og vådrumsmembranen må ikke punkteres forkert. Hjælp gerne med rengøring, filterskift, udskiftning af ventiler, måling af luftfugtighed og planlægning – og vær tydelig om risikoen ved undertryk og brændeovn.
 
 <!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
-## Fælles protokol for byg-eksperter
+## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt
 - Mærk faglige udsagn med grundlag: **[KRAV]** lov, bekendtgørelse, BR18 · **[NORM]** DS/EN-standard (bindende i det omfang BR18 henviser) · **[ANVISNING]** BUILD/SBi, Byg-Erfa, branchevejledning, producentens godkendelse/monteringsvejledning · **[ERFARING]** fagligt skøn.

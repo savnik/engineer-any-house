@@ -6,7 +6,7 @@ Brug:  python3 scripts/tjek_data.py        (kører også fra valider.py og git p
 Tjek:
   1. Struktur   – ingen sagsmapper (byg-sager/), sagsfiler, ejendomsrapporter, PDF'er eller kontroltilstand i repoet.
   2. Hemmeligheder – ingen API-nøgler: den lokale Datafordeler-nøgle og generiske nøglemønstre.
-  3. Private termer – ingen sag-id'er fra den lokale videnbank og ingen termer fra ~/.config/byg-eksperter/private-termer.txt.
+  3. Private termer – ingen sag-id'er fra den lokale videnbank og ingen termer fra ~/.config/engineer-any-house/private-termer.txt.
   4. Fingeraftryk – ingen tekstlinjer (≥ 60 tegn) kopieret fra de lokale sagsmapper. Linjer, der allerede står i
      repoet på origin/main, tæller ikke: de er offentliggjort og stammer typisk fra pluginet selv (en sag har
      kopieret pluginets tekst, ikke omvendt).
@@ -23,7 +23,7 @@ import sys
 
 ROD = pathlib.Path(os.environ.get("BYG_REPO_ROD") or pathlib.Path(__file__).resolve().parent.parent)
 HJEM = pathlib.Path.home()
-KONFIG = HJEM / ".config" / "byg-eksperter"
+KONFIG = [HJEM / ".config" / "engineer-any-house", HJEM / ".config" / "byg-eksperter"]  # gammelt navn læses stadig
 SPRING_OVER = {".git", ".claude", "dist", "__pycache__", "results", "node_modules", ".DS_Store"}  # .claude: lokale worktrees
 TEKST = {".md", ".json", ".py", ".txt", ".yml", ".yaml", ".toml", ".sh", ".html", ".csv", ""}
 
@@ -71,24 +71,25 @@ def private_termer():
                 if celle and not set(celle) <= set("-: ") and celle.lower() != "sag-id":
                     termer.add(celle)  # første kolonne = sag-id, uanset navneformat
             termer |= set(SAG_ID.findall(s.read_text(encoding="utf-8")))
-    f = KONFIG / "private-termer.txt"
-    if f.exists():
-        termer |= {l.strip() for l in f.read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")}
+    for f in (k / "private-termer.txt" for k in KONFIG):
+        if f.exists():
+            termer |= {l.strip() for l in f.read_text(encoding="utf-8").splitlines()
+                       if l.strip() and not l.startswith("#")}
     return sorted(termer, key=len, reverse=True)
 
 
 def sagsmapper():
-    """Stier fra videnbankens sager.md (kolonnen Sti) og fra ~/.config/byg-eksperter/sagsmapper.txt,
+    """Stier fra videnbankens sager.md (kolonnen Sti) og fra ~/.config/engineer-any-house/sagsmapper.txt,
     plus ejendomskortene i byg-sager/ejendomme/ ved siden af sagsmapperne."""
     stier = set()
     for vb in videnbanker():
         s = vb / "sager.md"
         if s.exists():
             stier |= {pathlib.Path(m).expanduser() for m in re.findall(r"`(/[^`]+|~/[^`]+)`", s.read_text(encoding="utf-8"))}
-    f = KONFIG / "sagsmapper.txt"
-    if f.exists():
-        stier |= {pathlib.Path(l.strip()).expanduser() for l in f.read_text(encoding="utf-8").splitlines()
-                  if l.strip() and not l.startswith("#")}
+    for f in (k / "sagsmapper.txt" for k in KONFIG):
+        if f.exists():
+            stier |= {pathlib.Path(l.strip()).expanduser() for l in f.read_text(encoding="utf-8").splitlines()
+                      if l.strip() and not l.startswith("#")}
     stier |= {p.parent / "ejendomme" for p in list(stier)}
     return sorted(p for p in stier if p.is_dir() and ROD not in (p, *p.parents))
 
