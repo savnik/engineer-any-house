@@ -20,7 +20,7 @@ FELTER = {
     "vaegge": {"type", "punkter", "lukket", "justering", "hoejde", "bund", "til_tag", "vend_lag"},
     "aabninger": {"vaeg", "type", "afstand", "brystning", "bredde", "hoejde", "slaar_mod", "haengsel", "placering"},
     "daek": {"type", "omrids", "top", "huller", "art", "tykkelse"},
-    "tage": {"form", "omrids", "rygning", "haeldning", "tagfod", "udhaeng", "udhaeng_gavl", "tykkelse", "type",
+    "tage": {"form", "omrids", "rygning", "haeldning", "tagfod", "udhaeng", "udhaeng_gavl", "tykkelse", "type", "spaer",
              "hoej_side"},
     "ovenlys": {"tag", "type", "punkt", "flade", "bredde", "hoejde"},
     "trapper": {"start", "retning", "bredde", "stigninger", "stigning", "grund", "materiale", "bund"},
@@ -431,6 +431,22 @@ def _tjek_element(s, el, sti, d, fejl):
             fejl.append(f"{sti}.haeldning skal være mellem 0 og 80 grader")
         if "type" in el:
             _type(d, el, sti, fejl, ("tag", "daek"))
+        if el.get("spaer") is not None:
+            sp = el["spaer"]
+            if not isinstance(sp, dict):
+                fejl.append(f"{sti}.spaer skal være en mapping (afstand, b, h, materiale, hanebaand)")
+            else:
+                ukendt = set(sp) - {"afstand", "b", "h", "materiale", "hanebaand"}
+                if ukendt:
+                    fejl.append(f"{sti}.spaer: ukendte felter {sorted(ukendt)}")
+                for k, std in (("afstand", 900), ("b", 50)):
+                    sp[k] = _tal(sp.get(k, std), f"{sti}.spaer.{k}", fejl, positiv=True)
+                for k in ("h", "hanebaand"):
+                    if k in sp:
+                        sp[k] = _tal(sp[k], f"{sti}.spaer.{k}", fejl, positiv=True)
+                if "hanebaand" in sp and el.get("form") != "sadeltag":
+                    fejl.append(f"{sti}.spaer.hanebaand kræver form: sadeltag")
+                sp.setdefault("materiale", "træ")
     elif s == "trapper":
         el["start"] = _pkt(el.get("start"), 2, f"{sti}.start", fejl)
         el["retning"] = _tal(el.get("retning", 0), f"{sti}.retning", fejl)

@@ -315,8 +315,10 @@ def _ignorer(fa, fb):
     ka, kb = fa.klasse, fb.klasse
     if {ka, kb} <= {"IfcPipeSegment", "IfcDuctSegment"}:
         return str(fa.tag).rsplit(".", 1)[0] == str(fb.tag).rsplit(".", 1)[0]
-    if ka == kb == "IfcSlab" and ue.get_aggregate(fa.ent) is not None and ue.get_aggregate(fa.ent) == ue.get_aggregate(fb.ent):
-        return True  # tagflader i samme tag mødes ved kip/grat
+    if {ka, kb} <= {"IfcSlab", "IfcMember"}:
+        agg = ue.get_aggregate(fa.ent)
+        if agg is not None and agg.is_a("IfcRoof") and agg == ue.get_aggregate(fb.ent):
+            return True  # roof faces meet at ridge/hip; rafters lie in the faces' rafter layer and meet each other
     return False
 
 

@@ -82,9 +82,12 @@ etager:
 ## tage
 ```yaml
   - {id: TAG1, etage: "1", form: sadeltag, omrids: [0, 0, 10000, 8500], rygning: x, haeldning: 45,
-     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG}
+     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG,
+     spaer: {afstand: 900, b: 50, hanebaand: 2300}}
 ```
 `form` er sadeltag|valmtag|pulttag (`hoej_side: x+|x-|y+|y-`)|fladt. `omrids` er rektanglet ved facadernes yderside. `tagfod` er højden af tagfladens underside ved facadelinjen, relativt til etagegulvet. Tagfladerne bliver IfcSlab (ROOF) samlet i en IfcRoof og er skåret lodret ved kip, grat, tagfod og gavl. Kviste og sammensatte tage laves med `generisk` (se mønstre).
+
+`spaer` (valgfri) danner spærene som IfcMember (RAFTER) i hver skrå tagflade, samlet i IfcRoof sammen med tagfladerne. Spærene ligger i tagfladens nederste lag med højst `afstand` mellem centrene (standard 900). `b` er bredden (standard 50). `h` er som standard tykkelsen af typens lag med navnet spær, ellers 150. `materiale` er som standard træ. Om ovenlys og skorstene (`generisk` med klasse IfcChimney) sættes der spær på begge sider og veksler (Tag `TAG1.side1.V01`) over og under. `hanebaand` er overkanten af hanebåndene over etagegulvet. Det gælder kun sadeltag, og der sættes et hanebånd (COLLAR) ved hvert spærpar, der når den højde inden for omridset og uden om skorstenen. `tjek` melder ikke spær mod tagflader i samme tag som kollision.
 
 ## ovenlys
 ```yaml

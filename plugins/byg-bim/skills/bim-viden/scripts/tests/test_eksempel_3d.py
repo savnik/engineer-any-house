@@ -48,6 +48,25 @@ def test_ovenlys_uden_for_tagfladen_er_fejl(tmp_path):
     assert any("T-OV1" in e and "tagflade" in e for e in sv["fejl"])
 
 
+def test_spaer_i_taget(hus):
+    f, sv, _ = hus
+    tag = f.by_type("IfcRoof")[0]
+    dele = [d for r in tag.IsDecomposedBy for d in r.RelatedObjects]
+    spaer = [d for d in dele if d.is_a("IfcMember")]
+    assert {m.PredefinedType for m in spaer} == {"RAFTER", "COLLAR"}
+    tags = {m.Tag for m in spaer}
+    assert {"TAG1.side1.S01", "TAG1.side2.S01", "TAG1.H01"} <= tags
+    # trimmers: two per hole – two roof windows per face, plus the chimney on side1
+    assert sum(".V" in t for t in tags if t.startswith("TAG1.side1")) == 6
+    assert sum(".V" in t for t in tags if t.startswith("TAG1.side2")) == 4
+    assert all(m.ContainedInStructure == () for m in spaer)  # aggregated in the roof, not contained in the storey
+
+
+def test_spaer_valideres(tmp_path):
+    with pytest.raises(SpecFejl, match="spaer.afstand"):
+        _spec(tmp_path, [("spaer: {afstand: 900,", "spaer: {afstand: -1,")])
+
+
 def test_systemfarve_overstyrer_art(hus):
     f, _, _ = hus
     seg = next(p for p in f.by_type("IfcPipeSegment") if (p.Tag or "").startswith("R-CV-R"))
