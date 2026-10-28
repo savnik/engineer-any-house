@@ -4,8 +4,10 @@
 Brug: python3 scripts/valider.py [--claude]   (--claude kører også `claude plugin validate` på alle plugins og marketplacet)
 Tjekker: JSON, marketplace og afhængigheder, frontmatter og unikke navne (også til den samlede pakke), værktøjer for
 fag- og kontrolagenter, fagregister, ${CLAUDE_PLUGIN_ROOT}-stier, evals, protokoller i synk, versionsnoter, ingen bin/,
-hook-tests, eksamenslaget, forsøgsloggen, rammefilerne og dataseparation.
+hook-tests, eksamenslaget, forsøgsloggen, rammefilerne, dataseparation, fælles miljømodul og låste miljøer i synk og
+hooks/opstartsscripts kun med standardbiblioteket.
 """
+import ast
 import json
 import pathlib
 import re
@@ -36,6 +38,27 @@ def frontmatter(fil: pathlib.Path) -> dict | None:
         elif noegle and linje.startswith((" ", "\t")):
             fm[noegle] = (fm[noegle] + " " + linje.strip()).strip()
     return fm
+
+
+# Runs with the system python3 before any venv exists: standard library and sibling modules only.
+# bim.py/fem.py: only module-level imports (their libraries are imported after switching into the venv).
+KUN_STDLIB = ["plugins/*/hooks/*.py", "scripts/hooks/*.py", "faelles/miljoe.py",
+              "plugins/*/skills/*/scripts/miljoe.py", "plugins/*/skills/*/scripts/statik.py"]
+KUN_STDLIB_TOP = ["plugins/*/skills/*/scripts/bim.py", "plugins/*/skills/*/scripts/fem.py"]
+
+
+def ikke_stdlib(fil: pathlib.Path, kun_top: bool) -> list[str]:
+    """Imported top-level modules that are neither standard library nor a sibling .py file."""
+    tree = ast.parse(fil.read_text(encoding="utf-8"))
+    noder = tree.body if kun_top else ast.walk(tree)
+    navne = set()
+    for n in noder:
+        if isinstance(n, ast.Import):
+            navne.update(a.name.split(".")[0] for a in n.names)
+        elif isinstance(n, ast.ImportFrom) and n.level == 0 and n.module:
+            navne.add(n.module.split(".")[0])
+    return sorted(m for m in navne
+                  if m not in sys.stdlib_module_names and m != "__future__" and not (fil.parent / f"{m}.py").exists())
 
 
 def laes_json(fil: pathlib.Path):
@@ -201,6 +224,17 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROD / "scripts" / "sync_protokol.py"), "--check"], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Protokoller ude af synk – kør scripts/sync_protokol.py\n" + r.stdout)
+    r = subprocess.run([sys.executable, str(ROD / "scripts" / "sync_miljoe.py"), "--check"], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Det fælles miljømodul er ude af synk – kør scripts/sync_miljoe.py\n" + r.stdout)
+    r = subprocess.run([sys.executable, str(ROD / "scripts" / "laas_miljoe.py"), "--check"], capture_output=True, text=True)
+    if r.returncode:
+        FEJL.append("Låste miljøer passer ikke til requirements*.in – kør scripts/laas_miljoe.py\n" + r.stdout)
+    for moenstre, kun_top in ((KUN_STDLIB, False), (KUN_STDLIB_TOP, True)):
+        for fil in sorted({f for m in moenstre for f in ROD.glob(m)}):
+            if fremmede := ikke_stdlib(fil, kun_top):
+                FEJL.append(f"{fil.relative_to(ROD)}: importerer {', '.join(fremmede)} – hooks og opstartsscripts må kun "
+                            "bruge standardbiblioteket (ARKITEKTUR.md, Python-miljøer)")
     r = subprocess.run([sys.executable, str(ROD / "scripts" / "udgiv.py"), "--check"], capture_output=True, text=True)
     if r.returncode:
         FEJL.append("Versionsnoter er ugyldige (versionsnoter/README.md):\n" + r.stdout)

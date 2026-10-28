@@ -88,7 +88,18 @@ Måling af 437 transskripter: subagenter 59 %, hovedtråd 35 %, workflows 6 % (m
 
 **Uafhængighed:** sammenligneren ser kun filerne (original, afkodning, IFC), ikke modellørens ræsonnement, og tegner selv modellen fra IFC-filen. Afkodningsfejl er en egen kategori, fordi en model, der svarer til en fejllæst afkodning, ellers ville bestå.
 
-**Miljø:** værktøjet kører i sit eget venv (`~/.local/share/byg-bim/venv`, fastlåste versioner i `requirements.txt`). `bim.py` skifter selv til det. Kendte fejl i IfcOpenShell 0.9.0 er omgået og dokumenteret i `erfaringsblade.md` (EB-BIM-02).
+**Miljø:** værktøjet kører i sit eget venv (`~/.local/share/byg-bim/venv`, låst i `requirements.txt`, se Python-miljøer). `bim.py` skifter selv til det. Kendte fejl i IfcOpenShell 0.9.0 er omgået og dokumenteret i `erfaringsblade.md` (EB-BIM-02).
+
+## Python-miljøer (2026-10-28)
+Alle scripts er Python. npm blev fravalgt: de tunge afhængigheder (IfcOpenShell med ifctester/ifcpatch, PyNite) findes kun i Python, og hooks uden afhængigheder er allerede det enkleste mulige – Node ville være en runtime mere, ikke en i stedet for.
+
+| Lag | Afhængigheder | Regel |
+|---|---|---|
+| Hooks (`plugins/*/hooks/`, `scripts/hooks/`) og opstartsscripts (`bim.py`, `fem.py` før skiftet, `statik.py`, `miljoe.py`) | Kun standardbiblioteket | Kører med systemets `python3` før noget miljø findes. `valider.py` afviser andre imports (AST-tjek). `miljoe.py` og opstarten skal også kunne køre på macOS' Python 3.9 for at give en forståelig fejl |
+| Værktøjer med eget miljø (`bim.py`, `fem.py`) | `requirements*.in` (direkte, fastlåst med `==`) → `requirements*.txt` (alle pakker låst, universel lås for Python ≥ 3.11 på alle platforme) | Lås med `python3 scripts/laas_miljoe.py` (kræver uv). `valider.py` tjeker uden netværk, at låsen har .in-filens versioner. `bim.py opsaet --test` bruger `requirements-test.txt` (+ pytest), så testværktøj ikke ligger i brugernes miljø |
+| Repoets udviklingsværktøjer (`scripts/`, `tests/`) | Kun standardbiblioteket; `pyproject.toml` + `uv.lock` angiver Python-versionen og uv til låsning | Kører med `python3 scripts/…` eller `uv run scripts/…` |
+
+**Opsætning:** `faelles/miljoe.py` er én kilde til opsætning og skift til venv'et. Plugins installeres hver for sig og kan ikke importere på tværs, så `scripts/sync_miljoe.py` kopierer modulet ind ved siden af hvert værktøj (tjekkes af `valider.py` og pre-commit). `opsaet` bruger uv, hvis det er installeret (sekunder, `uv pip sync` fjerner pakker, der ikke længere er i låsen), ellers `venv` + `pip install` fra samme lås. Brugerne skal altså ikke have uv.
 
 ## Statik (2026-10-11)
 **Rolle:** `statiker` er en **rådgivende** fagagent. Den screener (er væggen bærende?), laver overslag, skriver konstruktionsgrundlag og opgavebeskrivelser og reviewer statisk dokumentation fra rådgivere. Den udarbejder ikke statisk dokumentation til byggesagen og underskriver ikke – BR18 lægger ansvaret hos den ansvarlige statiker, i de højere konstruktionsklasser en certificeret statiker. Derfor er "ansvarlig statiker" stadig et fag uden agent i projektlederens fagvalg.
@@ -250,7 +261,7 @@ De lokale kilder findes ikke i CI. Der kører kun strukturtjek og nøglemønstre
 ## Begrænsninger og risici
 - Normer bag betalingsmur (DS m.fl.) kan ikke efterprøves direkte; kontrollen skal da skrive det under `usikkerheder`.
 - Punkter markeret T er ikke verificeret; se "Roadmap".
-- Hooks kræver python3; uden python3 er loopet kun instruktionsbaseret.
+- Hooks kræver python3; uden python3 er loopet kun instruktionsbaseret. BIM- og statikværktøjerne kræver Python 3.11 eller uv (som selv henter en Python).
 - Stop-hooken blokerer én gang pr. stop (for at undgå uendelige løkker) – en model kan i princippet afslutte ved andet forsøg.
 - Kontrolagentens strenghed skal kalibreres på rigtige sager (afvisningsrate, fund pr. runde, kontrolsvigt).
 - Agentkontrol er ikke lovpligtig kontrol og ændrer ikke ansvarsforhold.

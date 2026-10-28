@@ -1,0 +1,5 @@
+# Direkte afhængigheder for fem.py. Redigér her, og lås med:  python3 scripts/laas_miljoe.py
+PyNiteFEA==3.2.0
+plotly==7.1.0
+pyyaml==6.0.3
+matplotlib==3.11.2
