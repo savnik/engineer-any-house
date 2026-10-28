@@ -125,7 +125,7 @@ Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.p
 
 **Parallelle sessioner** (flere Claude-sessioner i hver sin worktree):
 - Én opgave = én worktree = én kortlivet gren. Rebase på `origin/main` før PR, og merge PR'erne én ad gangen.
-- **Hæv aldrig versioner i en gren.** Læg en note i `versionsnoter/<gren>.md` (se `versionsnoter/README.md`). Efter merge laver du en gren `udgivelse/<version>` fra `origin/main`, kører `python3 scripts/udgiv.py` og merger den som en PR. Pre-commit-hooken afviser versionsændringer uden for `udgivelse/*` (`BYG_UDGIV=1` tilsidesætter).
+- **Hæv aldrig versioner i en gren.** Læg en note i `versionsnoter/<gren>.md` (se `versionsnoter/README.md`). Efter merge laver du en gren `udgivelse/<version>` fra `origin/main`, kører `python3 scripts/udgiv.py` og merger den som en PR. Derefter tagger du `v<version>` på main, og CI bygger og udgiver releasen (`.github/workflows/release.yml`). Pre-commit-hooken afviser versionsændringer uden for `udgivelse/*` (`BYG_UDGIV=1` tilsidesætter).
 - `faelles/` og agentfilernes protokolblokke: konflikter i de genererede blokke løses ikke i hånden. Løs konflikten i `faelles/`, og kør `python3 scripts/sync_protokol.py`.
 - Opgaver, der begge ændrer `faelles/`, `fagregister.json` eller `kontrol_gate.py`, køres efter hinanden, ikke parallelt.
 

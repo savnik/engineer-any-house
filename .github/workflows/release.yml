@@ -1,0 +1,92 @@
+name: Release
+
+# Builds the distribution files from the tagged commit, attests their provenance
+# and publishes the GitHub release. With immutable releases enabled, the published
+# assets and the tag can no longer be changed.
+#
+#   git tag -a v<version> -m "Engineer Any House <version>" origin/main && git push origin v<version>
+#
+# workflow_dispatch republishes an existing tag (e.g. a tag created before this workflow existed).
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Existing tag to release, e.g. v1.0.0"
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event.inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write      # create the release
+      id-token: write      # sign the attestation
+      attestations: write  # store the attestation
+    env:
+      TAG: ${{ github.event.inputs.tag || github.ref_name }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: refs/tags/${{ env.TAG }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Claude Code CLI (claude plugin validate)
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Git identity (tests create local repos and commit)
+        run: |
+          git config --global user.name "CI"
+          git config --global user.email "ci@example.invalid"
+
+      - name: Tag must match the marketplace version and a CHANGELOG section
+        run: |
+          version=$(python3 -c 'import json; print(json.load(open(".claude-plugin/marketplace.json"))["metadata"]["version"])')
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Tag $TAG does not match marketplace version $version"; exit 1
+          fi
+          awk -v v="$version" '$0 ~ "^## " v " " {f=1; next} /^## /{if (f) exit} f' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if ! grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            echo "::error::CHANGELOG.md has no section for $version"; exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Validate
+        run: python3 scripts/valider.py --claude
+
+      - name: Build distribution files
+        run: |
+          python3 scripts/pak.py --validate
+          cd dist && sha256sum engineer-any-house.zip cowork/*.plugin | tee SHA256SUMS
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            dist/engineer-any-house.zip
+            dist/cowork/*.plugin
+
+      # Upload to a draft first and publish last: an immutable release accepts no assets once published.
+      - name: Publish release
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists – delete it first to republish"; exit 1
+          fi
+          gh release create "$TAG" --verify-tag --draft \
+            --title "Engineer Any House $VERSION" --notes-file "$RUNNER_TEMP/notes.md" \
+            dist/engineer-any-house.zip dist/cowork/*.plugin dist/SHA256SUMS
+          gh release edit "$TAG" --draft=false --latest
