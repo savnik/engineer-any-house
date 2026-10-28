@@ -6,7 +6,7 @@ Skrives af orkestratoren (projektlederen) til `<sagsmappe>/kvalitet/RCA-<leveran
 
 **Metode: 5 Why (fem gange hvorfor) er obligatorisk.** Hver RCA skal have mindst én fuld 5 Why-kæde. Reglerne:
 - **Start** i det konkrete problem: hvad forsøg 1 manglede (afsnit 2). Grupper fund med samme årsag i én kæde. Fund med forskellige årsager får hver sin kæde.
-- **Hvert "hvorfor"** besvarer det foregående svar, ikke det oprindelige problem. Svaret skal være et faktum med evidens: en dom, fagnotatet, agentens prompt eller videnbase, eller fagforespørgslen. Et gæt tæller ikke.
+- **Hvert "hvorfor"** besvarer det foregående svar, ikke det oprindelige problem. Svaret skal være et faktum med evidens: en dom, fagnotatet, agentens prompt eller videnbase, eller fagforespørgslen. Et gæt tæller ikke. Mangler evidensen, så skriv "utilstrækkeligt grundlag – mangler: <hvad, og hvor det findes>", og stop kæden dér. Skriv aldrig, at noget er genskabt, målt eller afprøvet, hvis det ikke er gjort.
 - **Mindst fem niveauer.** Stop ikke ved symptomet ("agenten glemte X"). Fortsæt, til svaret peger på noget i systemet, der kan ændres: fagagentens viden, metode, prompt eller input. Gå videre end fem, hvis femte svar ikke er handlingsbart.
 - **Grundårsagen** skrives på sin egen linje efter kæden og kobles til en årsagskategori (afsnit 4) og mindst én forbedring (afsnit 6).
 - **Kontrol af kæden:** læs den baglæns med "derfor". Hænger kæden ikke logisk sammen fra grundårsag til problem, er den ikke færdig.

@@ -1,12 +1,13 @@
 # Kontrol – projektlederens leverancer
 
-**rubric_version:** `kontrol-projekt@1.3` (2026-09-28)
+**rubric_version:** `kontrol-projekt@1.4` (2026-10-28)
 
 Kontrollerer projektgrundlag, koordineringsplan, grænsefladematrix, tidsplan, risikoregister, kontrolplan, beslutningslog og samlede anbefalinger til brugeren.
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
 1. Definition of Ready (G0): formål, omfang, bygning (type, år, konstruktion), rammer (budget, tid, kvalitet), udførende, kendte problemer og myndighedsforhold er afklaret eller markeret som antagelser. **Fagfakta pr. berørt fag** efter projektlederens `definition-of-ready.md` er indsamlet eller markeret som antagelser (væsentlig).
 1b. G1 og G2: grænsefladeregistret har én ejer pr. snitflade, og konflikter er afgjort og logget. Fag uden agent er prissat ved G1. G2 med åbne punkter kræver brugerens skriftlige accept af dem som hold points (væsentlig). Hold points følger navngivningen fra fase 0 (mindre).
+1e. Opgørelse ved gaten (G1, G2, G3): hvert succeskriterie, skal-krav, ramme R1–Rn og åbent spørgsmål i projektgrundlaget har status besvaret, delvis eller åben med henvisning. "Besvaret" uden godkendt leverance, beslutning eller dokumenteret faktum, et udeladt punkt eller en gate passeret med punkter, brugeren ikke har accepteret (væsentlig).
 1d. Manuel gate: den samlede plan stemmer med den løsning, brugeren godkendte (loesningspraesentation.md og beslutningslog). Afvigelser fra den godkendte løsning er ændringer, der kræver ny godkendelse (væsentlig).
 1c. Samlet plan (fase 3): tjeklisten for tværgående tidsregler (faser-og-gates.md) er gennemgået. Lovfrister, maksimale intervaller med reservedag, driftstilstande (varme, fyr på Aus), R1, R-rammer med tidlig, forventet og sen gren, og kritisk vej med slæk (væsentlig).
 1a. Fase og gate: en planleverance (tidsplan, detailbudget, montage) bygger kun på godkendte fagnotater (design freeze, G2). Ændringer efter G2 er ført i `aendringer.md` med konsekvensanalyse (væsentlig). Delplaner, der burde være samlet, noteres som mindre.
@@ -25,6 +26,8 @@ Kontrollerer projektgrundlag, koordineringsplan, grænsefladematrix, tidsplan, r
 - Tidsplan uden tørretider og uden plads til kontrol og afvist leverance.
 - Plan skrevet før design freeze, eller revideret for hver enkelt ny oplysning i stedet for samlet (ændringsstyring).
 - Myndighedsforhold antaget i stedet for undersøgt.
+- "Ingen lokalplan", "ingen asbest" eller lignende skrevet, fordi intet blev fundet i BBR eller en søgning – ikke fordi en kilde siger det.
+- Fase erklæret færdig, mens et af brugerens succeskriterier stadig er åbent.
 - Konflikt mellem fag skjult i stedet for eskaleret.
 
 ## Primærkilder

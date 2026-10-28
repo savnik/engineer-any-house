@@ -450,6 +450,32 @@ def main() -> int:
         if not ok:
             FEJL.append(f"afklar: {ea}")
 
+        # ikke_kontrolleret: valideres, gemmes og nævnes, når leverancen genbruges
+        LI = "2026-09-25-bad/vvs/22"
+        I = {"session_id": "s-ik", "cwd": str(cwd)}
+        kald("pretool", {**I, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {LI}"}}, env)
+        kald_raa("pretool", {**I, "tool_input": {"subagent_type": KON, "prompt": f"LEVERANCE: {LI}"}}, env)
+        def ik_dom(liste):
+            blok = {"leverance_id": LI, "fag": "vvs", "dom": "godkendt", "fund": [], "ikke_kontrolleret": liste}
+            return "OK.\n```json\n" + json.dumps(blok, ensure_ascii=False) + "\n```"
+        forvent("ikke_kontrolleret som tekst i stedet for liste sendes retur", kald_raa("subagentstop", {**I,
+                "agent_type": KON, "last_assistant_message": ik_dom("bilag")}, env), "blokeret")
+        forvent("godkendt dom med ikke_kontrolleret registreres", kald_raa("subagentstop", {**I, "agent_type": KON,
+                "stop_hook_active": True, "last_assistant_message": ik_dom(["bilag vvs-bilag.md, trykfald"])}, env),
+                "tilladt")
+        tilst = json.loads((pathlib.Path(env["CLAUDE_PLUGIN_DATA"]) / "kontrol" / "tilstand.json").read_text(encoding="utf-8"))
+        ei = tilst["leverancer"][LI]
+        ok = ei["status"] == "godkendt" and ei["domme"][-1].get("ikke_kontrolleret") == ["bilag vvs-bilag.md, trykfald"]
+        print(("OK   " if ok else "FEJL ") + "ikke_kontrolleret gemmes i dommen")
+        if not ok:
+            FEJL.append(f"ikke_kontrolleret: {ei}")
+        r = kald_raa("pretool", {**I, "tool_input": {"subagent_type": FAG, "prompt": f"LEVERANCE: {LI}"}}, env)
+        grund = str((r or {}).get("hookSpecificOutput", {}).get("permissionDecisionReason", ""))
+        ok = "dækker ikke: bilag vvs-bilag.md, trykfald" in grund
+        print(("OK   " if ok else "FEJL ") + "godkendt-besked nævner det ikke kontrollerede")
+        if not ok:
+            FEJL.append(f"ikke_kontrolleret-besked: {r}")
+
         # KONTROLNIVEAU: fuld kræver Opus i kontrolkaldet
         LF = "2026-09-25-bad/vvs/21"
         F = {"session_id": "s-fuld", "cwd": str(cwd)}

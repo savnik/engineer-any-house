@@ -86,7 +86,9 @@ Gør ét forsøg ad gangen, medmindre brugeren beder om flere. Brug TodoWrite ti
 8. **Afgør.** Kør `forsoeg.py vurder F-<nr>`, og derefter
    `forsoeg.py afslut F-<nr> --beslutning … --laering "…"`. Følg reglen. Afviger du fra den, kræves
    `--begrundelse`, og så skal du også sige det til brugeren. Læringen er det vigtigste felt. Skriv, hvad en
-   fremtidig forbedrer skal vide, også når forsøget fejler.
+   fremtidig forbedrer skal vide, også når forsøget fejler. Skriv også, hvad der ikke blev målt (manglende
+   opgaver, kun udviklingssæt, ingen holdout), og mærk anslåede tal som anslåede. Et billigt tjek med
+   `--kun-fejlede` er aldrig grundlag for "behold".
 9. **Aflevér.**
    - **behold:** Lav en versionsnote i `versionsnoter/` for de berørte plugins, og hæv aldrig versionen på en
      gren. Kør `python3 scripts/valider.py`. Commit log, benchmark og ændring, push, og opret en draft-PR.

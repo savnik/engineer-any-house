@@ -314,7 +314,9 @@ def naeste_skridt(lev: str, e: dict) -> str:
                 f"hold points, " + valg + "omformuleres som en ny, mindre opgave under et nyt leverance-ID. Start ingen "
                 "ny runde, og skriv ingen RCA, før brugeren har valgt.")
     if st == "godkendt":
-        return f"Godkendt: ændringer kræver et nyt leverance-ID (fx '{lev}-r2')."
+        ik = ((e.get("domme") or [{}])[-1]).get("ikke_kontrolleret") or []
+        omfang = (f" Godkendelsen dækker ikke: {'; '.join(ik)}. Nævn det, når leverancen bruges." if ik else "")
+        return f"Godkendt: ændringer kræver et nyt leverance-ID (fx '{lev}-r2').{omfang}"
     if st == "ikke_udtaget":
         return (f"Ikke udtaget til stikprøvekontrol: {lev} er afleveret uden kontrol. Svar brugeren, og skriv tydeligt "
                 "'Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)'. Skal svaret alligevel kontrolleres, eller "
@@ -571,6 +573,9 @@ def valider(dom: dict) -> list:
     afk = dom.get("afklar_med_bruger", [])
     if not isinstance(afk, list) or any(not isinstance(a, dict) or not str(a.get("spoergsmaal") or "").strip() for a in afk):
         fejl.append("afklar_med_bruger skal være en liste af objekter med 'spoergsmaal' (tom liste er tilladt).")
+    ik = dom.get("ikke_kontrolleret", [])
+    if not isinstance(ik, list) or any(not isinstance(x, str) or not x.strip() for x in ik):
+        fejl.append("ikke_kontrolleret skal være en liste af korte tekster om det, der ikke er kontrolleret (tom liste er tilladt).")
     if dv == "godkendt" and aabne:
         fejl.append(f"dom 'godkendt' er ikke tilladt med åbne blokerende fund: {', '.join(aabne)}.")
     if dv == "afvist" and not aabne:
@@ -858,7 +863,8 @@ def subagentstop(inp: dict, d: pathlib.Path) -> None:
             return
         e.setdefault("domme", []).append({"runde": runde(e), "forsoeg": e.get("forsoeg"), "dom": dom["dom"],
                                           "aabne_fund": taelling(dom), "tid": nu(),
-                                          "afklar_med_bruger": len(dom.get("afklar_med_bruger") or [])})
+                                          "afklar_med_bruger": len(dom.get("afklar_med_bruger") or []),
+                                          "ikke_kontrolleret": list(dom.get("ikke_kontrolleret") or [])})
         if e.get("type") == "ekstern":
             e["status"] = "vurderet_ekstern"
         elif dom["dom"] == "godkendt":

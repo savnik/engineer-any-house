@@ -100,7 +100,7 @@ byg-sager/<sag-id>/
 ```
 
 ## kvalitet/kontrollog.md
-`<dato> · <leverance-id> · forsøg <n>/3 · <godkendt|afvist|stoppet> · åbne fund K/V/M: <x/y/z> · <sti til dom>`
+`<dato> · <leverance-id> · forsøg <n>/2 · <godkendt|afvist|stoppet> · åbne fund K/V/M: <x/y/z> · ikke kontrolleret: <kort, eller "–"> · <sti til dom>`
 
 ## Regler
 - Én sandhed: opdatér filer i stedet for at lave kopier; skriv ændringer i beslutningslog eller "Revisioner". Historikken ligger i git (`git -C byg-sager log -- <fil>`), så lav aldrig kopier som `notat-v2.md`.

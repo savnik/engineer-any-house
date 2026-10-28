@@ -21,6 +21,17 @@ Fasemodellen følger byggeriets egen faseopdeling. Den bygger på Ydelsesbeskriv
 - **Kontrolniveauet følger opgavens risiko, ikke kun faget.** `fuld` kræver, at leverancen fastlægger eller ændrer en sikkerhedsfunktion: sikkerhedsudstyr, hydraulik ved varmekilden, el-beskyttelse, bærende konstruktion eller brand. Indkøb, priser, sortiment, materialelister og styklister til et godkendt design får `let`, også i et sikkerhedskritisk fag. Ændrer et produktvalg en sikkerhedsfunktion (fx temperaturklassen på rør ved en kedel), er det `fuld`. **Bærende konstruktioner:** `fuld` kun, når leverancen dimensionerer eller ændrer en bærende del (ny åbning, bjælke, vederlag, opmuring, fundering). Screening, diagnose, fotogennemgang, beregning til orientering, svar inden for en ramme (fagets `rammer.md`) og review af egne tidligere notater får `let`. `fuld` kaldes altid med `model: "opus"`.
 - **Parallelt i forgrunden:** fag uden indbyrdes afhængighed kaldes samtidig som flere Agent-kald i samme besked. Kontrolkald køres i forgrunden, så dommen er registreret, når svaret kommer, og der ikke skal tjekkes status. Brugerens beskeder venter i køen imens.
 
+## Opgørelse ved gaten (projektlederen, ved G1, G2 og G3)
+Før en gate passeres, gøres brugerens ønsker op mod det, der faktisk er leveret. Opgørelsen skrives i `status.md` under "Opgørelse G<n>" og danner afsnit 7 i løsningspræsentationen.
+
+| Punkt (fra projektgrundlaget) | Status | Hvor besvaret / hvad mangler |
+|---|---|---|
+| Succeskriterie, skal-krav, ramme R<n> eller åbent spørgsmål | besvaret · delvis · åben | leverance-ID og afsnit, eller hvad der mangler og hvem der afklarer det |
+
+- Tag alle succeskriterier, skal-krav, rammer R1–Rn og åbne spørgsmål fra `projektgrundlag.md` med. Spring ingen over, fordi de virker små.
+- **Besvaret** kræver en godkendt leverance, en beslutning i beslutningsloggen eller et dokumenteret faktum. At ingen har nævnt et problem, er ikke et svar.
+- Gaten passeres ikke, før hvert punkt med status delvis eller åben enten er afklaret eller accepteret af brugeren som hold point eller antagelse (beslutningsloggen). Skriv aldrig, at en fase er færdig, mens der er punkter, som brugeren ikke har accepteret.
+
 ## Enkelhedstjek (projektlederen, ved G1 og før løsningspræsentationen)
 Stil disse spørgsmål til hvert fag, før gaten passeres. Er svaret ja, så bed faget forenkle, før du går videre.
 - Er der en standardløsning, som en almindelig håndværker kender, men som ikke er valgt?
@@ -55,7 +66,7 @@ Grundlag: <godkendte fagleverancer med ID> · beslutningslog <dato>
 ## 4. Økonomi (groft ±20 %) mod rammen, inkl. fag uden agent og buffer
 ## 5. Tid – milepæle og realistisk slutdato (tidlig, forventet, sen) mod rammen
 ## 6. Det du selv skal gøre, og gør-det-selv-grænser
-## 7. Åbne punkter og hold points før tilbud (accepteret ved G2)
+## 7. Opgørelse af dine ønsker: besvaret, delvis og åbne punkter – hold points før tilbud (accepteret ved G2)
 ## 8. Risici og hvad der kan ændre løsningen
 ## 9. Beslutning
 Godkend ved selv at skrive: **Godkend G2 <sag-id>**. Eller skriv, hvad der skal ændres.
