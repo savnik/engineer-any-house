@@ -1,4 +1,4 @@
-"""Hovedmodel og forslag: bim.py forslag/flet (kør i bim-miljøet: python -m pytest scripts/tests)."""
+"""Hovedmodel og forslag: bim.py forslag/flet (bim.py opsaet --test, derefter i bim-miljøet: python -m pytest scripts/tests)."""
 import pathlib
 import shutil
 import sys

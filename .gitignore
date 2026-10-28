@@ -12,3 +12,6 @@ videnbank/
 .env
 *.key
 datafordeler_api_key
+
+# uv sync (udviklingsmiljøet i pyproject.toml)
+.venv/

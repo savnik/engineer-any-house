@@ -1,0 +1,3 @@
+# Testmiljø for bimlib (bim.py opsaet --test). Redigér her, og lås med:  python3 scripts/laas_miljoe.py
+-r requirements.in
+pytest==9.1.1

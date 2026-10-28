@@ -4,7 +4,8 @@ skalelementer) ud fra en modelspec (YAML).
 
 Kør altid med:  python3 fem.py <kommando> ...   (scriptet skifter selv til sit eget Python-miljø)
 
-  opsaet                                    Opretter/opdaterer miljøet (~/.local/share/byg-statik/venv)
+  opsaet                                    Opretter/opdaterer miljøet (~/.local/share/byg-statik/venv) fra den låste
+                                            requirements-fem.txt
   skabelon [flader]                         Komplet eksempel på fem.yaml (flader: hus med vægge, dæk og bjælke)
   regn  <fem.yaml> [--ud <mappe>] [--ingen-filer] [--saet <sti>=<værdi> …]
                                             Analyse: reaktioner, snitkræfter, nedbøjninger og ligevægt pr. kombination
@@ -22,33 +23,15 @@ Enheder: længder i m, kræfter i kN, momenter i kNm; profiler og tværsnit i mm
 Akser: x og y vandret, z lodret op. En model med alle y = 0 regnes som plan ramme i x-z-planen.
 Alle resultater er OVERSLAG – de skal eftervises af den ansvarlige statiker. Se references/fem.md.
 """
-import os
 import pathlib
-import subprocess
 import sys
 
+from miljoe import Miljoe
+
 HER = pathlib.Path(__file__).resolve().parent
-VENV = pathlib.Path(os.environ.get("BYG_STATIK_VENV", pathlib.Path.home() / ".local" / "share" / "byg-statik" / "venv"))
-VPY = VENV / "bin" / "python"
-KRAV = HER / "requirements-fem.txt"
-
-
-def _i_venv() -> bool:
-    return pathlib.Path(sys.prefix).resolve() == VENV.resolve()
-
-
-def opsaet() -> int:
-    if not VPY.exists():
-        print(f"Opretter miljø i {VENV} …", flush=True)
-        subprocess.run([sys.executable, "-m", "venv", str(VENV)], check=True)
-    r = subprocess.run([str(VPY), "-m", "pip", "install", "-q", "--disable-pip-version-check", "-r", str(KRAV)])
-    if r.returncode:
-        return r.returncode
-    out = subprocess.run([str(VPY), "-c", "import Pynite, plotly, yaml, matplotlib; from importlib.metadata import version;"
-                          "print('PyNiteFEA', version('PyNiteFEA'), '· plotly', plotly.__version__)"],
-                         capture_output=True, text=True)
-    print(out.stdout.strip() or out.stderr.strip())
-    return out.returncode
+MILJOE = Miljoe("byg-statik", "BYG_STATIK_VENV", HER / "requirements-fem.txt",
+                ("import Pynite, plotly, yaml, matplotlib; from importlib.metadata import version;"
+                 "print('PyNiteFEA', version('PyNiteFEA'), '· plotly', plotly.__version__)"))
 
 
 def main() -> int:
@@ -57,12 +40,9 @@ def main() -> int:
         print(__doc__)
         return 0
     if args[0] == "opsaet":
-        return opsaet()
-    if not _i_venv():
-        if not VPY.exists():
-            print("Miljøet mangler. Kør først:  python3 " + str(pathlib.Path(__file__)) + " opsaet", file=sys.stderr)
-            return 2
-        os.execv(str(VPY), [str(VPY), str(pathlib.Path(__file__))] + args)
+        return MILJOE.opsaet()
+    if (r := MILJOE.skift(__file__, args)) is not None:
+        return r
     sys.path.insert(0, str(HER))
     from femlib import cli
     return cli.main(args)

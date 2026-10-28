@@ -13,6 +13,12 @@ python3 "$(git rev-parse --show-toplevel)/scripts/sync_protokol.py" --staged || 
   exit 1
 }
 
+# Fælles miljømodul: plugin-kopierne skal svare til faelles/miljoe.py i det, der committes.
+python3 "$(git rev-parse --show-toplevel)/scripts/sync_miljoe.py" --staged || {
+  echo "Commit afvist: miljoe.py er ude af synk med faelles/miljoe.py. Kør scripts/sync_miljoe.py og git add." >&2
+  exit 1
+}
+
 # Parallel udvikling: versioner hæves kun ved udgivelse på main (scripts/udgiv.py), aldrig i en feature-gren.
 gren=$(git symbolic-ref --short -q HEAD)
 if [ "$gren" != "main" ] && [ -z "$BYG_UDGIV" ] && \

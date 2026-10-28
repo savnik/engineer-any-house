@@ -89,10 +89,14 @@ faelles/kontrolprotokol.md   fælles protokol for kontrolagenter
 plugins/<plugin>/            plugins
 skabelon/                    skabelon til nye fag (fag-plugin + kontrolagent + kontrolfil)
 scripts/sync_protokol.py     indsætter protokollerne i agentfilerne (--check i CI)
+faelles/miljoe.py            fælles opsætning af værktøjernes Python-miljø (venv, uv eller pip)
+scripts/sync_miljoe.py       kopierer faelles/miljoe.py ind i byg-bim og byg-statik (--check i CI)
+scripts/laas_miljoe.py       låser værktøjernes miljøer: requirements*.in → requirements*.txt (kræver uv)
+pyproject.toml, uv.lock      repoets udviklingsmiljø (scripts/ og tests/ bruger kun standardbiblioteket)
 scripts/nyt_fag.py           opretter et nyt fag og registrerer det overalt
 scripts/valider.py           strukturtjek, navne, stier, protokoller, evals og hook-tests
 scripts/tjek_data.py         dataseparation: ingen sager, brugerdata eller nøgler i repoet
-scripts/hooks/pre-commit     kører tjek_data.py før hvert commit (git config core.hooksPath scripts/hooks)
+scripts/hooks/pre-commit     kører tjek_data.py og synk-tjek før hvert commit (git config core.hooksPath scripts/hooks)
 scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
 scripts/udgiv.py             udgivelse på main: hæver versioner ud fra versionsnoter/ og skriver CHANGELOG.md
 versionsnoter/               én note pr. gren: hvilke plugins der ændres (patch/minor/major) og hvorfor
@@ -114,7 +118,7 @@ tests/test_forsoeg.py        tests af forsøgsloggen, beslutningsreglen og holdo
 tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session
 ```
-Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`.
+Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`. Ændret en afhængighed i `requirements*.in`: `python3 scripts/laas_miljoe.py`, kør `opsaet` og testene (BIM: `bim.py opsaet --test` og `python -m pytest scripts/tests` i bim-miljøet).
 
 **Parallelle sessioner** (flere Claude-sessioner i hver sin worktree):
 - Én opgave = én worktree = én kortlivet gren. Rebase på `origin/main` før PR, og merge PR'erne én ad gangen.

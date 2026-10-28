@@ -3,7 +3,8 @@
 
 Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit eget Python-miljø)
 
-  opsaet                                   Opretter/opdaterer miljøet (~/.local/share/byg-bim/venv)
+  opsaet [--test]                          Opretter/opdaterer miljøet (~/.local/share/byg-bim/venv) fra den låste
+                                           requirements.txt (--test: + pytest til scripts/tests)
   byg   <model.yaml> [--ud <fil.ifc>]      Spec → IFC (+ <fil>.byg.json). Standard: <specmappe>/ud/<navn>.ifc
   tjek  <fil.ifc> [--ids <krav.ids>] [--ud <mappe>] [--tegn]
                                            Skema, buildingSMART-regler, geometri, semantik, mængder, IDS
@@ -31,32 +32,14 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
   linjer <billede.png> --beskaer x0,y0,x1,y1 [--andel 0.5]   Præcise pixelpositioner af streger (vægflader, hjælpelinjer)
   skala --kal "x1,y1,x2,y2=mm[;…]" [--maal "x1,y1,x2,y2;…"]   Målestok fra kendte mål → mål i mm
 """
-import os
 import pathlib
-import subprocess
 import sys
 
+from miljoe import Miljoe
+
 HER = pathlib.Path(__file__).resolve().parent
-VENV = pathlib.Path(os.environ.get("BYG_BIM_VENV", pathlib.Path.home() / ".local" / "share" / "byg-bim" / "venv"))
-VPY = VENV / "bin" / "python"
-KRAV = HER / "requirements.txt"
-
-
-def _i_venv() -> bool:
-    return pathlib.Path(sys.prefix).resolve() == VENV.resolve()
-
-
-def opsaet() -> int:
-    if not VPY.exists():
-        print(f"Opretter miljø i {VENV} …", flush=True)
-        subprocess.run([sys.executable, "-m", "venv", str(VENV)], check=True)
-    r = subprocess.run([str(VPY), "-m", "pip", "install", "-q", "--disable-pip-version-check", "-r", str(KRAV)])
-    if r.returncode:
-        return r.returncode
-    out = subprocess.run([str(VPY), "-c", "import ifcopenshell, shapely, matplotlib, pymupdf, yaml, ifctester;"
-                          "print('ifcopenshell', ifcopenshell.version)"], capture_output=True, text=True)
-    print(out.stdout.strip() or out.stderr.strip())
-    return out.returncode
+MILJOE = Miljoe("byg-bim", "BYG_BIM_VENV", HER / "requirements.txt",
+                "import ifcopenshell, shapely, matplotlib, pymupdf, yaml, ifctester; print('ifcopenshell', ifcopenshell.version)")
 
 
 def main() -> int:
@@ -65,12 +48,9 @@ def main() -> int:
         print(__doc__)
         return 0
     if args[0] == "opsaet":
-        return opsaet()
-    if not _i_venv():
-        if not VPY.exists():
-            print("Miljøet mangler. Kør først:  python3 " + str(pathlib.Path(__file__)) + " opsaet", file=sys.stderr)
-            return 2
-        os.execv(str(VPY), [str(VPY), str(pathlib.Path(__file__))] + args)
+        return MILJOE.opsaet(HER / "requirements-test.txt" if "--test" in args else None)
+    if (r := MILJOE.skift(__file__, args)) is not None:
+        return r
     sys.path.insert(0, str(HER))
     from bimlib import cli
     return cli.main(args)
