@@ -3,7 +3,30 @@
   "displayName": "Byg · Hele teamet",
   "version": "0.4.1",
   "description": "Installerer hele Engineer Any House-teamet: projektleder, uafhængig kvalitetskontrol og alle fagagenter (vvs, el, murer, ventilation, maler, tømrer, statiker, arkitekt, anlægsgartner, BIM) samt ejendomsdata.",
-  "author": { "name": "Peter Savnik" },
-  "keywords": ["byggeri", "renovering", "projektledelse", "kvalitetskontrol", "danmark"],
-  "dependencies": ["byg", "byg-kontrol", "byg-vvs", "byg-el", "byg-murer", "byg-ventilation", "byg-maler", "byg-toemrer", "byg-data", "byg-bim", "byg-statik", "byg-arkitekt", "byg-anlaeg"]
+  "author": {
+    "name": "Peter Savnik"
+  },
+  "license": "MIT",
+  "keywords": [
+    "byggeri",
+    "renovering",
+    "projektledelse",
+    "kvalitetskontrol",
+    "danmark"
+  ],
+  "dependencies": [
+    "byg",
+    "byg-kontrol",
+    "byg-vvs",
+    "byg-el",
+    "byg-murer",
+    "byg-ventilation",
+    "byg-maler",
+    "byg-toemrer",
+    "byg-data",
+    "byg-bim",
+    "byg-statik",
+    "byg-arkitekt",
+    "byg-anlaeg"
+  ]
 }

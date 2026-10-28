@@ -67,10 +67,11 @@ def saml(maal: pathlib.Path) -> None:
         "description": "Samlet pakke: projektleder, fagagenter på mesterniveau (vvs, el, murer, ventilation, maler, tømrer, BIM) "
                        "og uafhængig kvalitetskontrol af hver leverance (højst 3 forsøg pr. runde, derefter RCA, forbedring af fagagenten og ny runde).",
         "author": {"name": "Peter Savnik"},
+        "license": "MIT",
         "keywords": ["byggeri", "renovering", "projektledelse", "kvalitetskontrol", "danmark"],
     }
     (maal / ".claude-plugin" / "plugin.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    shutil.copy2(ROD / "README.md", maal / "README.md")
+    shutil.copy2(ROD / "README.da.md", maal / "README.md")  # Cowork-pakken er dansk
 
 
 def main() -> int:

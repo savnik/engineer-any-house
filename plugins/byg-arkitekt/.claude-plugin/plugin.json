@@ -3,7 +3,16 @@
   "displayName": "Byg · Arkitekt",
   "version": "0.1.2",
   "description": "Arkitekt som subagent efter dansk regelgrundlag: planløsning og disposition, tilbygning, kvist, tagetage og facade samt myndighedsscreening (byggetilladelse, byggeret og bebyggelsesprocent, afstand til skel, lokalplan, servitutter, bevaring). Rådgivende – skitser og BIM-forslag, ikke ansøgningsprojekt. Med egen videnbase, hukommelse og evals.",
-  "author": { "name": "Peter Savnik" },
-  "keywords": ["byggeri", "arkitekt", "danmark"],
-  "dependencies": ["byg-kontrol"]
+  "author": {
+    "name": "Peter Savnik"
+  },
+  "license": "MIT",
+  "keywords": [
+    "byggeri",
+    "arkitekt",
+    "danmark"
+  ],
+  "dependencies": [
+    "byg-kontrol"
+  ]
 }

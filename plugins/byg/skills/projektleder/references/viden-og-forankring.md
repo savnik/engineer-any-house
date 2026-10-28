@@ -28,7 +28,7 @@ Kun indekset (agentens `MEMORY.md`, skill-indgangen) ligger altid i konteksten. 
 | Dato | Kilde (sag/RCA) | Type | Målfil | Forslag | Status (ny/accepteret/afvist/indarbejdet) |
 |---|---|---|---|---|---|
 
-Indarbejdelse i kanon sker i repoet (se README): ret filen, læg en versionsnote i `versionsnoter/`, kør tests og evals. Versionen hæves ved udgivelse på main.
+Indarbejdelse i kanon sker i repoet (se README.da.md): ret filen, læg en versionsnote i `versionsnoter/`, kør tests og evals. Versionen hæves ved udgivelse på main.
 
 **Anonymisering før kanon (repoet er offentligt):** Kolonnen "Forslag" skrives, så den kan stå i repoet ordret. Den må ikke indeholde sag-id, adresse, navne, firmaer, datoer, beløb, mål eller citater fra sagsmappen. Den indeholder kun den generaliserede faglige pointe og kilden (norm, RCA-kategori). Sagshenvisningen står i kolonnen "Kilde", og den bliver i den lokale kø. Eval-cases, der bygger på en sag, skrives som et nyt, opdigtet scenarie med andre detaljer. `scripts/tjek_data.py` afviser sag-id'er og tekst kopieret fra registrerede sagsmapper.
 
