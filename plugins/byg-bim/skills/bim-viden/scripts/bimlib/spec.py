@@ -9,7 +9,7 @@ import pathlib
 
 import yaml
 
-SEKTIONER = ("vaegge", "aabninger", "daek", "tage", "trapper", "soejler", "bjaelker", "rum",
+SEKTIONER = ("vaegge", "aabninger", "daek", "tage", "ovenlys", "trapper", "soejler", "bjaelker", "rum",
              "systemer", "installationer", "roer", "generisk")
 FORSLAGSFELTER = ("basis", "basis_sha256", "nedrives", "slet")
 IDLISTER = (*SEKTIONER, "etager", "fakta", "grupper")   # lister, hvor elementer flettes på id
@@ -22,11 +22,12 @@ FELTER = {
     "daek": {"type", "omrids", "top", "huller", "art", "tykkelse"},
     "tage": {"form", "omrids", "rygning", "haeldning", "tagfod", "udhaeng", "udhaeng_gavl", "tykkelse", "type",
              "hoej_side"},
+    "ovenlys": {"tag", "type", "punkt", "flade", "bredde", "hoejde"},
     "trapper": {"start", "retning", "bredde", "stigninger", "stigning", "grund", "materiale", "bund"},
     "soejler": {"punkt", "profil", "hoejde", "bund", "rotation", "materiale"},
     "bjaelker": {"fra", "til", "profil", "materiale", "kant", "rotation"},
     "rum": {"punkt", "omrids", "hoejde", "bund", "til_tag", "anvendelse", "afgraensning"},
-    "systemer": {"art"},
+    "systemer": {"art", "farve"},
     "installationer": {"art", "klasse", "predefined", "punkt", "geometri", "rotation", "system", "producent",
                        "model", "materiale"},
     "roer": {"system", "punkter", "diameter", "godstykkelse", "materiale", "art"},
@@ -246,7 +247,7 @@ def normaliser(d: dict) -> dict:
             alle_id[el["id"]] = s
             for k in set(el) - FELTER[s] - FAELLES:
                 fejl.append(f"{sti}: ukendt felt '{k}' (tilladt: {', '.join(sorted(FELTER[s]))})")
-            if s not in ("systemer", "aabninger"):  # åbninger arver væggens etage
+            if s not in ("systemer", "aabninger", "ovenlys"):  # openings and roof windows inherit the host's storey
                 el["etage"] = str(el.get("etage", ""))
                 if el["etage"] not in eids:
                     fejl.append(f"{sti}.etage '{el['etage']}' findes ikke (etager: {', '.join(sorted(eids))})")
@@ -268,6 +269,13 @@ def normaliser(d: dict) -> dict:
                 hint = f" – mente du {kand[0]} … {kand[-1]}?" if kand else ""
                 fejl.append(f"aabninger.{a['id']}.vaeg '{a['vaeg']}' findes ikke{hint}")
     tag_ids = {t["id"] for t in d["tage"]}
+    for o in d["ovenlys"]:
+        o["tag"] = str(o.get("tag"))
+        tag = next((t for t in d["tage"] if t["id"] == o["tag"]), None)
+        if tag is None:
+            fejl.append(f"ovenlys.{o['id']}.tag '{o['tag']}' findes ikke")
+        else:
+            o["etage"] = tag["etage"]
     for s in ("vaegge", "rum", "generisk"):
         for el in d[s]:
             if el.get("til_tag") is not None:
@@ -374,6 +382,16 @@ def _tjek_element(s, el, sti, d, fejl):
             fejl.append(f"{sti}.haengsel skal være start|slut")
         if el.get("placering", "midt") not in ("midt", "ude", "inde"):
             fejl.append(f"{sti}.placering skal være midt|ude|inde")
+    elif s == "ovenlys":
+        t = _type(d, el, sti, fejl, ("vindue",))
+        if "tag" not in el:
+            fejl.append(f"{sti}.tag mangler")
+        el["punkt"] = _pkt(el.get("punkt"), 2, f"{sti}.punkt", fejl)
+        for k in ("bredde", "hoejde"):
+            if k in el:
+                el[k] = _tal(el[k], f"{sti}.{k}", fejl, positiv=True)
+            elif t:
+                el[k] = t[k]
     elif s == "daek":
         if "type" in el:
             _type(d, el, sti, fejl, ("daek", "tag"))
@@ -451,6 +469,10 @@ def _tjek_element(s, el, sti, d, fejl):
     elif s == "systemer":
         if el.get("art") not in SYSTEMARTER:
             fejl.append(f"{sti}.art skal være en af {sorted(SYSTEMARTER)}")
+        if "farve" in el:
+            f = el["farve"]
+            if not (isinstance(f, list) and len(f) == 3 and all(isinstance(v, (int, float)) and 0 <= v <= 255 for v in f)):
+                fejl.append(f"{sti}.farve skal være [r, g, b] med værdier 0–255")
     elif s == "installationer":
         if not el.get("art") and not el.get("klasse"):
             fejl.append(f"{sti}: angiv art (se spec.md) eller klasse (IFC-klasse)")

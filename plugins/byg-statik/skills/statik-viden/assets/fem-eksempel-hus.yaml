@@ -1,0 +1,199 @@
+# fem.yaml – samme hus som BIM-eksemplet (byg-bim assets/eksempel/model.yaml): murermesterhus fra 1937 med kælder,
+# stueetage og udnyttet tagetage under 45° sadeltag. Vægge som skalelementer i vægaksen, træbjælkelag som bjælker.
+# Enheder: m, kN, kNm; tykkelser, profiler og tværsnit i mm. z er lodret op (0 = stueetagens gulv).
+# Forenklinger: hulmuren regnes som massiv tegl 300 (isotrop), tagetagen (spær, gavltrekanter) indgår som linjelaster
+# på murkronen, og huller i bjælkelaget (skorsten, trappe) og den lette skillevæg er udeladt.
+navn: eksempelhus
+beskrivelse: Eksempelhuset 10,0 × 8,5 m – betonkælder, hulmur og træbjælkelag; egenlast, nyttelast, sne, vind og jordtryk.
+mesh: 0.5
+
+knuder:                     # vægakser: ydermål 10,0 × 8,5 m minus ½ vægtykkelse (150 mm)
+  AK: [0.15, 0.15, -2.4]
+  BK: [9.85, 0.15, -2.4]
+  CK: [9.85, 8.35, -2.4]
+  DK: [0.15, 8.35, -2.4]
+  MK: [5, 0.15, -2.4]
+  NK: [5, 8.35, -2.4]
+  AS: [0.15, 0.15, 0.0]
+  BS: [9.85, 0.15, 0.0]
+  CS: [9.85, 8.35, 0.0]
+  DS: [0.15, 8.35, 0.0]
+  MS: [5, 0.15, 0.0]
+  NS: [5, 8.35, 0.0]
+  AT: [0.15, 0.15, 2.9]
+  BT: [9.85, 0.15, 2.9]
+  CT: [9.85, 8.35, 2.9]
+  DT: [0.15, 8.35, 2.9]
+  MT: [5, 0.15, 2.9]
+  NT: [5, 8.35, 2.9]
+  # bjælkeender på vægkronerne (c/c 1,2 m); vest = V, midtervæg = M, øst = Ø
+  SV1: [0.15, 1.15, 0.0]
+  SM1: [5, 1.15, 0.0]
+  SØ1: [9.85, 1.15, 0.0]
+  SV2: [0.15, 2.35, 0.0]
+  SM2: [5, 2.35, 0.0]
+  SØ2: [9.85, 2.35, 0.0]
+  SV3: [0.15, 3.55, 0.0]
+  SM3: [5, 3.55, 0.0]
+  SØ3: [9.85, 3.55, 0.0]
+  SV4: [0.15, 4.75, 0.0]
+  SM4: [5, 4.75, 0.0]
+  SØ4: [9.85, 4.75, 0.0]
+  SV5: [0.15, 5.95, 0.0]
+  SM5: [5, 5.95, 0.0]
+  SØ5: [9.85, 5.95, 0.0]
+  SV6: [0.15, 7.15, 0.0]
+  SM6: [5, 7.15, 0.0]
+  SØ6: [9.85, 7.15, 0.0]
+  TV1: [0.15, 1.15, 2.9]
+  TM1: [5, 1.15, 2.9]
+  TØ1: [9.85, 1.15, 2.9]
+  TV2: [0.15, 2.35, 2.9]
+  TM2: [5, 2.35, 2.9]
+  TØ2: [9.85, 2.35, 2.9]
+  TV3: [0.15, 3.55, 2.9]
+  TM3: [5, 3.55, 2.9]
+  TØ3: [9.85, 3.55, 2.9]
+  TV4: [0.15, 4.75, 2.9]
+  TM4: [5, 4.75, 2.9]
+  TØ4: [9.85, 4.75, 2.9]
+  TV5: [0.15, 5.95, 2.9]
+  TM5: [5, 5.95, 2.9]
+  TØ5: [9.85, 5.95, 2.9]
+  TV6: [0.15, 7.15, 2.9]
+  TM6: [5, 7.15, 2.9]
+  TØ6: [9.85, 7.15, 2.9]
+
+flader:
+  # hjoerner [A, B, C, D]: A→B vandret, A→D op. aabninger {x, y, b, h} i m fra A – BIM-åbningerne flyttet til vægaksen
+  K-Syd:  {hjoerner: [AK, BK, BS, AS], tykkelse: 300, materiale: C20/25,
+           aabninger: [{x: 1.35, y: 1.5, b: 0.8, h: 0.5}, {x: 6.85, y: 1.5, b: 0.8, h: 0.5}]}       # K-V1, K-V2
+  K-Nord: {hjoerner: [DK, CK, CS, DS], tykkelse: 300, materiale: C20/25}
+  K-Vest: {hjoerner: [AK, DK, DS, AS], tykkelse: 300, materiale: C20/25}
+  K-Oest: {hjoerner: [BK, CK, CS, BS], tykkelse: 300, materiale: C20/25}
+  K-Midt: {hjoerner: [MK, NK, NS, MS], tykkelse: 128, materiale: tegl, aabninger: [{x: 3.15, y: 0, b: 0.825, h: 2.04}]}
+  S-Syd:  {hjoerner: [AS, BS, BT, AT], tykkelse: 300, materiale: tegl,
+           aabninger: [{x: 1.05, y: 0.85, b: 1.18, h: 1.3}, {x: 3.85, y: 0, b: 0.925, h: 2.1},    # S-V1, S-D0
+                       {x: 6.75, y: 0.85, b: 1.18, h: 1.3}]}                                       # S-V2
+  S-Nord: {hjoerner: [DS, CS, CT, DT], tykkelse: 300, materiale: tegl,
+           aabninger: [{x: 2.17, y: 0.85, b: 1.18, h: 1.3}, {x: 6.67, y: 0.85, b: 1.18, h: 1.3}]}  # S-V4, S-V3
+  S-Vest: {hjoerner: [AS, DS, DT, AT], tykkelse: 300, materiale: tegl}
+  S-Oest: {hjoerner: [BS, CS, CT, BT], tykkelse: 300, materiale: tegl}
+  S-Midt: {hjoerner: [MS, NS, NT, MT], tykkelse: 128, materiale: tegl, aabninger: [{x: 1.65, y: 0, b: 0.825, h: 2.04}]}
+
+elementer:                  # træbjælkelag spænder øst-vest fra facade til midtervæg; 2 stk. 100 × 200 pr. 1,2 m
+  # stueetagens gulv
+  SB1v: {fra: SV1, til: SM1, profil: rekt 200x200, materiale: C24}
+  SB1ø: {fra: SM1, til: SØ1, profil: rekt 200x200, materiale: C24}
+  SB2v: {fra: SV2, til: SM2, profil: rekt 200x200, materiale: C24}
+  SB2ø: {fra: SM2, til: SØ2, profil: rekt 200x200, materiale: C24}
+  SB3v: {fra: SV3, til: SM3, profil: rekt 200x200, materiale: C24}
+  SB3ø: {fra: SM3, til: SØ3, profil: rekt 200x200, materiale: C24}
+  SB4v: {fra: SV4, til: SM4, profil: rekt 200x200, materiale: C24}
+  SB4ø: {fra: SM4, til: SØ4, profil: rekt 200x200, materiale: C24}
+  SB5v: {fra: SV5, til: SM5, profil: rekt 200x200, materiale: C24}
+  SB5ø: {fra: SM5, til: SØ5, profil: rekt 200x200, materiale: C24}
+  SB6v: {fra: SV6, til: SM6, profil: rekt 200x200, materiale: C24}
+  SB6ø: {fra: SM6, til: SØ6, profil: rekt 200x200, materiale: C24}
+  # tagetagens gulv
+  TB1v: {fra: TV1, til: TM1, profil: rekt 200x200, materiale: C24}
+  TB1ø: {fra: TM1, til: TØ1, profil: rekt 200x200, materiale: C24}
+  TB2v: {fra: TV2, til: TM2, profil: rekt 200x200, materiale: C24}
+  TB2ø: {fra: TM2, til: TØ2, profil: rekt 200x200, materiale: C24}
+  TB3v: {fra: TV3, til: TM3, profil: rekt 200x200, materiale: C24}
+  TB3ø: {fra: TM3, til: TØ3, profil: rekt 200x200, materiale: C24}
+  TB4v: {fra: TV4, til: TM4, profil: rekt 200x200, materiale: C24}
+  TB4ø: {fra: TM4, til: TØ4, profil: rekt 200x200, materiale: C24}
+  TB5v: {fra: TV5, til: TM5, profil: rekt 200x200, materiale: C24}
+  TB5ø: {fra: TM5, til: TØ5, profil: rekt 200x200, materiale: C24}
+  TB6v: {fra: TV6, til: TM6, profil: rekt 200x200, materiale: C24}
+  TB6ø: {fra: TM6, til: TØ6, profil: rekt 200x200, materiale: C24}
+
+understoetninger_linje:     # kældervæggenes fod på fundamentet
+  - {fra: AK, til: BK}
+  - {fra: BK, til: CK}
+  - {fra: CK, til: DK}
+  - {fra: DK, til: AK}
+  - {fra: MK, til: NK}
+
+udtraek:
+  midtervaeg-kaelder-fod: {flade: K-Midt, x: [0, 8.2], y: [0, 0.3]}
+  midtervaeg-stue-ved-doer: {flade: S-Midt, x: [0.9, 1.65], y: [0, 2.9]}
+  kaeldervaeg-syd: {flade: K-Syd, x: [0, 9.7], y: [0, 2.4]}
+
+lasttilfaelde:
+  G:                        # egenlast: konstruktioner (t·ρ, A·ρ) + gulv/loft på bjælkerne + tag og gavltrekanter på murkronen
+    egenvaegt: true
+    laster:
+      - {element: SB1v, linjelast: 0.6}
+      - {element: SB1ø, linjelast: 0.6}
+      - {element: SB2v, linjelast: 0.6}
+      - {element: SB2ø, linjelast: 0.6}
+      - {element: SB3v, linjelast: 0.6}
+      - {element: SB3ø, linjelast: 0.6}
+      - {element: SB4v, linjelast: 0.6}
+      - {element: SB4ø, linjelast: 0.6}
+      - {element: SB5v, linjelast: 0.6}
+      - {element: SB5ø, linjelast: 0.6}
+      - {element: SB6v, linjelast: 0.6}
+      - {element: SB6ø, linjelast: 0.6}
+      - {element: TB1v, linjelast: 0.6}
+      - {element: TB1ø, linjelast: 0.6}
+      - {element: TB2v, linjelast: 0.6}
+      - {element: TB2ø, linjelast: 0.6}
+      - {element: TB3v, linjelast: 0.6}
+      - {element: TB3ø, linjelast: 0.6}
+      - {element: TB4v, linjelast: 0.6}
+      - {element: TB4ø, linjelast: 0.6}
+      - {element: TB5v, linjelast: 0.6}
+      - {element: TB5ø, linjelast: 0.6}
+      - {element: TB6v, linjelast: 0.6}
+      - {element: TB6ø, linjelast: 0.6}
+      - {linje: [AT, BT], linjelast: 5.0}    # tegltag 0,75 kN/m² × 6,6 m spærlængde
+      - {linje: [DT, CT], linjelast: 5.0}
+      - {linje: [AT, DT], linjelast: 12.0}   # gavltrekant 18 m² × 0,3 m tegl, fordelt på gavlens længde
+      - {linje: [BT, CT], linjelast: 12.0}
+  Q:                        # nyttelast bolig 1,5 kN/m² × 1,2 m
+    laster:
+      - {element: SB1v, linjelast: 1.8}
+      - {element: SB1ø, linjelast: 1.8}
+      - {element: SB2v, linjelast: 1.8}
+      - {element: SB2ø, linjelast: 1.8}
+      - {element: SB3v, linjelast: 1.8}
+      - {element: SB3ø, linjelast: 1.8}
+      - {element: SB4v, linjelast: 1.8}
+      - {element: SB4ø, linjelast: 1.8}
+      - {element: SB5v, linjelast: 1.8}
+      - {element: SB5ø, linjelast: 1.8}
+      - {element: SB6v, linjelast: 1.8}
+      - {element: SB6ø, linjelast: 1.8}
+      - {element: TB1v, linjelast: 1.8}
+      - {element: TB1ø, linjelast: 1.8}
+      - {element: TB2v, linjelast: 1.8}
+      - {element: TB2ø, linjelast: 1.8}
+      - {element: TB3v, linjelast: 1.8}
+      - {element: TB3ø, linjelast: 1.8}
+      - {element: TB4v, linjelast: 1.8}
+      - {element: TB4ø, linjelast: 1.8}
+      - {element: TB5v, linjelast: 1.8}
+      - {element: TB5ø, linjelast: 1.8}
+      - {element: TB6v, linjelast: 1.8}
+      - {element: TB6ø, linjelast: 1.8}
+  S:                        # sne 45°: μ = 0,4 → 0,4 kN/m² × 4,65 m vandret
+    laster:
+      - {linje: [AT, BT], linjelast: 1.9}
+      - {linje: [DT, CT], linjelast: 1.9}
+  W:
+    laster:
+      - {flade: S-Syd, tryk: 0.8, retning: y}   # vind mod sydfacaden
+  J:                        # jordtryk på kældervæggene, middel K0·γ·h/2 ≈ 0,5 × 18 × 2,4 / 2
+    laster:
+      - {flade: K-Syd, tryk: 11, retning: y}
+      - {flade: K-Nord, tryk: -11, retning: y}
+      - {flade: K-Vest, tryk: 11, retning: x}
+      - {flade: K-Oest, tryk: -11, retning: x}
+
+kombinationer:
+  STR-6.10b: {type: brud, faktorer: {G: 1.0, J: 1.0, Q: 1.5, S: 0.45, W: 0.45}}
+  STR-vind: {type: brud, faktorer: {G: 1.0, J: 1.0, Q: 0.45, S: 0.45, W: 1.5}}
+  SLS: {type: anvendelse, faktorer: {G: 1.0, J: 1.0, Q: 1.0}, graense: 400}

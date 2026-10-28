@@ -86,6 +86,13 @@ etager:
 ```
 `form` er sadeltag|valmtag|pulttag (`hoej_side: x+|x-|y+|y-`)|fladt. `omrids` er rektanglet ved facadernes yderside. `tagfod` er højden af tagfladens underside ved facadelinjen, relativt til etagegulvet. Tagfladerne bliver IfcSlab (ROOF) samlet i en IfcRoof og er skåret lodret ved kip, grat, tagfod og gavl. Kviste og sammensatte tage laves med `generisk` (se mønstre).
 
+## ovenlys
+```yaml
+  - {id: T-OV1, tag: TAG1, type: OV1, punkt: [2500, 2600]}            # type med klasse vindue
+  - {id: T-OV2, tag: TAG1, type: OV1, punkt: [7500, 5900], flade: side2, bredde: 780, hoejde: 1180}
+```
+Tagvinduer (IfcWindow i et hul i tagfladen, vinkelret på den). `punkt` er vinduets midte i plan, `bredde` løber langs tagfoden og `hoejde` op ad tagfladen (standard fra typen). Tagfladen findes ud fra punktet; `flade` vælger en bestemt flade. Det er en fejl, hvis punktet ikke ligger på en tagflade, eller hvis vinduet går ud over den. Ovenlyset arver tagets etage.
+
 ## trapper (lige løb)
 ```yaml
   - {id: TR-K, etage: K, start: [5550, 5300], retning: 90, bredde: 800, stigninger: 13, grund: 220}
@@ -112,6 +119,7 @@ Punktet skal ligge inde i et lukket rum (døråbninger lukkes ved væglinjen). `
 ```yaml
 systemer:
   - {id: CV-F, navn: Centralvarme fremløb, art: varme}   # varme|brugsvand_koldt|brugsvand_varmt|afloeb|regnvand|ventilation|el|gas|andet
+  - {id: CV-R, navn: Centralvarme retur, art: varme, farve: [130, 40, 160]}   # farve [r, g, b] 0–255 overstyrer artens farve
 installationer:
   - {id: KEDEL, etage: K, art: pillefyr, punkt: [1500, 1200, 0], geometri: {kasse: [600, 700, 1300]}, system: CV-F,
      producent: …, model: …, kilde: F, ref: "typeskilt"}
@@ -119,7 +127,7 @@ installationer:
 roer:
   - {id: R-CV1, etage: K, system: CV-F, punkter: [[1500,850,1400],[1500,400,1400],[1500,400,2300]], diameter: 22, materiale: kobber}
 ```
-`punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment). Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
+`punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment) og får systemets farve. Eksempelhuset i `assets/eksempel/model.yaml` har en komplet VVS-installation (centralvarme med fremløb og retur, radiatorer, varmtvandsbeholder, koldt og varmt brugsvand og spildevand til brønd), der kan bruges som skabelon. Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
 
 **art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle IfcElectricDistributionBoard · stikkontakt IfcOutlet · lampe IfcLightFixture · afbryder IfcSwitchingDevice · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
 

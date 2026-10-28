@@ -77,7 +77,7 @@ def _tegn(a):
 
 def _eksport(a):
     from .export import export_glb
-    return export_glb(pathlib.Path(a.ifc), pathlib.Path(a.ud) if a.ud else None)
+    return export_glb(pathlib.Path(a.ifc), pathlib.Path(a.ud) if a.ud else None, a.gennemsigtig or (), a.alfa)
 
 
 def _info(a):
@@ -158,7 +158,10 @@ def main(argv):
     x.add_argument("--ud"); x.add_argument("--snithoejde", type=float, default=1000)
     x.add_argument("--forrige", help="forrige rundes sammenligningsmappe: marker kun ændrede fliser til gennemgang")
     x.set_defaults(fn=_sammenlign)
-    x = sp.add_parser("eksport"); x.add_argument("ifc"); x.add_argument("--ud"); x.set_defaults(fn=_eksport)
+    x = sp.add_parser("eksport"); x.add_argument("ifc"); x.add_argument("--ud")
+    x.add_argument("--gennemsigtig", nargs="+", metavar="ID", help="elementer (id/Tag, glob som 'S-YV.1' eller '*-YV.4') der gøres gennemsigtige")
+    x.add_argument("--alfa", type=float, default=0.25, help="dækkevne for --gennemsigtig (0–1, standard 0.25)")
+    x.set_defaults(fn=_eksport)
     x = sp.add_parser("info"); x.add_argument("ifc"); x.set_defaults(fn=_info)
     x = sp.add_parser("vis"); x.add_argument("ifc"); x.add_argument("id"); x.set_defaults(fn=_vis)
     x = sp.add_parser("find"); x.add_argument("ifc"); x.add_argument("selector"); x.set_defaults(fn=_find)

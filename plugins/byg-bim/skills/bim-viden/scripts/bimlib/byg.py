@@ -40,7 +40,7 @@ import ifcopenshell.guid
 import ifcopenshell.util.pset
 from ifcopenshell import api
 from ifcopenshell.util.shape_builder import ShapeBuilder
-from shapely.geometry import Polygon
+from shapely.geometry import Point, Polygon
 
 from . import VERSION
 from .geo import (VaegGeo, ccw, enhed, flade_ramme, lokal_polygon, omrids_fra_vaegge, rens_ring, rum_polygon,
@@ -145,6 +145,7 @@ class Bygger:
         self._aabninger()
         self._daek()
         self._tage_og_klip()
+        self._ovenlys()
         self._trapper()
         self._soejler_bjaelker()
         self._rum()
@@ -725,6 +726,7 @@ class Bygger:
     # ------------------------------------------------------------------ tage (og klipning af vægge/rum)
     def _tage_og_klip(self):
         self.tagplaner = {}
+        self.roof_faces = {}  # roof id → [(face, slab, world matrix, 2D ring, thickness)] for roof windows
         for t in self.s["tage"]:
             kote = self.etage_kote[t["etage"]]
             flader = tagflader(t)
@@ -756,6 +758,7 @@ class Bygger:
                 areal = Polygon(ring).area
                 self._qto(slab, "Qto_SlabBaseQuantities", {"Width": tyk, "GrossArea": areal / 1e6, "NetArea": areal / 1e6})
                 dele.append(slab)
+                self.roof_faces.setdefault(t["id"], []).append((fl, slab, Mw, ring, tyk))
                 planer.append((np.array([o[0], o[1], o[2] + kote]), za))
                 self.elementer[f"{t['id']}.{fl.navn}"] = {"guid": slab.GlobalId, "klasse": "IfcSlab", "etage": t["etage"],
                                                          "status": t["status"], "kilde": str(t["kilde"])[:1], "sektion": "tage"}
@@ -782,6 +785,55 @@ class Bygger:
         for w in self.vaeggeo.values():
             if hasattr(w, "ent"):
                 self._qto(w.ent, "Qto_WallBaseQuantities", w.qto)
+
+    def _ovenlys(self):
+        """Roof windows: an opening through the roof face (perpendicular to it) filled by an IfcWindow.
+        `punkt` is the window centre in plan; width runs along the eaves, height up the slope."""
+        for o in self.s["ovenlys"]:
+            sti = f"ovenlys.{o['id']}"
+            faces = self.roof_faces.get(o["tag"], [])
+            x, y = o["punkt"]
+            hit = [f for f in faces if (o.get("flade") or f[0].navn) == f[0].navn
+                   and Polygon([(p[0], p[1]) for p in f[0].pkt]).contains(Point(x, y))]
+            if not hit:
+                self.fejl.append(f"{sti}: punktet ({x:.0f}, {y:.0f}) ligger ikke på en tagflade af {o['tag']}"
+                                 + (f" ({o['flade']})" if o.get("flade") else ""))
+                continue
+            fl, slab, Mw, ring, tyk = hit[0]
+            _, xa, ya, za = flade_ramme(fl)
+            if abs(za[2]) < 1e-6:
+                self.fejl.append(f"{sti}: tagfladen {fl.navn} er lodret")
+                continue
+            # the point on the face's underside straight above (x, y), in the face's own frame
+            z = fl.origo[2] - (za[0] * (x - fl.origo[0]) + za[1] * (y - fl.origo[1])) / za[2]
+            d = np.array([x, y, z]) - fl.origo
+            u, v = d @ xa, d @ ya
+            W, H = o["bredde"], o["hoejde"]
+            u0, v0 = u - W / 2, v - H / 2
+            if not Polygon(ring).contains(Polygon([(u0, v0), (u0 + W, v0), (u0 + W, v0 + H), (u0, v0 + H)])):
+                self.fejl.append(f"{sti}: ovenlyset ({W:.0f} × {H:.0f}) går ud over tagfladen {fl.navn}")
+            aab = self.ny("IfcOpeningElement", o, suffix="/hul", navn=f"Åbning {o['id']}", predefined="OPENING")
+            api.feature.add_feature(self.f, feature=aab, element=slab)
+            self._placer(aab, Mw @ self._T((u0, v0, -10.0)))
+            prof = self.b.polyline([(0.0, 0.0), (W, 0.0), (W, H), (0.0, H)], closed=True)
+            self._rep(aab, self.b.extrude(self.b.profile(prof), magnitude=tyk + 20))
+            t = self.s["typer"][o["type"]]
+            ld = min(tyk, float(t.get("ramme", 100)))
+            ent = self.ny("IfcWindow", o, predefined="SKYLIGHT")
+            ent.OverallWidth, ent.OverallHeight = W, H
+            # window frame: x along the eaves, z up the slope, y down through the roof from its top face
+            M = Mw @ self._T((u0, v0, tyk + 20.0), x=(1, 0, 0), z=(0, 1, 0))
+            api.spatial.assign_container(self.f, products=[ent], relating_structure=self.etager[o["etage"]])
+            self._placer(ent, M)
+            self._vindue_geo(ent, W, H, ld, int(t.get("felter", 1)))
+            api.feature.add_filling(self.f, opening=aab, element=ent)
+            api.type.assign_type(self.f, related_objects=[ent], relating_type=self._typer[o["type"]],
+                                 should_map_representations=False)
+            self.egenskaber(ent, o, None, {"IsExternal": True}, "ovenlys")
+            self.elementer[o["id"]] = {"guid": ent.GlobalId, "klasse": "IfcWindow", "etage": o["etage"],
+                                       "status": o["status"], "kilde": str(o["kilde"])[:1], "sektion": "ovenlys",
+                                       "tag": f"{o['tag']}.{fl.navn}"}
+            self._qto(ent, "Qto_WindowBaseQuantities", {"Width": W, "Height": H, "Area": W * H / 1e6})
 
     def _tagflade_solid(self, fl, ring, tyk, ramme, form):
         """Tagflade som plade vinkelret på fladen, skåret lodret (geret) langs alle kanter, så kip og
@@ -1026,7 +1078,10 @@ class Bygger:
                     api.system.assign_system(self.f, products=[ent], system=self.systemer[str(r["system"])])
 
     def _systemfarve(self, sid):
-        art = next((s["art"] for s in self.s["systemer"] if s["id"] == str(sid)), None)
+        system = next((s for s in self.s["systemer"] if s["id"] == str(sid)), {})
+        if system.get("farve"):
+            return tuple(v / 255 for v in system["farve"]), 0
+        art = system.get("art")
         return {"varme": ((0.85, 0.15, 0.15), 0), "brugsvand_koldt": ((0.15, 0.45, 0.85), 0),
                 "brugsvand_varmt": ((0.90, 0.45, 0.10), 0), "afloeb": ((0.45, 0.35, 0.25), 0),
                 "ventilation": ((0.40, 0.75, 0.40), 0), "gas": ((0.95, 0.85, 0.10), 0)}.get(art, ((0.6, 0.6, 0.6), 0))

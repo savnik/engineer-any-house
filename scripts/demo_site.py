@@ -17,7 +17,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 BIM = ROOT / "plugins/byg-bim/skills/bim-viden/scripts/bim.py"
 FEM = ROOT / "plugins/byg-statik/skills/statik-viden/scripts/fem.py"
 BIM_SPEC = ROOT / "plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml"
-FEM_SPEC = ROOT / "plugins/byg-statik/skills/statik-viden/assets/fem-eksempel-flader.yaml"
+FEM_SPEC = ROOT / "plugins/byg-statik/skills/statik-viden/assets/fem-eksempel-hus.yaml"
 IMG = ROOT / "docs/img"
 REPO = "https://github.com/savnik/engineer-any-house"
 MODEL_VIEWER = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"
@@ -43,10 +43,11 @@ model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7
 @media (prefers-color-scheme: dark) {{ model-viewer {{ background: linear-gradient(#232a33, #14171c); }} }}
 </style></head><body>
 <header><h1>BIM model of the example house</h1>
-<p>IFC4 built with <code>bim.py byg</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
+<p>The same house as the FEM model: structure, roof windows and the full plumbing and heating installation, with the south and west facades see-through.
+IFC4 built with <code>bim.py byg</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
 exported with <code>bim.py eksport</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
 <model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
-  camera-orbit="-35deg 65deg auto" shadow-intensity="0.6" exposure="1.05" environment-image="neutral"></model-viewer>
+  camera-orbit="-35deg 75deg 80%" shadow-intensity="0.6" exposure="0.85" tone-mapping="neutral" environment-image="neutral"></model-viewer>
 </body></html>
 """
 
@@ -62,8 +63,8 @@ main {{ max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16p
 <header><h1>Engineer Any House – 3D examples</h1>
 <p>Generated in CI from the examples in the repository. · <a href="{repo}">GitHub</a></p></header>
 <main>
-<a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house model in its own colours (glTF in model-viewer).</p></div></a>
-<a class="card" href="fem/"><img src="fem.png" alt=""><div><h2>FEM model</h2><p>Walls and slabs as shell elements: stresses, forces and deflection per load combination (Danish UI).</p></div></a>
+<a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house with roof windows, central heating, hot and cold water and drains. Two facades are see-through so the inside shows.</p></div></a>
+<a class="card" href="fem/"><img src="fem.png" alt=""><div><h2>FEM model</h2><p>The same house, with walls and slabs as shell elements: stresses, forces and deflection per load combination (Danish UI).</p></div></a>
 </main></body></html>
 """
 
@@ -79,7 +80,8 @@ def build(out: pathlib.Path):
     work = out / "_work"
     (out / "bim").mkdir(parents=True)
     run(BIM, "byg", BIM_SPEC, "--ud", work / "hus.ifc")
-    run(BIM, "eksport", work / "hus.ifc", "--ud", out / "bim/hus.glb")
+    # south (segment .1) and west (.4) facades see-through on every storey, so the structure inside shows
+    run(BIM, "eksport", work / "hus.ifc", "--ud", out / "bim/hus.glb", "--gennemsigtig", "*-YV.1", "*-YV.4")
     (out / "bim/index.html").write_text(BIM_PAGE.format(mv=MODEL_VIEWER, style=STYLE, repo=REPO), encoding="utf-8")
     shutil.copy(FEM_SPEC, work / "fem.yaml")
     run(FEM, "regn", work / "fem.yaml", "--ud", work)

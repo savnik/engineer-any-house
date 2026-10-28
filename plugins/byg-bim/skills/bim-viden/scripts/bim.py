@@ -10,7 +10,9 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
                                            Skema, buildingSMART-regler, geometri, semantik, mængder, IDS
   tegn  <fil.ifc> plan|snit|facade|3d|alle [--etage K] [--linje x1,y1,x2,y2] [--side syd] [--fra sv]
         [--underlag <png> --kal "px,py=x,y;px,py=x,y"] [--id] [--maal] [--ud <mappe>]
-  eksport <fil.ifc> [--ud <fil.glb>]      3D til webvisning: glTF (.glb) i modellens farver, uden rum og huller
+  eksport <fil.ifc> [--ud <fil.glb>] [--gennemsigtig <id-glob> …] [--alfa 0.25]
+                                           3D til webvisning: glTF (.glb) i modellens farver, uden rum og huller;
+                                           --gennemsigtig gør fx facadevægge gennemsigtige, så konstruktionen ses
   afkod skabelon                           Komplet skabelon til afkodning.yaml
   afkod tjek <afkodning.yaml>              Kontrol af en tegningsafkodning (kalibrering, mål mod tegningen, kæder)
   sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>] [--forrige <forrige rundes mappe>]

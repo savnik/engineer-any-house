@@ -23,7 +23,7 @@ Most houses come with little more than a few old drawings, a public building rec
 
 ## See it in 3D
 
-The example house from the repository, built and computed by the tools in CI. Click a picture to open the interactive viewer.
+One example house from the repository, built and computed by the tools in CI. The BIM model has roof windows and the full plumbing and heating installation (central heating, radiators, hot water tank, hot and cold water, drains), with two facades see-through. The FEM model is the same house's walls and slabs. Click a picture to open the interactive viewer.
 
 | BIM model (IFC4) | FEM model (walls and slabs as shells) |
 |---|---|
