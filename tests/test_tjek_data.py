@@ -45,8 +45,8 @@ def main() -> int:
         (vb / "sager.md").write_text(f"| Sag-id | Sti |\n|---|---|\n| {SAG} | `{sagsmappe}` |\n| lindevej-7b | – |\n", encoding="utf-8")
         (hjem / ".config" / "byg-data").mkdir(parents=True)
         (hjem / ".config" / "byg-data" / "datafordeler_api_key").write_text(NOEGLE, encoding="utf-8")
-        (hjem / ".config" / "byg-eksperter").mkdir(parents=True)
-        (hjem / ".config" / "byg-eksperter" / "private-termer.txt").write_text("# egne termer\nSolsikkevej 99\n", encoding="utf-8")
+        (hjem / ".config" / "engineer-any-house").mkdir(parents=True)
+        (hjem / ".config" / "engineer-any-house" / "private-termer.txt").write_text("# egne termer\nSolsikkevej 99\n", encoding="utf-8")
         (repo / "plugins" / "p" / "skills" / "s").mkdir(parents=True)
         ren = repo / "plugins" / "p" / "skills" / "s" / "SKILL.md"
         ren.write_text("# Generel viden\nTestadresse til evals: Rådhuspladsen 1, 1550 København V.\n\n```\n"

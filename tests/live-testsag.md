@@ -1,4 +1,4 @@
-# Live-testsag – byg-eksperter i Claude Code
+# Live-testsag – Engineer Any House i Claude Code
 
 Formål: afprøve hele kæden på en realistisk sag – interview → sagsmappe → fagleverancer → uafhængig kvalitetskontrol → retur/loop → stop og RCA → samlet plan → erfaring – og bekræfte, at hooks faktisk håndhæver reglerne i en rigtig session.
 
@@ -19,11 +19,11 @@ Tidsforbrug: 60–90 minutter. Kontrolagenterne kører på Opus, så en fuld kø
    claude --version
    python3 --version
    ```
-2. Pak `byg-eksperter.zip` ud, fx til `~/byg-eksperter`.
+2. Pak `engineer-any-house.zip` ud, fx til `~/engineer-any-house`.
 3. Installér:
    ```
-   claude plugin marketplace add ~/byg-eksperter
-   claude plugin install byg-team@byg-eksperter
+   claude plugin marketplace add ~/engineer-any-house
+   claude plugin install byg-team@engineer-any-house
    claude plugin list
    ```
    Forventet: `byg-team`, `byg`, `byg-kontrol` og de seks fag-plugins er installeret og aktiveret.
@@ -38,7 +38,7 @@ Tidsforbrug: 60–90 minutter. Kontrolagenterne kører på Opus, så en fuld kø
 LOG=$(find ~/.claude -path '*kontrol/log.jsonl' 2>/dev/null | head -1); echo "$LOG"
 tail -n 5 "$LOG"
 BK=$(dirname "$(dirname "$LOG")")
-CLAUDE_PLUGIN_DATA="$BK" python3 ~/byg-eksperter/plugins/byg-kontrol/hooks/kontrol_gate.py status
+CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/kontrol_gate.py status
 ```
 Finder `find` intet, efter at der har været et fagkald, kører hooks ikke – se afsnit 6.
 
@@ -158,6 +158,6 @@ Installér `byg.plugin` i Cowork (ikke samtidig med marketplace-installationen) 
 - **Hooks kører ikke:** tjek at `python3` findes i den terminal, Claude Code startes fra; se `/hooks`; start med `claude --debug` og se efter fejl fra `kontrol_gate.py`.
 - **Forkerte agentnavne:** sammenlign `/agents` med navnene i `plugins/byg-kontrol/hooks/fagregister.json`.
 - **Kontrollen er for streng eller for blød:** notér leverance-ID og dom – det er input til en ny rubric-version.
-- **Nulstil en leverance under test:** `CLAUDE_PLUGIN_DATA="$BK" python3 ~/byg-eksperter/plugins/byg-kontrol/hooks/kontrol_gate.py nulstil <leverance-id>`
+- **Nulstil en leverance under test:** `CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/kontrol_gate.py nulstil <leverance-id>`
 
 Send mig bagefter resultatskemaet, output fra status-kommandoen og de dele af sagsmappen, der fejlede. Så retter jeg pluginet og laver eval-cases, der fanger fejlene fremover.

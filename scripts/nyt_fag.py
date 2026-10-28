@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Opretter et nyt fag i byg-eksperter: fag-plugin, modsvarende kontrolagent og kontrolfil – og registrerer faget.
+"""Opretter et nyt fag i Engineer Any House: fag-plugin, modsvarende kontrolagent og kontrolfil – og registrerer faget.
 
 Brug:     python3 scripts/nyt_fag.py <fag-id> "<Fagnavn>" <agentnavn> [--farve green]
 Eksempel: python3 scripts/nyt_fag.py kloak "Kloakmester" kloakmester --farve orange

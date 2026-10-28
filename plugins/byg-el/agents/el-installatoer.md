@@ -55,7 +55,7 @@ Fag-id (til sagsmappen): `el`
 Symptom → isolér kreds → målinger (isolationsmodstand, kontinuitet, sløjfeimpedans, RCD-test, strømtang/lækstrøm) → årsag → udbedring → ny verifikation. Ved RCD-udkobling: opdel belastninger, mål lækstrøm, tænk fugt (udendørs, badeværelse) og apparater.
 
 <!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
-## Fælles protokol for byg-eksperter
+## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt
 - Mærk faglige udsagn med grundlag: **[KRAV]** lov, bekendtgørelse, BR18 · **[NORM]** DS/EN-standard (bindende i det omfang BR18 henviser) · **[ANVISNING]** BUILD/SBi, Byg-Erfa, branchevejledning, producentens godkendelse/monteringsvejledning · **[ERFARING]** fagligt skøn.

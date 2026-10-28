@@ -52,7 +52,7 @@ Brug det fulde navn fra din agentliste: `byg-vvs:vvs-mester` og `byg-kontrol:vvs
    2. **Root cause-analyse (kun ved (b)):** skriv RCA'en efter `${CLAUDE_PLUGIN_ROOT}/skills/kontrol-viden/references/rca-skabelon.md` til `<sagsmappe>/kvalitet/RCA-<leverance-id med / erstattet af __>.md`. Fra runde 2 får filnavnet `__runde-<n>`. Analysen undersøger, **hvorfor fagagenten ikke kunne levere korrekt i første forsøg**, med **5 Why-metoden**: mindst én kæde med fem hvorfor-niveauer, evidens til hvert svar og en handlingsbar grundårsag (skabelonens afsnit 3).
    3. **Forbedr fagagenten:**
       - Skriv læringen i agentens egen hukommelse (`~/.claude/agent-memory/<plugin>-<agent>/`, med en linje i dens `MEMORY.md`), så den virker i næste runde.
-      - Skriv den samtidig generaliseret i byg-eksperter-repoet (agentprompt eller videnbase), med commit og en versionsnote (`versionsnoter/`, se README).
+      - Skriv den samtidig generaliseret i Engineer Any House-repoet (agentprompt eller videnbase), med commit og en versionsnote (`versionsnoter/`, se README).
       - Skriv `Forbedring implementeret: ja` i RCA'en.
    4. **Ny runde:** send et nyt fagkald under **samme leverance-ID**. Hooken starter runde n+1 med forsøg 1. Prompten indeholder RCA-stien, den oprindelige opgave og de seneste fund. Fagagenten retter sit notat ud fra læringen i stedet for at starte helt forfra.
    5. **Efter runde 2:** eskalér igen. Fortsæt kun efter brugerens beslutning og under et nyt leverance-ID.
