@@ -81,7 +81,7 @@ Contributions are welcome, especially:
 - **New trades** via `/byg:nyt-fag` or `python3 scripts/nyt_fag.py`.
 - **Corrections** to the knowledge bases, with a source.
 
-The developer documentation is in Danish: the development section of [README.da.md](README.da.md#udvikling) and [ARKITEKTUR.md](ARKITEKTUR.md). In short, run `python3 scripts/sync_protokol.py && python3 scripts/valider.py` after changes, and put a version note in `versionsnoter/` instead of raising versions on a branch.
+The developer documentation is in Danish: the development section of [README.da.md](README.da.md#udvikling) and [ARKITEKTUR.md](ARKITEKTUR.md). In short, run `python3 scripts/sync_protokol.py && python3 scripts/valider.py` after changes, and put a version note in `versionsnoter/` instead of raising versions on a branch. `main` is protected: every change goes through a pull request, and CI (structure validation, ruff, BIM tests and the FEM self-test) must pass before merging.
 
 ## License
 
