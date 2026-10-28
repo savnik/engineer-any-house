@@ -18,6 +18,7 @@ BIM = ROOT / "plugins/byg-bim/skills/bim-viden/scripts/bim.py"
 FEM = ROOT / "plugins/byg-statik/skills/statik-viden/scripts/fem.py"
 BIM_SPEC = ROOT / "plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml"
 FEM_SPEC = ROOT / "plugins/byg-statik/skills/statik-viden/assets/fem-eksempel-hus.yaml"
+VVS_DIAGRAM = ROOT / "plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg"
 IMG = ROOT / "docs/img"
 REPO = "https://github.com/savnik/engineer-any-house"
 MODEL_VIEWER = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"
@@ -64,6 +65,7 @@ main {{ max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16p
 <p>Generated in CI from the examples in the repository. · <a href="{repo}">GitHub</a></p></header>
 <main>
 <a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house with roof windows, central heating, hot and cold water and drains. Two facades and one roof face are see-through so the inside shows.</p></div></a>
+<a class="card" href="vvs/principdiagram.svg"><img src="vvs/principdiagram.svg" alt="" style="object-fit: contain; background: #fff"><div><h2>Plumbing and heating diagram</h2><p>The same house's central heating, hot and cold water and drains as a schematic, drawn by the VVS agent's method (Danish labels).</p></div></a>
 <a class="card" href="fem/"><img src="fem.png" alt=""><div><h2>FEM model</h2><p>The same house, with walls and slabs as shell elements: stresses, forces and deflection per load combination (Danish UI).</p></div></a>
 </main></body></html>
 """
@@ -91,6 +93,8 @@ def build(out: pathlib.Path):
         sys.exit(f"Forventede én HTML fra fem.py vis i {work}, fandt {len(html)}")
     (out / "fem").mkdir()
     shutil.copy(html[0], out / "fem/index.html")
+    (out / "vvs").mkdir()
+    shutil.copy(VVS_DIAGRAM, out / "vvs/principdiagram.svg")
     (out / "index.html").write_text(INDEX_PAGE.format(style=STYLE, repo=REPO), encoding="utf-8")
     for name in ("bim.png", "fem.png"):
         if (IMG / name).exists():
