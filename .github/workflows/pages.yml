@@ -18,16 +18,17 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    env:
-      BYG_BIM_VENV: ${{ runner.temp }}/byg-bim-venv
-      BYG_STATIK_VENV: ${{ runner.temp }}/byg-statik-venv
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      # bim.py and fem.py re-execute themselves in these venvs (runner.temp only exists at step level).
       - name: Tool environments
         run: |
+          echo "BYG_BIM_VENV=$RUNNER_TEMP/byg-bim-venv" >> "$GITHUB_ENV"
+          echo "BYG_STATIK_VENV=$RUNNER_TEMP/byg-statik-venv" >> "$GITHUB_ENV"
+          export BYG_BIM_VENV="$RUNNER_TEMP/byg-bim-venv" BYG_STATIK_VENV="$RUNNER_TEMP/byg-statik-venv"
           python plugins/byg-bim/skills/bim-viden/scripts/bim.py opsaet
           python plugins/byg-statik/skills/statik-viden/scripts/fem.py opsaet
       - name: Build site
