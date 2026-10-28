@@ -82,32 +82,34 @@ flader:
   S-Midt: {hjoerner: [MS, NS, NT, MT], tykkelse: 128, materiale: tegl, aabninger: [{x: 1.65, y: 0, b: 0.825, h: 2.04}]}
 
 elementer:                  # træbjælkelag spænder øst-vest fra facade til midtervæg; 2 stk. 100 × 200 pr. 1,2 m
+  # bjælkerne ligger af på murkronen og er leddet i begge ender: en stiv samling ville sende bjælkens
+  # indspændingsmoment ind i én vægknude som et punktmoment (falsk spændingstop i murværket)
   # stueetagens gulv
-  SB1v: {fra: SV1, til: SM1, profil: rekt 200x200, materiale: C24}
-  SB1ø: {fra: SM1, til: SØ1, profil: rekt 200x200, materiale: C24}
-  SB2v: {fra: SV2, til: SM2, profil: rekt 200x200, materiale: C24}
-  SB2ø: {fra: SM2, til: SØ2, profil: rekt 200x200, materiale: C24}
-  SB3v: {fra: SV3, til: SM3, profil: rekt 200x200, materiale: C24}
-  SB3ø: {fra: SM3, til: SØ3, profil: rekt 200x200, materiale: C24}
-  SB4v: {fra: SV4, til: SM4, profil: rekt 200x200, materiale: C24}
-  SB4ø: {fra: SM4, til: SØ4, profil: rekt 200x200, materiale: C24}
-  SB5v: {fra: SV5, til: SM5, profil: rekt 200x200, materiale: C24}
-  SB5ø: {fra: SM5, til: SØ5, profil: rekt 200x200, materiale: C24}
-  SB6v: {fra: SV6, til: SM6, profil: rekt 200x200, materiale: C24}
-  SB6ø: {fra: SM6, til: SØ6, profil: rekt 200x200, materiale: C24}
+  SB1v: {fra: SV1, til: SM1, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB1ø: {fra: SM1, til: SØ1, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB2v: {fra: SV2, til: SM2, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB2ø: {fra: SM2, til: SØ2, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB3v: {fra: SV3, til: SM3, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB3ø: {fra: SM3, til: SØ3, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB4v: {fra: SV4, til: SM4, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB4ø: {fra: SM4, til: SØ4, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB5v: {fra: SV5, til: SM5, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB5ø: {fra: SM5, til: SØ5, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB6v: {fra: SV6, til: SM6, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  SB6ø: {fra: SM6, til: SØ6, profil: rekt 200x200, materiale: C24, led: [start, slut]}
   # tagetagens gulv
-  TB1v: {fra: TV1, til: TM1, profil: rekt 200x200, materiale: C24}
-  TB1ø: {fra: TM1, til: TØ1, profil: rekt 200x200, materiale: C24}
-  TB2v: {fra: TV2, til: TM2, profil: rekt 200x200, materiale: C24}
-  TB2ø: {fra: TM2, til: TØ2, profil: rekt 200x200, materiale: C24}
-  TB3v: {fra: TV3, til: TM3, profil: rekt 200x200, materiale: C24}
-  TB3ø: {fra: TM3, til: TØ3, profil: rekt 200x200, materiale: C24}
-  TB4v: {fra: TV4, til: TM4, profil: rekt 200x200, materiale: C24}
-  TB4ø: {fra: TM4, til: TØ4, profil: rekt 200x200, materiale: C24}
-  TB5v: {fra: TV5, til: TM5, profil: rekt 200x200, materiale: C24}
-  TB5ø: {fra: TM5, til: TØ5, profil: rekt 200x200, materiale: C24}
-  TB6v: {fra: TV6, til: TM6, profil: rekt 200x200, materiale: C24}
-  TB6ø: {fra: TM6, til: TØ6, profil: rekt 200x200, materiale: C24}
+  TB1v: {fra: TV1, til: TM1, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB1ø: {fra: TM1, til: TØ1, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB2v: {fra: TV2, til: TM2, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB2ø: {fra: TM2, til: TØ2, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB3v: {fra: TV3, til: TM3, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB3ø: {fra: TM3, til: TØ3, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB4v: {fra: TV4, til: TM4, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB4ø: {fra: TM4, til: TØ4, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB5v: {fra: TV5, til: TM5, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB5ø: {fra: TM5, til: TØ5, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB6v: {fra: TV6, til: TM6, profil: rekt 200x200, materiale: C24, led: [start, slut]}
+  TB6ø: {fra: TM6, til: TØ6, profil: rekt 200x200, materiale: C24, led: [start, slut]}
 
 understoetninger_linje:     # kældervæggenes fod på fundamentet
   - {fra: AK, til: BK}
@@ -115,6 +117,11 @@ understoetninger_linje:     # kældervæggenes fod på fundamentet
   - {fra: CK, til: DK}
   - {fra: DK, til: AK}
   - {fra: MK, til: NK}
+                            # dækket over kælderen virker som skive og holder kældervæggenes top vandret mod jordtrykket
+  - {fra: AS, til: BS, type: [y]}
+  - {fra: DS, til: CS, type: [y]}
+  - {fra: AS, til: DS, type: [x]}
+  - {fra: BS, til: CS, type: [x]}
 
 udtraek:
   midtervaeg-kaelder-fod: {flade: K-Midt, x: [0, 8.2], y: [0, 0.3]}
