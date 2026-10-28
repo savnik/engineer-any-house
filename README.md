@@ -1,4 +1,6 @@
-# Engineer Any House
+# (Over) Engineer Any House
+
+For de fleste er det her overengineering. Det er til dig, der bygger en digital tvilling af dit hus og gerne går hele vejen ned i kaninhullet – BIM-model, FEM-beregning og et fagnotat pr. fag til et projekt, en håndværker ville løse med en blyant. Risikoen er reel: det er let at gøre en simpel opgave alt for kompliceret. Spørg derfor altid dig selv (og projektlederen), om dybden står mål med opgaven.
 
 Danske byggefaglige ekspertagenter til Claude Code og Claude Cowork: en **projektleder**, der interviewer, planlægger og koordinerer, **fagagenter på mesterniveau** (vvs, el, murer, ventilation, maler, tømrer, statiker, arkitekt, anlægsgartner, BIM) og en **uafhængig kvalitetskontrol** med én kontrolagent pr. fag. Hver leverance kontrolleres hårdt og kildebaseret. Afviste leverancer sendes retur med fund, og efter 3 afviste forsøg stoppes der med root cause-analyse.
 
