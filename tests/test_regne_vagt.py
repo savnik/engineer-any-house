@@ -32,6 +32,8 @@ SAGER = [
     ("statiker", f"python3 {FEM} vis /sag/fem/fem.yaml", "allow"),
     ("statik-kontrol", f"python3 {FEM} regn /sag/fem/fem.yaml --ingen-filer --saet elementer.B1.profil=HEB180", "allow"),
     ("statik-kontrol", f"python3 {FEM} test", "allow"),
+    ("statik-kontrol", f"python3 {FEM} resultat /sag/fem/fem.yaml --element B1", "allow"),
+    ("statiker", f"python3 {FEM} resultat /sag/fem/fem.yaml", "allow"),
     ("statik-kontrol", f"python3 {FEM} regn /sag/fem/fem.yaml", "deny"),
     ("statik-kontrol", f"python3 {FEM} vis /sag/fem/fem.yaml", "deny"),
     ("statik-kontrol", f"python3 {FEM} tegn /sag/fem/fem.yaml M", "deny"),

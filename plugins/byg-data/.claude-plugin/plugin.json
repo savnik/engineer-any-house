@@ -3,6 +3,18 @@
   "displayName": "Byg · Ejendomsdata",
   "version": "0.1.0",
   "description": "Henter offentlige data om en dansk bygning eller matrikel ud fra en adresse: BBR, matrikel, lokalplan, fredning/bevaring, jordforurening, grundvand, klima, energimærke og ejendomsvurdering – uden persondata.",
-  "author": { "name": "Peter Savnik" },
-  "keywords": ["byggeri", "BBR", "matrikel", "lokalplan", "energimærke", "jordforurening", "datafordeler", "danmark"]
+  "author": {
+    "name": "Peter Savnik"
+  },
+  "license": "MIT",
+  "keywords": [
+    "byggeri",
+    "BBR",
+    "matrikel",
+    "lokalplan",
+    "energimærke",
+    "jordforurening",
+    "datafordeler",
+    "danmark"
+  ]
 }

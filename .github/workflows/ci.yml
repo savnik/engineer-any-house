@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# The job names are required status checks in the ruleset "main: checks".
+# Renaming a job means updating the ruleset too.
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Claude Code CLI (claude plugin validate)
+        run: npm install -g @anthropic-ai/claude-code
+      - name: Git identity (tests create local repos and commit)
+        run: |
+          git config --global user.name "CI"
+          git config --global user.email "ci@example.invalid"
+      - name: Structure, protocols, version notes, hook tests and data separation
+        run: python3 scripts/valider.py --claude
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/ruff-action@v3
+        with:
+          args: check --output-format github
+
+  bim:
+    name: bim-tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: plugins/byg-bim/skills/bim-viden
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: plugins/byg-bim/skills/bim-viden/scripts/requirements.txt
+      - run: pip install -r scripts/requirements.txt
+      - run: python -m pytest -q scripts/tests
+
+  fem:
+    name: fem-self-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: plugins/byg-statik/skills/statik-viden/scripts/requirements-fem.txt
+      # fem.py installs into and re-executes itself in its own venv (BYG_STATIK_VENV).
+      - name: FEM self-test against hand formulas
+        env:
+          BYG_STATIK_VENV: ${{ runner.temp }}/byg-statik-venv
+        run: |
+          python plugins/byg-statik/skills/statik-viden/scripts/fem.py opsaet
+          python plugins/byg-statik/skills/statik-viden/scripts/fem.py test

@@ -1,0 +1,3 @@
+# Maintainers, requested as reviewers on every pull request. Only people with write access can merge to main.
+# The ruleset "main: approval" (disabled for now) would require one approval from a person listed here.
+* @savnik

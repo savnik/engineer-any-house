@@ -77,7 +77,6 @@ def main_staged() -> int:
     for kilde, navn, hint in BLOKKE:
         start, slut = markoerer(navn, hint)
         tekst_kilde = (staged(f"faelles/{kilde}") or "").strip()
-        blok = f"{start}\n{tekst_kilde}\n{slut}"
         for rel in staged_kandidater():
             tekst = staged(rel)
             if tekst is None or start not in tekst or slut not in tekst:
