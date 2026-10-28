@@ -10,7 +10,7 @@ Viser:
 - hovedtrådens kontekst pr. kald (median og maks.)
 - andel af fag- og kontroltokens i forsøg 2–3 (retur)
 - forbrug pr. agenttype (kørsler, vægtet i alt og pr. kørsel)
-- billed- og PDF-læsninger og Edits pr. kørsel (median, p90 og antal kørsler over loftet i protokollen)
+- billed- og PDF-læsninger og Edit-runder (API-kald med kun Edits) pr. kørsel (median, p90 og antal kørsler over loftet i protokollen)
 - sidehentninger gentaget i samme kørsel og på tværs af kørsler, og statuskald i hovedtråden
 - svarlængde: slutsvar (hovedtrådens svar til brugeren, subagenternes rapport) og tekst mellem værktøjskald
 
@@ -31,13 +31,14 @@ FORSOEG_RE = re.compile(r"Fors(?:ø|o)g:\s*(\d)")
 LEV_RE = re.compile(r"LEVERANCE:\s*(\S+)")
 MAAL_TXT = "hovedtråd og fagagenter under ca. 800, kontrolagenter under ca. 1.500"
 BILLEDE = (".png", ".jpg", ".jpeg", ".gif", ".webp")
-LOFT_BILLEDER, LOFT_EDITS = 10, 5   # faelles/protokol.md: højst 10 billeder pr. kald, ca. 5 Edits efter notatet
+LOFT_BILLEDER, LOFT_EDITS = 10, 5   # faelles/protokol.md: højst 10 billeder pr. kald, ca. 5 Edit-runder
 
 
 def laes(sti: pathlib.Path) -> dict:
     """Usage pr. API-kald (max pr. besked-id, fordi streaming gentager beskeden), første prompt og værktøjskald."""
     pr_besked, foerste, vaerktoej, start = {}, "", [], None
     tekst = {}                        # besked-id -> [tegn, har værktøjskald]; streaming deler en besked i flere linjer
+    navne = collections.defaultdict(list)   # besked-id -> værktøjsnavne; parallelle Edits i samme besked er ét kald
     slutsvar, sidste = [], None       # sidste besked-id uden værktøjskald før en brugerbesked eller slut
     for linje in sti.open(encoding="utf-8"):
         try:
@@ -61,6 +62,7 @@ def laes(sti: pathlib.Path) -> dict:
         for c in msg.get("content") or []:
             if isinstance(c, dict) and c.get("type") == "tool_use":
                 vaerktoej.append((c.get("name"), c.get("input") or {}))
+                navne[msg.get("id")].append(c.get("name"))
                 t[1] = True
             elif isinstance(c, dict) and c.get("type") == "text":
                 t[0] += len(c.get("text", ""))
@@ -72,7 +74,8 @@ def laes(sti: pathlib.Path) -> dict:
         slutsvar.append(tekst[sidste][0])
     mellem = sum(n for n, _ in tekst.values()) - sum(slutsvar)   # al anden tekst: mellemsvar undervejs
     return {"kald": list(pr_besked.values()), "foerste": foerste, "vaerktoej": vaerktoej, "start": start or "",
-            "slutsvar": slutsvar, "mellemtekst": mellem}
+            "slutsvar": slutsvar, "mellemtekst": mellem,
+            "editrunder": sum(1 for n in navne.values() if all(x in ("Edit", "MultiEdit") for x in n))}
 
 
 def vaegtet(kald) -> float:
@@ -80,10 +83,10 @@ def vaegtet(kald) -> float:
 
 
 def laesninger(r) -> tuple:
-    """Antal billeder, PDF'er og Edits, kørslen har læst eller lavet."""
+    """Antal billeder og PDF'er, kørslen har læst, og antal Edit-runder."""
     filer = [str(i.get("file_path", "")).lower() for n, i in r["vaerktoej"] if n == "Read"]
     return (sum(f.endswith(BILLEDE) for f in filer), sum(f.endswith(".pdf") for f in filer),
-            sum(n in ("Edit", "MultiEdit") for n, _ in r["vaerktoej"]))
+            r["editrunder"])
 
 
 def p90(xs) -> int:
@@ -171,8 +174,8 @@ def main() -> int:
         print(f"{typ:22} {len(rs):7} {v / 1e6:7.1f}M {100 * v / total:5.0f} % {v / len(rs) / 1e6:9.2f}M")
 
     print(f"\nLæsninger pr. kørsel (median / p90 / kørsler over loftet; loft: {LOFT_BILLEDER} billeder, "
-          f"ca. {LOFT_EDITS} Edits)")
-    print(f"{'Del':16} {'billeder':>14} {'PDF':>9} {'Edits':>14}")
+          f"ca. {LOFT_EDITS} Edit-runder)")
+    print(f"{'Del':16} {'billeder':>14} {'PDF':>9} {'Edit-runder':>14}")
     for del_ in ("fagagenter", "kontrolagenter", "øvrige"):
         if dele[del_]:
             b, pdf, e = zip(*(laesninger(r) for r in dele[del_]))

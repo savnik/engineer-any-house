@@ -142,7 +142,7 @@ Bygherren må selv søge byggetilladelse og selv tegne – BR18 kræver ikke en 
   1. Læs hver fil højst én gang pr. kald. Har du brug for et afsnit igen, så brug `grep -n` eller `sed -n 'a,bp'`.
   2. Læs aldrig en scannet PDF, når `text.txt`, `oversigt.txt` eller udsnits-PNG findes. Skal en side ses, så render kun den side eller det udsnit (højst 150 dpi). Højst 10 billeder pr. kald.
   3. Læs værktøjets resumé, ikke rå resultatfiler (fx `*.fem.json`, IFC, logfiler). Find tal med `grep`.
-  4. Regn og afklar først. Skriv derefter notatet med **ét** Write. Højst ca. 5 Edits bagefter.
+  4. Regn og afklar først. Skriv derefter et nyt notat med **ét** Write. Findes notatet, så ret det med Edits i stedet for at skrive det om. Saml rettelserne: læg alle Edits, du kender, i samme svar (de koster ét kald), og brug højst ca. 5 sådanne runder.
   5. Har opgaven mange trin, så skriv kort status (gjort, mellemresultater, næste skridt) i `<sagsmappe>/bilag/<fag-id>/arbejde-<nr>.md`, mens du arbejder. Står der GENFORSØG i prompten, så læs den fil først, og fortsæt derfra uden at gentage arbejdet.
   6. Opgaven er for stor til ét kald, hvis den kræver flere selvstændige analyser. Løs den første, og skriv de øvrige under "Åbne spørgsmål" som forslag til nye leverancer.
   7. **Et ufærdigt svar skal kunne ses.** Løser notatet kun en del af opgaven, så skriv det i Konklusionen: "Delvist besvaret – mangler: <hvad>". Et resultat, du kun har set et udsnit af (fx de første sider eller de første linjer af en liste), er ufuldstændigt. Konkludér ikke ud over det udsnit.
