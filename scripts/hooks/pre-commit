@@ -13,7 +13,7 @@ python3 "$(git rev-parse --show-toplevel)/scripts/sync_protokol.py" --staged || 
   exit 1
 }
 
-# Parallel udvikling: versioner hæves kun i en udgivelsesgren (udgivelse/*, scripts/udgiv.py), aldrig i en feature-gren.
+# Parallel development: versions are raised only on a release branch (udgivelse/*, scripts/udgiv.py), never on a feature branch.
 gren=$(git symbolic-ref --short -q HEAD)
 case "$gren" in udgivelse/*) BYG_UDGIV=1 ;; esac
 if [ -z "$BYG_UDGIV" ] && \

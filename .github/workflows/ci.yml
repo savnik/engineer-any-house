@@ -16,8 +16,8 @@ concurrency:
 # The job names are required status checks in the branch protection of main.
 # Renaming a job means updating the protection rule too.
 jobs:
-  valider:
-    name: valider
+  validate:
+    name: validate
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -65,7 +65,7 @@ jobs:
       - run: python -m pytest -q scripts/tests
 
   fem:
-    name: fem-selvtest
+    name: fem-self-test
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

@@ -95,7 +95,7 @@ scripts/tjek_data.py         dataseparation: ingen sager, brugerdata eller nøgl
 scripts/hooks/pre-commit     kører tjek_data.py før hvert commit (git config core.hooksPath scripts/hooks)
 scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
 scripts/udgiv.py             udgivelse (gren udgivelse/<version> → PR): hæver versioner ud fra versionsnoter/ og skriver CHANGELOG.md
-.github/workflows/ci.yml     CI på hver PR: valider.py --claude, ruff, bim-tests og fem-selvtest (krævet før merge til main)
+.github/workflows/ci.yml     CI på hver PR: valider.py --claude, ruff, bim-tests og fem-self-test (krævet før merge til main)
 versionsnoter/               én note pr. gren: hvilke plugins der ændres (patch/minor/major) og hvorfor
 scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --siden/--til
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
@@ -117,7 +117,7 @@ tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Cl
 ```
 Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`.
 
-**main er beskyttet:** alt går gennem en PR, og CI (`valider`, `lint`, `bim-tests`, `fem-selvtest`) skal være grøn, og grenen ajour med main, før der kan merges. Direkte push til main afvises, også for administratorer.
+**main er beskyttet:** alt går gennem en PR, og CI (`validate`, `lint`, `bim-tests`, `fem-self-test`) skal være grøn, og grenen ajour med main, før der kan merges. Direkte push til main afvises, også for administratorer.
 
 **Parallelle sessioner** (flere Claude-sessioner i hver sin worktree):
 - Én opgave = én worktree = én kortlivet gren. Rebase på `origin/main` før PR, og merge PR'erne én ad gangen.
