@@ -1,5 +1,26 @@
 # Ændringslog
 
+## 0.16.0 – 2026-10-28
+
+- `byg` 0.12.0 → 0.13.0
+- `byg-anlaeg` 0.1.0 → 0.1.1
+- `byg-arkitekt` 0.1.0 → 0.1.1
+- `byg-bim` 0.7.1 → 0.8.0
+- `byg-el` 0.2.2 → 0.2.3
+- `byg-kontrol` 0.15.0 → 0.16.0
+- `byg-maler` 0.1.11 → 0.1.12
+- `byg-murer` 0.2.0 → 0.2.1
+- `byg-statik` 0.4.0 → 0.4.1
+- `byg-toemrer` 0.1.11 → 0.1.12
+- `byg-ventilation` 0.1.12 → 0.1.13
+- `byg-vvs` 0.2.2 → 0.2.3
+
+### effektivitet-fliser-og-kilder (byg-anlaeg, byg-arkitekt, byg-bim, byg-el, byg-kontrol, byg-maler, byg-murer, byg-statik, byg-toemrer, byg-ventilation, byg-vvs)
+Mindre genlæsning. `bim.py sammenlign` skriver nu `fliser.md` og `fliser.json`, som siger, hvilke fliser der skal gennemgås. Tomme fliser springes over. Med `--forrige <forrige rundes mappe>` springes fliser over, hvis modeltegningen er pixel for pixel uændret siden forrige runde. Fliser med automatiske fund gennemgås altid. Sammenligneren læser kun de markerede fliser og fører de uændrede i `daekning.fliser_uaendret`. I en prøve på en lokal sag faldt det, der skulle gennemgås i runde 2 med uændret model, fra 16 til 5 fliser (V1) og fra 25 til 3 (V2). Fællesprotokollen har fået et kilderegister pr. fag og sag, `bilag/<fag-id>/kilder.md` (URL, dato, udgave og side/§, parafrase). Fagene søger i alle fags registre, før de henter en side, og kan genbruge en linje med "jf. kilderegister". Kontrollen må kun bruge registret til at finde kilden og efterprøver stadig selv. Målingen viste, at 23 % af sidehentningerne gentog en side, der allerede var hentet i en anden kørsel. `scripts/forbrug.py` viser nu forbrug pr. agenttype, billed- og PDF-læsninger og Edit-runder pr. kørsel målt mod protokollens lofter, og gentagne hentninger delt op i samme kørsel og på tværs af kørsler. Edit-loftet tæller nu runder, ikke enkelte Edits. Fagagenterne lagde i gennemsnit ca. 4 Edits i samme kald, og kald med kun notat-Edits udgjorde 5 % af fagagenternes forbrug. Når notatet allerede findes, er Edits billigere end at skrive det om. Reglen siger derfor nu: ret et eksisterende notat med Edits, saml dem i samme svar, og brug højst ca. 5 runder. Et loft håndhævet af en hook ville presse agenterne til at skrive hele notatet om eller stoppe midt i en revision, så det er fravalgt.
+
+### fravaer-og-daekning (byg, byg-anlaeg, byg-arkitekt, byg-bim, byg-el, byg-kontrol, byg-maler, byg-murer, byg-statik, byg-toemrer, byg-ventilation, byg-vvs)
+Ærlighed om fravær og dækning. "Ikke fundet" behandles som ukendt, ikke som "findes ikke": det står i fællesprotokollen, og i kontrolprotokollen er en fraværskonklusion uden kilde nu et fund. Et delvist besvaret notat skal skrive "Delvist besvaret – mangler: …". Kontrollens dom har et nyt felt, `ikke_kontrolleret`. Hooken validerer og gemmer det, og ved godkendelse siger den, hvad godkendelsen ikke dækker. Feltet føres også i kontrolloggen. Projektlederen laver en opgørelse ved G1–G3: hvert succeskriterie, krav, ramme og åbent spørgsmål markeres besvaret, delvis eller åben, og gaten passeres ikke med punkter, brugeren ikke har accepteret. Det giver kontrolpunkt 1e i kontrol-projekt@1.4. RCA-skabelonen kræver "utilstrækkeligt grundlag", når evidensen mangler.
+
 ## 0.15.0 – 2026-10-24
 
 - `byg` 0.11.0 → 0.12.0

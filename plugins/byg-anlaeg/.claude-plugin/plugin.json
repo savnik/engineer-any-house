@@ -1,7 +1,7 @@
 {
   "name": "byg-anlaeg",
   "displayName": "Byg · Anlægsgartner",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Anlægsgartner som subagent efter dansk regelgrundlag – med egen videnbase, hukommelse og evals. Belægning og terrasser, regnvand og faskiner, omfangsdræn og terrænfald, terrænregulering og støttemure, hegn, træer, beplantning og pleje.",
   "author": { "name": "Peter Savnik" },
   "keywords": ["byggeri", "anlaeg", "anlaegsgartner", "terrasse", "faskine", "regnvand", "hegn", "danmark"],
