@@ -117,7 +117,7 @@ tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Cl
 ```
 Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`.
 
-**main er beskyttet:** alt går gennem en PR, og CI (`validate`, `lint`, `bim-tests`, `fem-self-test`) skal være grøn, og grenen ajour med main, før der kan merges. Direkte push til main afvises, også for administratorer.
+**main er beskyttet:** alt går gennem en PR, og CI (`validate`, `lint`, `bim-tests`, `fem-self-test`) skal være grøn, og grenen ajour med main, før der kan merges. Direkte push til main afvises, også for administratorer. PR'er fra andre kræver godkendelse fra en kodeejer (`.github/CODEOWNERS`); ejeren kan merge sine egne PR'er uden godkendelse, men stadig kun med grøn CI.
 
 **Parallelle sessioner** (flere Claude-sessioner i hver sin worktree):
 - Én opgave = én worktree = én kortlivet gren. Rebase på `origin/main` før PR, og merge PR'erne én ad gangen.

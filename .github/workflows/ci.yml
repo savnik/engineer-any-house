@@ -13,8 +13,8 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# The job names are required status checks in the branch protection of main.
-# Renaming a job means updating the protection rule too.
+# The job names are required status checks in the ruleset "main: checks".
+# Renaming a job means updating the ruleset too.
 jobs:
   validate:
     name: validate
