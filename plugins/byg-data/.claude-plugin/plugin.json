@@ -1,7 +1,7 @@
 {
   "name": "byg-data",
   "displayName": "Byg · Ejendomsdata",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Henter offentlige data om en dansk bygning eller matrikel ud fra en adresse: BBR, matrikel, lokalplan, fredning/bevaring, jordforurening, grundvand, klima, energimærke og ejendomsvurdering – uden persondata.",
   "author": {
     "name": "Peter Savnik"

@@ -1,5 +1,36 @@
 # Ændringslog
 
+## 1.0.0 – 2026-10-28
+
+Første stabile udgivelse af Engineer Any House-marketplacet (MIT-licens). Marketplacet går fra 0.16.1 til 1.0.0; de enkelte plugins følger deres egne versionsnoter.
+
+- `byg` 0.13.1 → 0.13.2
+- `byg-anlaeg` 0.1.2 → 0.1.3
+- `byg-arkitekt` 0.1.2 → 0.1.3
+- `byg-bim` 0.8.1 → 0.9.0
+- `byg-data` 0.1.0 → 0.1.1
+- `byg-el` 0.2.4 → 0.2.5
+- `byg-kontrol` 0.16.1 → 0.16.2
+- `byg-maler` 0.1.13 → 0.1.14
+- `byg-murer` 0.2.2 → 0.2.3
+- `byg-statik` 0.4.2 → 0.5.0
+- `byg-team` 0.4.1 → 0.4.2
+- `byg-toemrer` 0.1.13 → 0.1.14
+- `byg-ventilation` 0.1.14 → 0.1.15
+- `byg-vvs` 0.2.4 → 0.2.5
+
+### bim-opslag (byg, byg-bim, byg-kontrol)
+Hurtige opslag i BIM-modellen: ny kommando `bim.py maal` (mål på vægge, rum og åbninger, afstande og etageoversigt med kilde – bygger model.yaml frisk, så målet aldrig kommer fra en forældet IFC) og ny skrivebeskyttet opslagsagent `bim-opslag` på Haiku. Projektlederen sender rene spørgsmål til en eksisterende model dertil uden leverance og kontrol; ændringer går stadig til `bim-modelloer`.
+
+### licens-og-engelsk-readme (byg, byg-anlaeg, byg-arkitekt, byg-bim, byg-data, byg-el, byg-kontrol, byg-maler, byg-murer, byg-statik, byg-team, byg-toemrer, byg-ventilation, byg-vvs)
+Projektet er udgivet under MIT-licensen (`LICENSE`), og alle plugins angiver `"license": "MIT"`. `README.md` er nu på engelsk til et internationalt publikum, og den danske README ligger i `README.da.md`. Cowork-pakken får stadig den danske README.
+
+### python-miljoe (byg-bim, byg-statik)
+Værktøjernes Python-miljøer er nu fuldt låst (alle pakker, også transitive, for Python ≥ 3.11 på alle platforme), så alle får samme versioner. `opsaet` bruger uv, hvis det er installeret, ellers pip, og giver en klar fejl ved for gammel Python. pytest ligger ikke længere i brugernes BIM-miljø (`bim.py opsaet --test`). Opsætningen deles via `faelles/miljoe.py`.
+
+### statik-resultat (byg, byg-kontrol, byg-statik)
+Opslag i en statisk beregning uden ny beregning: `fem.py resultat <fem.yaml> [--element] [--kombi]` viser det gemte resultat med kombination, spec-sha og overslagsforbehold og afviser det, hvis `fem.yaml` er ændret siden eller resultatet er regnet med `--saet`. Statik-kontrollen må bruge kommandoen. Projektlederen svarer på spørgsmål til en færdig beregning ud fra det godkendte statiknotat; nye tal og ændrede input går til statikeren som leverance.
+
 ## 0.16.1 – 2026-10-28
 
 - `byg` 0.13.0 → 0.13.1
