@@ -1,7 +1,7 @@
 {
   "name": "byg-bim",
   "displayName": "Byg · BIM-modellør",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "BIM-modellør og uafhængig sammenligner som subagenter: bygger, kontrollerer og redigerer IFC-modeller (IFC4) af huse med en deterministisk værktøjskæde (IfcOpenShell). Tegningsimport: afkodning af PDF-tegninger, modelbygning og sammenligning af original og model i loop. Kontrol mod buildingSMART-regler, IDS og BBR; planer, snit, facader og 3D.",
   "author": {
     "name": "Peter Savnik"

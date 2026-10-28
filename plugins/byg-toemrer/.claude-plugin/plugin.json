@@ -1,7 +1,7 @@
 {
   "name": "byg-toemrer",
   "displayName": "Byg · Tømrermester",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "Tømrermester som subagent: tage og undertag, efterisolering, dampspærre og lufttæthed, vinduer og døre, lette konstruktioner, bærende træ og tilbygninger efter dansk regelgrundlag (BR18 m.fl.) – med egen videnbase, hukommelse og evals.",
   "author": { "name": "Peter Savnik" },
   "keywords": ["byggeri", "tømrer", "tag", "efterisolering", "dampspærre", "undertag", "vinduer", "BR18", "danmark"],

@@ -1,5 +1,24 @@
 # Ændringslog
 
+## 0.16.1 – 2026-10-28
+
+- `byg` 0.13.0 → 0.13.1
+- `byg-anlaeg` 0.1.1 → 0.1.2
+- `byg-arkitekt` 0.1.1 → 0.1.2
+- `byg-bim` 0.8.0 → 0.8.1
+- `byg-el` 0.2.3 → 0.2.4
+- `byg-kontrol` 0.16.0 → 0.16.1
+- `byg-maler` 0.1.12 → 0.1.13
+- `byg-murer` 0.2.1 → 0.2.2
+- `byg-statik` 0.4.1 → 0.4.2
+- `byg-team` 0.4.0 → 0.4.1
+- `byg-toemrer` 0.1.12 → 0.1.13
+- `byg-ventilation` 0.1.13 → 0.1.14
+- `byg-vvs` 0.2.3 → 0.2.4
+
+### navneskift-engineer-any-house (byg, byg-anlaeg, byg-arkitekt, byg-bim, byg-el, byg-kontrol, byg-maler, byg-murer, byg-statik, byg-team, byg-toemrer, byg-ventilation, byg-vvs)
+Projektet hedder nu Engineer Any House. Marketplace hedder `engineer-any-house` (før `byg-eksperter`), og GitHub-repoet bliver `savnik/engineer-any-house`. Plugin-, agent- og skillnavne er uændrede (`byg`, `byg-kontrol`, `byg-vvs` …), og sagsmapper i `byg-sager/` virker som før. Installer fra den nye marketplace med `claude plugin marketplace add <sti>/engineer-any-house` og `claude plugin install byg-team@engineer-any-house`. Claude Code navngiver pluginernes datamapper efter marketplace, så videnbanken og kontroltilstanden skal kopieres fra `~/.claude/plugins/data/<plugin>-byg-eksperter` til `<plugin>-engineer-any-house` ved skiftet. `scripts/tjek_data.py` læser private termer og sagsmapper fra `~/.config/engineer-any-house/` og stadig fra den gamle `~/.config/byg-eksperter/`.
+
 ## 0.16.0 – 2026-10-28
 
 - `byg` 0.12.0 → 0.13.0
