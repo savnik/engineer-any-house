@@ -40,7 +40,8 @@ import ifcopenshell.guid
 import ifcopenshell.util.pset
 from ifcopenshell import api
 from ifcopenshell.util.shape_builder import ShapeBuilder
-from shapely.geometry import Polygon
+from shapely.geometry import LineString, Point, Polygon, box
+from shapely.ops import unary_union
 
 from . import VERSION
 from .geo import (VaegGeo, ccw, enhed, flade_ramme, lokal_polygon, omrids_fra_vaegge, rens_ring, rum_polygon,
@@ -145,6 +146,8 @@ class Bygger:
         self._aabninger()
         self._daek()
         self._tage_og_klip()
+        self._ovenlys()
+        self._spaer()
         self._trapper()
         self._soejler_bjaelker()
         self._rum()
@@ -725,6 +728,9 @@ class Bygger:
     # ------------------------------------------------------------------ tage (og klipning af vægge/rum)
     def _tage_og_klip(self):
         self.tagplaner = {}
+        self.roof_faces = {}  # roof id → [(face, slab, world matrix, 2D ring, thickness)] for roof windows
+        self.roof_holes = {}  # (roof id, face name) → [(u0, v0, u1, v1)] roof window openings in the face frame
+        self._roof_ent = {}
         for t in self.s["tage"]:
             kote = self.etage_kote[t["etage"]]
             flader = tagflader(t)
@@ -733,6 +739,7 @@ class Bygger:
             tag = self.ny("IfcRoof", t, predefined={"sadeltag": "GABLE_ROOF", "valmtag": "HIP_ROOF",
                                                     "pulttag": "SHED_ROOF", "fladt": "FLAT_ROOF"}[t["form"]])
             self.indsaet(tag, t, self._T((0, 0, kote)), "Pset_RoofCommon", {}, "tage")
+            self._roof_ent[t["id"]] = tag
             planer, dele = [], []
             for fl in flader:
                 o, xa, ya, za = flade_ramme(fl)
@@ -756,6 +763,7 @@ class Bygger:
                 areal = Polygon(ring).area
                 self._qto(slab, "Qto_SlabBaseQuantities", {"Width": tyk, "GrossArea": areal / 1e6, "NetArea": areal / 1e6})
                 dele.append(slab)
+                self.roof_faces.setdefault(t["id"], []).append((fl, slab, Mw, ring, tyk))
                 planer.append((np.array([o[0], o[1], o[2] + kote]), za))
                 self.elementer[f"{t['id']}.{fl.navn}"] = {"guid": slab.GlobalId, "klasse": "IfcSlab", "etage": t["etage"],
                                                          "status": t["status"], "kilde": str(t["kilde"])[:1], "sektion": "tage"}
@@ -783,14 +791,69 @@ class Bygger:
             if hasattr(w, "ent"):
                 self._qto(w.ent, "Qto_WallBaseQuantities", w.qto)
 
+    def _ovenlys(self):
+        """Roof windows: an opening through the roof face (perpendicular to it) filled by an IfcWindow.
+        `punkt` is the window centre in plan; width runs along the eaves, height up the slope."""
+        for o in self.s["ovenlys"]:
+            sti = f"ovenlys.{o['id']}"
+            faces = self.roof_faces.get(o["tag"], [])
+            x, y = o["punkt"]
+            hit = [f for f in faces if (o.get("flade") or f[0].navn) == f[0].navn
+                   and Polygon([(p[0], p[1]) for p in f[0].pkt]).contains(Point(x, y))]
+            if not hit:
+                self.fejl.append(f"{sti}: punktet ({x:.0f}, {y:.0f}) ligger ikke på en tagflade af {o['tag']}"
+                                 + (f" ({o['flade']})" if o.get("flade") else ""))
+                continue
+            fl, slab, Mw, ring, tyk = hit[0]
+            _, xa, ya, za = flade_ramme(fl)
+            if abs(za[2]) < 1e-6:
+                self.fejl.append(f"{sti}: tagfladen {fl.navn} er lodret")
+                continue
+            # the point on the face's underside straight above (x, y), in the face's own frame
+            z = fl.origo[2] - (za[0] * (x - fl.origo[0]) + za[1] * (y - fl.origo[1])) / za[2]
+            d = np.array([x, y, z]) - fl.origo
+            u, v = d @ xa, d @ ya
+            W, H = o["bredde"], o["hoejde"]
+            u0, v0 = u - W / 2, v - H / 2
+            if not Polygon(ring).contains(Polygon([(u0, v0), (u0 + W, v0), (u0 + W, v0 + H), (u0, v0 + H)])):
+                self.fejl.append(f"{sti}: ovenlyset ({W:.0f} × {H:.0f}) går ud over tagfladen {fl.navn}")
+            aab = self.ny("IfcOpeningElement", o, suffix="/hul", navn=f"Åbning {o['id']}", predefined="OPENING")
+            api.feature.add_feature(self.f, feature=aab, element=slab)
+            self._placer(aab, Mw @ self._T((u0, v0, -10.0)))
+            self.roof_holes.setdefault((o["tag"], fl.navn), []).append((u0, v0, u0 + W, v0 + H))
+            prof = self.b.polyline([(0.0, 0.0), (W, 0.0), (W, H), (0.0, H)], closed=True)
+            self._rep(aab, self.b.extrude(self.b.profile(prof), magnitude=tyk + 20))
+            t = self.s["typer"][o["type"]]
+            ld = min(tyk, float(t.get("ramme", 100)))
+            ent = self.ny("IfcWindow", o, predefined="SKYLIGHT")
+            ent.OverallWidth, ent.OverallHeight = W, H
+            # window frame: x along the eaves, z up the slope, y down through the roof from its top face
+            M = Mw @ self._T((u0, v0, tyk + 20.0), x=(1, 0, 0), z=(0, 1, 0))
+            api.spatial.assign_container(self.f, products=[ent], relating_structure=self.etager[o["etage"]])
+            self._placer(ent, M)
+            self._vindue_geo(ent, W, H, ld, int(t.get("felter", 1)))
+            api.feature.add_filling(self.f, opening=aab, element=ent)
+            api.type.assign_type(self.f, related_objects=[ent], relating_type=self._typer[o["type"]],
+                                 should_map_representations=False)
+            self.egenskaber(ent, o, None, {"IsExternal": True}, "ovenlys")
+            self.elementer[o["id"]] = {"guid": ent.GlobalId, "klasse": "IfcWindow", "etage": o["etage"],
+                                       "status": o["status"], "kilde": str(o["kilde"])[:1], "sektion": "ovenlys",
+                                       "tag": f"{o['tag']}.{fl.navn}"}
+            self._qto(ent, "Qto_WindowBaseQuantities", {"Width": W, "Height": H, "Area": W * H / 1e6})
+
     def _tagflade_solid(self, fl, ring, tyk, ramme, form):
         """Tagflade som plade vinkelret på fladen, skåret lodret (geret) langs alle kanter, så kip og
         grater slutter tæt og tagfod/gavl får lodret afskæring."""
         if form == "fladt":
             return self._ekstruder(ring, tyk)
-        o, xa, ya, za = ramme
         stor = Polygon(ring).buffer(3 * tyk, join_style=2)
         solid = self._ekstruder(list(stor.exterior.coords)[:-1], tyk)
+        return self._klip(solid, self._kantplaner(fl, ramme))
+
+    @staticmethod
+    def _kantplaner(fl, ramme):
+        """The vertical planes through the face's edges, in the face frame, with outward normals."""
+        o, xa, ya, za = ramme
         c = np.mean(fl.pkt, axis=0)
         planer = []
         for i in range(len(fl.pkt)):
@@ -802,7 +865,139 @@ class Bygger:
             if (c - a) @ n > 0:
                 n = -n
             planer.append((np.array([(a - o) @ xa, (a - o) @ ya, (a - o) @ za]), np.array([n @ xa, n @ ya, n @ za])))
-        return self._klip(solid, planer)
+        return planer
+
+    # ------------------------------------------------------------------ spær
+    SKORSTEN_LUFT = 50  # mm clearance between rafters/collars and a chimney
+
+    def _spaer(self):
+        """Rafters (IfcMember RAFTER) in the bottom layer of each roof face, at most `afstand` apart, with trimmers
+        around roof windows and chimneys, and optionally collar ties (hanebånd) across a gable roof."""
+        chimneys = []
+        for g in self.s["generisk"]:
+            if g.get("klasse") == "IfcChimney" and "profil" in g and abs(enhed(np.array(g["z_akse"], float))[2]) > 0.999:
+                x = enhed(np.array(g["x_akse"], float))
+                y = np.cross((0, 0, 1.0), x)
+                o = np.array(g["origo"], float)
+                chimneys.append(Polygon([(o[0] + px * x[0] + py * y[0], o[1] + px * x[1] + py * y[1])
+                                         for px, py in g["profil"]]).buffer(self.SKORSTEN_LUFT, join_style=2))
+        for t in self.s["tage"]:
+            sp = t.get("spaer")
+            if not sp:
+                continue
+            kote = self.etage_kote[t["etage"]]
+            typ = self.s["typer"].get(t.get("type")) if t.get("type") else None
+            lag = [tk for navn, tk in (typ["lag"] if typ else []) if "spær" in navn.lower() or "spaer" in navn.lower()]
+            b, h, mat = sp["b"], sp.get("h") or (lag[-1] if lag else 150.0), sp["materiale"]
+            el = {"id": t["id"], "etage": t["etage"], "status": t["status"], "kilde": t["kilde"], "ref": t.get("ref")}
+            dele, spaer = [], {}  # spaer: face name → [(world point at the eaves line, axis up the slope, segments)]
+            for fl, slab, Mw, ring, tyk in self.roof_faces.get(t["id"], []):
+                ramme = flade_ramme(fl)
+                o, xa, ya, za = ramme
+                if abs(za[2]) > 0.999:
+                    continue  # flat roof: no rafters
+                planer = self._kantplaner(fl, ramme)
+                face = Polygon(ring)
+                huller = list(self.roof_holes.get((t["id"], fl.navn), []))
+                for ch in chimneys:
+                    # the chimney's footprint where it passes the rafter layer (underside and top of the rafters)
+                    pts = []
+                    for d in (-10.0, h - 10.0):
+                        for x, y in ch.exterior.coords:
+                            z = o[2] + (d - za[0] * (x - o[0]) - za[1] * (y - o[1])) / za[2]
+                            q = np.array([x, y, z]) - o
+                            pts.append((q @ xa, q @ ya))
+                    hp = Polygon(pts).convex_hull
+                    if hp.intersects(face):
+                        huller.append(hp.bounds)
+                u_min, _, u_max, _ = face.bounds
+                n = max(1, math.ceil((u_max - u_min - b) / sp["afstand"]))
+                pos = [u_min + b / 2 + i * (u_max - u_min - b) / n for i in range(n + 1)]
+                flanker = [u for u0, _, u1, _ in huller for u in (u0 - b / 2, u1 + b / 2)]
+                pos = sorted([u for u in pos if all(abs(u - fu) >= 1.5 * b for fu in flanker)] + flanker)
+                skaer = unary_union([box(u0 - b / 2, v0 - b, u1 + b / 2, v1 + b) for u0, v0, u1, v1 in huller]) \
+                    if huller else None
+                stykker = []  # (u, va, vb) rafter pieces and (va, vb, v) trimmers in the face frame
+                for u in pos:
+                    linje = LineString([(u, -1e6), (u, 1e6)]).intersection(face)
+                    if skaer is not None and u not in flanker:
+                        linje = linje.difference(skaer)
+                    segs = []
+                    for g in getattr(linje, "geoms", [linje]):
+                        if g.is_empty or g.length < 2 * b:
+                            continue
+                        va, vb = sorted(c[1] for c in g.coords)
+                        segs.append((va, vb))
+                        # ends on the face's edges run past it and are cut by the edge planes like the slab
+                        ea = 3 * h if face.exterior.distance(Point(u, va)) < 0.5 else 0.0
+                        eb = 3 * h if face.exterior.distance(Point(u, vb)) < 0.5 else 0.0
+                        stykker.append(("S", [(u - b / 2, va - ea), (u + b / 2, va - ea), (u + b / 2, vb + eb),
+                                              (u - b / 2, vb + eb)], vb - va))
+                    spaer.setdefault(fl.navn, []).append((o + u * xa, ya, segs))
+                for u0, v0, u1, v1 in huller:
+                    for v in (v0 - b / 2, v1 + b / 2):
+                        stykker.append(("V", [(u0, v - b / 2), (u1, v - b / 2), (u1, v + b / 2), (u0, v + b / 2)], u1 - u0))
+                tael = {"S": 0, "V": 0}
+                for art, rekt, laengde in stykker:
+                    tael[art] += 1
+                    ent = self.ny("IfcMember", el, suffix=f".{fl.navn}.{art}{tael[art]:02d}",
+                                  navn=f"{'Spær' if art == 'S' else 'Veksel'} {fl.navn} {tael[art]}", predefined="RAFTER")
+                    self._placer(ent, Mw)
+                    # the rafter hangs 10 mm below the face's underside so it doesn't share a plane with the slab
+                    solid = self._klip(self._ekstruder(rekt, h, z0=-10.0), planer)
+                    self._member(ent, el, solid, mat, laengde, dele)
+            if sp.get("hanebaand") and t["form"] == "sadeltag" and len(spaer) == 2:
+                self._hanebaand(t, el, sp, b, h, mat, kote, spaer, chimneys, dele)
+            if dele:
+                api.aggregate.assign_object(self.f, relating_object=self._roof_ent[t["id"]], products=dele)
+
+    def _hanebaand(self, t, el, sp, b, h, mat, kote, spaer, chimneys, dele):
+        """Collar ties between rafter pairs: top at `hanebaand` above the floor, inside the walls, clear of chimneys."""
+        a_side, b_side = spaer.values()
+        x0, y0, x1, y1 = t["omrids"]
+        inde = box(x0, y0, x1, y1)
+        zc = kote + sp["hanebaand"]
+
+        def ved_hoejde(p0, akse, segs):
+            # the point on the rafter's underside at height zc, if a rafter piece is there
+            if abs(akse[2]) < 1e-9:
+                return None
+            v = (zc - (p0[2] + kote)) / akse[2]
+            # underside is 10 mm below the face plane: shift along the face normal is negligible for the collar's ends
+            return p0 + akse * v + np.array([0, 0, kote]) if any(va <= v <= vb for va, vb in segs) else None
+
+        nr = 0
+        for pa, aa, sa in a_side:
+            for pb, ab, sb in b_side:
+                d = (pb - pa)[:2]
+                if abs(d @ enhed(np.array([aa[1], -aa[0]]))) > 1.0:  # not the same rafter line across the ridge
+                    continue
+                A, B = ved_hoejde(pa, aa, sa), ved_hoejde(pb, ab, sb)
+                if A is None or B is None:
+                    continue
+                plan = LineString([A[:2], B[:2]]).buffer(b / 2, cap_style=2)
+                if not inde.contains(plan) or any(plan.intersects(c) for c in chimneys):
+                    continue
+                nr += 1
+                L = float(np.linalg.norm(B - A))
+                z = enhed(B - A)
+                x = enhed(np.cross((0, 0, 1.0), z))
+                ent = self.ny("IfcMember", el, suffix=f".H{nr:02d}", navn=f"Hanebånd {nr}", predefined="COLLAR")
+                self._placer(ent, self._T(A - np.array([0, 0, h / 2]), x=x, z=z))
+                solid = self.f.createIfcExtrudedAreaSolid(self._profildef({"form": "rekt", "b": b, "h": h}), None,
+                                                          self.f.createIfcDirection((0.0, 0.0, 1.0)), L)
+                self._member(ent, el, solid, mat, L, dele)
+                break
+
+    def _member(self, ent, el, solid, mat, laengde, dele):
+        rep = self._rep(ent, solid)
+        self._farv(rep, mat)
+        self._materiale_til(ent, mat)
+        self.egenskaber(ent, el, "Pset_MemberCommon", {"LoadBearing": True}, "tage")
+        self._qto(ent, "Qto_MemberBaseQuantities", {"Length": float(laengde)})
+        self.elementer[ent.Tag] = {"guid": ent.GlobalId, "klasse": "IfcMember", "etage": el["etage"],
+                                   "status": el["status"], "kilde": str(el["kilde"])[:1], "sektion": "tage"}
+        dele.append(ent)
 
     # ------------------------------------------------------------------ trapper
     def _trapper(self):
@@ -1026,7 +1221,10 @@ class Bygger:
                     api.system.assign_system(self.f, products=[ent], system=self.systemer[str(r["system"])])
 
     def _systemfarve(self, sid):
-        art = next((s["art"] for s in self.s["systemer"] if s["id"] == str(sid)), None)
+        system = next((s for s in self.s["systemer"] if s["id"] == str(sid)), {})
+        if system.get("farve"):
+            return tuple(v / 255 for v in system["farve"]), 0
+        art = system.get("art")
         return {"varme": ((0.85, 0.15, 0.15), 0), "brugsvand_koldt": ((0.15, 0.45, 0.85), 0),
                 "brugsvand_varmt": ((0.90, 0.45, 0.10), 0), "afloeb": ((0.45, 0.35, 0.25), 0),
                 "ventilation": ((0.40, 0.75, 0.40), 0), "gas": ((0.95, 0.85, 0.10), 0)}.get(art, ((0.6, 0.6, 0.6), 0))

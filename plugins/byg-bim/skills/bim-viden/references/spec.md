@@ -82,9 +82,19 @@ etager:
 ## tage
 ```yaml
   - {id: TAG1, etage: "1", form: sadeltag, omrids: [0, 0, 10000, 8500], rygning: x, haeldning: 45,
-     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG}
+     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG,
+     spaer: {afstand: 900, b: 50, hanebaand: 2300}}
 ```
 `form` er sadeltag|valmtag|pulttag (`hoej_side: x+|x-|y+|y-`)|fladt. `omrids` er rektanglet ved facadernes yderside. `tagfod` er højden af tagfladens underside ved facadelinjen, relativt til etagegulvet. Tagfladerne bliver IfcSlab (ROOF) samlet i en IfcRoof og er skåret lodret ved kip, grat, tagfod og gavl. Kviste og sammensatte tage laves med `generisk` (se mønstre).
+
+`spaer` (valgfri) danner spærene som IfcMember (RAFTER) i hver skrå tagflade, samlet i IfcRoof sammen med tagfladerne. Spærene ligger i tagfladens nederste lag med højst `afstand` mellem centrene (standard 900). `b` er bredden (standard 50). `h` er som standard tykkelsen af typens lag med navnet spær, ellers 150. `materiale` er som standard træ. Om ovenlys og skorstene (`generisk` med klasse IfcChimney) sættes der spær på begge sider og veksler (Tag `TAG1.side1.V01`) over og under. `hanebaand` er overkanten af hanebåndene over etagegulvet. Det gælder kun sadeltag, og der sættes et hanebånd (COLLAR) ved hvert spærpar, der når den højde inden for omridset og uden om skorstenen. `tjek` melder ikke spær mod tagflader i samme tag som kollision.
+
+## ovenlys
+```yaml
+  - {id: T-OV1, tag: TAG1, type: OV1, punkt: [2500, 2600]}            # type med klasse vindue
+  - {id: T-OV2, tag: TAG1, type: OV1, punkt: [7500, 5900], flade: side2, bredde: 780, hoejde: 1180}
+```
+Tagvinduer (IfcWindow i et hul i tagfladen, vinkelret på den). `punkt` er vinduets midte i plan, `bredde` løber langs tagfoden og `hoejde` op ad tagfladen (standard fra typen). Tagfladen findes ud fra punktet; `flade` vælger en bestemt flade. Det er en fejl, hvis punktet ikke ligger på en tagflade, eller hvis vinduet går ud over den. Ovenlyset arver tagets etage.
 
 ## trapper (lige løb)
 ```yaml
@@ -112,6 +122,7 @@ Punktet skal ligge inde i et lukket rum (døråbninger lukkes ved væglinjen). `
 ```yaml
 systemer:
   - {id: CV-F, navn: Centralvarme fremløb, art: varme}   # varme|brugsvand_koldt|brugsvand_varmt|afloeb|regnvand|ventilation|el|gas|andet
+  - {id: CV-R, navn: Centralvarme retur, art: varme, farve: [130, 40, 160]}   # farve [r, g, b] 0–255 overstyrer artens farve
 installationer:
   - {id: KEDEL, etage: K, art: pillefyr, punkt: [1500, 1200, 0], geometri: {kasse: [600, 700, 1300]}, system: CV-F,
      producent: …, model: …, kilde: F, ref: "typeskilt"}
@@ -119,7 +130,7 @@ installationer:
 roer:
   - {id: R-CV1, etage: K, system: CV-F, punkter: [[1500,850,1400],[1500,400,1400],[1500,400,2300]], diameter: 22, materiale: kobber}
 ```
-`punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment). Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
+`punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment) og får systemets farve. Eksempelhuset i `assets/eksempel/model.yaml` har en komplet VVS-installation (centralvarme med fremløb og retur, radiatorer, varmtvandsbeholder, koldt og varmt brugsvand og spildevand til brønd), der kan bruges som skabelon. Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
 
 **art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle IfcElectricDistributionBoard · stikkontakt IfcOutlet · lampe IfcLightFixture · afbryder IfcSwitchingDevice · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
 

@@ -24,6 +24,7 @@ typer:
   TAG:        {klasse: tag, navn: Tegltag på lægter, lag: [[tagsten, 50], [lægter, 50], [spær, 150]]}
   V1:         {klasse: vindue, navn: Vindue 2-fag, bredde: 1180, hoejde: 1300, felter: 2}
   V2:         {klasse: vindue, navn: Kældervindue, bredde: 800, hoejde: 500}
+  OV1:        {klasse: vindue, navn: Ovenlysvindue, bredde: 780, hoejde: 1180, ramme: 90}
   D1:         {klasse: doer, navn: Indvendig dør, bredde: 825, hoejde: 2040}
   D2:         {klasse: doer, navn: Hoveddør, bredde: 925, hoejde: 2100}
 
@@ -68,7 +69,14 @@ daek:
 
 tage:
   - {id: TAG1, etage: "1", navn: Sadeltag, form: sadeltag, omrids: [0, 0, 10000, 8500], rygning: x, haeldning: 45,
-     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG}
+     tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG,
+     spaer: {afstand: 900, b: 50, hanebaand: 2300}}  # spær i typens spærlag, veksler om ovenlys og skorsten
+
+ovenlys:  # punkt = vinduets midte i plan; bredde langs tagfoden, højde op ad tagfladen
+  - {id: T-OV1, tag: TAG1, type: OV1, punkt: [2500, 2600]}
+  - {id: T-OV2, tag: TAG1, type: OV1, punkt: [7500, 2600]}
+  - {id: T-OV3, tag: TAG1, type: OV1, punkt: [2500, 5900]}
+  - {id: T-OV4, tag: TAG1, type: OV1, punkt: [7500, 5900]}
 
 trapper:
   - {id: TR-K, etage: K, start: [5550, 5300], retning: 90, bredde: 800, stigninger: 13, grund: 220}
@@ -89,19 +97,101 @@ rum:
   - {id: S.03, etage: S, navn: Spisestue, punkt: [7500, 4000]}
   - {id: T.01, etage: "1", navn: Værelse, punkt: [5000, 4250], til_tag: TAG1}
 
+# VVS: pillefyr med 2-strenget centralvarme (ring langs kælderens ydervægge, stigstrenge op til radiatorerne under
+# vinduerne), indirekte opvarmet varmtvandsbeholder, koldt og varmt brugsvand til køkken og grovkøkken samt
+# spildevand under kældergulvet med fald mod brønd foran huset. Rør er etage K; z er målt fra kældergulvet
+# (stueetagens gulv = 2400, tagetagens = 5300). Fremløb ligger i z 1850, retur i 1700, koldt vand 1450, varmt 1300.
 systemer:
   - {id: CV-F, navn: Centralvarme fremløb, art: varme}
+  - {id: CV-R, navn: Centralvarme retur, art: varme, farve: [130, 40, 160]}
   - {id: BV-K, navn: Brugsvand koldt, art: brugsvand_koldt}
+  - {id: BV-V, navn: Brugsvand varmt, art: brugsvand_varmt}
+  - {id: AF, navn: Spildevand, art: afloeb}
 
 installationer:
+  # varmecentral i fyrrummet
   - {id: KEDEL, etage: K, art: pillefyr, navn: Pillefyr 12 kW, punkt: [1500, 1200, 0], geometri: {kasse: [600, 700, 1300]},
      system: CV-F, producent: Eksempel, kilde: F}
-  - {id: VVB, etage: K, art: beholder, navn: Varmtvandsbeholder 100 l, punkt: [8500, 1000, 0], geometri: {cylinder: [520, 900]}}
-  - {id: RAD1, etage: S, art: radiator, punkt: [1790, 380, 150], geometri: {kasse: [800, 100, 500]}, system: CV-F}
+  - {id: PUMPE, etage: K, art: pumpe, navn: Cirkulationspumpe, punkt: [1350, 800, 1775], rotation: 90,
+     geometri: {kasse: [150, 150, 150]}, system: CV-F}
+  - {id: EKSP, etage: K, art: ekspansionsbeholder, navn: Ekspansionsbeholder 18 l, punkt: [2300, 650, 1050],
+     geometri: {cylinder: [300, 450]}, system: CV-R}
+  - {id: VVB, etage: K, art: beholder, navn: Varmtvandsbeholder 100 l, punkt: [8500, 1000, 0], geometri: {cylinder: [520, 900]},
+     system: BV-V}
+  # radiatorer under vinduerne
+  - {id: RAD1, etage: S, art: radiator, navn: Radiator stue, punkt: [1790, 380, 150], geometri: {kasse: [800, 100, 500]}, system: CV-F}
+  - {id: RAD2, etage: S, art: radiator, navn: Radiator spisestue syd, punkt: [7490, 380, 150], geometri: {kasse: [800, 100, 500]},
+     system: CV-F}
+  - {id: RAD3, etage: S, art: radiator, navn: Radiator spisestue nord, punkt: [7410, 8120, 150], geometri: {kasse: [800, 100, 500]},
+     system: CV-F}
+  - {id: RAD4, etage: S, art: radiator, navn: Radiator køkken, punkt: [2910, 8120, 150], geometri: {kasse: [800, 100, 500]},
+     system: CV-F}
+  - {id: RAD5, etage: "1", art: radiator, navn: Radiator værelse, punkt: [380, 4250, 150], rotation: 90,
+     geometri: {kasse: [800, 100, 500]}, system: CV-F}
+  # vandindlæg ved østvæggen
+  - {id: HV, etage: K, art: ventil, navn: Hovedhane, punkt: [9620, 2750, 1390], rotation: 90, geometri: {kasse: [100, 90, 120]},
+     system: BV-K}
+  - {id: VM, etage: K, art: vandmaaler, navn: Vandmåler, punkt: [9620, 2300, 1390], rotation: 90, geometri: {kasse: [220, 110, 120]},
+     system: BV-K}
+  # tapsteder og afløb
+  - {id: KV, etage: S, art: koekkenvask, navn: Køkkenvask i underskab, punkt: [4630, 6500, 0], rotation: 90,
+     geometri: {kasse: [800, 600, 900]}, system: AF}
+  - {id: WC, etage: K, art: wc, navn: Toilet grovkøkken, punkt: [5390, 2400, 0], rotation: 90, geometri: {kasse: [400, 650, 400]},
+     system: AF}
+  - {id: HVASK, etage: K, art: haandvask, navn: Håndvask grovkøkken, punkt: [5300, 1600, 650], rotation: 90,
+     geometri: {kasse: [500, 400, 200]}, system: AF}
+  - {id: GA, etage: K, art: gulvafloeb, navn: Gulvafløb, punkt: [7000, 3000, 0], geometri: {cylinder: [200, 20]}, system: AF}
+  - {id: BRØND, etage: K, art: broend, navn: Rensebrønd Ø425, punkt: [7000, -1500, -700], geometri: {cylinder: [425, 3100]},
+     system: AF}
 
 roer:
-  - {id: R-CV1, etage: K, system: CV-F, punkter: [[1500, 850, 1400], [1500, 400, 1400], [1500, 400, 2300], [1790, 400, 2300]],
-     diameter: 22, materiale: kobber}
+  # centralvarme: fremløb og retur som ring langs ydervæggene
+  - {id: R-CV-F, etage: K, system: CV-F, diameter: 28, materiale: kobber,
+     punkter: [[1350, 1200, 1300], [1350, 1200, 1850], [1350, 380, 1850], [9620, 380, 1850], [9620, 8120, 1850],
+               [380, 8120, 1850], [380, 3900, 1850]]}
+  - {id: R-CV-R, etage: K, system: CV-R, diameter: 28, materiale: kobber,
+     punkter: [[520, 4600, 1700], [520, 7980, 1700], [9480, 7980, 1700], [9480, 520, 1700], [1650, 520, 1700],
+               [1650, 1200, 1700], [1650, 1200, 1300]]}
+  - {id: R-EKSP, etage: K, system: CV-R, diameter: 18, materiale: kobber, punkter: [[2300, 520, 1700], [2300, 650, 1700], [2300, 650, 1500]]}
+  # stigstrenge til radiatorerne (fremløb i venstre ende, retur i højre)
+  - {id: R-RAD1-F, etage: K, system: CV-F, diameter: 15, materiale: kobber, punkter: [[1440, 380, 1850], [1440, 380, 2550]]}
+  - {id: R-RAD1-R, etage: K, system: CV-R, diameter: 15, materiale: kobber,
+     punkter: [[2140, 520, 1700], [2140, 520, 2300], [2140, 380, 2300], [2140, 380, 2550]]}
+  - {id: R-RAD2-F, etage: K, system: CV-F, diameter: 15, materiale: kobber, punkter: [[7140, 380, 1850], [7140, 380, 2550]]}
+  - {id: R-RAD2-R, etage: K, system: CV-R, diameter: 15, materiale: kobber,
+     punkter: [[7840, 520, 1700], [7840, 520, 2300], [7840, 380, 2300], [7840, 380, 2550]]}
+  - {id: R-RAD3-F, etage: K, system: CV-F, diameter: 15, materiale: kobber, punkter: [[7060, 8120, 1850], [7060, 8120, 2550]]}
+  - {id: R-RAD3-R, etage: K, system: CV-R, diameter: 15, materiale: kobber,
+     punkter: [[7760, 7980, 1700], [7760, 7980, 2300], [7760, 8120, 2300], [7760, 8120, 2550]]}
+  - {id: R-RAD4-F, etage: K, system: CV-F, diameter: 15, materiale: kobber, punkter: [[2560, 8120, 1850], [2560, 8120, 2550]]}
+  - {id: R-RAD4-R, etage: K, system: CV-R, diameter: 15, materiale: kobber,
+     punkter: [[3260, 7980, 1700], [3260, 7980, 2300], [3260, 8120, 2300], [3260, 8120, 2550]]}
+  - {id: R-RAD5-F, etage: K, system: CV-F, diameter: 15, materiale: kobber, punkter: [[380, 3900, 1850], [380, 3900, 5450]]}
+  - {id: R-RAD5-R, etage: K, system: CV-R, diameter: 15, materiale: kobber,
+     punkter: [[520, 4600, 1700], [520, 4600, 2300], [380, 4600, 2300], [380, 4600, 5450]]}
+  # varmtvandsbeholderens varmespiral
+  - {id: R-VVB-F, etage: K, system: CV-F, diameter: 22, materiale: kobber, punkter: [[8400, 380, 1850], [8400, 1000, 1850], [8400, 1000, 900]]}
+  - {id: R-VVB-R, etage: K, system: CV-R, diameter: 22, materiale: kobber, punkter: [[8600, 1000, 900], [8600, 1000, 1700], [8600, 520, 1700]]}
+  # koldt vand: stikledning gennem østvæggen, hovedhane og måler, videre til beholder, grovkøkken og køkken
+  - {id: R-BV-K, etage: K, system: BV-K, diameter: 22, materiale: pex,
+     punkter: [[11000, 3000, 1450], [9620, 3000, 1450], [9620, 1500, 1450], [4150, 1500, 1450], [4150, 6500, 1450],
+               [4850, 6500, 1450], [4850, 6500, 2900]]}
+  - {id: R-BV-K-VVB, etage: K, system: BV-K, diameter: 18, materiale: pex,
+     punkter: [[8850, 1500, 1450], [8850, 1000, 1450], [8850, 1000, 200], [8760, 1000, 200]]}
+  - {id: R-BV-K-WC, etage: K, system: BV-K, diameter: 15, materiale: pex, punkter: [[5150, 1500, 1450], [5150, 2400, 1450], [5150, 2400, 500]]}
+  - {id: R-BV-K-HV, etage: K, system: BV-K, diameter: 15, materiale: pex, punkter: [[5200, 1500, 1450], [5200, 1580, 1450], [5200, 1580, 850]]}
+  # varmt vand fra beholderens top til håndvask og køkken
+  - {id: R-BV-V, etage: K, system: BV-V, diameter: 22, materiale: pex,
+     punkter: [[8500, 1000, 900], [8500, 1000, 1300], [8500, 1650, 1300], [4250, 1650, 1300], [4250, 6400, 1300],
+               [4900, 6400, 1300], [4900, 6400, 2900]]}
+  - {id: R-BV-V-HV, etage: K, system: BV-V, diameter: 15, materiale: pex, punkter: [[5300, 1650, 1300], [5300, 1650, 850]]}
+  # spildevand under kældergulvet med ca. 1 % fald mod brønden
+  - {id: R-AF, etage: K, system: AF, diameter: 110, materiale: pvc,
+     punkter: [[4700, 6750, 2400], [4700, 6750, -250], [4700, 3000, -285], [7000, 3000, -310], [7000, -1290, -350]]}
+  - {id: R-AF-WC, etage: K, system: AF, diameter: 110, materiale: pvc, punkter: [[5390, 2400, 0], [5390, 2400, -200], [5390, 3000, -292]]}
+  - {id: R-AF-HV, etage: K, system: AF, diameter: 50, materiale: pvc, punkter: [[5300, 1600, 650], [5300, 1600, -200], [5300, 3000, -291]]}
+  - {id: R-AF-GA, etage: K, system: AF, diameter: 75, materiale: pvc, punkter: [[7000, 3000, 0], [7000, 3000, -310]]}
+  - {id: R-KLOAK, etage: K, system: AF, diameter: 110, materiale: pvc, punkter: [[7000, -1710, -380], [7000, -5000, -450]]}
 
 generisk:
   - {id: SKORSTEN, etage: K, klasse: IfcChimney, profil: [[4300, 3400], [4800, 3400], [4800, 3900], [4300, 3900]],

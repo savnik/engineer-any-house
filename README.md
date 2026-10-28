@@ -23,12 +23,14 @@ Most houses come with little more than a few old drawings, a public building rec
 
 ## See it in 3D
 
-The example house from the repository, built and computed by the tools in CI. Click a picture to open the interactive viewer.
+One example house from the repository, built and computed by the tools in CI. The BIM model has roof windows and the full plumbing and heating installation (central heating, radiators, hot water tank, hot and cold water, drains), with two facades and one roof face see-through. The FEM model is the same house's walls and slabs. Click a picture to open the interactive viewer.
 
 | BIM model (IFC4) | FEM model (walls and slabs as shells) |
 |---|---|
 | [![BIM model of the example house](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM model with von Mises stresses](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
 | Built with `bim.py byg`, exported to glTF with `bim.py eksport` | Computed with `fem.py regn`, shown with `fem.py vis`: pick a load combination and a result |
+
+The VVS agent draws the same house's installation as a [plumbing and heating schematic](https://savnik.github.io/engineer-any-house/vvs/principdiagram.svg) ([source](plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg)).
 
 ## Plugins
 
