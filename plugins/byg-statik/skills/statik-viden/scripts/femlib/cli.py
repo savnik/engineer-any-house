@@ -205,7 +205,7 @@ def vis(args, argv) -> int:
     s = model.laes_spec(spec, aendr)
     m = model.analyser(s)
     res = model.resultater(s, m, _kommando(argv))
-    sti = v.vis(s, model.kurver_alle(s, m), res, _uddir(spec, uddir))
+    sti = v.vis(s, model.kurver_alle(s, m), res, _uddir(spec, uddir), cdn=_flag(args, "--cdn"))
     print(sti)
     print("Åbn filen i en browser (dobbeltklik, eller: open " + shlex.quote(str(sti)) + ").")
     return 0

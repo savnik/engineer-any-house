@@ -15,3 +15,4 @@ datafordeler_api_key
 
 # uv sync (udviklingsmiljøet i pyproject.toml)
 .venv/
+_site/

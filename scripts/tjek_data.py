@@ -160,7 +160,9 @@ def main() -> int:
             fejl.append(f"{rel}: ligger i en sags-/datamappe – hører ikke hjemme i repoet")
         elif f.name in SAGSFILER and not {"skabelon", "evals", "tests"} & set(rel.parts):
             fejl.append(f"{rel}: sagsfil – hører hjemme i en sagsmappe eller pluginets datamappe")
-        elif f.suffix.lower() in (".pdf", ".docx", ".xlsx", ".jpg", ".jpeg", ".heic", ".png") and "evals" not in rel.parts:
+        # docs/img: README images rendered from the repo's own examples (scripts/demo_site.py --billeder)
+        elif (f.suffix.lower() in (".pdf", ".docx", ".xlsx", ".jpg", ".jpeg", ".heic", ".png") and "evals" not in rel.parts
+              and rel.parts[:2] != ("docs", "img")):
             fejl.append(f"{rel}: bilag/dokument – hører hjemme i sagsmappens bilag/")
         if f.suffix.lower() not in TEKST:
             continue

@@ -252,7 +252,8 @@ window.addEventListener('load', opdater);
 </body></html>"""
 
 
-def vis(s: dict, kurver: dict, res: dict, ud: pathlib.Path) -> pathlib.Path:
+def vis(s: dict, kurver: dict, res: dict, ud: pathlib.Path, cdn: bool = False) -> pathlib.Path:
+    """cdn: load plotly.js from its CDN instead of embedding it (a small file for the web; needs internet)."""
     plan = s["_plan"]
     span = la.span(s)
     fig = go.Figure()
@@ -358,7 +359,7 @@ def vis(s: dict, kurver: dict, res: dict, ud: pathlib.Path) -> pathlib.Path:
     else:
         fig.update_layout(scene=dict(aspectmode="data", xaxis_title="x [m]", yaxis_title="y [m]", zaxis_title="z [m]",
                                      camera=dict(eye=dict(x=-1.3, y=-1.6, z=0.9))))
-    plot = fig.to_html(include_plotlyjs=True, full_html=False, div_id="fem",
+    plot = fig.to_html(include_plotlyjs="cdn" if cdn else True, full_html=False, div_id="fem",
                        config={"displaylogo": False, "responsive": True})
     kombier = list(s["kombinationer"])
     brud = [k for k in kombier if s["kombinationer"][k]["type"] == "brud"]
