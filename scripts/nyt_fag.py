@@ -113,7 +113,7 @@ def main() -> int:
     if not (ok1 and ok2):
         print("Bemærk: en fagtabel blev ikke fundet – tilføj faget manuelt i projektleder- og kvalitetskontrol-skillen.")
     print("Næste skridt: udfyld alle TODO (fagagent, videnbase med V/T-status, kontrolpunkter, fejlkatalog, eval),"
-          " opdatér README og koordinering.md, og kør: python3 scripts/valider.py --claude")
+          " opdatér README.md, README.da.md og koordinering.md, og kør: python3 scripts/valider.py --claude")
     return 0
 
 
