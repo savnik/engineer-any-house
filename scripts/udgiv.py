@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Udgivelse: samler versionsnoterne og hæver versionerne – kun på main, efter merge.
+"""Udgivelse: samler versionsnoterne og hæver versionerne – i en udgivelsesgren fra main, efter merge.
 
 Feature-grene hæver aldrig versioner selv (det er den største kilde til merge-konflikter).
 I stedet lægger hver gren én versionsnote i versionsnoter/<gren>.md:
@@ -13,7 +13,10 @@ I stedet lægger hver gren én versionsnote i versionsnoter/<gren>.md:
 Brug:  python3 scripts/udgiv.py            hæv versioner, skriv CHANGELOG.md, slet de udgivne noter
        python3 scripts/udgiv.py --proev    vis hvad der ville ske
        python3 scripts/udgiv.py --check    valider noterne (bruges af valider.py)
-Commit derefter: git commit -am "Udgivelse <version>"  (pre-commit tillader versionsændringer på main).
+main er beskyttet, så udgivelsen går også gennem en PR:
+       git switch -c udgivelse/<version> origin/main && python3 scripts/udgiv.py
+       git commit -am "Udgivelse <version>" && git push -u origin HEAD   → PR, CI grøn, merge
+(pre-commit tillader versionsændringer i grene, der hedder udgivelse/*).
 """
 import datetime
 import json
@@ -132,7 +135,7 @@ def main() -> int:
     CHANGELOG.write_text(ny_log, encoding="utf-8")
     for f in noter:
         f.unlink()
-    print(f"\nCHANGELOG.md opdateret, {len(noter)} note(r) udgivet. Commit: git commit -am \"Udgivelse {m_ny}\"")
+    print(f"\nCHANGELOG.md opdateret, {len(noter)} note(r) udgivet. Commit i grenen udgivelse/{m_ny}: git commit -am \"Udgivelse {m_ny}\" – og åbn en PR")
     return 0
 
 

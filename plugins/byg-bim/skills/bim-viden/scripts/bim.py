@@ -24,6 +24,10 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
                                            --tjek: afviger kortet?  --importer: kort → forslag/ejendomskort-import.yaml
   info  <fil.ifc>                          Overblik over en (fremmed) model
   vis   <fil.ifc> <id|GlobalId|#step>       Ét element: attributter, egenskaber, materiale, placering
+  maal  <fil.ifc|model.yaml> <id> [<id2>] | --rum <navn> | --etage <navn>
+                                           Mål i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger),
+                                           rum (indvendige mål, areal, højde), afstand mellem to elementer,
+                                           alle vægge på en etage. Altid med kilden (Byg_Kilde). En .yaml bygges først
   find  <fil.ifc> "<selector>"             Fx "IfcWall, /Status=EXISTING/" (ifcopenshell-selector)
   diff  <gammel.ifc> <ny.ifc>              Ændringer mellem to versioner
   pdf   <fil.pdf> --oversigt                Kontaktark over alle sider (find tegningerne først)

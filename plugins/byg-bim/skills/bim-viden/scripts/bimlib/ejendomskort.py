@@ -11,8 +11,6 @@ import os
 import pathlib
 import re
 
-import yaml
-
 from .spec import SpecFejl, _laes
 
 GENERERET = "<!-- GENERERET fra {model} med bim.py ejendomskort – RET IKKE HER. Ret fakta i hovedmodellen via forslag + bim.py flet. -->"

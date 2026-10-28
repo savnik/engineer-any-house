@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""PreToolUse (Bash): bim-sammenligner må kun køre læsende bim.py-kommandoer.
+"""PreToolUse (Bash): bim-sammenligner og bim-opslag må kun køre læsende bim.py-kommandoer.
 
-Tilladt: [BIM=<sti>; ] python3 <…/bim.py | "$BIM"> sammenlign|gitter|linjer|tegn|vis|find|info|skala|tjek|afkod tjek …
+Tilladt: [BIM=<sti>; ] python3 <…/bim.py | "$BIM"> <kommando> …, hvor kommandoen står i agentens liste i TILLADT
+(sammenligneren: også 'afkod tjek' og 'tjek --ud <…/bim/sammenligning/…>').
 Alt andet (flere kommandoer, omdirigering, rm/mv/cp, redigering) afvises. Andre agenter påvirkes ikke.
 Fail-safe: en uventet fejl blokerer ikke.
 """
@@ -10,8 +11,14 @@ import re
 import shlex
 import sys
 
-TILLADT = {"sammenlign", "gitter", "linjer", "tegn", "vis", "find", "info", "skala", "afkod", "tjek"}
-AGENT = "bim-sammenligner"
+TILLADT = {
+    "bim-sammenligner": {"sammenlign", "gitter", "linjer", "tegn", "vis", "find", "info", "skala", "maal", "afkod", "tjek"},
+    "bim-opslag": {"info", "find", "vis", "maal"},
+}
+SVAR = {
+    "bim-sammenligner": "Du retter aldrig selv – beskriv afvigelsen i dit svar.",
+    "bim-opslag": "Du slår kun op – ændringer i modellen laver bim-modelloer.",
+}
 
 
 def afvis(grund: str) -> None:
@@ -19,7 +26,7 @@ def afvis(grund: str) -> None:
                                              "permissionDecisionReason": grund}}, ensure_ascii=False))
 
 
-def tjek(cmd: str) -> str | None:
+def tjek(cmd: str, agent: str = "bim-sammenligner") -> str | None:
     """None = tilladt; ellers grunden til afvisning."""
     c = cmd.strip()
     m = re.match(r'^BIM=("[^"]+"|\'[^\']+\'|\S+)\s*(;|&&)\s*', c)
@@ -33,8 +40,8 @@ def tjek(cmd: str) -> str | None:
         return "kommandoen kan ikke fortolkes"
     if len(dele) < 3 or dele[0] not in ("python3", "python") or not (dele[1].endswith("bim.py") or dele[1] == "$BIM"):
         return "kun python3 <…/bim.py> <kommando>"
-    if dele[2] not in TILLADT:
-        return f"kommandoen '{dele[2]}' er ikke læsende – tilladt: {', '.join(sorted(TILLADT))}"
+    if dele[2] not in TILLADT[agent]:
+        return f"kommandoen '{dele[2]}' er ikke tilladt – tilladt: {', '.join(sorted(TILLADT[agent]))}"
     if dele[2] == "afkod" and (len(dele) < 4 or dele[3] != "tjek"):
         return "kun 'afkod tjek'"
     if dele[2] == "tjek":
@@ -49,12 +56,12 @@ def tjek(cmd: str) -> str | None:
 def main() -> int:
     try:
         inp = json.loads(sys.stdin.read() or "{}")
-        at = str(inp.get("agent_type") or "")
-        if at.rsplit(":", 1)[-1] != AGENT:
+        agent = str(inp.get("agent_type") or "").rsplit(":", 1)[-1]
+        if agent not in TILLADT:
             return 0
-        grund = tjek(str((inp.get("tool_input") or {}).get("command") or ""))
+        grund = tjek(str((inp.get("tool_input") or {}).get("command") or ""), agent)
         if grund:
-            afvis(f"bim-sammenligner er skrivebeskyttet: {grund}. Du retter aldrig selv – beskriv afvigelsen i dit svar.")
+            afvis(f"{agent} er skrivebeskyttet: {grund}. {SVAR[agent]}")
     except Exception:
         return 0
     return 0

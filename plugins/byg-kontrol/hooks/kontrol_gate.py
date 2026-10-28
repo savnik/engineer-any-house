@@ -44,6 +44,8 @@ Regler
   fagversion ("afventer_kontrol" eller "sammenlignet") og sætter "under_sammenligning"; ved aflevering bliver den
   "sammenlignet". Et fagkald efter en sammenligning er en rettelse: det bruger ikke af kontrolforsøgene. Højst
   "maks_sammenligninger" (standard 3) sammenligninger pr. leverance. Kontrollen kan kaldes efter sammenligningen.
+- Opslagsagenter (fagregister: "opslag", fx bim-opslag) er hverken fag- eller hjælpeagenter: de svarer på rene
+  spørgsmål til en eksisterende model, kaldes uden LEVERANCE og gates ikke. De kan ikke skrive (valider.py).
 - Fase-gate: projektkontrol af en planleverance i fase 3 eller senere ("FASE: 3" i prompten) kræver
   "DESIGNGRUNDLAG: <id>, <id> …" med fagleverancer, der alle er godkendt (design freeze).
 - Manuel gate G2 (løsningsgodkendelse): kun brugeren kan åbne den ved selv at skrive

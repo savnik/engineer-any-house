@@ -97,12 +97,59 @@ def regn(args, argv) -> int:
     if not ingen:
         ud = _uddir(spec, uddir)
         ud.mkdir(parents=True, exist_ok=True)
-        sti = ud / f"{re.sub(r'[^A-Za-z0-9æøåÆØÅ_.-]+', '_', s['navn'])}.fem.json"
+        sti = _json_for(spec, s, uddir)
         model.gem_json(res, sti)
         print(f"\n→ {sti}")
     if not all(v["ok"] for k in res["kombinationer"].values() for v in k["ligevaegt"].values()):
         print("ADVARSEL: ligevægten passer ikke – tjek laster og understøtninger.", file=sys.stderr)
         return 1
+    return 0
+
+
+def _json_for(spec: pathlib.Path, s: dict, uddir) -> pathlib.Path:
+    return _uddir(spec, uddir) / f"{re.sub(r'[^A-Za-z0-9æøåÆØÅ_.-]+', '_', s['navn'])}.fem.json"
+
+
+def resultat(args, argv) -> int:
+    """Slår op i den gemte fem.json uden at regne igen – og afviser den, hvis fem.yaml er ændret siden."""
+    import json
+    uddir = _opt(args, "--ud")
+    kombi = _opt(args, "--kombi")
+    element = _opt(args, "--element")
+    spec = pathlib.Path(args[0]).expanduser().resolve()
+    s = model.laes_spec(spec)
+    sti = _json_for(spec, s, uddir)
+    if not sti.exists():
+        print(f"Intet gemt resultat ({sti}). Modellen er ikke regnet – det er statikerens opgave (fem.py regn).",
+              file=sys.stderr)
+        return 1
+    res = json.loads(sti.read_text(encoding="utf-8"))
+    if res.get("spec_sha256_12") != s["_sha"]:
+        print(f"FORÆLDET: {sti.name} er regnet på spec-sha {res.get('spec_sha256_12')}, men {spec.name} har nu "
+              f"{s['_sha']}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py regn).", file=sys.stderr)
+        return 1
+    if res.get("aendringer"):
+        print(f"{sti.name} er regnet med ændrede input (--saet: {' · '.join(res['aendringer'])}) og svarer ikke til "
+              f"{spec.name}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py regn).", file=sys.stderr)
+        return 1
+    if kombi:
+        if kombi not in res["kombinationer"]:
+            raise SpecFejl(f"ukendt kombination '{kombi}' (kendte: {', '.join(res['kombinationer'])})")
+        res["kombinationer"] = {kombi: res["kombinationer"][kombi]}
+    if element:
+        navne = sorted({n for k in res["kombinationer"].values() for f in ("elementer", "flader", "udtraek")
+                        for n in k.get(f, {})})
+        fundet = False
+        for k in res["kombinationer"].values():
+            for felt in ("elementer", "flader", "udtraek"):
+                if felt in k:
+                    k[felt] = {n: v for n, v in k[felt].items() if n.lower() == element.lower()}
+                    fundet |= bool(k[felt])
+        if not fundet:
+            raise SpecFejl(f"ukendt element, flade eller udtræk '{element}' (kendte: {', '.join(navne)})")
+    print(_resume(res))
+    print(f"\nKilde: {sti} (spec-sha {s['_sha']} = {spec.name}, ingen ny beregning)")
+    print("OVERSLAG fra fem.py – skal eftervises af den ansvarlige statiker. Nævn kombinationen, når tallet bruges.")
     return 0
 
 
@@ -328,11 +375,11 @@ def main(args) -> int:
             return 0
         if cmd == "test":
             return test(rest, argv)
-        if cmd in ("regn", "tegn", "vis"):
+        if cmd in ("regn", "tegn", "vis", "resultat"):
             if not rest:
                 print(f"Brug: fem.py {cmd} <fem.yaml> …", file=sys.stderr)
                 return 2
-            return {"regn": regn, "tegn": tegn, "vis": vis}[cmd](rest, argv)
+            return {"regn": regn, "tegn": tegn, "vis": vis, "resultat": resultat}[cmd](rest, argv)
         print(f"Ukendt kommando '{cmd}'. Se: python3 fem.py --help", file=sys.stderr)
         return 2
     except SpecFejl as e:

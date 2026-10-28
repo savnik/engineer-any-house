@@ -12,6 +12,9 @@ Kør altid med:  python3 fem.py <kommando> ...   (scriptet skifter selv til sit 
                                             → <ud>/<navn>.fem.json (+ resumé på skærmen). Standard-ud: <specmappe>/fem/ (eller specmappen selv, hvis den hedder fem)
                                             --saet ændrer ét input uden at røre filen (kontrollens egne input),
                                             fx --saet lasttilfaelde.Q.laster.0.linjelast=4.0
+  resultat <fem.yaml> [--element <navn>] [--kombi <navn>] [--ud <mappe>]
+                                            Opslag i det gemte resultat (<navn>.fem.json) uden ny beregning. Afviser
+                                            resultatet, hvis fem.yaml er ændret siden (spec-sha) eller regnet med --saet
   tegn  <fem.yaml> [model|deformation|M|V|N|spaending|n_u|n_v|pladmoment|flytning|alle] [--kombi <navn>] [--ud <mappe>]
                                             PNG til notatet og til din egen kontrol af modellen (model viser lasterne)
   vis   <fem.yaml> [--ud <mappe>]           Interaktiv HTML (åbnes i browseren): drej/zoom, laster som pile, vælg
