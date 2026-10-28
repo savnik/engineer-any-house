@@ -90,6 +90,11 @@ def _find(a):
     return find(pathlib.Path(a.ifc), a.selector)
 
 
+def _maal(a):
+    from .maal import maal
+    return maal(pathlib.Path(a.ifc), a.a, a.b, rum=a.rum, etage_navn=a.etage)
+
+
 def _diff(a):
     from .inspicer import diff
     return diff(pathlib.Path(a.gammel), pathlib.Path(a.ny))
@@ -151,6 +156,8 @@ def main(argv):
     x = sp.add_parser("info"); x.add_argument("ifc"); x.set_defaults(fn=_info)
     x = sp.add_parser("vis"); x.add_argument("ifc"); x.add_argument("id"); x.set_defaults(fn=_vis)
     x = sp.add_parser("find"); x.add_argument("ifc"); x.add_argument("selector"); x.set_defaults(fn=_find)
+    x = sp.add_parser("maal"); x.add_argument("ifc"); x.add_argument("a", nargs="?"); x.add_argument("b", nargs="?")
+    x.add_argument("--rum"); x.add_argument("--etage"); x.set_defaults(fn=_maal)
     x = sp.add_parser("diff"); x.add_argument("gammel"); x.add_argument("ny"); x.set_defaults(fn=_diff)
     x = sp.add_parser("pdf"); x.add_argument("pdf"); x.add_argument("--sider"); x.add_argument("--dpi", type=int, default=200)
     x.add_argument("--oversigt", action="store_true")

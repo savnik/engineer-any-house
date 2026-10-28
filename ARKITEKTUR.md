@@ -64,7 +64,7 @@ Måling af 437 transskripter: subagenter 59 %, hovedtråd 35 %, workflows 6 % (m
 | Kilde | Design |
 |---|---|
 | Workflows startet på "Fortsæt" | PreToolUse-hook på `Workflow`: afvises i byg-sager, medmindre brugerens seneste besked nævner "workflow" |
-| Opus på alt | Kontrol (`let`) og `bim-sammenligner` på Sonnet, produktopslag på Haiku; `fuld` kontrol kræver `model: opus` i kaldet |
+| Opus på alt | Kontrol (`let`) og `bim-sammenligner` på Sonnet, produktopslag og `bim-opslag` på Haiku; `fuld` kontrol kræver `model: opus` i kaldet |
 | Lange kontrolloop | 2 forsøg pr. runde; derefter eskalering til brugeren; ny runde (med RCA) kun efter brugerens `Ny runde <id>`; højst 2 runder |
 | Lange fagkald og genlæsning | `maxTurns` (fag 150, kontrol 60, sammenligner 50) og "Tokenbudget" i de fælles protokoller: hver fil én gang, ingen scannede PDF'er, resuméer frem for rå resultater, ét Write, arbejdsfil til genforsøg |
 | Mange leverancer pr. sag | Projektlederen viser status og spørger efter 3 fagleverancer; `let` er standardniveau, `fuld` for statik kun ved dimensionering eller ændring af en bærende del |
@@ -78,6 +78,7 @@ Måling af 437 transskripter: subagenter 59 %, hovedtråd 35 %, workflows 6 % (m
 |---|---|
 | `bim-modelloer` | Fagagent med **Bash** (undtagelse fra de øvrige fag: værktøjet skal køres). Afkoder, bygger og retter. Skriver modelnotat |
 | `bim-sammenligner` | **Hjælpeagent** (fagregister `hjaelpere`): Read/Glob/Grep/Bash, ingen hukommelse. Hooken `byg-bim/hooks/sammenligner_vagt.py` tillader kun læsende `bim.py`-kommandoer |
+| `bim-opslag` | **Opslagsagent** (fagregister `opslag`): Haiku, Read/Glob/Grep/Bash, ingen hukommelse, ingen leverance og ingen kontrol. Svarer på rene spørgsmål til en eksisterende model (mål, afstande, kilder) med `bim.py maal`. Samme hook tillader kun `maal`, `vis`, `find` og `info`. Grund: et mål på en kældervæg tog minutter som leverance til `bim-modelloer` (Opus, protokol, notat), selv om værktøjet svarer på under et sekund |
 | `bim.py afkod tjek` | Afkodningen kontrolleres mod tegningen selv: kalibreringsrest, skala mod målestok, hvert aflæst mål mod afstanden mellem dets endepunkter og målkædernes sum. Fanger fejllæste tal |
 | `bim.py sammenlign` | Modellen tegnes i originalens pixelramme (kalibreret). Original, model og overlay pr. visning og i fliser, plus automatisk sammenligning af alle afkodede mål (mod modelfladerne ud for hjælpelinjernes fod), rum, åbninger, vægtykkelser og koter |
 | Hook (`kontrol_gate.py`) | Hjælpekald kræver en afleveret fagversion og sætter `under_sammenligning` → `sammenlignet`. Et fagkald efter en sammenligning er en **rettelse**, som ikke bruger kontrolforsøg. Højst `maks_sammenligninger` (3). Kontrollen kan kaldes efter sammenligningen, og Stop minder om uafsluttede sammenligninger |

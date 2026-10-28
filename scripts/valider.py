@@ -119,7 +119,7 @@ def main() -> int:
                 if "Agent" in tools:
                     FEJL.append(f"{rel}: fagagenter må ikke have Agent-værktøjet (de kalder ikke selv kontrollen)")
                 hj = {h for v in (laes_json(PLUGINS / "byg-kontrol" / "hooks" / "fagregister.json") or {"fag": {}})["fag"].values()
-                      for h in v.get("hjaelpere", [])}
+                      for h in v.get("hjaelpere", []) + v.get("opslag", [])}
                 if a.stem not in hj and "FÆLLES-PROTOKOL:START" not in a.read_text(encoding="utf-8"):
                     FEJL.append(f"{rel}: mangler FÆLLES-PROTOKOL-markører")
         for s in sorted(p.glob("skills/*/SKILL.md")):
@@ -146,13 +146,18 @@ def main() -> int:
     for k in kontrol_agenter - registrerede:
         FEJL.append(f"Kontrolagent '{k}' er ikke registreret i fagregister.json")
     hjaelpere = {h for v in reg["fag"].values() for h in v.get("hjaelpere", [])}
+    opslag = {h for v in reg["fag"].values() for h in v.get("opslag", [])}
     for h in sorted(hjaelpere - set(agenter)):
         FEJL.append(f"fagregister: hjælpeagent '{h}' findes ikke")
+    for h in sorted(opslag - set(agenter)):
+        FEJL.append(f"fagregister: opslagsagent '{h}' findes ikke")
+    for h in sorted(opslag & hjaelpere):
+        FEJL.append(f"fagregister: '{h}' er både hjælpe- og opslagsagent")
     for n, pl in agenter.items():
         if pl.startswith("byg-") and pl not in ("byg-kontrol", "byg-team") and n not in {v["agent"] for v in reg["fag"].values()} \
-                and n not in hjaelpere:
+                and n not in hjaelpere | opslag:
             FEJL.append(f"Fagagent '{n}' ({pl}) har ingen modsvarende kontrolagent i fagregister.json")
-        if n in hjaelpere and agenter[n] not in ("byg-kontrol",):
+        if n in hjaelpere | opslag and agenter[n] not in ("byg-kontrol",):
             fm = frontmatter(next(PLUGINS.glob(f"*/agents/{n}.md"))) or {}
             if {t.strip() for t in fm.get("tools", "").split(",")} & {"Write", "Edit", "MultiEdit", "Agent", "NotebookEdit"} \
                     or "memory" in fm:

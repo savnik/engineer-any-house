@@ -30,6 +30,9 @@
       "hjaelpere": [
         "bim-sammenligner"
       ],
+      "opslag": [
+        "bim-opslag"
+      ],
       "skriv": [
         "bim/forslag/*",
         "bim/kilder/*"
