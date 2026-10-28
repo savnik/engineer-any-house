@@ -46,6 +46,6 @@ Overlay: originalen lysnet, modellen **rød**. Rødt, der ikke dækker en streg 
 
 ## Runde ≥ 2
 1. Tag stilling til hver tidligere afvigelse: `lukket` eller `aaben` (genbrug id'et), med evidens.
-2. Se efter **regressioner**, hvor modellen er ændret (`bim.py diff` er ikke tilladt for dig – sammenlign med forrige rundes billeder).
+2. Kør `sammenlign` med `--forrige <forrige rundes mappe>`. `fliser.md` markerer så de fliser, hvor modeltegningen er ændret (`model ændret`), og dem, der er pixel for pixel uændrede (`uændret`). Se efter **regressioner** i de ændrede fliser; de uændrede er dækket af forrige runde, medmindre en åben afvigelse ligger i dem. Fliser med auto-fund gennemgås altid. (`bim.py diff` er ikke tilladt for sammenligneren.)
 3. Nye væsentlige fund uden for de ændrede områder er `overset: true`.
 4. `resultat: ok`, når ingen væsentlige er åbne. Bestridte afvigelser vurderes på originalens evidens.

@@ -5,6 +5,8 @@ For hver visning i afkodning.yaml:
   model.png     – modellen tegnet i samme pixelramme (via kalibreringen): plan i snit, snit eller facade
   overlay.png   – kildetegningen lysnet med modellen i rødt og afkodede punkter i grønt
   fliser/       – samme tre side om side i fliser (til grundig gennemgang i høj opløsning)
+  fliser.md     – hvilke fliser der skal gennemgås: tomme fliser springes over, og med --forrige
+                  (sidste rundes sammenligningsmappe) kun fliser, hvor modellen er ændret eller auto har fund
   auto.md/json  – automatisk sammenligning af alle afkodede mål, rum, åbninger, vægtykkelser og koter
 
 Den automatiske del er deterministisk; den visuelle gennemgang laves af bim-sammenligner.
@@ -33,6 +35,9 @@ from .tegn import (_ramme_for_side, fyld_poly, plan_data, polys_af, projektion, 
                    snit_polygoner)
 
 FLISE = 760
+BLAEK = 160         # gråtone under denne værdi tæller som streg
+TOM_ANDEL = 0.002   # en flise med færre streger end dette i både original og model er tom
+AENDRET_PX = 25     # så mange ændrede modelpixels (efter støjfilter) gør en flise ændret
 SOEG = 150.0  # mm – søgeafstand fra et målpunkt til en modelflade
 
 
@@ -335,7 +340,10 @@ def _auto(f, v, g, M, sidevogn):
 
 # ------------------------------------------------------------------ fliser
 def _fliser(orig, model, overlay, mappe, vid, x0, y0):
+    """Skriv fliserne; returnér (fil, boks) pr. flise. Boksen er i visningens pixelramme."""
     mappe.mkdir(parents=True, exist_ok=True)
+    for gammel in mappe.glob("flise-*.png"):
+        gammel.unlink()
     W, H = orig.size
     nx, ny = max(1, math.ceil(W / FLISE)), max(1, math.ceil(H / FLISE))
     tw, th = math.ceil(W / nx), math.ceil(H / ny)
@@ -357,12 +365,69 @@ def _fliser(orig, model, overlay, mappe, vid, x0, y0):
                             "   |  original  |  model  |  overlay", fill=(0, 0, 0), font=font)
             fil = mappe / f"flise-r{r + 1}c{c + 1}.png"
             ark.save(fil)
-            filer.append(fil)
+            filer.append((fil, box))
     return filer
 
 
+def _blaek(img):
+    return np.asarray(img.convert("L")) < BLAEK
+
+
+def _aendret(ny, gammel):
+    """Pixelmaske over ændrede streger i modellen; None, hvis forrige model ikke kan sammenlignes."""
+    if gammel is None or gammel.size != ny.size:
+        return None
+    d = _blaek(ny) ^ _blaek(gammel)
+    # enkeltpixels (antialiasing) tæller ikke: kræv en ændret nabo vandret eller lodret
+    nabo = np.zeros_like(d)
+    nabo[:, 1:] |= d[:, :-1]
+    nabo[:, :-1] |= d[:, 1:]
+    nabo[1:, :] |= d[:-1, :]
+    nabo[:-1, :] |= d[1:, :]
+    return d & nabo
+
+
+def _flisevalg(fliser, orig, model_img, gammel_model, rows, x0, y0):
+    """Afgør pr. flise, om den skal gennemgås. Returnér rækker til fliser.md."""
+    o, m = _blaek(orig), _blaek(model_img)
+    aendr = _aendret(model_img, gammel_model)
+    valg = []
+    for fil, (a, b, c, d) in fliser:
+        areal = max(1, (c - a) * (d - b))
+        tom = o[b:d, a:c].sum() / areal < TOM_ANDEL and m[b:d, a:c].sum() / areal < TOM_ANDEL
+        fund = [f"A{i + 1}" for i, rw in enumerate(rows) if rw["status"] != "OK"
+                and any(a <= p[0] - x0 < c and b <= p[1] - y0 < d for p in rw["px"])]
+        n_aendr = None if aendr is None else int(aendr[b:d, a:c].sum())
+        if tom:
+            grund, gennemgaa = "tom", False
+        elif fund:
+            grund, gennemgaa = "auto-fund", True
+        elif n_aendr is None:
+            grund, gennemgaa = "første runde" if gammel_model is None else "forrige model kan ikke sammenlignes", True
+        elif n_aendr >= AENDRET_PX:
+            grund, gennemgaa = "model ændret", True
+        else:
+            grund, gennemgaa = "uændret", False
+        valg.append({"flise": fil.stem.removeprefix("flise-"), "fil": fil.name, "gennemgaa": gennemgaa,
+                     "grund": grund, "aendrede_px": n_aendr, "fund": fund})
+    return valg
+
+
+def _fliser_md(valg, vid, forrige):
+    g = [v for v in valg if v["gennemgaa"]]
+    lin = [f"# Fliser – {vid}",
+           f"Gennemgå {len(g)} af {len(valg)} fliser" + (f" (sammenlignet med {forrige})" if forrige else "") + ".",
+           "Tomme fliser har hverken streger i originalen eller i modellen. Uændrede fliser er dækket af forrige "
+           "runde – men læs en uændret flise alligevel, hvis en åben afvigelse fra forrige runde ligger i den.", "",
+           "| Flise | Gennemgå | Grund | Ændrede px | Auto-fund |", "|---|---|---|---|---|"]
+    for v in valg:
+        lin.append(f"| {v['flise']} | {'ja' if v['gennemgaa'] else 'nej'} | {v['grund']} | "
+                   f"{'–' if v['aendrede_px'] is None else v['aendrede_px']} | {', '.join(v['fund']) or '–'} |")
+    return "\n".join(lin) + "\n"
+
+
 # ------------------------------------------------------------------ indgang
-def sammenlign(ifc, afk_sti, visning=None, ud=None, snithoejde=1000.0):
+def sammenlign(ifc, afk_sti, visning=None, ud=None, snithoejde=1000.0, forrige=None):
     ifc = pathlib.Path(ifc)
     d = afkod.indlaes(afk_sti)
     f = ifcopenshell.open(str(ifc))
@@ -371,6 +436,10 @@ def sammenlign(ifc, afk_sti, visning=None, ud=None, snithoejde=1000.0):
     former = hent(f)
     kildebillede = Image.open(d["kilde"]["_billede"]).convert("RGB")
     ud = pathlib.Path(ud) if ud else ifc.parent.parent / "sammenligning" / d["kilde"]["id"]
+    forrige = pathlib.Path(forrige) if forrige else None
+    if forrige and forrige.resolve() == ud.resolve():
+        print("--forrige skal være en anden mappe end --ud (forrige rundes sammenligning)")
+        return 1
     total = {}
     for v in d["visninger"]:
         if v["type"] not in ("plan", "snit", "facade") or (visning and v["id"] != visning):
@@ -412,6 +481,12 @@ def sammenlign(ifc, afk_sti, visning=None, ud=None, snithoejde=1000.0):
         overlay_img = Image.open(mappe / "overlay.png").convert("RGB").resize((W, H))
         orig.save(mappe / "original.png")
         fliser = _fliser(orig, model_img, overlay_img, mappe / "fliser", v["id"], x0, y0)
+        gammel_sti = forrige / v["id"] / "model.png" if forrige else None
+        gammel = Image.open(gammel_sti).convert("RGB") if gammel_sti and gammel_sti.exists() else None
+        valg = _flisevalg(fliser, orig, model_img, gammel, rows, x0, y0)
+        (mappe / "fliser.md").write_text(_fliser_md(valg, v["id"], forrige), encoding="utf-8")
+        (mappe / "fliser.json").write_text(json.dumps(valg, ensure_ascii=False, indent=1), encoding="utf-8")
+        n_g = sum(x["gennemgaa"] for x in valg)
         # tabel
         tael = {}
         for rw in rows:
@@ -424,7 +499,8 @@ def sammenlign(ifc, afk_sti, visning=None, ud=None, snithoejde=1000.0):
         for i, rw in enumerate(rows):
             lin.append(f"| A{i + 1} | {rw['art']} | {rw.get('id') or rw.get('tekst') or ''} | {rw['original']} | "
                        f"{rw['model'] if rw['model'] is not None else '–'} | {rw['status']} | {rw['note']} |")
-        lin += ["", "Billeder: original.png · model.png · overlay.png · fliser/ (" + str(len(fliser)) + ")",
+        lin += ["", "Billeder: original.png · model.png · overlay.png · fliser/ (" + str(len(fliser))
+                + f", gennemgå {n_g} – se fliser.md)",
                 "Grønne cirkler = OK · orange = AFVIGER · magenta = MANGLER · blå kryds = kalibreringspunkter"]
         (mappe / "auto.md").write_text("\n".join(lin) + "\n", encoding="utf-8")
         (mappe / "auto.json").write_text(json.dumps(rows, ensure_ascii=False, indent=1, default=float), encoding="utf-8")
@@ -434,7 +510,8 @@ def sammenlign(ifc, afk_sti, visning=None, ud=None, snithoejde=1000.0):
             if rw["status"] not in ("OK",) and i < 200:
                 print(f"  A{i + 1} {rw['status']} {rw['art']} {rw.get('id') or ''}: tegning {rw['original']} · model "
                       f"{rw['model'] if rw['model'] is not None else '–'} · {rw['note']}")
-        print(f"  billeder: {mappe}/overlay.png · {len(fliser)} fliser i {mappe / 'fliser'}")
+        print(f"  billeder: {mappe}/overlay.png · {len(fliser)} fliser i {mappe / 'fliser'}, gennemgå {n_g} "
+              f"({', '.join(x['flise'] for x in valg if x['gennemgaa']) or 'ingen'}) – se fliser.md")
     if not total:
         print("Ingen plan/snit/facade-visninger at sammenligne" + (f" med id {visning}" if visning else ""))
         return 1

@@ -58,7 +58,7 @@ def _sammenlign(a):
     from .sammenlign import sammenlign
     try:
         return sammenlign(pathlib.Path(a.ifc), pathlib.Path(a.afkodning), visning=a.visning, ud=a.ud,
-                          snithoejde=a.snithoejde)
+                          snithoejde=a.snithoejde, forrige=a.forrige)
     except AfkodFejl as e:
         print(f"AFKODNING-FEJL ({len(e.fejl)}) – ret afkodningen og kør 'afkod tjek' først:")
         for x in e.fejl[:40]:
@@ -145,7 +145,9 @@ def main(argv):
     x = sp.add_parser("afkod"); x.add_argument("handling", choices=["tjek", "skabelon"]); x.add_argument("fil", nargs="?")
     x.set_defaults(fn=_afkod)
     x = sp.add_parser("sammenlign"); x.add_argument("ifc"); x.add_argument("afkodning"); x.add_argument("--visning")
-    x.add_argument("--ud"); x.add_argument("--snithoejde", type=float, default=1000); x.set_defaults(fn=_sammenlign)
+    x.add_argument("--ud"); x.add_argument("--snithoejde", type=float, default=1000)
+    x.add_argument("--forrige", help="forrige rundes sammenligningsmappe: marker kun ændrede fliser til gennemgang")
+    x.set_defaults(fn=_sammenlign)
     x = sp.add_parser("info"); x.add_argument("ifc"); x.set_defaults(fn=_info)
     x = sp.add_parser("vis"); x.add_argument("ifc"); x.add_argument("id"); x.set_defaults(fn=_vis)
     x = sp.add_parser("find"); x.add_argument("ifc"); x.add_argument("selector"); x.set_defaults(fn=_find)

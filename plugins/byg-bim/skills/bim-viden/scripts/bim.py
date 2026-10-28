@@ -11,7 +11,7 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
         [--underlag <png> --kal "px,py=x,y;px,py=x,y"] [--id] [--maal] [--ud <mappe>]
   afkod skabelon                           Komplet skabelon til afkodning.yaml
   afkod tjek <afkodning.yaml>              Kontrol af en tegningsafkodning (kalibrering, mål mod tegningen, kæder)
-  sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>]
+  sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>] [--forrige <forrige rundes mappe>]
                                            Model i tegningens pixelramme + automatisk sammenligning
   forslag <model.yaml> <navn> [--note …] [--ud <mappe>]  Ny forslagsfil forslag/<navn>.yaml (--ud: branch-sagens mappe) oven på hovedmodellen (ret aldrig i
                                            hovedmodellen selv – byg og kontrollér forslaget)

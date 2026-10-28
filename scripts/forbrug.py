@@ -9,7 +9,9 @@ Viser:
 - vægtet forbrug pr. del (hovedtråd, fagagenter, kontrolagenter, øvrige)
 - hovedtrådens kontekst pr. kald (median og maks.)
 - andel af fag- og kontroltokens i forsøg 2–3 (retur)
-- gentagne sidehentninger og statuskald i hovedtråden
+- forbrug pr. agenttype (kørsler, vægtet i alt og pr. kørsel)
+- billed- og PDF-læsninger og Edits pr. kørsel (median, p90 og antal kørsler over loftet i protokollen)
+- sidehentninger gentaget i samme kørsel og på tværs af kørsler, og statuskald i hovedtråden
 - svarlængde: slutsvar (hovedtrådens svar til brugeren, subagenternes rapport) og tekst mellem værktøjskald
 
 Vægtning i forhold til almindelige input-tokens: cache-læsning 0,1 ×, cache-skrivning 1,25 × og output 5 ×.
@@ -28,6 +30,8 @@ KONTEKST = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tok
 FORSOEG_RE = re.compile(r"Fors(?:ø|o)g:\s*(\d)")
 LEV_RE = re.compile(r"LEVERANCE:\s*(\S+)")
 MAAL_TXT = "hovedtråd og fagagenter under ca. 800, kontrolagenter under ca. 1.500"
+BILLEDE = (".png", ".jpg", ".jpeg", ".gif", ".webp")
+LOFT_BILLEDER, LOFT_EDITS = 10, 5   # faelles/protokol.md: højst 10 billeder pr. kald, ca. 5 Edits efter notatet
 
 
 def laes(sti: pathlib.Path) -> dict:
@@ -75,6 +79,18 @@ def vaegtet(kald) -> float:
     return sum(u[k] * v for u in kald for k, v in VAEGT.items())
 
 
+def laesninger(r) -> tuple:
+    """Antal billeder, PDF'er og Edits, kørslen har læst eller lavet."""
+    filer = [str(i.get("file_path", "")).lower() for n, i in r["vaerktoej"] if n == "Read"]
+    return (sum(f.endswith(BILLEDE) for f in filer), sum(f.endswith(".pdf") for f in filer),
+            sum(n in ("Edit", "MultiEdit") for n, _ in r["vaerktoej"]))
+
+
+def p90(xs) -> int:
+    xs = sorted(xs)
+    return xs[int(0.9 * (len(xs) - 1))] if xs else 0
+
+
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     siden = sys.argv[sys.argv.index("--siden") + 1] if "--siden" in sys.argv else ""
@@ -87,7 +103,7 @@ def main() -> int:
         return 1
 
     dele = collections.defaultdict(list)          # del -> liste af kørsler
-    hovedkontekst, statuskald, hentninger = [], 0, collections.Counter()
+    hovedkontekst, statuskald, hentninger, gentaget_i_koersel = [], 0, collections.Counter(), 0
     retur = collections.defaultdict(lambda: [0.0, 0.0])  # del -> [forsøg 1, forsøg 2–3]
     leverancer = collections.defaultdict(float)
     for hoved in sorted(mappe.glob("*.jsonl")):
@@ -110,8 +126,11 @@ def main() -> int:
             if not r["kald"]:
                 continue
             del_ = "kontrolagenter" if "-kontrol" in typ else "fagagenter" if typ.startswith("byg") else "øvrige"
+            r["typ"] = typ.split(":")[-1] or "ukendt"
             dele[del_].append(r)
-            hentninger.update(i.get("url") for n, i in r["vaerktoej"] if n == "WebFetch")
+            urls = [i.get("url") for n, i in r["vaerktoej"] if n == "WebFetch"]
+            gentaget_i_koersel += len(urls) - len(set(urls))
+            hentninger.update(set(urls))
             if del_ in ("fagagenter", "kontrolagenter"):
                 m = FORSOEG_RE.search(r["foerste"])
                 retur[del_][1 if m and int(m.group(1)) > 1 else 0] += vaegtet(r["kald"])
@@ -137,8 +156,29 @@ def main() -> int:
         if f1 + f23:
             print(f"{del_.capitalize()}: {100 * f23 / (f1 + f23):.0f} % af forbruget i forsøg 2–3 (retur)")
     if hentninger:
-        n = sum(hentninger.values())
-        print(f"Sidehentninger: {n}, heraf gentagne: {100 * (n - len(hentninger)) / n:.0f} %")
+        n = sum(hentninger.values()) + gentaget_i_koersel
+        tvaers = sum(hentninger.values()) - len(hentninger)
+        print(f"Sidehentninger: {n}, heraf gentaget i samme kørsel: {gentaget_i_koersel} · "
+              f"på tværs af kørsler: {tvaers} ({100 * tvaers / n:.0f} %)")
+
+    typer = collections.defaultdict(list)
+    for del_ in ("fagagenter", "kontrolagenter", "øvrige"):
+        for r in dele[del_]:
+            typer[r["typ"]].append(r)
+    print(f"\n{'Agenttype':22} {'kørsler':>7} {'vægtet':>8} {'andel':>6} {'pr. kørsel':>10}")
+    for typ, rs in sorted(typer.items(), key=lambda x: -sum(vaegtet(r["kald"]) for r in x[1])):
+        v = sum(vaegtet(r["kald"]) for r in rs)
+        print(f"{typ:22} {len(rs):7} {v / 1e6:7.1f}M {100 * v / total:5.0f} % {v / len(rs) / 1e6:9.2f}M")
+
+    print(f"\nLæsninger pr. kørsel (median / p90 / kørsler over loftet; loft: {LOFT_BILLEDER} billeder, "
+          f"ca. {LOFT_EDITS} Edits)")
+    print(f"{'Del':16} {'billeder':>14} {'PDF':>9} {'Edits':>14}")
+    for del_ in ("fagagenter", "kontrolagenter", "øvrige"):
+        if dele[del_]:
+            b, pdf, e = zip(*(laesninger(r) for r in dele[del_]))
+            print(f"{del_:16} {statistics.median(b):3.0f} / {p90(b):3} / {sum(x > LOFT_BILLEDER for x in b):2} "
+                  f"{statistics.median(pdf):3.0f} / {p90(pdf):3} "
+                  f"{statistics.median(e):3.0f} / {p90(e):3} / {sum(x > LOFT_EDITS for x in e):2}")
     print(f"\nSvarlængde i tegn (mål for median: {MAAL_TXT})")
     print(f"{'Del':16} {'slutsvar':>8} {'median':>7} {'p90':>7} {'mellemtekst/kørsel':>19}")
     for del_ in ("hovedtråd", "fagagenter", "kontrolagenter", "øvrige"):
