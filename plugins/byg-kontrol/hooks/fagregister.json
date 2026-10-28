@@ -57,7 +57,8 @@
         "fem.py": {
           "regn": "--ingen-filer",
           "test": "",
-          "skabelon": ""
+          "skabelon": "",
+          "resultat": ""
         }
       }
     },
