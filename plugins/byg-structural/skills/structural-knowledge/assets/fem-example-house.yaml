@@ -1,4 +1,4 @@
-# fem.yaml – samme hus som BIM-eksemplet (byg-bim assets/eksempel/model.yaml): murermesterhus fra 1937 med kælder,
+# fem.yaml – samme hus som BIM-eksemplet (byg-bim assets/example/model.yaml): murermesterhus fra 1937 med kælder,
 # stueetage og udnyttet tagetage under 45° sadeltag. Vægge som skalelementer i vægaksen, træbjælkelag som bjælker.
 # Enheder: m, kN, kNm; tykkelser, profiler og tværsnit i mm. z er lodret op (0 = stueetagens gulv).
 # Forenklinger: hulmuren regnes som massiv tegl 300 (isotrop), tagetagen (spær, gavltrekanter) indgår som linjelaster
