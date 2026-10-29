@@ -2,7 +2,7 @@
 
 Et principdiagram viser, **hvordan installationen hænger sammen**: hvad der forsyner hvad, i hvilken rækkefølge komponenterne sidder, og hvor sikkerhedsudstyret er. Det er ikke målfast og viser ikke rørføringen i plan. Det er det første, en VVS'er, en kontrollant eller en ny ejer skal se for at forstå huset.
 
-Eksempel: `assets/schematic-example-house.svg` er eksempelhusets installation (BIM-eksemplet `byg-bim/skills/bim-knowledge/assets/eksempel/model.yaml`). Den bruger alle symboler og konventioner nedenfor. Tag udgangspunkt i den, når du tegner et nyt diagram.
+Eksempel: `assets/schematic-example-house.svg` er eksempelhusets installation (BIM-eksemplet `byg-bim/skills/bim-knowledge/assets/example/model.yaml`). Den bruger alle symboler og konventioner nedenfor. Tag udgangspunkt i den, når du tegner et nyt diagram.
 
 ## Hvornår
 - Ved projektering af ny eller ændret varme-, brugsvands- eller afløbsinstallation. Diagrammet viser løsningen, før detaljerne regnes.
