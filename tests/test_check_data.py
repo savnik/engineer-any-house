@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Tester dataseparationen (scripts/check_data.py) med et falsk hjem og et falsk repo.
+"""Tests the data separation (scripts/check_data.py) with a fake home and a fake repo.
 
-Kør:  python3 tests/test_check_data.py
+Run:  python3 tests/test_check_data.py
 """
 import os
 import pathlib
@@ -9,97 +9,97 @@ import subprocess
 import sys
 import tempfile
 
-ROD = pathlib.Path(__file__).resolve().parent.parent
-TJEK = ROD / "scripts" / "check_data.py"
-FEJL = []
-NOEGLE = "x" * 8 + "TESTNOEGLE" + "y" * 30  # falsk nøgle – kun til testen
-SAG = "2031-02-03-tag-test"
-LINJE = "Tagfladen mod syd har tre knækkede teglsten over køkkenvinduet og en utæt inddækning."
-EJENDOMSLINJE = "Træpillekedel på 12 kW fra 2009 med integreret returløft og elpatron på 6 kW i beholderen"
-SKABELONLINJE = "**Kilder:** F foto · D dokument (typeskilt, manual, rapport, BBR) · M måling · B bygherren"
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+CHECK = ROOT / "scripts" / "check_data.py"
+FAILURES = []
+KEY = "x" * 8 + "TESTNOEGLE" + "y" * 30  # fake key – for the test only
+CASE = "2031-02-03-tag-test"
+LINE = "Tagfladen mod syd har tre knækkede teglsten over køkkenvinduet og en utæt inddækning."
+PROPERTY_LINE = "Træpillekedel på 12 kW fra 2009 med integreret returløft og elpatron på 6 kW i beholderen"
+TEMPLATE_LINE = "**Kilder:** F foto · D dokument (typeskilt, manual, rapport, BBR) · M måling · B bygherren"
 
 
-def kør(hjem, repo):
-    env = dict(os.environ, HOME=str(hjem), BYG_REPO_ROD=str(repo))
-    r = subprocess.run([sys.executable, str(TJEK)], capture_output=True, text=True, env=env, timeout=60)
+def run(home, repo):
+    env = dict(os.environ, HOME=str(home), BYG_REPO_ROD=str(repo))
+    r = subprocess.run([sys.executable, str(CHECK)], capture_output=True, text=True, env=env, timeout=60)
     return r.returncode, r.stdout
 
 
-def forvent(navn, ok, ud=""):
-    print(("OK   " if ok else "FEJL ") + navn + ("" if ok else f"\n{ud}"))
+def expect(name, ok, out=""):
+    print(("OK   " if ok else "FEJL ") + name + ("" if ok else f"\n{out}"))
     if not ok:
-        FEJL.append(navn)
+        FAILURES.append(name)
 
 
 def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
-        hjem, repo = pathlib.Path(tmp) / "hjem", pathlib.Path(tmp) / "repo"
-        sagsmappe = pathlib.Path(tmp) / "arbejde" / "byg-sager" / SAG
-        sagsmappe.mkdir(parents=True)
-        (sagsmappe / "projektgrundlag.md").write_text(f"# Projektgrundlag\n\n{LINJE}\n", encoding="utf-8")
-        ejendomme = sagsmappe.parent / "ejendomme"
-        ejendomme.mkdir()
-        (ejendomme / "lindevej-7b.md").write_text(f"# Ejendomskort\n\n| E-VVS-01 | Kedel | {EJENDOMSLINJE} |\n", encoding="utf-8")
-        vb = hjem / ".claude" / "plugins" / "data" / "byg-test" / "videnbank"
+        home, repo = pathlib.Path(tmp) / "hjem", pathlib.Path(tmp) / "repo"
+        case_dir = pathlib.Path(tmp) / "arbejde" / "byg-sager" / CASE
+        case_dir.mkdir(parents=True)
+        (case_dir / "projektgrundlag.md").write_text(f"# Projektgrundlag\n\n{LINE}\n", encoding="utf-8")
+        properties = case_dir.parent / "ejendomme"
+        properties.mkdir()
+        (properties / "lindevej-7b.md").write_text(f"# Ejendomskort\n\n| E-VVS-01 | Kedel | {PROPERTY_LINE} |\n", encoding="utf-8")
+        vb = home / ".claude" / "plugins" / "data" / "byg-test" / "videnbank"
         vb.mkdir(parents=True)
-        (vb / "sager.md").write_text(f"| Sag-id | Sti |\n|---|---|\n| {SAG} | `{sagsmappe}` |\n| lindevej-7b | – |\n", encoding="utf-8")
-        (hjem / ".config" / "byg-data").mkdir(parents=True)
-        (hjem / ".config" / "byg-data" / "datafordeler_api_key").write_text(NOEGLE, encoding="utf-8")
-        (hjem / ".config" / "engineer-any-house").mkdir(parents=True)
-        (hjem / ".config" / "engineer-any-house" / "private-termer.txt").write_text("# egne termer\nSolsikkevej 99\n", encoding="utf-8")
+        (vb / "sager.md").write_text(f"| Sag-id | Sti |\n|---|---|\n| {CASE} | `{case_dir}` |\n| lindevej-7b | – |\n", encoding="utf-8")
+        (home / ".config" / "byg-data").mkdir(parents=True)
+        (home / ".config" / "byg-data" / "datafordeler_api_key").write_text(KEY, encoding="utf-8")
+        (home / ".config" / "engineer-any-house").mkdir(parents=True)
+        (home / ".config" / "engineer-any-house" / "private-termer.txt").write_text("# egne termer\nSolsikkevej 99\n", encoding="utf-8")
         (repo / "plugins" / "p" / "skills" / "s").mkdir(parents=True)
-        ren = repo / "plugins" / "p" / "skills" / "s" / "SKILL.md"
-        ren.write_text("# Generel viden\nTestadresse til evals: Rådhuspladsen 1, 1550 København V.\n\n```\n"
-                       f"{SKABELONLINJE}\n```\n", encoding="utf-8")
-        (sagsmappe / "status.md").write_text(f"# Status\n{SKABELONLINJE}\n", encoding="utf-8")  # skabelon brugt i sagen
+        clean = repo / "plugins" / "p" / "skills" / "s" / "SKILL.md"
+        clean.write_text("# Generel viden\nTestadresse til evals: Rådhuspladsen 1, 1550 København V.\n\n```\n"
+                       f"{TEMPLATE_LINE}\n```\n", encoding="utf-8")
+        (case_dir / "status.md").write_text(f"# Status\n{TEMPLATE_LINE}\n", encoding="utf-8")  # template used in the case
 
-        kode, ud = kør(hjem, repo)
-        forvent("rent repo med testdata godkendes (sagsmappe + ejendomme)", kode == 0 and "2 sagsmappe(r)" in ud, ud)
+        code, out = run(home, repo)
+        expect("rent repo med testdata godkendes (sagsmappe + ejendomme)", code == 0 and "2 sagsmappe(r)" in out, out)
 
-        tilfaelde = {
-            "sag-id fra videnbanken afvises": ("plugins/p/eksempel.md", f"Se sagen {SAG}."),
+        cases = {
+            "sag-id fra videnbanken afvises": ("plugins/p/eksempel.md", f"Se sagen {CASE}."),
             "sag-id uden dato afvises": ("plugins/p/eksempel.md", "Som i sagen Lindevej-7B viste …"),
             "privat term afvises": ("plugins/p/eksempel.md", "Huset på Solsikkevej 99 har …"),
-            "kopieret sagstekst afvises": ("plugins/p/references/praksis.md", f"- **Erfaring:** {LINJE}"),
-            "kopieret tekst fra ejendomskort afvises": ("plugins/p/references/praksis.md", f"- {EJENDOMSLINJE}"),
+            "kopieret sagstekst afvises": ("plugins/p/references/praksis.md", f"- **Erfaring:** {LINE}"),
+            "kopieret tekst fra ejendomskort afvises": ("plugins/p/references/praksis.md", f"- {PROPERTY_LINE}"),
             "ejendomskort i repoet afvises": ("ejendomme/lindevej-7b.md", "kort"),
-            "lokal API-nøgle afvises": ("tests/fixture.py", f'KEY = "{NOEGLE}"'),
+            "lokal API-nøgle afvises": ("tests/fixture.py", f'KEY = "{KEY}"'),
             "nøgle i URL afvises": ("plugins/p/x.md", "https://graphql.datafordeler.dk/BBR/v3?apiKey=" + "A1b2" * 8),
             "sagsmappe i repoet afvises": ("byg-sager/2031-01-01-x/noter.md", "noter"),
             "sagsfil i repoet afvises": ("plugins/p/beslutningslog.md", "log"),
             "PDF-bilag afvises": ("plugins/p/energimaerke.pdf", "%PDF"),
         }
-        for navn, (sti, indhold) in tilfaelde.items():
-            f = repo / sti
+        for name, (path, content) in cases.items():
+            f = repo / path
             f.parent.mkdir(parents=True, exist_ok=True)
-            f.write_text(indhold, encoding="utf-8")
-            kode, ud = kør(hjem, repo)
-            forvent(navn, kode == 1 and "FEJL" in ud, ud)
-            if "nøgle" in navn:
-                forvent(f"{navn}: værdien udskrives ikke", NOEGLE not in ud and "A1b2A1b2" not in ud, ud)
+            f.write_text(content, encoding="utf-8")
+            code, out = run(home, repo)
+            expect(name, code == 1 and "FEJL" in out, out)
+            if "nøgle" in name:
+                expect(f"{name}: værdien udskrives ikke", KEY not in out and "A1b2A1b2" not in out, out)
             f.unlink()
 
-        # Tekst, der allerede står på origin/main, stammer fra pluginet – en sag, der kopierer den, er ikke et læk.
+        # Text already on origin/main comes from the plugin – a case that copies it is not a leak.
         def git(*a):
             subprocess.run(["git", "-C", str(repo), *a], capture_output=True, check=True)
         git("init", "-q")
-        (repo / "plugins" / "p" / "praksis.md").write_text(f"- {LINJE}\n", encoding="utf-8")
+        (repo / "plugins" / "p" / "praksis.md").write_text(f"- {LINE}\n", encoding="utf-8")
         git("add", "-A")
         git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "main")
         git("update-ref", "refs/remotes/origin/main", "HEAD")
-        kode, ud = kør(hjem, repo)
-        forvent("sagstekst, der allerede står på origin/main, godkendes", kode == 0, ud)
-        (repo / "plugins" / "p" / "ny.md").write_text(f"- {EJENDOMSLINJE}\n", encoding="utf-8")
-        kode, ud = kør(hjem, repo)
-        forvent("ny kopieret sagstekst afvises stadig med git", kode == 1 and "ny.md" in ud, ud)
+        code, out = run(home, repo)
+        expect("sagstekst, der allerede står på origin/main, godkendes", code == 0, out)
+        (repo / "plugins" / "p" / "ny.md").write_text(f"- {PROPERTY_LINE}\n", encoding="utf-8")
+        code, out = run(home, repo)
+        expect("ny kopieret sagstekst afvises stadig med git", code == 1 and "ny.md" in out, out)
         (repo / "plugins" / "p" / "ny.md").unlink()
         (repo / "plugins" / "p" / "praksis.md").unlink()
 
-        kode, ud = kør(pathlib.Path(tmp) / "tomt-hjem", repo)
-        forvent("uden lokale data (CI) køres strukturtjek alene", kode == 0 and "0 private termer" in ud, ud)
+        code, out = run(pathlib.Path(tmp) / "tomt-hjem", repo)
+        expect("uden lokale data (CI) køres strukturtjek alene", code == 0 and "0 private termer" in out, out)
 
-    print(f"\n{'ALLE TESTS BESTÅET' if not FEJL else f'{len(FEJL)} FEJL'}")
-    return 1 if FEJL else 0
+    print(f"\n{'ALLE TESTS BESTÅET' if not FAILURES else f'{len(FAILURES)} FEJL'}")
+    return 1 if FAILURES else 0
 
 
 if __name__ == "__main__":

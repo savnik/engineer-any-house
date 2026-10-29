@@ -42,11 +42,11 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
 import pathlib
 import sys
 
-from environment import Miljoe
+from environment import Environment
 
-HER = pathlib.Path(__file__).resolve().parent
-MILJOE = Miljoe("byg-bim", "BYG_BIM_VENV", HER / "requirements.txt",
-                "import ifcopenshell, shapely, matplotlib, pymupdf, yaml, ifctester; print('ifcopenshell', ifcopenshell.version)")
+HERE = pathlib.Path(__file__).resolve().parent
+ENV = Environment("byg-bim", "BYG_BIM_VENV", HERE / "requirements.txt",
+                  "import ifcopenshell, shapely, matplotlib, pymupdf, yaml, ifctester; print('ifcopenshell', ifcopenshell.version)")
 
 
 def main() -> int:
@@ -55,10 +55,10 @@ def main() -> int:
         print(__doc__)
         return 0
     if args[0] == "opsaet":
-        return MILJOE.opsaet(HER / "requirements-test.txt" if "--test" in args else None)
-    if (r := MILJOE.skift(__file__, args)) is not None:
+        return ENV.setup(HERE / "requirements-test.txt" if "--test" in args else None)
+    if (r := ENV.switch(__file__, args)) is not None:
         return r
-    sys.path.insert(0, str(HER))
+    sys.path.insert(0, str(HERE))
     from bimlib import cli
     return cli.main(args)
 

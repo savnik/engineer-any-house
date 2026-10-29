@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Bygger distributionsfiler i dist/.
+"""Builds distribution files in dist/.
 
-  dist/cowork/<plugin>.plugin  ét pr. fag-plugin og byg-kontrol (uden evals) – fag kræver byg-kontrol
-  dist/cowork/byg.plugin       samlet Cowork-pakke: alle agenter, skills og hooks i ét plugin ved navn "byg"
-  dist/engineer-any-house.zip  hele repoet (marketplace til Claude Code)
+  dist/cowork/<plugin>.plugin  one per trade plugin and byg-kontrol (without evals) – trades require byg-kontrol
+  dist/cowork/byg.plugin       combined Cowork package: all agents, skills and hooks in one plugin named "byg"
+  dist/engineer-any-house.zip  the whole repo (marketplace for Claude Code)
 
-Brug: python3 scripts/package.py [--validate]   (--validate kører `claude plugin validate` på den samlede pakke)
+Usage: python3 scripts/package.py [--validate]   (--validate runs `claude plugin validate` on the combined package)
 """
 import json
 import pathlib
@@ -15,51 +15,51 @@ import sys
 import tempfile
 import zipfile
 
-ROD = pathlib.Path(__file__).resolve().parent.parent
-DIST = ROD / "dist"
-SKRALD = {"__pycache__", ".DS_Store", "results", ".git", "dist"}
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+DIST = ROOT / "dist"
+JUNK = {"__pycache__", ".DS_Store", "results", ".git", "dist"}
 
 
-def zip_mappe(mappe: pathlib.Path, zipfil: pathlib.Path, prefix: str = "", udelad: set = frozenset()) -> int:
+def zip_dir(src_dir: pathlib.Path, zip_file: pathlib.Path, prefix: str = "", exclude: set = frozenset()) -> int:
     n = 0
-    with zipfile.ZipFile(zipfil, "w", zipfile.ZIP_DEFLATED) as z:
-        for f in sorted(mappe.rglob("*")):
-            rel = f.relative_to(mappe)
-            if f.is_dir() or (set(rel.parts) & (SKRALD | set(udelad))):
+    with zipfile.ZipFile(zip_file, "w", zipfile.ZIP_DEFLATED) as z:
+        for f in sorted(src_dir.rglob("*")):
+            rel = f.relative_to(src_dir)
+            if f.is_dir() or (set(rel.parts) & (JUNK | set(exclude))):
                 continue
             z.write(f, (pathlib.PurePosixPath(prefix) / rel.as_posix()).as_posix() if prefix else rel.as_posix())
             n += 1
     return n
 
 
-def flet_hooks(maal_fil: pathlib.Path, ny_fil: pathlib.Path) -> None:
-    a = json.loads(maal_fil.read_text(encoding="utf-8"))
-    b = json.loads(ny_fil.read_text(encoding="utf-8"))
-    for haendelse, lst in b.get("hooks", {}).items():
-        a.setdefault("hooks", {}).setdefault(haendelse, []).extend(lst)
+def merge_hooks(dst_file: pathlib.Path, new_file: pathlib.Path) -> None:
+    a = json.loads(dst_file.read_text(encoding="utf-8"))
+    b = json.loads(new_file.read_text(encoding="utf-8"))
+    for event, lst in b.get("hooks", {}).items():
+        a.setdefault("hooks", {}).setdefault(event, []).extend(lst)
     a["description"] = (a.get("description", "") + " · " + b.get("description", "")).strip(" ·")
-    maal_fil.write_text(json.dumps(a, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    dst_file.write_text(json.dumps(a, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def saml(maal: pathlib.Path) -> None:
-    plugins = [p for p in sorted((ROD / "plugins").iterdir())
+def combine(dst: pathlib.Path) -> None:
+    plugins = [p for p in sorted((ROOT / "plugins").iterdir())
                if (p / ".claude-plugin" / "plugin.json").exists() and p.name != "byg-team"]
-    version = json.loads((ROD / "plugins" / "byg" / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"]
+    version = json.loads((ROOT / "plugins" / "byg" / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))["version"]
     for p in plugins:
-        for del_ in ("agents", "skills", "hooks"):
-            for f in sorted((p / del_).rglob("*")) if (p / del_).exists() else []:
-                if f.is_dir() or set(f.parts) & SKRALD:
+        for part in ("agents", "skills", "hooks"):
+            for f in sorted((p / part).rglob("*")) if (p / part).exists() else []:
+                if f.is_dir() or set(f.parts) & JUNK:
                     continue
                 rel = f.relative_to(p)
-                ud = maal / rel
-                if rel.as_posix() == "hooks/hooks.json" and ud.exists():
-                    flet_hooks(ud, f)  # flere plugins med hooks: flet hændelserne
+                out = dst / rel
+                if rel.as_posix() == "hooks/hooks.json" and out.exists():
+                    merge_hooks(out, f)  # several plugins with hooks: merge the events
                     continue
-                if ud.exists():
+                if out.exists():
                     sys.exit(f"Navnekonflikt i samlet pakke: {rel} ({p.name})")
-                ud.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(f, ud)
-    (maal / ".claude-plugin").mkdir(parents=True, exist_ok=True)
+                out.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(f, out)
+    (dst / ".claude-plugin").mkdir(parents=True, exist_ok=True)
     manifest = {
         "name": "byg",
         "displayName": "Byg – projektleder, fagagenter og kvalitetskontrol",
@@ -70,30 +70,30 @@ def saml(maal: pathlib.Path) -> None:
         "license": "MIT",
         "keywords": ["byggeri", "renovering", "projektledelse", "kvalitetskontrol", "danmark"],
     }
-    (maal / ".claude-plugin" / "plugin.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    shutil.copy2(ROD / "README.da.md", maal / "README.md")  # Cowork-pakken er dansk
+    (dst / ".claude-plugin" / "plugin.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    shutil.copy2(ROOT / "README.da.md", dst / "README.md")  # the Cowork package is Danish
 
 
 def main() -> int:
     if DIST.exists():
         shutil.rmtree(DIST)
     (DIST / "cowork").mkdir(parents=True)
-    for p in sorted((ROD / "plugins").iterdir()):
+    for p in sorted((ROOT / "plugins").iterdir()):
         if p.name in ("byg", "byg-team") or not (p / ".claude-plugin" / "plugin.json").exists():
             continue
-        n = zip_mappe(p, DIST / "cowork" / f"{p.name}.plugin", udelad={"evals"})
+        n = zip_dir(p, DIST / "cowork" / f"{p.name}.plugin", exclude={"evals"})
         print(f"dist/cowork/{p.name}.plugin ({n} filer)")
     with tempfile.TemporaryDirectory() as tmp:
-        samlet = pathlib.Path(tmp) / "byg"
-        saml(samlet)
+        combined = pathlib.Path(tmp) / "byg"
+        combine(combined)
         if "--validate" in sys.argv and shutil.which("claude"):
-            r = subprocess.run(["claude", "plugin", "validate", str(samlet)], capture_output=True, text=True)
+            r = subprocess.run(["claude", "plugin", "validate", str(combined)], capture_output=True, text=True)
             print(r.stdout.strip().splitlines()[-1] if r.stdout.strip() else r.stderr)
             if "Validation passed" not in r.stdout:
                 return 1
-        n = zip_mappe(samlet, DIST / "cowork" / "byg.plugin")
+        n = zip_dir(combined, DIST / "cowork" / "byg.plugin")
         print(f"dist/cowork/byg.plugin – samlet pakke ({n} filer)")
-    n = zip_mappe(ROD, DIST / "engineer-any-house.zip", prefix="engineer-any-house")
+    n = zip_dir(ROOT, DIST / "engineer-any-house.zip", prefix="engineer-any-house")
     print(f"dist/engineer-any-house.zip ({n} filer)")
     return 0
 

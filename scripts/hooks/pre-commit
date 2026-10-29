@@ -1,13 +1,13 @@
 #!/bin/sh
-# Aktivér:  git config core.hooksPath scripts/hooks
+# Enable:  git config core.hooksPath scripts/hooks
 
-# Dataseparation: stop commits med sager, brugerdata eller hemmeligheder (se ARKITEKTUR.md).
+# Data separation: stop commits containing cases, user data or secrets (see ARKITEKTUR.md).
 python3 "$(git rev-parse --show-toplevel)/scripts/check_data.py" || {
   echo "Commit afvist af dataseparationen. Fjern sagsdata/hemmeligheder, eller generalisér teksten." >&2
   exit 1
 }
 
-# Protokoller: det committede indhold skal være i synk med faelles/ (ikke kun arbejdskopien).
+# Protocols: the committed content must be in sync with faelles/ (not just the working copy).
 python3 "$(git rev-parse --show-toplevel)/scripts/sync_protocol.py" --staged || {
   echo "Commit afvist: protokollerne er ude af synk i det, der committes. Kør scripts/sync_protocol.py og git add." >&2
   exit 1
@@ -20,12 +20,12 @@ python3 "$(git rev-parse --show-toplevel)/scripts/sync_environment.py" --staged 
 }
 
 # Parallel development: versions are raised only on a release branch (udgivelse/*, scripts/release.py), never on a feature branch.
-gren=$(git symbolic-ref --short -q HEAD)
-case "$gren" in udgivelse/*) BYG_UDGIV=1 ;; esac
+branch=$(git symbolic-ref --short -q HEAD)
+case "$branch" in udgivelse/*) BYG_UDGIV=1 ;; esac
 if [ -z "$BYG_UDGIV" ] && \
    git diff --cached -U0 --diff-filter=M -- 'plugins/*/.claude-plugin/plugin.json' .claude-plugin/marketplace.json \
      | grep -qE '^[+-][[:space:]]*"version"'; then
-  echo "Commit afvist: versionen er ændret i grenen '$gren'. Læg i stedet en note i versionsnoter/$gren.md" >&2
+  echo "Commit afvist: versionen er ændret i grenen '$branch'. Læg i stedet en note i versionsnoter/$branch.md" >&2
   echo "(se versionsnoter/README.md) – versionerne hæves i en gren udgivelse/<version> med scripts/release.py." >&2
   exit 1
 fi

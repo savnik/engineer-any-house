@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Opretter et nyt fag i Engineer Any House: fag-plugin, modsvarende kontrolagent og kontrolfil – og registrerer faget.
+"""Creates a new trade in Engineer Any House: trade plugin, matching review agent and review file – and registers the trade.
 
-Brug:     python3 scripts/new_trade.py <fag-id> "<Fagnavn>" <agentnavn> [--farve green]
-Eksempel: python3 scripts/new_trade.py kloak "Kloakmester" kloakmester --farve orange
+Usage:   python3 scripts/new_trade.py <fag-id> "<Fagnavn>" <agentnavn> [--farve green]
+Example: python3 scripts/new_trade.py kloak "Kloakmester" kloakmester --farve orange
 
-Registrerer i: .claude-plugin/marketplace.json, byg-team (dependencies), byg-kontrol/hooks/fagregister.json,
-projektlederens fagtabel og kvalitetskontrollens agentpar. Kører derefter sync_protocol.py.
+Registers in: .claude-plugin/marketplace.json, byg-team (dependencies), byg-kontrol/hooks/fagregister.json,
+the project manager's trade table and the quality review's agent pairs. Then runs sync_protocol.py.
 """
 import argparse
 import datetime
@@ -15,44 +15,44 @@ import re
 import subprocess
 import sys
 
-ROD = pathlib.Path(__file__).resolve().parent.parent
-SKAB = ROD / "skabelon"
-FARVER = {"red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"}
-NAVN_RE = re.compile(r"^[a-z][a-z0-9-]{1,30}$")
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+TEMPLATES = ROOT / "skabelon"
+COLORS = {"red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"}
+NAME_RE = re.compile(r"^[a-z][a-z0-9-]{1,30}$")
 
 
-def erstat(tekst: str, v: dict) -> str:
+def replace_vars(text: str, v: dict) -> str:
     for k, x in v.items():
-        tekst = tekst.replace("{{%s}}" % k, x)
-    return tekst
+        text = text.replace("{{%s}}" % k, x)
+    return text
 
 
-def kopier(kilde: pathlib.Path, maal: pathlib.Path, v: dict) -> None:
-    for f in sorted(kilde.rglob("*")):
+def copy_template(src: pathlib.Path, dst: pathlib.Path, v: dict) -> None:
+    for f in sorted(src.rglob("*")):
         if f.is_dir():
             continue
-        rel = str(f.relative_to(kilde)).replace("__SLUG__", v["SLUG"]).replace("__AGENT__", v["AGENT"])
-        ud = maal / rel
-        ud.parent.mkdir(parents=True, exist_ok=True)
-        ud.write_text(erstat(f.read_text(encoding="utf-8"), v), encoding="utf-8")
+        rel = str(f.relative_to(src)).replace("__SLUG__", v["SLUG"]).replace("__AGENT__", v["AGENT"])
+        out = dst / rel
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(replace_vars(f.read_text(encoding="utf-8"), v), encoding="utf-8")
 
 
-def gem_json(fil: pathlib.Path, data) -> None:
-    fil.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+def save_json(path: pathlib.Path, data) -> None:
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def indsaet_raekke(fil: pathlib.Path, header: str, raekke: str, foer: str | None = None) -> bool:
-    linjer = fil.read_text(encoding="utf-8").split("\n")
-    i = next((n for n, l in enumerate(linjer) if l.startswith(header)), None)
+def insert_row(path: pathlib.Path, header: str, row: str, before: str | None = None) -> bool:
+    lines = path.read_text(encoding="utf-8").split("\n")
+    i = next((n for n, line in enumerate(lines) if line.startswith(header)), None)
     if i is None:
         return False
     j = i + 2
-    while j < len(linjer) and linjer[j].startswith("|"):
-        if foer and linjer[j].startswith(foer):
+    while j < len(lines) and lines[j].startswith("|"):
+        if before and lines[j].startswith(before):
             break
         j += 1
-    linjer.insert(j, raekke)
-    fil.write_text("\n".join(linjer), encoding="utf-8")
+    lines.insert(j, row)
+    path.write_text("\n".join(lines), encoding="utf-8")
     return True
 
 
@@ -64,50 +64,50 @@ def main() -> int:
     ap.add_argument("--farve", default="green")
     a = ap.parse_args()
 
-    if not NAVN_RE.match(a.fag_id) or not NAVN_RE.match(a.agent):
+    if not NAME_RE.match(a.fag_id) or not NAME_RE.match(a.agent):
         sys.exit("fag-id og agentnavn: små bogstaver, tal og bindestreg (2–31 tegn), fx 'kloak' og 'kloakmester'.")
-    if a.farve not in FARVER:
-        sys.exit(f"Farve skal være en af: {', '.join(sorted(FARVER))}")
+    if a.farve not in COLORS:
+        sys.exit(f"Farve skal være en af: {', '.join(sorted(COLORS))}")
     plugin = f"byg-{a.fag_id}"
-    reg_fil = ROD / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
-    reg = json.loads(reg_fil.read_text(encoding="utf-8"))
-    eksisterende = {p.stem for p in ROD.glob("plugins/*/agents/*.md")}
+    reg_path = ROOT / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
+    reg = json.loads(reg_path.read_text(encoding="utf-8"))
+    existing = {p.stem for p in ROOT.glob("plugins/*/agents/*.md")}
     if a.fag_id in reg["fag"] or a.fag_id == "projekt":
         sys.exit(f"Faget '{a.fag_id}' findes allerede.")
-    if a.agent in eksisterende or f"{a.fag_id}-kontrol" in eksisterende:
+    if a.agent in existing or f"{a.fag_id}-kontrol" in existing:
         sys.exit("Agentnavnet eller kontrolagentens navn findes allerede.")
-    if (ROD / "plugins" / plugin).exists():
+    if (ROOT / "plugins" / plugin).exists():
         sys.exit(f"plugins/{plugin} findes allerede.")
 
     v = {"SLUG": a.fag_id, "AGENT": a.agent, "FAGNAVN": a.fagnavn, "PLUGIN": plugin,
          "FARVE": a.farve, "DATO": datetime.date.today().isoformat()}
-    kopier(SKAB / "fag-plugin", ROD / "plugins" / plugin, v)
-    kopier(SKAB / "kontrol" / "agents", ROD / "plugins" / "byg-kontrol" / "agents", v)
-    fagfil = ROD / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "references" / "fag" / f"{a.fag_id}.md"
-    fagfil.write_text(erstat((SKAB / "kontrol" / "fag.md").read_text(encoding="utf-8"), v), encoding="utf-8")
+    copy_template(TEMPLATES / "fag-plugin", ROOT / "plugins" / plugin, v)
+    copy_template(TEMPLATES / "kontrol" / "agents", ROOT / "plugins" / "byg-kontrol" / "agents", v)
+    trade_file = ROOT / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "references" / "fag" / f"{a.fag_id}.md"
+    trade_file.write_text(replace_vars((TEMPLATES / "kontrol" / "fag.md").read_text(encoding="utf-8"), v), encoding="utf-8")
 
     reg["fag"][a.fag_id] = {"agent": a.agent, "kontrol": f"{a.fag_id}-kontrol"}
-    gem_json(reg_fil, reg)
-    mp_fil = ROD / ".claude-plugin" / "marketplace.json"
-    mp = json.loads(mp_fil.read_text(encoding="utf-8"))
+    save_json(reg_path, reg)
+    mp_path = ROOT / ".claude-plugin" / "marketplace.json"
+    mp = json.loads(mp_path.read_text(encoding="utf-8"))
     mp["plugins"].append({"name": plugin, "source": f"./plugins/{plugin}",
                           "description": f"{a.fagnavn}: TODO – kort beskrivelse."})
-    gem_json(mp_fil, mp)
-    team_fil = ROD / "plugins" / "byg-team" / ".claude-plugin" / "plugin.json"
-    team = json.loads(team_fil.read_text(encoding="utf-8"))
+    save_json(mp_path, mp)
+    team_path = ROOT / "plugins" / "byg-team" / ".claude-plugin" / "plugin.json"
+    team = json.loads(team_path.read_text(encoding="utf-8"))
     if plugin not in team["dependencies"]:
         team["dependencies"].append(plugin)
-    gem_json(team_fil, team)
+    save_json(team_path, team)
 
-    ok1 = indsaet_raekke(ROD / "plugins" / "byg" / "skills" / "projektleder" / "SKILL.md", "| Fag-id | Agent |",
+    ok1 = insert_row(ROOT / "plugins" / "byg" / "skills" / "projektleder" / "SKILL.md", "| Fag-id | Agent |",
                          f"| {a.fag_id} | `{a.agent}` | TODO: typiske opgaver |")
-    ok2 = indsaet_raekke(ROD / "plugins" / "byg-kontrol" / "skills" / "kvalitetskontrol" / "SKILL.md",
+    ok2 = insert_row(ROOT / "plugins" / "byg-kontrol" / "skills" / "kvalitetskontrol" / "SKILL.md",
                          "| Fag | Fagagent | Kontrolagent |", f"| {a.fag_id} | `{a.agent}` | `{a.fag_id}-kontrol` |",
-                         foer="| projekt |")
-    kv = ROD / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "SKILL.md"
+                         before="| projekt |")
+    kv = ROOT / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "SKILL.md"
     t = kv.read_text(encoding="utf-8")
     kv.write_text(t.replace(", `projekt`.", f", `{a.fag_id}`, `projekt`.", 1), encoding="utf-8")
-    subprocess.run([sys.executable, str(ROD / "scripts" / "sync_protocol.py")], check=True)
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "sync_protocol.py")], check=True)
 
     print(f"\nOprettet plugins/{plugin}, kontrolagent {a.fag_id}-kontrol og kontrolfil fag/{a.fag_id}.md.")
     if not (ok1 and ok2):

@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
-"""Udgivelse: samler versionsnoterne og hæver versionerne – i en udgivelsesgren fra main, efter merge.
+"""Release: collects the version notes and raises the versions – in a release branch from main, after merge.
 
-Feature-grene hæver aldrig versioner selv (det er den største kilde til merge-konflikter).
-I stedet lægger hver gren én versionsnote i versionsnoter/<gren>.md:
+Feature branches never raise versions themselves (that is the biggest source of merge conflicts).
+Instead each branch adds one version note in versionsnoter/<branch>.md:
 
     ---
     byg-kontrol: minor
     byg: patch
     ---
-    Kort beskrivelse af ændringen (bliver udgivelsesnoten).
+    Short description of the change (becomes the release note).
 
-Brug:  python3 scripts/release.py            hæv versioner, skriv CHANGELOG.md, slet de udgivne noter
-       python3 scripts/release.py --proev    vis hvad der ville ske
-       python3 scripts/release.py --check    valider noterne (bruges af validate.py)
-main er beskyttet, så udgivelsen går også gennem en PR:
+Usage: python3 scripts/release.py            raise versions, write CHANGELOG.md, delete the released notes
+       python3 scripts/release.py --proev    show what would happen
+       python3 scripts/release.py --check    validate the notes (used by validate.py)
+main is protected, so the release also goes through a PR:
        git switch -c udgivelse/<version> origin/main && python3 scripts/release.py
-       git commit -am "Udgivelse <version>" && git push -u origin HEAD   → PR, CI grøn, merge
-(pre-commit tillader versionsændringer i grene, der hedder udgivelse/*).
+       git commit -am "Udgivelse <version>" && git push -u origin HEAD   → PR, CI green, merge
+(pre-commit allows version changes in branches named udgivelse/*).
 """
 import datetime
 import json
@@ -24,118 +24,118 @@ import pathlib
 import re
 import sys
 
-ROD = pathlib.Path(__file__).resolve().parent.parent
-NOTER = ROD / "versionsnoter"
-MARKED = ROD / ".claude-plugin" / "marketplace.json"
-CHANGELOG = ROD / "CHANGELOG.md"
-NIVEAU = {"patch": 0, "minor": 1, "major": 2}
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+NOTES_DIR = ROOT / "versionsnoter"
+MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
+CHANGELOG = ROOT / "CHANGELOG.md"
+LEVEL = {"patch": 0, "minor": 1, "major": 2}
 
 
-def plugin_json(navn: str) -> pathlib.Path:
-    return ROD / "plugins" / navn / ".claude-plugin" / "plugin.json"
+def plugin_json(name: str) -> pathlib.Path:
+    return ROOT / "plugins" / name / ".claude-plugin" / "plugin.json"
 
 
-def laes_note(f: pathlib.Path) -> tuple[dict, str, list]:
-    """(plugin → niveau, tekst, fejl)."""
+def read_note(f: pathlib.Path) -> tuple[dict, str, list]:
+    """(plugin → level, text, errors)."""
     t = f.read_text(encoding="utf-8")
     m = re.match(r"^---\n(.*?)\n---\n?(.*)$", t, re.S)
     if not m:
         return {}, "", [f"{f.name}: mangler '---'-blok med '<plugin>: patch|minor|major'"]
-    bump, fejl = {}, []
-    for linje in m.group(1).splitlines():
-        if not linje.strip() or linje.lstrip().startswith("#"):
+    bump, errors = {}, []
+    for line in m.group(1).splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
             continue
-        lm = re.match(r"^\s*([a-z0-9-]+)\s*:\s*(patch|minor|major)\s*$", linje)
+        lm = re.match(r"^\s*([a-z0-9-]+)\s*:\s*(patch|minor|major)\s*$", line)
         if not lm:
-            fejl.append(f"{f.name}: ugyldig linje '{linje}' (forventet '<plugin>: patch|minor|major')")
+            errors.append(f"{f.name}: ugyldig linje '{line}' (forventet '<plugin>: patch|minor|major')")
             continue
         if not plugin_json(lm.group(1)).is_file():
-            fejl.append(f"{f.name}: ukendt plugin '{lm.group(1)}'")
+            errors.append(f"{f.name}: ukendt plugin '{lm.group(1)}'")
             continue
         bump[lm.group(1)] = lm.group(2)
-    if not bump and not fejl:
-        fejl.append(f"{f.name}: ingen plugins nævnt")
+    if not bump and not errors:
+        errors.append(f"{f.name}: ingen plugins nævnt")
     if not m.group(2).strip():
-        fejl.append(f"{f.name}: mangler beskrivelse under '---'-blokken")
-    return bump, m.group(2).strip(), fejl
+        errors.append(f"{f.name}: mangler beskrivelse under '---'-blokken")
+    return bump, m.group(2).strip(), errors
 
 
-def hæv(version: str, niveau: str) -> str:
+def raise_version(version: str, level: str) -> str:
     major, minor, patch = (int(x) for x in version.split("."))
-    if niveau == "major":
+    if level == "major":
         return f"{major + 1}.0.0"
-    if niveau == "minor":
+    if level == "minor":
         return f"{major}.{minor + 1}.0"
     return f"{major}.{minor}.{patch + 1}"
 
 
-def skriv_json(f: pathlib.Path, version: str, nøgle_sti: tuple) -> None:
-    """Ret kun versionslinjen, så resten af filen (formatering) står urørt."""
+def write_json(f: pathlib.Path, version: str, key_path: tuple) -> None:
+    """Change only the version line, so the rest of the file (formatting) stays untouched."""
     t = f.read_text(encoding="utf-8")
     data = json.loads(t)
     obj = data
-    for k in nøgle_sti:
+    for k in key_path:
         obj = obj[k]
-    gammel = obj["version"]
-    ny_t, n = re.subn(rf'("version"\s*:\s*"){re.escape(gammel)}(")', rf"\g<1>{version}\g<2>", t, count=1)
+    old = obj["version"]
+    new_text, n = re.subn(rf'("version"\s*:\s*"){re.escape(old)}(")', rf"\g<1>{version}\g<2>", t, count=1)
     if n != 1:
         raise SystemExit(f"Fandt ikke versionslinjen i {f}")
-    f.write_text(ny_t, encoding="utf-8")
+    f.write_text(new_text, encoding="utf-8")
 
 
 def main() -> int:
-    proev, check = "--proev" in sys.argv, "--check" in sys.argv
-    noter = sorted(f for f in NOTER.glob("*.md") if f.name != "README.md") if NOTER.is_dir() else []
-    samlet, tekster, fejl = {}, [], []
-    for f in noter:
-        bump, tekst, ff = laes_note(f)
-        fejl += ff
+    dry_run, check = "--proev" in sys.argv, "--check" in sys.argv
+    notes = sorted(f for f in NOTES_DIR.glob("*.md") if f.name != "README.md") if NOTES_DIR.is_dir() else []
+    combined, texts, errors = {}, [], []
+    for f in notes:
+        bump, text, errs = read_note(f)
+        errors += errs
         for p, n in bump.items():
-            if p not in samlet or NIVEAU[n] > NIVEAU[samlet[p]]:
-                samlet[p] = n
-        tekster.append((f.stem, sorted(bump), tekst))
-    if fejl:
-        print("\n".join("FEJL  " + x for x in fejl))
+            if p not in combined or LEVEL[n] > LEVEL[combined[p]]:
+                combined[p] = n
+        texts.append((f.stem, sorted(bump), text))
+    if errors:
+        print("\n".join("FEJL  " + x for x in errors))
         return 1
     if check:
-        print(f"{len(noter)} versionsnote(r) ok")
+        print(f"{len(notes)} versionsnote(r) ok")
         return 0
-    if not samlet:
+    if not combined:
         print("Ingen versionsnoter – intet at udgive.")
         return 0
 
-    nye = {}
-    for p, n in sorted(samlet.items()):
-        gammel = json.loads(plugin_json(p).read_text(encoding="utf-8"))["version"]
-        nye[p] = (gammel, hæv(gammel, n), n)
-    marked = json.loads(MARKED.read_text(encoding="utf-8"))
-    m_gammel = marked["metadata"]["version"]
-    m_niveau = max(samlet.values(), key=lambda n: NIVEAU[n])
-    m_ny = hæv(m_gammel, m_niveau)
+    new = {}
+    for p, n in sorted(combined.items()):
+        old = json.loads(plugin_json(p).read_text(encoding="utf-8"))["version"]
+        new[p] = (old, raise_version(old, n), n)
+    marketplace = json.loads(MARKETPLACE.read_text(encoding="utf-8"))
+    mp_old = marketplace["metadata"]["version"]
+    mp_level = max(combined.values(), key=lambda n: LEVEL[n])
+    mp_new = raise_version(mp_old, mp_level)
 
-    for p, (g, n, niv) in nye.items():
-        print(f"{p:16} {g} → {n}  ({niv})")
-    print(f"{'marketplace':16} {m_gammel} → {m_ny}  ({m_niveau})")
-    if proev:
+    for p, (o, n, lvl) in new.items():
+        print(f"{p:16} {o} → {n}  ({lvl})")
+    print(f"{'marketplace':16} {mp_old} → {mp_new}  ({mp_level})")
+    if dry_run:
         return 0
 
-    for p, (_, n, _) in nye.items():
-        skriv_json(plugin_json(p), n, ())
-    skriv_json(MARKED, m_ny, ("metadata",))
-    afsnit = [f"## {m_ny} – {datetime.date.today().isoformat()}", ""]
-    afsnit += [f"- `{p}` {g} → {n}" for p, (g, n, _) in nye.items()]
-    afsnit.append("")
-    for navn, plugins, tekst in tekster:
-        afsnit += [f"### {navn} ({', '.join(plugins)})", tekst, ""]
-    gammel_log = CHANGELOG.read_text(encoding="utf-8") if CHANGELOG.exists() else "# Ændringslog\n"
-    hoved, _, rest = gammel_log.partition("\n")
-    ny_log = hoved + "\n\n" + "\n".join(afsnit)
+    for p, (_, n, _) in new.items():
+        write_json(plugin_json(p), n, ())
+    write_json(MARKETPLACE, mp_new, ("metadata",))
+    section = [f"## {mp_new} – {datetime.date.today().isoformat()}", ""]
+    section += [f"- `{p}` {o} → {n}" for p, (o, n, _) in new.items()]
+    section.append("")
+    for name, plugins, text in texts:
+        section += [f"### {name} ({', '.join(plugins)})", text, ""]
+    old_log = CHANGELOG.read_text(encoding="utf-8") if CHANGELOG.exists() else "# Ændringslog\n"
+    header, _, rest = old_log.partition("\n")
+    new_log = header + "\n\n" + "\n".join(section)
     if rest.strip():
-        ny_log += "\n" + rest.lstrip("\n")
-    CHANGELOG.write_text(ny_log, encoding="utf-8")
-    for f in noter:
+        new_log += "\n" + rest.lstrip("\n")
+    CHANGELOG.write_text(new_log, encoding="utf-8")
+    for f in notes:
         f.unlink()
-    print(f"\nCHANGELOG.md opdateret, {len(noter)} note(r) udgivet. Commit i grenen udgivelse/{m_ny}: git commit -am \"Udgivelse {m_ny}\" – og åbn en PR")
+    print(f"\nCHANGELOG.md opdateret, {len(notes)} note(r) udgivet. Commit i grenen udgivelse/{mp_new}: git commit -am \"Udgivelse {mp_new}\" – og åbn en PR")
     return 0
 
 

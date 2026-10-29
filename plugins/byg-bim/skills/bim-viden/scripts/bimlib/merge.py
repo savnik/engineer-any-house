@@ -1,15 +1,15 @@
-"""Hovedmodel og forslag: én source of truth (hovedmodellen), ændringer laves i en forslagsfil oven på den
-og flettes først ind, når forslaget er godkendt.
+"""Main model and proposals: one source of truth (the main model); changes are made in a proposal file on top of it
+and merged in only once the proposal is approved.
 
-  forslag <hoved.yaml> <navn>   → <hovedmappe>/forslag/<navn>.yaml med basis og basis_sha256
-  flet <forslag.yaml> [--proev] → forslaget føres ind i hovedmodellen; kun de berørte elementer skrives om,
-                                  alle andre linjer og kommentarer står urørt. Hovedmodellen før og efter
-                                  gemmes i historik/, forslaget flyttes til historik/forslag/, og fletningen
-                                  logges i historik/flettelog.md.
+  forslag <hoved.yaml> <navn>   → <main dir>/forslag/<navn>.yaml with basis and basis_sha256
+  flet <forslag.yaml> [--proev] → the proposal is merged into the main model; only the affected elements are rewritten,
+                                  all other lines and comments are left untouched. The main model before and after
+                                  is saved in historik/, the proposal is moved to historik/forslag/, and the merge
+                                  is logged in historik/flettelog.md.
 
-Sikkerhed: resultatet læses tilbage og skal give præcis samme model som forslaget gav oven på hovedmodellen
-(det, kontrollen godkendte). Er hovedmodellen ændret siden forslaget blev oprettet, sammenlignes med den
-version, forslaget byggede på (historik/), og fletningen stoppes, hvis de samme elementer er ændret begge steder.
+Safety: the result is read back and must give exactly the same model as the proposal gave on top of the main model
+(what the review approved). If the main model has changed since the proposal was created, it is compared with the
+version the proposal was based on (historik/), and the merge is stopped if the same elements changed in both places.
 """
 import datetime
 import hashlib
@@ -20,408 +20,409 @@ import shutil
 
 import yaml
 
-from .spec import FORSLAGSFELTER, IDLISTER, SpecFejl, _flet, _laes, indlaes
+from .spec import PROPOSAL_FIELDS, ID_LISTS, SpecError, _merge, _read, load
 
-LISTER = IDLISTER
-
-
-def _sha(sti: pathlib.Path) -> str:
-    return hashlib.sha256(sti.read_bytes()).hexdigest()
+LISTS = ID_LISTS
 
 
-def _historik(hoved: pathlib.Path) -> pathlib.Path:
-    return hoved.parent / "historik"
+def _sha(path: pathlib.Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _gem_version(hoved: pathlib.Path) -> pathlib.Path:
-    h = _historik(hoved)
+def _history_dir(main: pathlib.Path) -> pathlib.Path:
+    return main.parent / "historik"
+
+
+def _save_version(main: pathlib.Path) -> pathlib.Path:
+    h = _history_dir(main)
     h.mkdir(exist_ok=True)
-    mål = h / f"{hoved.stem}.{_sha(hoved)[:12]}.yaml"
-    if not mål.exists():
-        shutil.copy2(hoved, mål)
-    return mål
+    target = h / f"{main.stem}.{_sha(main)[:12]}.yaml"
+    if not target.exists():
+        shutil.copy2(main, target)
+    return target
 
 
 def _flow(v) -> str:
     return yaml.safe_dump(v, default_flow_style=True, allow_unicode=True, sort_keys=False, width=10**9).removesuffix("\n...\n").strip()
 
 
-# ------------------------------------------------------------------ tekstblokke i hovedmodellen
-def _sektion(linjer, navn):
-    """(start, slut) for linjerne under topnøglen `navn:` (slut eksklusiv) eller None."""
-    start = next((i for i, l in enumerate(linjer) if re.match(rf"{re.escape(navn)}:(\s|$)", l)), None)
+# ------------------------------------------------------------------ text blocks in the main model
+def _section(lines, name):
+    """(start, end) of the lines under the top-level key `name:` (end exclusive), or None."""
+    start = next((i for i, l in enumerate(lines) if re.match(rf"{re.escape(name)}:(\s|$)", l)), None)
     if start is None:
         return None
-    slut = next((i for i in range(start + 1, len(linjer)) if re.match(r"[^\s#]", linjer[i])), len(linjer))
-    return start, slut
+    end = next((i for i in range(start + 1, len(lines)) if re.match(r"[^\s#]", lines[i])), len(lines))
+    return start, end
 
 
-def _blokke(linjer, start, slut, liste: bool, ind: int = 2):
-    """Elementblokke i en sektion: [(fra, til)] i filens rækkefølge. Et element er en linje på indrykning `ind`
-    ('- ' eller 'nøgle:') plus fortsættelseslinjer med større indrykning. Tomme linjer og kommentarer inde i
-    et element hører med; tomme linjer og kommentarer lige før næste element gør ikke."""
-    mønster = re.compile(" " * ind + (r"- " if liste else r"[^\s#-][^:]*:"))
-    ud, i = [], start + 1
-    while i < slut:
-        if mønster.match(linjer[i]):
+def _blocks(lines, start, end, is_list: bool, indent: int = 2):
+    """Element blocks in a section: [(begin, stop)] in file order. An element is a line at indentation `indent`
+    ('- ' or 'key:') plus continuation lines with deeper indentation. Blank lines and comments inside
+    an element belong to it; blank lines and comments just before the next element do not."""
+    pattern = re.compile(" " * indent + (r"- " if is_list else r"[^\s#-][^:]*:"))
+    out, i = [], start + 1
+    while i < end:
+        if pattern.match(lines[i]):
             j = i + 1
-            while j < slut and (not linjer[j].strip() or linjer[j].lstrip().startswith("#")
-                                or len(linjer[j]) - len(linjer[j].lstrip()) > ind):
+            while j < end and (not lines[j].strip() or lines[j].lstrip().startswith("#")
+                                or len(lines[j]) - len(lines[j].lstrip()) > indent):
                 j += 1
-            while j > i + 1 and (not linjer[j - 1].strip() or linjer[j - 1].lstrip().startswith("#")):
+            while j > i + 1 and (not lines[j - 1].strip() or lines[j - 1].lstrip().startswith("#")):
                 j -= 1
-            ud.append((i, j))
+            out.append((i, j))
             i = j
         else:
             i += 1
-    return ud
+    return out
 
 
-def _dict_tekst(linjer, fra, til, ind, g, n, erstat, indsæt, sti, fx):
-    """Skriv kun de ændrede nøgler i en mapping om. En undermapping i blokform skrives om nøgle for nøgle.
-    Står nøglen i forslaget med samme værdi, bruges forslagets tekst ordret – og har den kommentarer lige over sig,
-    erstatter de hovedmodellens kommentarer over nøglen. Ellers skrives værdien på én linje, og kommentarerne står."""
-    bl = _blokke(linjer, fra, til, False, ind)
+def _dict_text(lines, begin, stop, indent, g, n, replace, insert, path, ptext):
+    """Rewrite only the changed keys in a mapping. A sub-mapping in block style is rewritten key by key.
+    If the key appears in the proposal with the same value, the proposal's text is used verbatim – and if it has comments
+    directly above it, they replace the main model's comments above the key. Otherwise the value is written on one line
+    and the comments stay."""
+    bl = _blocks(lines, begin, stop, False, indent)
     if len(bl) != len(g):
-        raise SpecFejl([f"flet: kan ikke afgrænse nøglerne i '{'.'.join(sti)}' ({len(bl)} blokke, {len(g)} nøgler)"
-                        f" – skriv hver nøgle på sin egen linje med {ind} mellemrums indrykning"])
+        raise SpecError([f"flet: kan ikke afgrænse nøglerne i '{'.'.join(path)}' ({len(bl)} blokke, {len(g)} nøgler)"
+                        f" – skriv hver nøgle på sin egen linje med {indent} mellemrums indrykning"])
 
-    def ny_tekst(nøgle, værdi):
-        f = fx.nøgle([*sti, nøgle], værdi)
+    def new_text(key, value):
+        f = ptext.key([*path, key], value)
         if f:
-            return f[0] and [" " * ind + x for x in f[0]], [" " * ind + x if x.strip() else x for x in f[1]]
-        return None, [" " * ind + f"{nøgle}: {_flow(værdi)}"]
+            return f[0] and [" " * indent + x for x in f[0]], [" " * indent + x if x.strip() else x for x in f[1]]
+        return None, [" " * indent + f"{key}: {_flow(value)}"]
 
-    forrige = fra + 1
-    for nøgle, (a, b) in zip(list(g), bl):
+    prev = begin + 1
+    for key, (a, b) in zip(list(g), bl):
         lead = a
-        while lead > forrige and linjer[lead - 1].lstrip().startswith("#"):
+        while lead > prev and lines[lead - 1].lstrip().startswith("#"):
             lead -= 1
-        forrige = b
-        if nøgle not in n:
-            erstat[lead] = (b, [])
-        elif n[nøgle] != g[nøgle]:
-            blokform = re.match(rf"\s*{re.escape(str(nøgle))}:\s*(#.*)?$", linjer[a])
-            barn = next((len(x) - len(x.lstrip()) for x in linjer[a + 1:b] if x.strip() and not x.lstrip().startswith("#")),
+        prev = b
+        if key not in n:
+            replace[lead] = (b, [])
+        elif n[key] != g[key]:
+            block_form = re.match(rf"\s*{re.escape(str(key))}:\s*(#.*)?$", lines[a])
+            child_indent = next((len(x) - len(x.lstrip()) for x in lines[a + 1:b] if x.strip() and not x.lstrip().startswith("#")),
                         None)
-            if isinstance(g[nøgle], dict) and isinstance(n[nøgle], dict) and blokform and barn and barn > ind:
-                _dict_tekst(linjer, a, b, barn, g[nøgle], n[nøgle], erstat, indsæt, [*sti, nøgle], fx)
+            if isinstance(g[key], dict) and isinstance(n[key], dict) and block_form and child_indent and child_indent > indent:
+                _dict_text(lines, a, b, child_indent, g[key], n[key], replace, insert, [*path, key], ptext)
             else:
-                kom, tekst = ny_tekst(nøgle, n[nøgle])
-                erstat[lead if kom else a] = (b, (kom or []) + tekst)
-    nye = [x for x in n if x not in g]
-    if nye:
-        sidste = bl[-1][1] if bl else fra + 1
-        for x in nye:
-            kom, tekst = ny_tekst(x, n[x])
-            indsæt.setdefault(sidste, []).extend((kom or []) + tekst)
+                comments, text = new_text(key, n[key])
+                replace[lead if comments else a] = (b, (comments or []) + text)
+    added = [x for x in n if x not in g]
+    if added:
+        last = bl[-1][1] if bl else begin + 1
+        for x in added:
+            comments, text = new_text(x, n[x])
+            insert.setdefault(last, []).extend((comments or []) + text)
 
 
-def _ændringer(gammel: dict, ny: dict) -> set:
-    """ID'er (og topnøgler) der er forskellige mellem to rå modeller."""
-    ud = set()
-    for k in set(gammel) | set(ny):
-        if k in LISTER:
-            g = {str(e.get("id")): e for e in gammel.get(k) or []}
-            n = {str(e.get("id")): e for e in ny.get(k) or []}
-            ud |= {i for i in set(g) | set(n) if g.get(i) != n.get(i)}
-        elif isinstance(gammel.get(k), dict) and isinstance(ny.get(k), dict):
-            ud |= {f"{k}.{f}" for f in set(gammel[k]) | set(ny[k]) if gammel[k].get(f) != ny[k].get(f)}
-        elif gammel.get(k) != ny.get(k):
-            ud.add(k)
-    return ud
+def _changes(old: dict, new: dict) -> set:
+    """IDs (and top-level keys) that differ between two raw models."""
+    out = set()
+    for k in set(old) | set(new):
+        if k in LISTS:
+            g = {str(e.get("id")): e for e in old.get(k) or []}
+            n = {str(e.get("id")): e for e in new.get(k) or []}
+            out |= {i for i in set(g) | set(n) if g.get(i) != n.get(i)}
+        elif isinstance(old.get(k), dict) and isinstance(new.get(k), dict):
+            out |= {f"{k}.{f}" for f in set(old[k]) | set(new[k]) if old[k].get(f) != new[k].get(f)}
+        elif old.get(k) != new.get(k):
+            out.add(k)
+    return out
 
 
-def _berørt(forslag: dict) -> set:
-    ud = {str(x) for x in (forslag.get("nedrives") or []) + (forslag.get("slet") or [])}
-    for k, v in forslag.items():
-        if k in FORSLAGSFELTER:
+def _touched(proposal: dict) -> set:
+    out = {str(x) for x in (proposal.get("nedrives") or []) + (proposal.get("slet") or [])}
+    for k, v in proposal.items():
+        if k in PROPOSAL_FIELDS:
             continue
-        if k in LISTER:
-            ud |= {str(e.get("id")) for e in v or []}
+        if k in LISTS:
+            out |= {str(e.get("id")) for e in v or []}
         elif isinstance(v, dict):
-            ud |= {f"{k}.{f}" for f in v}
+            out |= {f"{k}.{f}" for f in v}
         else:
-            ud.add(k)
-    return ud
+            out.add(k)
+    return out
 
 
-class _Forslagstekst:
-    """Forslagets egen tekst for en sektion eller et element – bruges ordret (med kommentarer), når den giver
-    præcis den flettede værdi; ellers skrives elementet på én linje."""
+class _ProposalText:
+    """The proposal's own text for a section or an element – used verbatim (with comments) when it gives
+    exactly the merged value; otherwise the element is written on one line."""
 
-    def __init__(self, tekst):
-        self.linjer = (tekst or "").split("\n")
+    def __init__(self, text):
+        self.lines = (text or "").split("\n")
 
-    def sektion(self, k, værdi):
-        sek = _sektion(self.linjer, k)
-        if sek is None:
+    def section(self, k, value):
+        sec = _section(self.lines, k)
+        if sec is None:
             return None
-        bid = self.linjer[sek[0]:sek[1]]
-        while bid and (not bid[-1].strip() or bid[-1].startswith("#")):
-            bid.pop()
-        return bid if _læs_tekst(bid) == {k: værdi} else None
+        chunk = self.lines[sec[0]:sec[1]]
+        while chunk and (not chunk[-1].strip() or chunk[-1].startswith("#")):
+            chunk.pop()
+        return chunk if _parse_text(chunk) == {k: value} else None
 
-    def nøgle(self, sti, værdi):
-        """(ledende kommentarer, linjer) for nøglen sti[-1] i mappingen sti[:-1] – kun hvis de giver `værdi`."""
-        sek = _sektion(self.linjer, sti[0])
-        if sek is None:
+    def key(self, path, value):
+        """(leading comments, lines) for the key path[-1] in the mapping path[:-1] – only if they give `value`."""
+        sec = _section(self.lines, path[0])
+        if sec is None:
             return None
-        fra, til, ind = sek[0], sek[1], 2
-        for i, k in enumerate(sti[1:]):
-            bl = [(a, b) for a, b in _blokke(self.linjer, fra, til, False, ind)
-                  if re.match(rf"\s*{re.escape(str(k))}:(\s|$)", self.linjer[a])]
+        begin, stop, indent = sec[0], sec[1], 2
+        for i, k in enumerate(path[1:]):
+            bl = [(a, b) for a, b in _blocks(self.lines, begin, stop, False, indent)
+                  if re.match(rf"\s*{re.escape(str(k))}:(\s|$)", self.lines[a])]
             if not bl:
                 return None
             a, b = bl[0]
-            if i == len(sti) - 2:
-                bid = [x[ind:] for x in self.linjer[a:b]]
-                if _læs_tekst(bid) != {k: værdi}:
+            if i == len(path) - 2:
+                chunk = [x[indent:] for x in self.lines[a:b]]
+                if _parse_text(chunk) != {k: value}:
                     return None
                 lead = a
-                while lead > fra + 1 and self.linjer[lead - 1].lstrip().startswith("#"):
+                while lead > begin + 1 and self.lines[lead - 1].lstrip().startswith("#"):
                     lead -= 1
-                return [x[ind:] for x in self.linjer[lead:a]], bid
-            ind = next((len(x) - len(x.lstrip()) for x in self.linjer[a + 1:b]
+                return [x[indent:] for x in self.lines[lead:a]], chunk
+            indent = next((len(x) - len(x.lstrip()) for x in self.lines[a + 1:b]
                         if x.strip() and not x.lstrip().startswith("#")), None)
-            if ind is None:
+            if indent is None:
                 return None
-            fra, til = a, b
+            begin, stop = a, b
         return None
 
-    def element(self, k, nøgle, værdi, liste):
-        sek = _sektion(self.linjer, k)
-        if sek is None:
+    def element(self, k, key, value, is_list):
+        sec = _section(self.lines, k)
+        if sec is None:
             return None
-        for fra, til in _blokke(self.linjer, *sek, liste):
-            bid = self.linjer[fra:til]
-            v = _læs_tekst([f"{k}:"] + bid)
+        for begin, stop in _blocks(self.lines, *sec, is_list):
+            chunk = self.lines[begin:stop]
+            v = _parse_text([f"{k}:"] + chunk)
             v = (v or {}).get(k)
-            if liste and isinstance(v, list) and len(v) == 1 and v[0] == værdi:
-                return bid
-            if not liste and isinstance(v, dict) and v == {nøgle: værdi}:
-                return bid
+            if is_list and isinstance(v, list) and len(v) == 1 and v[0] == value:
+                return chunk
+            if not is_list and isinstance(v, dict) and v == {key: value}:
+                return chunk
         return None
 
 
-def _læs_tekst(linjer):
+def _parse_text(lines):
     try:
-        return yaml.safe_load("\n".join(linjer))
+        return yaml.safe_load("\n".join(lines))
     except yaml.YAMLError:
         return None
 
 
-def _skriv_tekst(tekst: str, gammel: dict, ny: dict, ftekst: str = None) -> str:
-    """Skriv kun de ændrede elementer om i hovedmodellens tekst."""
-    fx = _Forslagstekst(ftekst)
-    linjer = tekst.split("\n")
-    erstat = {}   # linjeindeks (fra) -> (til, nye linjer)
-    indsæt = {}   # linjeindeks -> nye linjer (indsættes før)
-    nye_sektioner = []
-    for k in ny:
-        if k in FORSLAGSFELTER:
+def _write_text(text: str, old: dict, new: dict, proposal_text: str = None) -> str:
+    """Rewrite only the changed elements in the main model's text."""
+    ptext = _ProposalText(proposal_text)
+    lines = text.split("\n")
+    replace = {}   # line index (begin) -> (stop, new lines)
+    insert = {}   # line index -> new lines (inserted before)
+    new_sections = []
+    for k in new:
+        if k in PROPOSAL_FIELDS:
             continue
-        g, n = gammel.get(k), ny.get(k)
+        g, n = old.get(k), new.get(k)
         if g == n:
             continue
-        sek = _sektion(linjer, k)
-        liste = k in LISTER
-        if sek is None or not isinstance(n, (list, dict)) or (liste and not isinstance(g, list)) \
-                or (not liste and not isinstance(g, dict)):
-            if sek is not None:
-                erstat[sek[0]] = (sek[1], [f"{k}: {_flow(n)}" if not isinstance(n, (list, dict))
-                                           else f"{k}:"] + _render(n, liste))
+        sec = _section(lines, k)
+        is_list = k in LISTS
+        if sec is None or not isinstance(n, (list, dict)) or (is_list and not isinstance(g, list)) \
+                or (not is_list and not isinstance(g, dict)):
+            if sec is not None:
+                replace[sec[0]] = (sec[1], [f"{k}: {_flow(n)}" if not isinstance(n, (list, dict))
+                                           else f"{k}:"] + _render(n, is_list))
             else:
-                nye_sektioner += fx.sektion(k, n) or ([f"{k}:"] + _render(n, liste) if isinstance(n, (list, dict))
+                new_sections += ptext.section(k, n) or ([f"{k}:"] + _render(n, is_list) if isinstance(n, (list, dict))
                                                      else [f"{k}: {_flow(n)}"])
-                nye_sektioner.append("")
+                new_sections.append("")
             continue
-        if not liste:
-            _dict_tekst(linjer, *sek, 2, g, n, erstat, indsæt, [k], fx)
+        if not is_list:
+            _dict_text(lines, *sec, 2, g, n, replace, insert, [k], ptext)
             continue
-        bl = _blokke(linjer, *sek, liste)
-        nøgler = [str(e.get("id")) for e in g] if liste else list(g)
-        if len(bl) != len(nøgler):
-            raise SpecFejl([f"flet: kan ikke afgrænse elementerne i '{k}' ({len(bl)} blokke, {len(nøgler)} elementer)"
+        bl = _blocks(lines, *sec, is_list)
+        keys = [str(e.get("id")) for e in g] if is_list else list(g)
+        if len(bl) != len(keys):
+            raise SpecError([f"flet: kan ikke afgrænse elementerne i '{k}' ({len(bl)} blokke, {len(keys)} elementer)"
                             " – skriv hvert element på sin egen linje ('  - {id: …}' / '  nøgle: …')"])
-        gpos = dict(zip(nøgler, bl))
-        nmap = {str(e.get("id")): e for e in n} if liste else n
-        gmap = {str(e.get("id")): e for e in g} if liste else g
-        for nøgle, (fra, til) in gpos.items():
-            if nøgle not in nmap:
-                erstat[fra] = (til, [])
-            elif nmap[nøgle] != gmap[nøgle]:
-                erstat[fra] = (til, fx.element(k, nøgle, nmap[nøgle], liste)
-                               or _render({nøgle: nmap[nøgle]} if not liste else [nmap[nøgle]], liste))
-        nye = [x for x in nmap if x not in gpos]
-        if nye:
-            sidste = bl[-1][1] if bl else sek[0] + 1
-            for x in nye:
-                indsæt.setdefault(sidste, []).extend(fx.element(k, x, nmap[x], liste)
-                                                     or _render([nmap[x]] if liste else {x: nmap[x]}, liste))
-    ud = []
+        gpos = dict(zip(keys, bl))
+        nmap = {str(e.get("id")): e for e in n} if is_list else n
+        gmap = {str(e.get("id")): e for e in g} if is_list else g
+        for key, (begin, stop) in gpos.items():
+            if key not in nmap:
+                replace[begin] = (stop, [])
+            elif nmap[key] != gmap[key]:
+                replace[begin] = (stop, ptext.element(k, key, nmap[key], is_list)
+                               or _render({key: nmap[key]} if not is_list else [nmap[key]], is_list))
+        added = [x for x in nmap if x not in gpos]
+        if added:
+            last = bl[-1][1] if bl else sec[0] + 1
+            for x in added:
+                insert.setdefault(last, []).extend(ptext.element(k, x, nmap[x], is_list)
+                                                     or _render([nmap[x]] if is_list else {x: nmap[x]}, is_list))
+    out = []
     i = 0
-    while i < len(linjer):
-        if i in indsæt:
-            ud += indsæt.pop(i)
-        if i in erstat:
-            til, nye = erstat.pop(i)
-            ud += nye
-            i = til
+    while i < len(lines):
+        if i in insert:
+            out += insert.pop(i)
+        if i in replace:
+            stop, added = replace.pop(i)
+            out += added
+            i = stop
             continue
-        ud.append(linjer[i])
+        out.append(lines[i])
         i += 1
-    for x in indsæt.values():
-        ud += x
-    if nye_sektioner:
-        while ud and ud[-1] == "":
-            ud.pop()
-        ud += [""] + nye_sektioner
-    return "\n".join(ud)
+    for x in insert.values():
+        out += x
+    if new_sections:
+        while out and out[-1] == "":
+            out.pop()
+        out += [""] + new_sections
+    return "\n".join(out)
 
 
-def _render(v, liste: bool):
-    if liste:
+def _render(v, is_list: bool):
+    if is_list:
         return [f"  - {_flow(e)}" for e in v]
     return [f"  {k}: {_flow(x)}" for k, x in v.items()]
 
 
-# ------------------------------------------------------------------ kommandoer
-def opret(hoved, navn, note=None, ud=None) -> int:
-    hoved = pathlib.Path(hoved).resolve()
-    if not hoved.exists():
-        print(f"Hovedmodellen findes ikke: {hoved}")
+# ------------------------------------------------------------------ commands
+def create(main, name, note=None, out=None) -> int:
+    main = pathlib.Path(main).resolve()
+    if not main.exists():
+        print(f"Hovedmodellen findes ikke: {main}")
         return 1
-    if _laes(hoved).get("basis"):
-        print(f"{hoved.name} har selv en basis – et forslag skal bygge direkte på hovedmodellen")
+    if _read(main).get("basis"):
+        print(f"{main.name} har selv en basis – et forslag skal bygge direkte på hovedmodellen")
         return 1
-    # ud: en branch-sags egen forslagsmappe (fx <hovedsag>--vvs/bim/forslag); basis peger så relativt på hovedmodellen
-    mappe = pathlib.Path(ud).resolve() if ud else hoved.parent / "forslag"
-    mappe.mkdir(parents=True, exist_ok=True)
-    sti = mappe / f"{navn}.yaml"
-    if sti.exists():
-        print(f"Findes allerede: {sti}")
+    # out: a branch case's own proposal dir (e.g. <main case>--vvs/bim/forslag); basis then points relatively to the main model
+    out_dir = pathlib.Path(out).resolve() if out else main.parent / "forslag"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"{name}.yaml"
+    if path.exists():
+        print(f"Findes allerede: {path}")
         return 1
-    _gem_version(hoved)
-    rel = pathlib.Path(os.path.relpath(hoved, mappe))
-    sti.write_text(
-        f"# Forslag '{navn}' oven på hovedmodellen {hoved.name} ({datetime.date.today()}). Ret KUN her – aldrig i {hoved.name}.\n"
+    _save_version(main)
+    rel = pathlib.Path(os.path.relpath(main, out_dir))
+    path.write_text(
+        f"# Forslag '{name}' oven på hovedmodellen {main.name} ({datetime.date.today()}). Ret KUN her – aldrig i {main.name}.\n"
         + (f"# {note}\n" if note else "")
         + "# Skriv kun det, der ændres: elementer med samme id overskriver felterne (null fjerner et felt), nye id'er\n"
           "# tilføjes, 'nedrives: [id, …]' = renovering, 'slet: [id, …]' = modelrettelse. Byg/kontrollér forslaget med\n"
-          f"#   bim.py byg {sti.name}   ·   flet først ind efter godkendelse: bim.py flet {sti.name}\n"
+          f"#   bim.py byg {path.name}   ·   flet først ind efter godkendelse: bim.py flet {path.name}\n"
         f"basis: {rel.as_posix()}\n"
-        f"basis_sha256: {_sha(hoved)}\n",
+        f"basis_sha256: {_sha(main)}\n",
         encoding="utf-8")
-    print(f"OPRETTET {sti}")
-    print(f"  basis {hoved.name} ({_sha(hoved)[:12]}); version gemt i historik/")
+    print(f"OPRETTET {path}")
+    print(f"  basis {main.name} ({_sha(main)[:12]}); version gemt i historik/")
     return 0
 
 
-def flet(forslag, proev=False, tving=False, note=None) -> int:
-    fsti = pathlib.Path(forslag).resolve()
-    fr = _laes(fsti)
-    if not fr.get("basis"):
+def merge(proposal, dry_run=False, force=False, note=None) -> int:
+    ppath = pathlib.Path(proposal).resolve()
+    prop = _read(ppath)
+    if not prop.get("basis"):
         print("Forslaget har ingen 'basis:' – det er ikke et forslag oven på en hovedmodel")
         return 1
-    hoved = (fsti.parent / fr["basis"]).resolve()
-    if not hoved.exists():
-        print(f"Hovedmodellen findes ikke: {hoved}")
+    main = (ppath.parent / prop["basis"]).resolve()
+    if not main.exists():
+        print(f"Hovedmodellen findes ikke: {main}")
         return 1
-    tekst = hoved.read_text(encoding="utf-8")
-    gammel = _laes(hoved)
-    if gammel.get("basis"):
-        print(f"{hoved.name} har selv en basis – flet kun ind i en hovedmodel")
+    text = main.read_text(encoding="utf-8")
+    old = _read(main)
+    if old.get("basis"):
+        print(f"{main.name} har selv en basis – flet kun ind i en hovedmodel")
         return 1
 
-    # Er hovedmodellen ændret, siden forslaget blev oprettet?
-    sha_nu = _sha(hoved)
-    sha_f = str(fr.get("basis_sha256") or "")
-    konflikt = set()
-    if sha_f and sha_f != sha_nu:
-        før = _historik(hoved) / f"{hoved.stem}.{sha_f[:12]}.yaml"
-        if not før.exists():
-            print(f"STOP: {hoved.name} er ændret siden forslaget, og versionen {sha_f[:12]} findes ikke i historik/.")
-            if not tving:
+    # Has the main model changed since the proposal was created?
+    sha_now = _sha(main)
+    sha_prop = str(prop.get("basis_sha256") or "")
+    conflicts = set()
+    if sha_prop and sha_prop != sha_now:
+        before = _history_dir(main) / f"{main.stem}.{sha_prop[:12]}.yaml"
+        if not before.exists():
+            print(f"STOP: {main.name} er ændret siden forslaget, og versionen {sha_prop[:12]} findes ikke i historik/.")
+            if not force:
                 return 1
         else:
-            konflikt = _ændringer(_laes(før), gammel) & _berørt(fr)
-            if konflikt:
-                print(f"KONFLIKT: {hoved.name} er ændret siden forslaget, og de samme elementer er ændret begge steder:")
-                for x in sorted(konflikt):
+            conflicts = _changes(_read(before), old) & _touched(prop)
+            if conflicts:
+                print(f"KONFLIKT: {main.name} er ændret siden forslaget, og de samme elementer er ændret begge steder:")
+                for x in sorted(conflicts):
                     print("  - " + x)
                 print("  Opdatér forslaget mod den nuværende hovedmodel (og kontrollér igen), eller brug --tving.")
-                if not tving:
+                if not force:
                     return 1
             else:
-                print(f"  Hovedmodellen er ændret siden forslaget ({sha_f[:12]} → {sha_nu[:12]}), men ikke i de samme elementer.")
+                print(f"  Hovedmodellen er ændret siden forslaget ({sha_prop[:12]} → {sha_now[:12]}), men ikke i de samme elementer.")
 
-    ny = _flet(gammel, fr)
-    fejl = ny.pop("_fejl", [])
-    if fejl:
-        print(f"FLET-FEJL ({len(fejl)}):")
-        for x in fejl:
+    new = _merge(old, prop)
+    errors = new.pop("_fejl", [])
+    if errors:
+        print(f"FLET-FEJL ({len(errors)}):")
+        for x in errors:
             print("  - " + x)
         return 1
-    ny_tekst = _skriv_tekst(tekst, gammel, ny, fsti.read_text(encoding="utf-8"))
-    ændret = _ændringer(gammel, ny)
-    if not ændret:
+    new_text = _write_text(text, old, new, ppath.read_text(encoding="utf-8"))
+    changed = _changes(old, new)
+    if not changed:
         print("Forslaget ændrer intet i hovedmodellen.")
         return 0
 
-    # Kontrol 1: teksten giver præcis den flettede model. Kontrol 2: den validerer som spec.
-    if yaml.safe_load(ny_tekst) != ny:
+    # Check 1: the text gives exactly the merged model. Check 2: it validates as a spec.
+    if yaml.safe_load(new_text) != new:
         print("STOP: den omskrevne tekst giver ikke den forventede model (fejl i flet) – intet er skrevet.")
         return 1
-    tmp = hoved.with_name(f".{hoved.stem}.flet-tjek.yaml")
-    tmp.write_text(ny_tekst, encoding="utf-8")
+    tmp = main.with_name(f".{main.stem}.flet-tjek.yaml")
+    tmp.write_text(new_text, encoding="utf-8")
     try:
-        indlaes(tmp)
-    except SpecFejl as e:
-        print(f"SPEC-FEJL efter fletning ({len(e.fejl)}) – intet er skrevet:")
-        for x in e.fejl[:40]:
+        load(tmp)
+    except SpecError as e:
+        print(f"SPEC-FEJL efter fletning ({len(e.errors)}) – intet er skrevet:")
+        for x in e.errors[:40]:
             print("  - " + x)
         return 1
     finally:
         tmp.unlink(missing_ok=True)
 
-    g_ids = {str(e.get("id")) for k in LISTER for e in gammel.get(k) or []}
-    n_ids = {str(e.get("id")) for k in LISTER for e in ny.get(k) or []}
-    nye, slettet = sorted(n_ids - g_ids), sorted(g_ids - n_ids)
-    rettet = sorted(ændret - set(nye) - set(slettet))
-    print(f"{'PRØVE – intet skrevet' if proev else 'FLETTET'}: {fsti.name} → {hoved.name}")
-    print(f"  rettet {len(rettet)}: {', '.join(rettet[:30])}{' …' if len(rettet) > 30 else ''}")
-    print(f"  nye {len(nye)}: {', '.join(nye[:30])}{' …' if len(nye) > 30 else ''}")
-    if slettet:
-        print(f"  slettet {len(slettet)}: {', '.join(slettet)}")
-    if proev:
+    g_ids = {str(e.get("id")) for k in LISTS for e in old.get(k) or []}
+    n_ids = {str(e.get("id")) for k in LISTS for e in new.get(k) or []}
+    added, deleted = sorted(n_ids - g_ids), sorted(g_ids - n_ids)
+    modified = sorted(changed - set(added) - set(deleted))
+    print(f"{'PRØVE – intet skrevet' if dry_run else 'FLETTET'}: {ppath.name} → {main.name}")
+    print(f"  rettet {len(modified)}: {', '.join(modified[:30])}{' …' if len(modified) > 30 else ''}")
+    print(f"  nye {len(added)}: {', '.join(added[:30])}{' …' if len(added) > 30 else ''}")
+    if deleted:
+        print(f"  slettet {len(deleted)}: {', '.join(deleted)}")
+    if dry_run:
         return 0
 
-    dato = datetime.date.today().isoformat()
-    _gem_version(hoved)
-    linjer = ny_tekst.split("\n")
-    pos = next((i for i, l in enumerate(linjer) if not l.startswith("#")), 0)
-    linjer.insert(pos, f"# Flettet {dato}: {fsti.name}{' – ' + note if note else ''} (rettet {len(rettet)}, nye {len(nye)}, slettet {len(slettet)}).")
-    hoved.write_text("\n".join(linjer), encoding="utf-8")
-    efter = _gem_version(hoved)
-    h = _historik(hoved)
+    date_str = datetime.date.today().isoformat()
+    _save_version(main)
+    lines = new_text.split("\n")
+    pos = next((i for i, l in enumerate(lines) if not l.startswith("#")), 0)
+    lines.insert(pos, f"# Flettet {date_str}: {ppath.name}{' – ' + note if note else ''} (rettet {len(modified)}, nye {len(added)}, slettet {len(deleted)}).")
+    main.write_text("\n".join(lines), encoding="utf-8")
+    after = _save_version(main)
+    h = _history_dir(main)
     (h / "forslag").mkdir(exist_ok=True)
-    arkiv = h / "forslag" / f"{fsti.stem}.{dato}.yaml"
+    archive = h / "forslag" / f"{ppath.stem}.{date_str}.yaml"
     n = 2
-    while arkiv.exists():
-        arkiv = h / "forslag" / f"{fsti.stem}.{dato}-{n}.yaml"
+    while archive.exists():
+        archive = h / "forslag" / f"{ppath.stem}.{date_str}-{n}.yaml"
         n += 1
-    shutil.move(str(fsti), arkiv)
+    shutil.move(str(ppath), archive)
     log = h / "flettelog.md"
     if not log.exists():
-        log.write_text(f"# Flettelog – {hoved.name}\n| Dato | Forslag | Før | Efter | Rettet | Nye | Slettet | Note |\n|---|---|---|---|---|---|---|---|\n",
+        log.write_text(f"# Flettelog – {main.name}\n| Dato | Forslag | Før | Efter | Rettet | Nye | Slettet | Note |\n|---|---|---|---|---|---|---|---|\n",
                        encoding="utf-8")
     with log.open("a", encoding="utf-8") as f:
-        f.write(f"| {dato} | {fsti.name} | {sha_nu[:12]} | {efter.stem.split('.')[-1]} | {', '.join(rettet)} | "
-                f"{', '.join(nye)} | {', '.join(slettet)} | {note or ''} |\n")
-    print(f"  før/efter gemt i historik/, forslaget flyttet til {arkiv.relative_to(hoved.parent)}")
-    if (yaml.safe_load(ny_tekst).get("ejendomskort") or {}).get("fil"):
-        from .property_card import generer
-        generer(hoved)
-    print(f"  næste: bim.py byg {hoved.name} og tjek – IFC'en er ikke bygget om")
+        f.write(f"| {date_str} | {ppath.name} | {sha_now[:12]} | {after.stem.split('.')[-1]} | {', '.join(modified)} | "
+                f"{', '.join(added)} | {', '.join(deleted)} | {note or ''} |\n")
+    print(f"  før/efter gemt i historik/, forslaget flyttet til {archive.relative_to(main.parent)}")
+    if (yaml.safe_load(new_text).get("ejendomskort") or {}).get("fil"):
+        from .property_card import generate
+        generate(main)
+    print(f"  næste: bim.py byg {main.name} og tjek – IFC'en er ikke bygget om")
     return 0

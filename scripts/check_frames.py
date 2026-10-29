@@ -10,73 +10,73 @@ import pathlib
 import re
 import sys
 
-ROD = pathlib.Path(__file__).resolve().parent.parent
-HOVED = "| ID | Situation | Ramme (alle betingelser) | Standardløsning | Uden for rammen | Kilde |"
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+HEADER = "| ID | Situation | Ramme (alle betingelser) | Standardløsning | Uden for rammen | Kilde |"
 ID = re.compile(r"R-[A-ZÆØÅ]+-\d{2}")
-DATO = re.compile(r"\d{4}-\d{2}-\d{2}")
-ROLLE = re.compile(r"(mester|ingeniør|statiker|installatør|rådgiver)", re.I)
+DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+ROLE = re.compile(r"(mester|ingeniør|statiker|installatør|rådgiver)", re.I)
 
 
-def status(kilde: str) -> str | None:
+def status(source: str) -> str | None:
     """Return V, T, P or P-mangler from the start of the source cell, or None if unknown."""
-    if kilde.startswith("P – mangler"):
+    if source.startswith("P – mangler"):
         return "P-mangler"
     for s in ("V", "T", "P"):
-        if kilde == s or kilde.startswith((s + " ", s + " –")):
+        if source == s or source.startswith((s + " ", s + " –")):
             return s
     return None
 
 
-def tjek(filer: dict[str, str], andre: dict[str, str] | None = None) -> tuple[list[str], dict[str, int]]:
-    """Check frame files {name: text}; `andre` are other texts whose R-ID references must exist."""
-    fejl: list[str] = []
-    antal = {"V": 0, "T": 0, "P": 0, "P-mangler": 0}
-    ider: dict[str, str] = {}
-    for navn, tekst in filer.items():
-        if HOVED not in tekst:
-            fejl.append(f"{navn}: mangler tabelhovedet {HOVED}")
-        for nr, linje in enumerate(tekst.splitlines(), 1):
-            if not linje.startswith("| R-"):
+def check(files: dict[str, str], others: dict[str, str] | None = None) -> tuple[list[str], dict[str, int]]:
+    """Check frame files {name: text}; `others` are other texts whose R-ID references must exist."""
+    errors: list[str] = []
+    counts = {"V": 0, "T": 0, "P": 0, "P-mangler": 0}
+    ids: dict[str, str] = {}
+    for name, text in files.items():
+        if HEADER not in text:
+            errors.append(f"{name}: mangler tabelhovedet {HEADER}")
+        for lineno, line in enumerate(text.splitlines(), 1):
+            if not line.startswith("| R-"):
                 continue
-            celler = [c.strip() for c in linje.strip().strip("|").split("|")]
-            sted = f"{navn}:{nr}"
-            if len(celler) != 6:
-                fejl.append(f"{sted}: {len(celler)} celler, forventer 6 (ID, situation, ramme, løsning, uden for, kilde)")
+            cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            loc = f"{name}:{lineno}"
+            if len(cells) != 6:
+                errors.append(f"{loc}: {len(cells)} celler, forventer 6 (ID, situation, ramme, løsning, uden for, kilde)")
                 continue
-            rid, kilde = celler[0], celler[5]
+            rid, source = cells[0], cells[5]
             if not ID.fullmatch(rid):
-                fejl.append(f"{sted}: ugyldigt ID '{rid}' (forventer fx R-MUR-01)")
-            elif rid in ider:
-                fejl.append(f"{sted}: ID {rid} findes også i {ider[rid]}")
+                errors.append(f"{loc}: ugyldigt ID '{rid}' (forventer fx R-MUR-01)")
+            elif rid in ids:
+                errors.append(f"{loc}: ID {rid} findes også i {ids[rid]}")
             else:
-                ider[rid] = sted
-            s = status(kilde)
+                ids[rid] = loc
+            s = status(source)
             if s is None:
-                fejl.append(f"{sted}: kilde skal starte med V, T, P eller 'P – mangler'")
+                errors.append(f"{loc}: kilde skal starte med V, T, P eller 'P – mangler'")
                 continue
-            antal[s] += 1
-            if s == "V" and not DATO.search(kilde):
-                fejl.append(f"{sted}: V-række mangler dato (ÅÅÅÅ-MM-DD)")
-            if s == "P" and not (DATO.search(kilde) and ROLLE.search(kilde)):
-                fejl.append(f"{sted}: P-række skal have fagrolle og dato, fx 'P – murermester, 2026-11-02'")
-    for navn, tekst in {**filer, **(andre or {})}.items():
-        for rid in sorted(set(ID.findall(tekst)) - set(ider)):
-            fejl.append(f"{navn}: henviser til {rid}, som ikke findes i nogen rammer.md")
-    return fejl, antal
+            counts[s] += 1
+            if s == "V" and not DATE.search(source):
+                errors.append(f"{loc}: V-række mangler dato (ÅÅÅÅ-MM-DD)")
+            if s == "P" and not (DATE.search(source) and ROLE.search(source)):
+                errors.append(f"{loc}: P-række skal have fagrolle og dato, fx 'P – murermester, 2026-11-02'")
+    for name, text in {**files, **(others or {})}.items():
+        for rid in sorted(set(ID.findall(text)) - set(ids)):
+            errors.append(f"{name}: henviser til {rid}, som ikke findes i nogen rammer.md")
+    return errors, counts
 
 
 def main() -> int:
-    filer = {str(f.relative_to(ROD)): f.read_text(encoding="utf-8")
-             for f in sorted(ROD.glob("plugins/*/skills/*/references/rammer.md"))}
-    andre = {str(f.relative_to(ROD)): f.read_text(encoding="utf-8")
-             for mønster in ("plugins/**/*.md", "faelles/*.md", "skabelon/**/*.md")
-             for f in sorted(ROD.glob(mønster)) if f.name != "rammer.md"}
-    fejl, antal = tjek(filer, andre)
-    for f in fejl:
+    files = {str(f.relative_to(ROOT)): f.read_text(encoding="utf-8")
+             for f in sorted(ROOT.glob("plugins/*/skills/*/references/rammer.md"))}
+    others = {str(f.relative_to(ROOT)): f.read_text(encoding="utf-8")
+             for pattern in ("plugins/**/*.md", "faelles/*.md", "skabelon/**/*.md")
+             for f in sorted(ROOT.glob(pattern)) if f.name != "rammer.md"}
+    errors, counts = check(files, others)
+    for f in errors:
         print(f"FEJL  {f}")
-    print(f"Rammer: {len(filer)} filer · {antal['V']} V · {antal['T']} T · {antal['P']} P · "
-          f"{antal['P-mangler']} P – mangler · {len(fejl)} fejl")
-    return 1 if fejl else 0
+    print(f"Rammer: {len(files)} filer · {counts['V']} V · {counts['T']} T · {counts['P']} P · "
+          f"{counts['P-mangler']} P – mangler · {len(errors)} fejl")
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":

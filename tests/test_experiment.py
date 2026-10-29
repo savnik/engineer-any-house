@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests the improvement log (scripts/experiment.py) and the CI agent's holdout guard (scripts/hooks/holdout_guard.py).
 
-Kør:  python3 tests/test_experiment.py
+Run:  python3 tests/test_experiment.py
 """
 import json
 import pathlib

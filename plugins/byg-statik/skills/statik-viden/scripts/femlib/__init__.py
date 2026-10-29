@@ -1,1 +1,1 @@
-"""FEM-værktøjets bibliotek: model (spec → PyNite → resultater), tegn (PNG) og vis (HTML)."""
+"""FEM tool library: model (spec → PyNite → results), draw (PNG) and viewer (HTML)."""

@@ -43,7 +43,7 @@ ROOT = exam.ROOT
 REGISTRY = ROOT / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
 BLOCKING = {"kritisk", "væsentlig", "vaesentlig"}
 
-KONTROL_PROMPT = """LEVERANCE: eksamen/{fag}/{id}
+REVIEW_PROMPT = """LEVERANCE: eksamen/{fag}/{id}
 KONTROLNIVEAU: {niveau}
 FORSØG: 1
 
@@ -65,7 +65,7 @@ BESVARELSE FRA FAGAGENTEN:
 {svar}
 >>>"""
 
-RETUR_PROMPT = """{opgave}
+RETRY_PROMPT = """{opgave}
 
 Din tidligere besvarelse:
 <<<
@@ -82,8 +82,8 @@ opgaven kræver."""
 
 # ---------- parsing ----------
 
-def parse_dom(text: str) -> dict | None:
-    """The last JSON object in the answer that has a 'dom' field (the control agent ends with it)."""
+def parse_verdict(text: str) -> dict | None:
+    """The last JSON object in the answer that has a 'dom' field (the review agent ends with it)."""
     text = text or ""
     dec = json.JSONDecoder()
     pos = text.rfind("{")
@@ -98,10 +98,10 @@ def parse_dom(text: str) -> dict | None:
     return None
 
 
-def blocking_findings(dom: dict | None) -> list[dict]:
-    if not dom:
+def blocking_findings(verdict: dict | None) -> list[dict]:
+    if not verdict:
         return []
-    return [f for f in dom.get("fund") or [] if isinstance(f, dict)
+    return [f for f in verdict.get("fund") or [] if isinstance(f, dict)
             and str(f.get("klasse", "")).lower() in BLOCKING and str(f.get("status", "nyt")).lower() != "lukket"]
 
 
@@ -113,22 +113,22 @@ def classify(correct_before: bool, rejected: bool, correct_after: bool | None) -
     return "fanget_rettet" if correct_after else "fanget_ikke_rettet"
 
 
-def format_findings(fund: list[dict]) -> str:
+def format_findings(findings: list[dict]) -> str:
     keys = ("id", "klasse", "sted", "paastand", "krav", "kilde", "handling")
-    return "\n".join("- " + " · ".join(f"{k}: {f[k]}" for k in keys if f.get(k)) for f in fund)
+    return "\n".join("- " + " · ".join(f"{k}: {f[k]}" for k in keys if f.get(k)) for f in findings)
 
 
 # ---------- running ----------
 
-def control_agent(trade_plugin: str) -> str:
+def review_agent(trade_plugin: str) -> str:
     reg = json.loads(REGISTRY.read_text(encoding="utf-8"))
-    for fag_id, entry in reg["fag"].items():
-        if trade_plugin == f"byg-{fag_id}":
+    for trade_id, entry in reg["fag"].items():
+        if trade_plugin == f"byg-{trade_id}":
             return entry["kontrol"]
     raise SystemExit(f"Ingen kontrolagent for {trade_plugin} i fagregister.json")
 
 
-def prepare_control(tmp: pathlib.Path) -> pathlib.Path:
+def prepare_review(tmp: pathlib.Path) -> pathlib.Path:
     """byg-kontrol without hooks: the hooks guard real cases (LEVERANCE state, Stop) and would interfere here."""
     dst = exam.prepare_plugin("byg-kontrol", tmp)
     shutil.rmtree(dst / "hooks", ignore_errors=True)
@@ -136,7 +136,7 @@ def prepare_control(tmp: pathlib.Path) -> pathlib.Path:
 
 
 def run_one(task: dict, args, tmp: pathlib.Path, plugin_dir: pathlib.Path, agent: str,
-            kontrol_dir: pathlib.Path, kontrol_agent: str, reused: dict | None) -> dict:
+            review_dir: pathlib.Path, reviewer: str, reused: dict | None) -> dict:
     work = pathlib.Path(tempfile.mkdtemp(prefix="kontrol-", dir=tmp))
     if reused:
         first = {k: reused.get(k) for k in ("svar", "bestaaet", "note", "pris_usd", "sek")}
@@ -151,28 +151,28 @@ def run_one(task: dict, args, tmp: pathlib.Path, plugin_dir: pathlib.Path, agent
         return row
 
     extra = ["--tools", "Read,Glob,Grep", "--max-turns", str(args.max_turns_kontrol),
-             "--plugin-dir", str(kontrol_dir), "--add-dir", str(kontrol_dir), "--agent", kontrol_agent]
+             "--plugin-dir", str(review_dir), "--add-dir", str(review_dir), "--agent", reviewer]
     if args.kontrolmodel:
         extra += ["--model", args.kontrolmodel]
-    prompt = KONTROL_PROMPT.format(fag=args.fag, id=task["id"], niveau=args.niveau,
+    prompt = REVIEW_PROMPT.format(fag=args.fag, id=task["id"], niveau=args.niveau,
                                    opgave=exam.build_prompt(task), svar=first["svar"])
     k = exam.run_claude(prompt, work, extra, args.timeout)
     ktext = k.get("result") or ""
-    dom = parse_dom(ktext)
+    verdict = parse_verdict(ktext)
     row["kontrol"] = {"pris_usd": k.get("total_cost_usd") or 0, "sek": round((k.get("duration_ms") or 0) / 1000, 1),
                       "ture": k.get("num_turns")}
-    if k.get("is_error") or dom is None:
+    if k.get("is_error") or verdict is None:
         row.update(fejl=True, note="kørselsfejl eller ingen dom fra kontrollen: "
                    + (k.get("fejl") or ktext[-160:]))
         return row
-    fund = blocking_findings(dom)
-    rejected = bool(fund)
-    row["kontrol"].update(dom=dom.get("dom"), afvist=rejected, blokerende=len(fund),
-                          fund=[{x: f.get(x) for x in ("id", "klasse", "paastand", "krav", "kilde")} for f in fund])
+    findings = blocking_findings(verdict)
+    rejected = bool(findings)
+    row["kontrol"].update(dom=verdict.get("dom"), afvist=rejected, blokerende=len(findings),
+                          fund=[{x: f.get(x) for x in ("id", "klasse", "paastand", "krav", "kilde")} for f in findings])
 
     after = None
     if rejected:
-        retry = RETUR_PROMPT.format(opgave=exam.build_prompt(task), svar=first["svar"], fund=format_findings(fund))
+        retry = RETRY_PROMPT.format(opgave=exam.build_prompt(task), svar=first["svar"], fund=format_findings(findings))
         r = exam.run_claude(retry, work, exam.arm_args("plugin", args, plugin_dir, agent), args.timeout)
         rtext = r.get("result") or ""
         if r.get("is_error") or not rtext:
@@ -269,15 +269,15 @@ def cmd_run(args) -> int:
                 reused_rows[r["id"]] = r
         tasks = [t for t in tasks if t["id"] in reused_rows]
     agent = f"{goals['plugin']}:{goals['agent']}"
-    kontrol_agent = f"byg-kontrol:{control_agent(goals['plugin'])}"
-    print(f"{args.fag}: {len(tasks)} udviklingsopgaver · fag {agent} · kontrol {kontrol_agent}", flush=True)
+    reviewer = f"byg-kontrol:{review_agent(goals['plugin'])}"
+    print(f"{args.fag}: {len(tasks)} udviklingsopgaver · fag {agent} · kontrol {reviewer}", flush=True)
     rows, lock = [], threading.Lock()
     with tempfile.TemporaryDirectory(prefix="kontrol-ab-") as tmpname:
         tmp = pathlib.Path(tmpname)
         plugin_dir = exam.prepare_plugin(goals["plugin"], tmp, False, args.plugin_rev)
-        kontrol_dir = prepare_control(tmp)
+        review_dir = prepare_review(tmp)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
-            futs = [pool.submit(run_one, t, args, tmp, plugin_dir, agent, kontrol_dir, kontrol_agent,
+            futs = [pool.submit(run_one, t, args, tmp, plugin_dir, agent, review_dir, reviewer,
                                 reused_rows.get(t["id"])) for t in tasks]
             for fut in concurrent.futures.as_completed(futs):
                 r = fut.result()
@@ -289,7 +289,7 @@ def cmd_run(args) -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{stamp}-kontrol-udvikling.json"
     rows.sort(key=lambda r: r["id"])
-    data = {"fag": args.fag, "tid": stamp, "fagagent": agent, "kontrolagent": kontrol_agent,
+    data = {"fag": args.fag, "tid": stamp, "fagagent": agent, "kontrolagent": reviewer,
             "kontrolmodel": args.kontrolmodel or "", "kontrolniveau": args.niveau,
             "plugin_rev": args.plugin_rev or "arbejdstræ", "genbrug": args.genbrug or "",
             "sammendrag": summarize(rows), "resultater": rows}

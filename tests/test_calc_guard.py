@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Tester calc_guard.py: statiker og statik-kontrol må kun køre statik.py og fem.py via Bash.
+"""Tests calc_guard.py: statiker and statik-kontrol may only run statik.py and fem.py via Bash.
 
-Kør:  python3 tests/test_calc_guard.py
+Run:  python3 tests/test_calc_guard.py
 """
 import json
 import pathlib
@@ -9,25 +9,25 @@ import subprocess
 import sys
 
 HOOK = pathlib.Path(__file__).resolve().parent.parent / "plugins" / "byg-kontrol" / "hooks" / "calc_guard.py"
-VAERKTOEJ = "/x/plugins/byg-statik/skills/statik-viden/scripts/statik.py"
+TOOL = "/x/plugins/byg-statik/skills/statik-viden/scripts/statik.py"
 FEM = "/x/plugins/byg-statik/skills/statik-viden/scripts/fem.py"
 
 
-def kald(agent, cmd):
+def call(agent, cmd):
     inp = {"agent_type": agent, "tool_name": "Bash", "tool_input": {"command": cmd}}
-    ud = subprocess.run([sys.executable, str(HOOK)], input=json.dumps(inp), capture_output=True, text=True).stdout
-    return "deny" if '"deny"' in ud else "allow"
+    out = subprocess.run([sys.executable, str(HOOK)], input=json.dumps(inp), capture_output=True, text=True).stdout
+    return "deny" if '"deny"' in out else "allow"
 
 
-SAGER = [
-    ("byg-kontrol:statik-kontrol", f"python3 {VAERKTOEJ} regn '2*3'", "allow"),
-    ("byg:statiker", f"python3 '{VAERKTOEJ}' bjaelke --spaend 3.6 --materiale S235 --profil HEB160 --g 8", "allow"),
+CASES = [
+    ("byg-kontrol:statik-kontrol", f"python3 {TOOL} regn '2*3'", "allow"),
+    ("byg:statiker", f"python3 '{TOOL}' bjaelke --spaend 3.6 --materiale S235 --profil HEB160 --g 8", "allow"),
     ("statik-kontrol", "python3 -c 'print(2*3)'", "deny"),
-    ("statik-kontrol", f"python3 {VAERKTOEJ} regn 1 ; rm -rf /tmp/x", "deny"),
-    ("statik-kontrol", f"python3 {VAERKTOEJ} regn 1 > /tmp/ud.txt", "deny"),
+    ("statik-kontrol", f"python3 {TOOL} regn 1 ; rm -rf /tmp/x", "deny"),
+    ("statik-kontrol", f"python3 {TOOL} regn 1 > /tmp/ud.txt", "deny"),
     ("statik-kontrol", "python3 /tmp/statik.py regn 1", "deny"),
     ("statiker", "bc -l", "deny"),
-    ("statiker", f"python3 {VAERKTOEJ} regn \"$(cat /etc/passwd)\"", "deny"),
+    ("statiker", f"python3 {TOOL} regn \"$(cat /etc/passwd)\"", "deny"),
     ("statiker", f"python3 {FEM} regn /sag/fem/fem.yaml", "allow"),
     ("statiker", f"python3 {FEM} vis /sag/fem/fem.yaml", "allow"),
     ("statik-kontrol", f"python3 {FEM} regn /sag/fem/fem.yaml --ingen-filer --saet elementer.B1.profil=HEB180", "allow"),
@@ -44,14 +44,14 @@ SAGER = [
 
 
 def main():
-    fejl = 0
-    for agent, cmd, forventet in SAGER:
-        r = kald(agent, cmd)
-        ok = r == forventet
-        fejl += not ok
+    errors = 0
+    for agent, cmd, expected in CASES:
+        r = call(agent, cmd)
+        ok = r == expected
+        errors += not ok
         print(f"{'OK  ' if ok else 'FEJL'} {agent or '(hovedtråd)'}: {cmd[:70]} → {r}")
-    print("\nALLE TESTS BESTÅET" if not fejl else f"\n{fejl} FEJL")
-    return 1 if fejl else 0
+    print("\nALLE TESTS BESTÅET" if not errors else f"\n{errors} FEJL")
+    return 1 if errors else 0
 
 
 if __name__ == "__main__":

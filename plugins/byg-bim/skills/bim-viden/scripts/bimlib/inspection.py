@@ -1,4 +1,4 @@
-"""Inspektion af (også fremmede) IFC-modeller: info, vis, find og diff. Korte udskrifter."""
+"""Inspection of IFC models (including foreign ones): info, vis, find and diff. Short printouts."""
 import collections
 import pathlib
 
@@ -10,7 +10,7 @@ import ifcopenshell.util.selector as us
 import ifcopenshell.util.unit as uu
 
 
-def _etage(e):
+def _storey(e):
     c = ue.get_container(e)
     if c is None:
         a = ue.get_aggregate(e)
@@ -38,49 +38,49 @@ def info(ifc: pathlib.Path) -> int:
               f"skala {m.Scale}")
     else:
         print("Georeference: ingen")
-    pr_etage = collections.defaultdict(collections.Counter)
+    per_storey = collections.defaultdict(collections.Counter)
     for e in f.by_type("IfcElement"):
         if e.is_a("IfcFeatureElement"):
             continue
-        st = _etage(e)
-        pr_etage[st.Name if st else "(uden etage)"][e.is_a()[3:]] += 1
+        st = _storey(e)
+        per_storey[st.Name if st else "(uden etage)"][e.is_a()[3:]] += 1
     for st in sorted(f.by_type("IfcBuildingStorey"), key=lambda s: float(s.Elevation or 0)):
-        rum = [s for s in f.by_type("IfcSpace") if ue.get_aggregate(s) == st]
-        c = pr_etage.get(st.Name, {})
-        print(f"  {st.Name} (kote {float(st.Elevation or 0):+.0f}): {len(rum)} rum · "
+        spaces = [s for s in f.by_type("IfcSpace") if ue.get_aggregate(s) == st]
+        c = per_storey.get(st.Name, {})
+        print(f"  {st.Name} (kote {float(st.Elevation or 0):+.0f}): {len(spaces)} rum · "
               + ", ".join(f"{k} {n}" for k, n in sorted(c.items())))
-    if "(uden etage)" in pr_etage:
-        print("  (uden etage): " + ", ".join(f"{k} {n}" for k, n in sorted(pr_etage["(uden etage)"].items())))
+    if "(uden etage)" in per_storey:
+        print("  (uden etage): " + ", ".join(f"{k} {n}" for k, n in sorted(per_storey["(uden etage)"].items())))
     psets = collections.Counter(ps.Name for ps in f.by_type("IfcPropertySet"))
     print("Egenskabssæt: " + ", ".join(f"{k} {n}" for k, n in psets.most_common(12)))
-    kl = f.by_type("IfcClassification")
-    if kl:
-        print("Klassifikation: " + ", ".join(k.Name for k in kl))
+    classifications = f.by_type("IfcClassification")
+    if classifications:
+        print("Klassifikation: " + ", ".join(k.Name for k in classifications))
     print(f"Materialer: {len(f.by_type('IfcMaterial'))} · typer: {len(f.by_type('IfcTypeObject'))} · "
           f"systemer: {len(f.by_type('IfcSystem'))} · egen model (Byg_Kilde): {'ja' if 'Byg_Kilde' in psets else 'nej'}")
     return 0
 
 
-def _find_en(f, noegle):
-    if noegle.startswith("#"):
-        return f.by_id(int(noegle[1:]))
+def _find_one(f, key):
+    if key.startswith("#"):
+        return f.by_id(int(key[1:]))
     try:
-        return f.by_guid(noegle)
+        return f.by_guid(key)
     except RuntimeError:
         pass
     for e in f.by_type("IfcProduct"):
-        if getattr(e, "Tag", None) == noegle or e.Name == noegle:
+        if getattr(e, "Tag", None) == key or e.Name == key:
             return e
     return None
 
 
-def vis(ifc: pathlib.Path, noegle: str) -> int:
+def show(ifc: pathlib.Path, key: str) -> int:
     f = ifcopenshell.open(str(ifc))
-    e = _find_en(f, noegle)
+    e = _find_one(f, key)
     if e is None:
-        print(f"Ikke fundet: {noegle} (brug Tag/spec-id, Name, GlobalId eller #step-id)")
+        print(f"Ikke fundet: {key} (brug Tag/spec-id, Name, GlobalId eller #step-id)")
         return 1
-    st = _etage(e)
+    st = _storey(e)
     print(f"#{e.id()} {e.is_a()} '{e.Name}' Tag={getattr(e, 'Tag', None)} GlobalId={e.GlobalId}")
     pre = getattr(e, "PredefinedType", None)
     print(f"  PredefinedType={pre} ObjectType={getattr(e, 'ObjectType', None)} etage={st.Name if st else '-'}")
@@ -100,22 +100,22 @@ def vis(ifc: pathlib.Path, noegle: str) -> int:
     if getattr(e, "ObjectPlacement", None):
         M = up.get_local_placement(e.ObjectPlacement)
         print(f"  placering (mm): origo {np.round(M[:3, 3], 1).tolist()} x-akse {np.round(M[:3, 0], 3).tolist()}")
-    for navn, props in ue.get_psets(e).items():
+    for name, props in ue.get_psets(e).items():
         props = {k: v for k, v in props.items() if k != "id"}
-        print(f"  {navn}: " + ", ".join(f"{k}={v}" for k, v in props.items()))
+        print(f"  {name}: " + ", ".join(f"{k}={v}" for k, v in props.items()))
     for attr in ("OverallWidth", "OverallHeight", "OperationType", "LongName", "Elevation"):
         if hasattr(e, attr) and getattr(e, attr) is not None:
             print(f"  {attr}={getattr(e, attr)}")
     if e.is_a("IfcElement"):
-        aab = [r.RelatedOpeningElement for r in getattr(e, "HasOpenings", []) or []]
-        if aab:
-            print("  åbninger: " + ", ".join((o.Tag or o.Name or "?") for o in aab))
+        openings = [r.RelatedOpeningElement for r in getattr(e, "HasOpenings", []) or []]
+        if openings:
+            print("  åbninger: " + ", ".join((o.Tag or o.Name or "?") for o in openings))
         if getattr(e, "FillsVoids", None):
-            print(f"  fylder åbning i: {_navn(e.FillsVoids[0].RelatingOpeningElement.VoidsElements[0].RelatingBuildingElement)}")
+            print(f"  fylder åbning i: {_name(e.FillsVoids[0].RelatingOpeningElement.VoidsElements[0].RelatingBuildingElement)}")
     return 0
 
 
-def _navn(e):
+def _name(e):
     return getattr(e, "Tag", None) or e.Name or f"#{e.id()}"
 
 
@@ -129,15 +129,15 @@ def find(ifc: pathlib.Path, selector: str) -> int:
         return 1
     res = sorted(res, key=lambda e: e.id())
     for e in res[:100]:
-        st = _etage(e) if e.is_a("IfcProduct") else None
-        print(f"#{e.id()} {e.is_a()} {_navn(e)} {e.GlobalId} {st.Name if st else ''}")
+        st = _storey(e) if e.is_a("IfcProduct") else None
+        print(f"#{e.id()} {e.is_a()} {_name(e)} {e.GlobalId} {st.Name if st else ''}")
     print(f"{len(res)} fundet" + (" (viser 100)" if len(res) > 100 else ""))
     return 0
 
 
-def diff(gammel: pathlib.Path, ny: pathlib.Path) -> int:
+def diff(old: pathlib.Path, new: pathlib.Path) -> int:
     from ifcdiff import IfcDiff
-    a, b = ifcopenshell.open(str(gammel)), ifcopenshell.open(str(ny))
+    a, b = ifcopenshell.open(str(old)), ifcopenshell.open(str(new))
     import contextlib
     import io
     d = IfcDiff(a, b, relationships=["geometry", "attributes", "type", "property", "container", "aggregate"])
@@ -146,11 +146,11 @@ def diff(gammel: pathlib.Path, ny: pathlib.Path) -> int:
     print(f"Tilføjet {len(d.added_elements)} · slettet {len(d.deleted_elements)} · ændret {len(d.change_register)}")
     for g in list(d.added_elements)[:30]:
         e = b.by_guid(g)
-        print(f"  + {e.is_a()} {_navn(e)}")
+        print(f"  + {e.is_a()} {_name(e)}")
     for g in list(d.deleted_elements)[:30]:
         e = a.by_guid(g)
-        print(f"  - {e.is_a()} {_navn(e)}")
+        print(f"  - {e.is_a()} {_name(e)}")
     for g, ch in list(d.change_register.items())[:40]:
         e = b.by_guid(g)
-        print(f"  ~ {e.is_a()} {_navn(e)}: {', '.join(sorted(k for k, v in ch.items() if v))}")
+        print(f"  ~ {e.is_a()} {_name(e)}: {', '.join(sorted(k for k, v in ch.items() if v))}")
     return 0

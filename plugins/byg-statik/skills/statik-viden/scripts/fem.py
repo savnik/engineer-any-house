@@ -30,12 +30,12 @@ Alle resultater er OVERSLAG – de skal eftervises af den ansvarlige statiker. S
 import pathlib
 import sys
 
-from environment import Miljoe
+from environment import Environment
 
-HER = pathlib.Path(__file__).resolve().parent
-MILJOE = Miljoe("byg-statik", "BYG_STATIK_VENV", HER / "requirements-fem.txt",
-                ("import Pynite, plotly, yaml, matplotlib; from importlib.metadata import version;"
-                 "print('PyNiteFEA', version('PyNiteFEA'), '· plotly', plotly.__version__)"))
+HERE = pathlib.Path(__file__).resolve().parent
+ENV = Environment("byg-statik", "BYG_STATIK_VENV", HERE / "requirements-fem.txt",
+                  ("import Pynite, plotly, yaml, matplotlib; from importlib.metadata import version;"
+                   "print('PyNiteFEA', version('PyNiteFEA'), '· plotly', plotly.__version__)"))
 
 
 def main() -> int:
@@ -44,10 +44,10 @@ def main() -> int:
         print(__doc__)
         return 0
     if args[0] == "opsaet":
-        return MILJOE.opsaet()
-    if (r := MILJOE.skift(__file__, args)) is not None:
+        return ENV.setup()
+    if (r := ENV.switch(__file__, args)) is not None:
         return r
-    sys.path.insert(0, str(HER))
+    sys.path.insert(0, str(HERE))
     from femlib import cli
     return cli.main(args)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests the exam layer (scripts/exam.py): answer parsing, grading and coverage validation.
 
-Kør:  python3 tests/test_exam.py
+Run:  python3 tests/test_exam.py
 """
 import json
 import pathlib
@@ -61,8 +61,8 @@ def write_fixture(base: pathlib.Path, tasks: list[dict]):
     (d / "opgaver.json").write_text(json.dumps({"opgaver": tasks}), encoding="utf-8")
 
 
-def task(tid, saet, **kw):
-    t = {"id": tid, "maal": ["M1"], "saet": saet, "type": "valg", "niveau": "svend", "spoergsmaal": "?",
+def task(tid, set_id, **kw):
+    t = {"id": tid, "maal": ["M1"], "saet": set_id, "type": "valg", "niveau": "svend", "spoergsmaal": "?",
          "valgmuligheder": {"A": "a", "B": "b", "C": "c"}, "facit": "A", "kilde": "K1", "status": "V 2026-10"}
     t.update(kw)
     return t

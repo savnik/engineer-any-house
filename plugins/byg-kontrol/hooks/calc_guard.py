@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""PreToolUse (Bash): fag med et regneværktøj må kun bruge Bash til at køre det.
+"""PreToolUse (Bash): a trade with a calculation tool may only use Bash to run that tool.
 
-Fagregistret angiver værktøjet pr. fag (`"regnevaerktoej": "statik.py"` eller en liste). For fagets agent og
-kontrolagent tillades kun:  python3 <…/skills/<fag>-viden/scripts/<værktøj>> <kommando> [argumenter]
-Skriver et værktøj filer, begrænser `"kontrol_skrivefri"` kontrolagenten til de kommandoer, der ikke gør
-(fx `{"fem.py": {"regn": "--ingen-filer", "test": ""}}`: regn kun med --ingen-filer).
-Alt andet (flere kommandoer, rør, omdirigering, kommandosubstitution, andre programmer) afvises.
-Kontrolagenten forbliver dermed uden skriveadgang, og alle tal kommer fra værktøjet.
-Andre agenter påvirkes ikke. Fail-safe: en uventet fejl blokerer ikke.
+The trade register names the tool per trade (`"regnevaerktoej": "statik.py"` or a list). For the trade's agent and
+review agent only this is allowed:  python3 <…/skills/<trade>-viden/scripts/<tool>> <command> [arguments]
+If a tool writes files, `"kontrol_skrivefri"` limits the review agent to the commands that do not
+(e.g. `{"fem.py": {"regn": "--ingen-filer", "test": ""}}`: regn only with --ingen-filer).
+Everything else (several commands, pipes, redirection, command substitution, other programs) is denied.
+The review agent thus stays without write access, and every number comes from the tool.
+Other agents are unaffected. Fail-safe: an unexpected error never blocks.
 """
 import json
 import pathlib
@@ -18,42 +18,42 @@ import sys
 REGISTER = pathlib.Path(__file__).resolve().parent / "fagregister.json"
 
 
-def afvis(grund: str) -> None:
+def deny(reason: str) -> None:
     print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny",
-                                             "permissionDecisionReason": grund}}, ensure_ascii=False))
+                                             "permissionDecisionReason": reason}}, ensure_ascii=False))
 
 
-def vaerktoej_for(agent: str, reg: dict) -> tuple[str, list, dict] | None:
-    """(fag, værktøjer, skrivefri-regler) hvis agenten er fagagent eller kontrolagent i et fag med regneværktøj."""
-    for fag, v in reg.get("fag", {}).items():
+def tools_for(agent: str, reg: dict) -> tuple[str, list, dict] | None:
+    """(trade, tools, write-free rules) if the agent is the trade agent or review agent of a trade with a calculation tool."""
+    for trade, v in reg.get("fag", {}).items():
         if v.get("regnevaerktoej") and agent in (v.get("agent"), v.get("kontrol")):
-            vt = v["regnevaerktoej"]
-            regler = v.get("kontrol_skrivefri", {}) if agent == v.get("kontrol") else {}
-            return fag, [vt] if isinstance(vt, str) else list(vt), regler
+            tool = v["regnevaerktoej"]
+            rules = v.get("kontrol_skrivefri", {}) if agent == v.get("kontrol") else {}
+            return trade, [tool] if isinstance(tool, str) else list(tool), rules
     return None
 
 
-def tjek(cmd: str, fag: str, vaerktoejer: list, skrivefri: dict | None = None) -> str | None:
-    """None = tilladt; ellers grunden til afvisning."""
+def check(cmd: str, trade: str, tools: list, write_free: dict | None = None) -> str | None:
+    """None = allowed; otherwise the reason for denial."""
     if re.search(r"[;&|<>`\n]|\$\(", cmd):
         return "kun én kommando uden ;, &&, |, omdirigering eller kommandosubstitution"
     try:
-        dele = shlex.split(cmd.strip())
+        parts = shlex.split(cmd.strip())
     except ValueError:
         return "kommandoen kan ikke fortolkes"
-    navne = " eller ".join(vaerktoejer)
-    if len(dele) < 3 or dele[0] not in ("python3", "python"):
-        return f"kun python3 <…/{navne}> <kommando>"
-    sti = dele[1].replace("\\", "/")
-    vt = next((v for v in vaerktoejer if sti.endswith(f"/skills/{fag}-viden/scripts/{v}")), None)
-    if not vt:
-        return f"kun fagets egne regneværktøjer (…/skills/{fag}-viden/scripts/{navne})"
-    regler = (skrivefri or {}).get(vt)
-    if regler is not None:
-        if dele[2] not in regler:
-            return f"kontrollen må kun køre {vt} {', '.join(regler)} (de andre kommandoer skriver filer)"
-        if regler[dele[2]] and regler[dele[2]] not in dele[3:]:
-            return f"kontrollen skal køre {vt} {dele[2]} med {regler[dele[2]]} (ingen filer)"
+    names = " eller ".join(tools)
+    if len(parts) < 3 or parts[0] not in ("python3", "python"):
+        return f"kun python3 <…/{names}> <kommando>"
+    path = parts[1].replace("\\", "/")
+    tool = next((v for v in tools if path.endswith(f"/skills/{trade}-viden/scripts/{v}")), None)
+    if not tool:
+        return f"kun fagets egne regneværktøjer (…/skills/{trade}-viden/scripts/{names})"
+    rules = (write_free or {}).get(tool)
+    if rules is not None:
+        if parts[2] not in rules:
+            return f"kontrollen må kun køre {tool} {', '.join(rules)} (de andre kommandoer skriver filer)"
+        if rules[parts[2]] and rules[parts[2]] not in parts[3:]:
+            return f"kontrollen skal køre {tool} {parts[2]} med {rules[parts[2]]} (ingen filer)"
     return None
 
 
@@ -64,13 +64,13 @@ def main() -> int:
         if not agent:
             return 0
         reg = json.loads(REGISTER.read_text(encoding="utf-8"))
-        hit = vaerktoej_for(agent, reg)
+        hit = tools_for(agent, reg)
         if not hit:
             return 0
-        grund = tjek(str((inp.get("tool_input") or {}).get("command") or ""), *hit)
-        if grund:
-            afvis(f"{agent} må kun bruge Bash til regneværktøjet: {grund}. Al regning – også summer og "
-                  f"enhedsomregning – sker med værktøjet (fx kommandoen 'regn').")
+        reason = check(str((inp.get("tool_input") or {}).get("command") or ""), *hit)
+        if reason:
+            deny(f"{agent} må kun bruge Bash til regneværktøjet: {reason}. Al regning – også summer og "
+                 f"enhedsomregning – sker med værktøjet (fx kommandoen 'regn').")
     except Exception:
         return 0
     return 0

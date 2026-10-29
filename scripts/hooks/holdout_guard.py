@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""PreToolUse for CI-agenten (ci-forbedring): agenten må aldrig se holdout-opgaver eller facit direkte.
+"""PreToolUse for the CI agent (ci-forbedring): the agent must never see holdout tasks or answer keys directly.
 
-Opgavefilerne (eksamen/<fag>/opgaver*.json) og resultatfilerne (eksamen/<fag>/results/) rummer begge sæt. Agenten
-læser dem kun gennem scripts, der filtrerer holdout fra:
-- `exam.py vis <fag> --saet udvikling [--facit]`, `exam.py koer|rapport|rebedoem|tjek` (rapporten skjuler holdout-ID'er)
-- `experiment.py …` (loggen rummer kun holdout som antal og hash)
-Afvist: Read/Edit/Write af filerne, Grep med indhold i eksamen/, og Bash-kommandoer, der nævner filerne eller søger
-rekursivt uden en sti uden for eksamen/. Rettelser i opgavefilerne uddelegeres (se agentens instruks).
-Fail-safe: en uventet fejl blokerer ikke.
+The task files (eksamen/<trade>/opgaver*.json) and the result files (eksamen/<trade>/results/) hold both sets. The
+agent reads them only through scripts that filter holdout out:
+- `exam.py vis <fag> --saet udvikling [--facit]`, `exam.py koer|rapport|rebedoem|tjek` (the report hides holdout IDs)
+- `experiment.py …` (the log holds holdout only as a count and a hash)
+Denied: Read/Edit/Write of the files, Grep with content in eksamen/, and Bash commands that name the files or search
+recursively without a path outside eksamen/. Edits to the task files are delegated (see the agent's instructions).
+Fail-safe: an unexpected error does not block.
 """
 import json
 import pathlib
@@ -17,7 +17,7 @@ import sys
 
 PROTECTED_RE = re.compile(r"eksamen/[^/\s'\"]+/(opgaver[^/\s'\"]*\.json|results\b)")
 SAFE_SEARCH_ROOTS = ("plugins", "faelles", "scripts", "skabelon", "tests", "versionsnoter")
-SCRIPT_RE = re.compile(r"^python3?\s+(\S*/)?scripts/(exam|forsoeg)\.py\s+(\S+)(.*)$", re.DOTALL)
+SCRIPT_RE = re.compile(r"^python3?\s+(\S*/)?scripts/(exam|experiment)\.py\s+(\S+)(.*)$", re.DOTALL)
 
 
 def deny(reason: str) -> None:

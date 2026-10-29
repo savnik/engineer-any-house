@@ -1,4 +1,4 @@
-"""Kommandolinjen for fem.py."""
+"""The command line for fem.py."""
 import pathlib
 import re
 import shlex
@@ -6,212 +6,212 @@ import sys
 import tempfile
 
 from . import model
-from .model import SpecFejl
+from .model import SpecError
 
-EKSEMPEL = pathlib.Path(__file__).resolve().parent.parent.parent / "assets" / "fem-eksempel.yaml"
-EKSEMPEL_FLADER = EKSEMPEL.with_name("fem-eksempel-flader.yaml")
+EXAMPLE = pathlib.Path(__file__).resolve().parent.parent.parent / "assets" / "fem-eksempel.yaml"
+EXAMPLE_SHELLS = EXAMPLE.with_name("fem-eksempel-flader.yaml")
 
 
 def _fmt(v, d=1):
-    v = 0.0 if abs(v) < 0.5 * 10 ** -d else v  # ingen "-0,0"
+    v = 0.0 if abs(v) < 0.5 * 10 ** -d else v  # no "-0,0"
     return f"{v:.{d}f}".replace(".", ",")
 
 
-def _opt(args, navn, std=None):
-    if navn in args:
-        i = args.index(navn)
+def _opt(args, name, default=None):
+    if name in args:
+        i = args.index(name)
         v = args[i + 1] if i + 1 < len(args) else None
         del args[i:i + 2]
         return v
-    return std
+    return default
 
 
-def _flag(args, navn):
-    if navn in args:
-        args.remove(navn)
+def _flag(args, name):
+    if name in args:
+        args.remove(name)
         return True
     return False
 
 
-def _saet(args) -> list:
-    ud = []
+def _set_args(args) -> list:
+    out = []
     while "--saet" in args:
-        ud.append(_opt(args, "--saet"))
-    return ud
+        out.append(_opt(args, "--saet"))
+    return out
 
 
-def _uddir(spec: pathlib.Path, uddir) -> pathlib.Path:
-    """--ud, ellers <specmappe>/fem/ – men ligger spec'en allerede i en mappe ved navn fem, så den mappe."""
-    if uddir:
-        return pathlib.Path(uddir).expanduser()
+def _out_dir(spec: pathlib.Path, out_arg) -> pathlib.Path:
+    """--ud, otherwise <spec folder>/fem/ – but if the spec is already in a folder named fem, that folder."""
+    if out_arg:
+        return pathlib.Path(out_arg).expanduser()
     return spec.parent if spec.parent.name == "fem" else spec.parent / "fem"
 
 
-def _kommando(argv):
+def _command(argv):
     return "python3 fem.py " + " ".join(shlex.quote(a) for a in argv)
 
 
-def _resume(res: dict) -> str:
-    """Kort resumé til skærmen (det fulde resultat står i JSON-filen)."""
-    ud = [f"FEM {res['navn']} · spec-sha {res['spec_sha256_12']} · PyNite {res['pynite']} · {res['analyse']}"
+def _summary(res: dict) -> str:
+    """Short summary for the screen (the full result is in the JSON file)."""
+    out = [f"FEM {res['navn']} · spec-sha {res['spec_sha256_12']} · PyNite {res['pynite']} · {res['analyse']}"
           + (" · plan" if res["plan"] else " · 3D")]
     if res["aendringer"]:
-        ud.append("ÆNDREDE INPUT (--saet): " + " · ".join(res["aendringer"]))
+        out.append("ÆNDREDE INPUT (--saet): " + " · ".join(res["aendringer"]))
     for kn, k in res["kombinationer"].items():
-        lig = all(v["ok"] for v in k["ligevaegt"].values())
-        ud.append(f"\n{kn} ({k['type']}) · ligevægt {'OK' if lig else 'FEJL'}")
-        ud.append("  reaktioner: " + " · ".join(
+        balanced = all(v["ok"] for v in k["ligevaegt"].values())
+        out.append(f"\n{kn} ({k['type']}) · ligevægt {'OK' if balanced else 'FEJL'}")
+        out.append("  reaktioner: " + " · ".join(
             f"{n}: " + ", ".join(f"{a} {_fmt(v)}" for a, v in r.items()) for n, r in k["reaktioner"].items()))
         for en, e in k["elementer"].items():
-            linje = (f"  {en} {e['profil']} L={_fmt(e['L'], 2)}: M {_fmt(e['M_min'])}…{_fmt(e['M_max'])} kNm, "
+            line = (f"  {en} {e['profil']} L={_fmt(e['L'], 2)}: M {_fmt(e['M_min'])}…{_fmt(e['M_max'])} kNm, "
                      f"|V| {_fmt(e['V_abs_max'])} kN, N {_fmt(e['N_min'])}…{_fmt(e['N_max'])} kN, δ {_fmt(e['delta_mm'])} mm")
             if k["type"] == "anvendelse" and e.get("L_over_delta"):
-                linje += f" (L/{e['L_over_delta']}" + (f", krav {e['graense']}: {'OK' if e['nedboejning_ok'] else 'OVERSKREDET'}"
+                line += f" (L/{e['L_over_delta']}" + (f", krav {e['graense']}: {'OK' if e['nedboejning_ok'] else 'OVERSKREDET'}"
                                                        if e.get("graense") else "") + ")"
-            ud.append(linje)
+            out.append(line)
         for fn, f in k.get("flader", {}).items():
             st = f["steder_med_stoerst_spaending"][0]["xyz"]
-            ud.append(f"  flade {fn} ({f['tykkelse_mm']} mm {f['materiale']}): σ_vM maks {_fmt(f['sigma_vM_max_MPa'], 2)} MPa "
+            out.append(f"  flade {fn} ({f['tykkelse_mm']} mm {f['materiale']}): σ_vM maks {_fmt(f['sigma_vM_max_MPa'], 2)} MPa "
                       f"ved ({', '.join(_fmt(c, 2) for c in st)}), n_u {_fmt(f['n_u_min_kN_m'])}…{_fmt(f['n_u_max_kN_m'])}, "
                       f"n_v {_fmt(f['n_v_min_kN_m'])}…{_fmt(f['n_v_max_kN_m'])} kN/m, |m| {_fmt(f['m_abs_max_kNm_m'], 2)} kNm/m, "
                       f"flytning {_fmt(f['flytning_max_mm'], 2)} mm")
         for un, u in k.get("udtraek", {}).items():
             if "fejl" in u:
-                ud.append(f"  udtræk {un}: {u['fejl']}")
+                out.append(f"  udtræk {un}: {u['fejl']}")
                 continue
-            ud.append(f"  udtræk {un} ({u['flade']}, x {u['x']}, y {u['y']}): σ_vM maks {_fmt(u['sigma_vM_max_MPa'], 2)} MPa, "
+            out.append(f"  udtræk {un} ({u['flade']}, x {u['x']}, y {u['y']}): σ_vM maks {_fmt(u['sigma_vM_max_MPa'], 2)} MPa, "
                       f"n_u {_fmt(u['n_u_min_kN_m'])}…{_fmt(u['n_u_max_kN_m'])}, n_v {_fmt(u['n_v_min_kN_m'])}…"
                       f"{_fmt(u['n_v_max_kN_m'])} kN/m, |m| {_fmt(u['m_abs_max_kNm_m'], 2)} kNm/m")
-    return "\n".join(ud)
+    return "\n".join(out)
 
 
-def regn(args, argv) -> int:
-    ingen = _flag(args, "--ingen-filer")
-    uddir = _opt(args, "--ud")
-    aendr = _saet(args)
+def calc(args, argv) -> int:
+    no_files = _flag(args, "--ingen-filer")
+    out_arg = _opt(args, "--ud")
+    changes = _set_args(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()
-    s = model.laes_spec(spec, aendr)
-    m = model.analyser(s)
-    res = model.resultater(s, m, _kommando(argv))
-    print(_resume(res))
-    if not ingen:
-        ud = _uddir(spec, uddir)
-        ud.mkdir(parents=True, exist_ok=True)
-        sti = _json_for(spec, s, uddir)
-        model.gem_json(res, sti)
-        print(f"\n→ {sti}")
+    s = model.read_spec(spec, changes)
+    m = model.analyze(s)
+    res = model.results(s, m, _command(argv))
+    print(_summary(res))
+    if not no_files:
+        out_dir = _out_dir(spec, out_arg)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        path = _json_for(spec, s, out_arg)
+        model.save_json(res, path)
+        print(f"\n→ {path}")
     if not all(v["ok"] for k in res["kombinationer"].values() for v in k["ligevaegt"].values()):
         print("ADVARSEL: ligevægten passer ikke – tjek laster og understøtninger.", file=sys.stderr)
         return 1
     return 0
 
 
-def _json_for(spec: pathlib.Path, s: dict, uddir) -> pathlib.Path:
-    return _uddir(spec, uddir) / f"{re.sub(r'[^A-Za-z0-9æøåÆØÅ_.-]+', '_', s['navn'])}.fem.json"
+def _json_for(spec: pathlib.Path, s: dict, out_arg) -> pathlib.Path:
+    return _out_dir(spec, out_arg) / f"{re.sub(r'[^A-Za-z0-9æøåÆØÅ_.-]+', '_', s['navn'])}.fem.json"
 
 
-def resultat(args, argv) -> int:
-    """Slår op i den gemte fem.json uden at regne igen – og afviser den, hvis fem.yaml er ændret siden."""
+def result(args, argv) -> int:
+    """Looks up the saved fem.json without recalculating – and refuses it if fem.yaml has changed since."""
     import json
-    uddir = _opt(args, "--ud")
-    kombi = _opt(args, "--kombi")
+    out_arg = _opt(args, "--ud")
+    combo = _opt(args, "--kombi")
     element = _opt(args, "--element")
     spec = pathlib.Path(args[0]).expanduser().resolve()
-    s = model.laes_spec(spec)
-    sti = _json_for(spec, s, uddir)
-    if not sti.exists():
-        print(f"Intet gemt resultat ({sti}). Modellen er ikke regnet – det er statikerens opgave (fem.py regn).",
+    s = model.read_spec(spec)
+    path = _json_for(spec, s, out_arg)
+    if not path.exists():
+        print(f"Intet gemt resultat ({path}). Modellen er ikke regnet – det er statikerens opgave (fem.py regn).",
               file=sys.stderr)
         return 1
-    res = json.loads(sti.read_text(encoding="utf-8"))
+    res = json.loads(path.read_text(encoding="utf-8"))
     if res.get("spec_sha256_12") != s["_sha"]:
-        print(f"FORÆLDET: {sti.name} er regnet på spec-sha {res.get('spec_sha256_12')}, men {spec.name} har nu "
+        print(f"FORÆLDET: {path.name} er regnet på spec-sha {res.get('spec_sha256_12')}, men {spec.name} har nu "
               f"{s['_sha']}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py regn).", file=sys.stderr)
         return 1
     if res.get("aendringer"):
-        print(f"{sti.name} er regnet med ændrede input (--saet: {' · '.join(res['aendringer'])}) og svarer ikke til "
+        print(f"{path.name} er regnet med ændrede input (--saet: {' · '.join(res['aendringer'])}) og svarer ikke til "
               f"{spec.name}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py regn).", file=sys.stderr)
         return 1
-    if kombi:
-        if kombi not in res["kombinationer"]:
-            raise SpecFejl(f"ukendt kombination '{kombi}' (kendte: {', '.join(res['kombinationer'])})")
-        res["kombinationer"] = {kombi: res["kombinationer"][kombi]}
+    if combo:
+        if combo not in res["kombinationer"]:
+            raise SpecError(f"ukendt kombination '{combo}' (kendte: {', '.join(res['kombinationer'])})")
+        res["kombinationer"] = {combo: res["kombinationer"][combo]}
     if element:
-        navne = sorted({n for k in res["kombinationer"].values() for f in ("elementer", "flader", "udtraek")
+        names = sorted({n for k in res["kombinationer"].values() for f in ("elementer", "flader", "udtraek")
                         for n in k.get(f, {})})
-        fundet = False
+        found = False
         for k in res["kombinationer"].values():
-            for felt in ("elementer", "flader", "udtraek"):
-                if felt in k:
-                    k[felt] = {n: v for n, v in k[felt].items() if n.lower() == element.lower()}
-                    fundet |= bool(k[felt])
-        if not fundet:
-            raise SpecFejl(f"ukendt element, flade eller udtræk '{element}' (kendte: {', '.join(navne)})")
-    print(_resume(res))
-    print(f"\nKilde: {sti} (spec-sha {s['_sha']} = {spec.name}, ingen ny beregning)")
+            for field in ("elementer", "flader", "udtraek"):
+                if field in k:
+                    k[field] = {n: v for n, v in k[field].items() if n.lower() == element.lower()}
+                    found |= bool(k[field])
+        if not found:
+            raise SpecError(f"ukendt element, flade eller udtræk '{element}' (kendte: {', '.join(names)})")
+    print(_summary(res))
+    print(f"\nKilde: {path} (spec-sha {s['_sha']} = {spec.name}, ingen ny beregning)")
     print("OVERSLAG fra fem.py – skal eftervises af den ansvarlige statiker. Nævn kombinationen, når tallet bruges.")
     return 0
 
 
-def tegn(args, argv) -> int:
+def draw(args, argv) -> int:
     from . import draw as t
-    uddir = _opt(args, "--ud")
-    kombi = _opt(args, "--kombi")
-    aendr = _saet(args)
+    out_arg = _opt(args, "--ud")
+    combo = _opt(args, "--kombi")
+    changes = _set_args(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()
-    visning = args[1] if len(args) > 1 else "alle"
-    s = model.laes_spec(spec, aendr)
-    m = model.analyser(s)
-    kurver = model.kurver_alle(s, m)
-    ud = _uddir(spec, uddir)
-    brud = [k for k, v in s["kombinationer"].items() if v["type"] == "brud"]
-    anv = [k for k, v in s["kombinationer"].items() if v["type"] == "anvendelse"]
-    if kombi and kombi not in s["kombinationer"]:
-        raise SpecFejl(f"ukendt kombination '{kombi}' (kendte: {', '.join(s['kombinationer'])})")
-    opgaver = []
-    navne = {"model": "model", "deformation": "d", "M": "M", "V": "V", "N": "N", "spaending": "S", "n_u": "nu",
+    view_arg = args[1] if len(args) > 1 else "alle"
+    s = model.read_spec(spec, changes)
+    m = model.analyze(s)
+    curves = model.all_curves(s, m)
+    out_dir = _out_dir(spec, out_arg)
+    uls = [k for k, v in s["kombinationer"].items() if v["type"] == "brud"]
+    sls = [k for k, v in s["kombinationer"].items() if v["type"] == "anvendelse"]
+    if combo and combo not in s["kombinationer"]:
+        raise SpecError(f"ukendt kombination '{combo}' (kendte: {', '.join(s['kombinationer'])})")
+    tasks = []
+    names = {"model": "model", "deformation": "d", "M": "M", "V": "V", "N": "N", "spaending": "S", "n_u": "nu",
              "n_v": "nv", "pladmoment": "m", "flytning": "u"}
-    if visning == "alle":
-        vis = ["model"] + (["d", "M", "V", "N"] if s["elementer"] else []) + (["S", "nv", "m", "u"] if s["flader"] else [])
+    if view_arg == "alle":
+        views = ["model"] + (["d", "M", "V", "N"] if s["elementer"] else []) + (["S", "nv", "m", "u"] if s["flader"] else [])
     else:
-        vis = [navne.get(visning)]
-    if None in vis:
-        raise SpecFejl(f"ukendt visning '{visning}' – brug {', '.join(navne)} eller alle")
-    if any(v in t.FLADE_ST for v in vis) and not s["flader"]:
-        raise SpecFejl(f"visningen '{visning}' kræver flader i modellen")
-    if any(v in ("d", "M", "V", "N") for v in vis) and not s["elementer"]:
-        raise SpecFejl(f"visningen '{visning}' kræver elementer i modellen")
-    for v in vis:
+        views = [names.get(view_arg)]
+    if None in views:
+        raise SpecError(f"ukendt visning '{view_arg}' – brug {', '.join(names)} eller alle")
+    if any(v in t.SHELL_Q for v in views) and not s["flader"]:
+        raise SpecError(f"visningen '{view_arg}' kræver flader i modellen")
+    if any(v in ("d", "M", "V", "N") for v in views) and not s["elementer"]:
+        raise SpecError(f"visningen '{view_arg}' kræver elementer i modellen")
+    for v in views:
         if v == "model":
-            opgaver.append((v, None))
-        elif kombi:
-            opgaver.append((v, kombi))
+            tasks.append((v, None))
+        elif combo:
+            tasks.append((v, combo))
         elif v in ("d", "u"):
-            opgaver += [(v, k) for k in (anv or brud)[:1]]
-        elif v in t.FLADE_ST:
-            opgaver += [(v, k) for k in (brud or anv)[:1]]
+            tasks += [(v, k) for k in (sls or uls)[:1]]
+        elif v in t.SHELL_Q:
+            tasks += [(v, k) for k in (uls or sls)[:1]]
         else:
-            opgaver += [(v, k) for k in brud[:2] or anv[:1]]
-    for v, k in opgaver:
-        print(t.tegn(s, kurver, v, k, ud))
+            tasks += [(v, k) for k in uls[:2] or sls[:1]]
+    for v, k in tasks:
+        print(t.draw(s, curves, v, k, out_dir))
     return 0
 
 
-def vis(args, argv) -> int:
+def view(args, argv) -> int:
     from . import viewer as v
-    uddir = _opt(args, "--ud")
-    aendr = _saet(args)
+    out_arg = _opt(args, "--ud")
+    changes = _set_args(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()
-    s = model.laes_spec(spec, aendr)
-    m = model.analyser(s)
-    res = model.resultater(s, m, _kommando(argv))
-    sti = v.vis(s, model.kurver_alle(s, m), res, _uddir(spec, uddir), cdn=_flag(args, "--cdn"))
-    print(sti)
-    print("Åbn filen i en browser (dobbeltklik, eller: open " + shlex.quote(str(sti)) + ").")
+    s = model.read_spec(spec, changes)
+    m = model.analyze(s)
+    res = model.results(s, m, _command(argv))
+    path = v.view(s, model.all_curves(s, m), res, _out_dir(spec, out_arg), cdn=_flag(args, "--cdn"))
+    print(path)
+    print("Åbn filen i en browser (dobbeltklik, eller: open " + shlex.quote(str(path)) + ").")
     return 0
 
 
-# ---------- selvtest ----------
+# ---------- self-test ----------
 TEST = {
     "simpel": """navn: t-simpel
 knuder: {A: [0, 0], B: [5, 0]}
@@ -286,84 +286,84 @@ kombinationer: {K: {type: brud, faktorer: {G: 1.2}}}
 
 
 def test(args, argv) -> int:
-    fejl = []
+    failures = []
 
-    def tjek(navn, faktisk, forventet, tol=0.01):
-        ok = abs(faktisk - forventet) <= tol * max(abs(forventet), 1e-9)
-        print(("OK   " if ok else "FEJL ") + f"{navn}: {faktisk:.4g} (forventet {forventet:.4g})")
+    def check(name, actual, expected, tol=0.01):
+        ok = abs(actual - expected) <= tol * max(abs(expected), 1e-9)
+        print(("OK   " if ok else "FEJL ") + f"{name}: {actual:.4g} (forventet {expected:.4g})")
         if not ok:
-            fejl.append(navn)
+            failures.append(name)
 
     with tempfile.TemporaryDirectory() as tmp:
         res = {}
         for n, txt in TEST.items():
             p = pathlib.Path(tmp) / f"{n}.yaml"
             p.write_text(txt, encoding="utf-8")
-            s = model.laes_spec(p)
-            res[n] = (s, model.resultater(s, model.analyser(s), "test"))
+            s = model.read_spec(p)
+            res[n] = (s, model.results(s, model.analyze(s), "test"))
         s, r = res["simpel"]
         e, k = s["elementer"]["B1"], r["kombinationer"]["K"]
         EI = 210e6 * e["_t"]["I_staerk"] * 1e-12
-        tjek("simpel bjælke M = qL²/8", k["elementer"]["B1"]["M_max"], 10 * 5 ** 2 / 8)
-        tjek("simpel bjælke R = qL/2", k["reaktioner"]["A"]["Rz"], 25)
-        tjek("simpel bjælke δ = 5qL⁴/384EI [mm]", abs(k["elementer"]["B1"]["delta_mm"]), 5 * 10 * 5 ** 4 / (384 * EI) * 1000)
+        check("simpel bjælke M = qL²/8", k["elementer"]["B1"]["M_max"], 10 * 5 ** 2 / 8)
+        check("simpel bjælke R = qL/2", k["reaktioner"]["A"]["Rz"], 25)
+        check("simpel bjælke δ = 5qL⁴/384EI [mm]", abs(k["elementer"]["B1"]["delta_mm"]), 5 * 10 * 5 ** 4 / (384 * EI) * 1000)
         s, r = res["udkraget"]
         e, k = s["elementer"]["B1"], r["kombinationer"]["K"]
         EI = 11000e3 * e["_t"]["I_staerk"] * 1e-12
-        tjek("udkraget M = PL", abs(k["elementer"]["B1"]["M_min"]), 20)
-        tjek("udkraget δ = PL³/3EI [mm] (bøjning, uden forskydning)", abs(k["elementer"]["B1"]["delta_mm"]),
+        check("udkraget M = PL", abs(k["elementer"]["B1"]["M_min"]), 20)
+        check("udkraget δ = PL³/3EI [mm] (bøjning, uden forskydning)", abs(k["elementer"]["B1"]["delta_mm"]),
              10 * 2 ** 3 / (3 * EI) * 1000, tol=0.02)
         s, r = res["delt"]
         k = r["kombinationer"]["K"]
         EI = 210e6 * s["elementer"]["B1"]["_t"]["I_staerk"] * 1e-12
         d5 = 5 * 10 * 5 ** 4 / (384 * EI) * 1000
         dmax = max(abs(k["elementer"][n]["delta_mm"]) for n in ("B1", "B2"))
-        tjek("delt bjælke (2 + 3 m, B2 tegnet baglæns): δ over hele spændet = 5qL⁴/384EI [mm]", dmax, d5)
-        tjek("delt bjælke: L/δ regnes med spændets længde 5 m", k["elementer"]["B2"]["L_over_delta"], round(5000 / d5))
+        check("delt bjælke (2 + 3 m, B2 tegnet baglæns): δ over hele spændet = 5qL⁴/384EI [mm]", dmax, d5)
+        check("delt bjælke: L/δ regnes med spændets længde 5 m", k["elementer"]["B2"]["L_over_delta"], round(5000 / d5))
         s, r = res["kontinuert"]
         k = r["kombinationer"]["K"]
         ok = "spaend" not in k["elementer"]["B1"] and "spaend" not in k["elementer"]["B2"]
         print(("OK   " if ok else "FEJL ") + "kontinuert bjælke: spænd deles ved den midterste understøtning")
         if not ok:
-            fejl.append("kontinuert spænd")
-        tjek("kontinuert bjælke: δ = qL⁴/185EI [mm]", abs(k["elementer"]["B1"]["delta_mm"]), 10 * 4 ** 4 / (184.6 * EI) * 1000, tol=0.02)
+            failures.append("kontinuert spænd")
+        check("kontinuert bjælke: δ = qL⁴/185EI [mm]", abs(k["elementer"]["B1"]["delta_mm"]), 10 * 4 ** 4 / (184.6 * EI) * 1000, tol=0.02)
         s, r = res["plade"]
         k = r["kombinationer"]["K"]
         D = 31000e3 * 0.02 ** 3 / (12 * (1 - 0.2 ** 2))
-        tjek("plade (Navier, simpelt understøttet 2×2 m): w = 0,00406·qa⁴/D [mm]",
+        check("plade (Navier, simpelt understøttet 2×2 m): w = 0,00406·qa⁴/D [mm]",
              k["flader"]["P"]["flytning_max_mm"], 0.00406 * 10 * 2 ** 4 / D * 1000, tol=0.03)
-        tjek("plade: m = 0,0368·(1 + ν)·qa² [kNm/m]", k["flader"]["P"]["m_abs_max_kNm_m"], 0.0368 * 1.2 * 10 * 4, tol=0.03)
-        tjek("plade: ΣR = q·a² (lodret ligevægt)", k["ligevaegt"]["z"]["reaktioner"], 40)
+        check("plade: m = 0,0368·(1 + ν)·qa² [kNm/m]", k["flader"]["P"]["m_abs_max_kNm_m"], 0.0368 * 1.2 * 10 * 4, tol=0.03)
+        check("plade: ΣR = q·a² (lodret ligevægt)", k["ligevaegt"]["z"]["reaktioner"], 40)
         s, r = res["skive"]
         k = r["kombinationer"]["K"]
-        tjek("skive: n_v midt i væggen = −linjelast [kN/m]", k["udtraek"]["midt"]["n_v_min_kN_m"], -20, tol=0.02)
-        tjek("skive: σ = n/t [MPa]", k["udtraek"]["midt"]["sigma_vM_max_MPa"], 0.2, tol=0.03)
-        tjek("skive: ΣR = linjelast · længde", k["ligevaegt"]["z"]["reaktioner"], 40)
+        check("skive: n_v midt i væggen = −linjelast [kN/m]", k["udtraek"]["midt"]["n_v_min_kN_m"], -20, tol=0.02)
+        check("skive: σ = n/t [MPa]", k["udtraek"]["midt"]["sigma_vM_max_MPa"], 0.2, tol=0.03)
+        check("skive: ΣR = linjelast · længde", k["ligevaegt"]["z"]["reaktioner"], 40)
         kw = r["kombinationer"]["KW"]
-        tjek("skive: vindtryk i +y giver reaktion i −y", kw["ligevaegt"]["y"]["reaktioner"], -5.0)
-        tjek("skive: udkraget væg, m i y = 1,125 m = q·(h − y)²/2 [kNm/m]", kw["udtraek"]["midt"]["m_abs_max_kNm_m"],
+        check("skive: vindtryk i +y giver reaktion i −y", kw["ligevaegt"]["y"]["reaktioner"], -5.0)
+        check("skive: udkraget væg, m i y = 1,125 m = q·(h − y)²/2 [kNm/m]", kw["udtraek"]["midt"]["m_abs_max_kNm_m"],
              1.0 * (2.5 - 1.125) ** 2 / 2, tol=0.03)
         s, r = res["bjaelke-paa-vaeg"]
         k = r["kombinationer"]["K"]
-        tjek("bjælke på væg: lasten går gennem væggen, n_v = −q [kN/m]", k["udtraek"]["midt"]["n_v_min_kN_m"], -10, tol=0.05)
+        check("bjælke på væg: lasten går gennem væggen, n_v = −q [kN/m]", k["udtraek"]["midt"]["n_v_min_kN_m"], -10, tol=0.05)
         ok = max(abs(k["elementer"]["J"]["M_max"]), abs(k["elementer"]["J"]["M_min"])) < 0.05 * 10 * 3 ** 2 / 8
         print(("OK   " if ok else "FEJL ") + "bjælke på væg: bjælken er forbundet med væggen i hele længden (M < 5 % af qL²/8)")
         if not ok:
-            fejl.append("bjælke på væg")
+            failures.append("bjælke på væg")
         s, r = res["ramme"]
         k = r["kombinationer"]["K"]
         q = 1.2 * (12 + 78.5 * s["elementer"]["B1"]["_t"]["A"] * 1e-6)
         b1 = k["elementer"]["B1"]
-        tjek("ramme: felt- + hjørnemoment = qL²/8", b1["M_max"] - b1["M_min"], q * 4.2 ** 2 / 8)
+        check("ramme: felt- + hjørnemoment = qL²/8", b1["M_max"] - b1["M_min"], q * 4.2 ** 2 / 8)
         ok = b1["M_max"] > 0 > b1["M_min"]
         print(("OK   " if ok else "FEJL ") + "ramme: feltmoment positivt (træk i underside), hjørnemoment negativt")
         if not ok:
-            fejl.append("fortegn")
+            failures.append("fortegn")
         s1 = k["elementer"]["S1"]
-        tjek("ramme: søjle i tryk, N ved fod = −R", s1["N_min"], -k["reaktioner"]["A"]["Rz"], tol=0.02)
-        tjek("ramme: lodret ligevægt", k["ligevaegt"]["z"]["reaktioner"], -k["ligevaegt"]["z"]["laster"])
-    print("\nALLE TESTS BESTÅET" if not fejl else f"\n{len(fejl)} FEJL")
-    return 1 if fejl else 0
+        check("ramme: søjle i tryk, N ved fod = −R", s1["N_min"], -k["reaktioner"]["A"]["Rz"], tol=0.02)
+        check("ramme: lodret ligevægt", k["ligevaegt"]["z"]["reaktioner"], -k["ligevaegt"]["z"]["laster"])
+    print("\nALLE TESTS BESTÅET" if not failures else f"\n{len(failures)} FEJL")
+    return 1 if failures else 0
 
 
 def main(args) -> int:
@@ -371,7 +371,7 @@ def main(args) -> int:
     cmd, rest = args[0], args[1:]
     try:
         if cmd == "skabelon":
-            print((EKSEMPEL_FLADER if rest[:1] == ["flader"] else EKSEMPEL).read_text(encoding="utf-8"))
+            print((EXAMPLE_SHELLS if rest[:1] == ["flader"] else EXAMPLE).read_text(encoding="utf-8"))
             return 0
         if cmd == "test":
             return test(rest, argv)
@@ -379,10 +379,10 @@ def main(args) -> int:
             if not rest:
                 print(f"Brug: fem.py {cmd} <fem.yaml> …", file=sys.stderr)
                 return 2
-            return {"regn": regn, "tegn": tegn, "vis": vis, "resultat": resultat}[cmd](rest, argv)
+            return {"regn": calc, "tegn": draw, "vis": view, "resultat": result}[cmd](rest, argv)
         print(f"Ukendt kommando '{cmd}'. Se: python3 fem.py --help", file=sys.stderr)
         return 2
-    except SpecFejl as e:
+    except SpecError as e:
         print(f"FEJL i modellen: {e}", file=sys.stderr)
         return 2
     except FileNotFoundError as e:

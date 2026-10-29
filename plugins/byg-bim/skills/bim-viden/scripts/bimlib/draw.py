@@ -1,8 +1,8 @@
-"""Tegninger fra IFC-geometrien (PNG): plan med snit, lodret snit, facade og 3D.
+"""Drawings from the IFC geometry (PNG): plan with cut, vertical section, elevation and 3D.
 
-Tegnes fra selve IFC-filen – ikke fra spec'en – så det, der ses, er det, der er i filen.
-Konventioner: snit = fyldt og kraftig streg; under snittet = tynd streg; over snittet (bjælker) = stiplet.
-Status: eksisterende sort/grå, NY rød, NEDRIVES gul stiplet. Kilde A (antagelse) har orange kant.
+Drawn from the IFC file itself – not from the spec – so what you see is what is in the file.
+Conventions: cut = filled and heavy line; below the cut = thin line; above the cut (beams) = dashed.
+Status: existing black/grey, NEW red, DEMOLISH yellow dashed. Source A (assumption) has an orange edge.
 """
 import datetime as dt
 import math
@@ -22,26 +22,26 @@ from matplotlib.transforms import Affine2D  # noqa: E402
 from shapely.geometry import MultiLineString, Polygon  # noqa: E402
 from shapely.ops import polygonize, unary_union  # noqa: E402
 
-from .geometry import hent  # noqa: E402
+from .geometry import fetch_shapes  # noqa: E402
 
-FYLD = {"IfcWall": "#9a9a9a", "IfcColumn": "#5a5a5a", "IfcBeam": "#5a5a5a", "IfcSlab": "#c8c8c8",
+FILL = {"IfcWall": "#9a9a9a", "IfcColumn": "#5a5a5a", "IfcBeam": "#5a5a5a", "IfcSlab": "#c8c8c8",
         "IfcWindow": "#bfe0f0", "IfcDoor": "#d9b48c", "IfcStair": "#e0c9a0", "IfcChimney": "#b0705a",
         "IfcRoof": "#b0705a", "IfcSpace": "#eaf3fb"}
-STATUSFARVE = {"NEW": "#d62728", "DEMOLISH": "#e0b000", "TEMPORARY": "#1f77b4"}
+STATUS_COLOUR = {"NEW": "#d62728", "DEMOLISH": "#e0b000", "TEMPORARY": "#1f77b4"}
 MAX_PX = 2400
 
 
-# ------------------------------------------------------------------ snit af trekantnet
-def snit_polygoner(v, f, n, d):
-    """Snit af et lukket trekantnet med planet n·x = d. Returnerer (polygoner, segmenter) i 3D.
-    Skæringspunkter beregnes pr. kant med ordnede indeks, så naboer får identiske punkter."""
+# ------------------------------------------------------------------ sectioning a triangle mesh
+def section_segments(v, f, n, d):
+    """Section of a closed triangle mesh with the plane n·x = d. Returns (polygons, segments) in 3D.
+    Intersection points are computed per edge with ordered indices, so neighbours get identical points."""
     s = v @ n - d
     s[np.abs(s) < 1e-7] = 1e-7
     segs = []
     tri = f
     sgn = s[tri] > 0
-    blandet = sgn.any(axis=1) & ~sgn.all(axis=1)
-    for t in tri[blandet]:
+    mixed = sgn.any(axis=1) & ~sgn.all(axis=1)
+    for t in tri[mixed]:
         pts = []
         for a, b in ((t[0], t[1]), (t[1], t[2]), (t[2], t[0])):
             if (s[a] > 0) != (s[b] > 0):
@@ -53,44 +53,44 @@ def snit_polygoner(v, f, n, d):
     return segs
 
 
-def til_2d(segs, akser):
-    u, w = akser
+def to_2d(segs, axes):
+    u, w = axes
     return [[(float(np.dot(p, u)), float(np.dot(p, w))) for p in s] for s in segs]
 
 
-def polys_af(segs2d):
-    """Snitlinjer → materialeflader. polygonize returnerer også hullerne som flader; lige-ulige-reglen
-    (antal omsluttende flader) skiller dem fra."""
+def polys_from(segs2d):
+    """Section lines → material faces. polygonize also returns the holes as faces; the even-odd rule
+    (number of enclosing faces) separates them."""
     if not segs2d:
         return []
     ml = unary_union(MultiLineString(segs2d))
-    flader = [p for p in polygonize(ml) if p.area > 1.0]
-    skaller = [Polygon(p.exterior) for p in flader]
-    ud = []
-    for i, p in enumerate(flader):
+    faces = [p for p in polygonize(ml) if p.area > 1.0]
+    shells = [Polygon(p.exterior) for p in faces]
+    out = []
+    for i, p in enumerate(faces):
         rp = p.representative_point()
-        n = sum(1 for j, sk in enumerate(skaller) if j != i and sk.area > p.area and sk.contains(rp))
+        n = sum(1 for j, sh in enumerate(shells) if j != i and sh.area > p.area and sh.contains(rp))
         if n % 2 == 0:
-            ud.append(p)
-    return ud
+            out.append(p)
+    return out
 
 
-def fyld_poly(ax, poly, **kw):
+def fill_poly(ax, poly, **kw):
     if poly.is_empty:
         return
     for g in getattr(poly, "geoms", [poly]):
         if g.geom_type != "Polygon":
             continue
-        verts, koder = [], []
+        verts, codes = [], []
         for ring in [g.exterior] + list(g.interiors):
             c = list(ring.coords)
             verts += c
-            koder += [MPath.MOVETO] + [MPath.LINETO] * (len(c) - 2) + [MPath.CLOSEPOLY]
-        ax.add_patch(PathPatch(MPath(verts, koder), **kw))
+            codes += [MPath.MOVETO] + [MPath.LINETO] * (len(c) - 2) + [MPath.CLOSEPOLY]
+        ax.add_patch(PathPatch(MPath(verts, codes), **kw))
 
 
-def projektion(fm, akser, normal_min=0.05):
-    u, w = akser
+def projection(fm, axes, normal_min=0.05):
+    u, w = axes
     nrm = np.cross(u, w)
     P = fm.v[fm.f]
     nn = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
@@ -100,29 +100,29 @@ def projektion(fm, akser, normal_min=0.05):
     return unary_union(tris) if tris else None
 
 
-# ------------------------------------------------------------------ hjælpere
-def _figur(bounds, titel):
+# ------------------------------------------------------------------ helpers
+def _figure(bounds, title):
     x0, y0, x1, y1 = bounds
     bx, by = max(x1 - x0, 1), max(y1 - y0, 1)
     dpi = 150
-    skala = min(MAX_PX / dpi / bx, MAX_PX / dpi / by)
-    fig = plt.figure(figsize=(max(bx * skala, 6), max(by * skala, 4) + 0.6), dpi=dpi)
+    scale = min(MAX_PX / dpi / bx, MAX_PX / dpi / by)
+    fig = plt.figure(figsize=(max(bx * scale, 6), max(by * scale, 4) + 0.6), dpi=dpi)
     ax = fig.add_axes([0.02, 0.02, 0.96, 0.90])
     ax.set_aspect("equal")
     ax.set_xlim(x0, x1)
     ax.set_ylim(y0, y1)
     ax.axis("off")
-    fig.suptitle(titel, fontsize=10, x=0.02, ha="left")
+    fig.suptitle(title, fontsize=10, x=0.02, ha="left")
     return fig, ax
 
 
-def _kant(fm, std="#000000"):
-    if fm.status in STATUSFARVE:
-        return STATUSFARVE[fm.status]
-    return "#e67e00" if fm.kilde == "A" else std
+def _edge_colour(fm, default="#000000"):
+    if fm.status in STATUS_COLOUR:
+        return STATUS_COLOUR[fm.status]
+    return "#e67e00" if fm.source == "A" else default
 
 
-def _maalestok(ax, bounds):
+def _scale_bar(ax, bounds):
     x0, y0, x1, y1 = bounds
     L = 1000 if (x1 - x0) < 15000 else 5000
     x, y = x0 + 300, y0 + 300
@@ -130,7 +130,7 @@ def _maalestok(ax, bounds):
     ax.text(x + L / 2, y + 120, f"{L // 1000} m", ha="center", fontsize=7)
 
 
-def _nordpil(ax, f, bounds):
+def _north_arrow(ax, f, bounds):
     ctx = next((c for c in f.by_type("IfcGeometricRepresentationContext") if c.ContextType == "Model"
                 and not c.is_a("IfcGeometricRepresentationSubContext")), None)
     tn = getattr(ctx, "TrueNorth", None) if ctx else None
@@ -143,98 +143,98 @@ def _nordpil(ax, f, bounds):
     ax.text(cx + dx * L * 1.3, cy + dy * L * 1.3, "N", ha="center", va="center", fontsize=9, weight="bold")
 
 
-def _forklaring(ax, f):
+def _legend(ax, f):
     ax.text(0.99, 0.005, "Kraftig: snit · tynd: under snit · stiplet: over snit · rød: NY · gul: NEDRIVES · orange kant: kilde A",
             transform=ax.transAxes, fontsize=6, ha="right", va="bottom", color="#444")
 
 
-def _gem(fig, ud, navn):
-    ud.mkdir(parents=True, exist_ok=True)
-    sti = ud / navn
-    fig.savefig(sti, dpi=fig.dpi, facecolor="white")
+def _save(fig, out, name):
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / name
+    fig.savefig(path, dpi=fig.dpi, facecolor="white")
     plt.close(fig)
-    return sti
+    return path
 
 
-def _affin(kal):
-    """Kalibrering "px,py=x,y;…" → 2×3-matrix fra billedpixel til model-mm (2 punkter: ligedannet med
-    spejling af billedets y; 3+: mindste kvadraters affin – X og Y skaleres hver for sig)."""
-    par = []
-    for led in kal.split(";"):
-        if not led.strip():
+def _affine(cal):
+    """Calibration "px,py=x,y;…" → 2×3 matrix from image pixel to model mm (2 points: similarity with
+    the image y mirrored; 3+: least-squares affine – X and Y scaled independently)."""
+    pairs = []
+    for part in cal.split(";"):
+        if not part.strip():
             continue
-        a, b = led.split("=")
+        a, b = part.split("=")
         px, py = map(float, a.split(","))
         x, y = map(float, b.split(","))
-        par.append(((px, py), (x, y)))
-    if len(par) < 2:
+        pairs.append(((px, py), (x, y)))
+    if len(pairs) < 2:
         raise SystemExit("--kal kræver mindst 2 punktpar: \"px,py=x,y;px,py=x,y\"")
-    if len(par) == 2:
-        (p1, m1), (p2, m2) = par
+    if len(pairs) == 2:
+        (p1, m1), (p2, m2) = pairs
         P1, P2 = complex(p1[0], -p1[1]), complex(p2[0], -p2[1])
         M1, M2 = complex(*m1), complex(*m2)
         a = (M1 - M2) / (P1 - P2)
         b = M1 - a * P1
         # z = a·(px − i·py) + b
-        return np.array([[a.real, a.imag, b.real], [a.imag, -a.real, b.imag]]), par
-    A = np.array([[px, py, 1] for (px, py), _ in par])
-    X = np.array([m for _, m in par])
+        return np.array([[a.real, a.imag, b.real], [a.imag, -a.real, b.imag]]), pairs
+    A = np.array([[px, py, 1] for (px, py), _ in pairs])
+    X = np.array([m for _, m in pairs])
     sol, *_ = np.linalg.lstsq(A, X, rcond=None)
-    return sol.T, par
+    return sol.T, pairs
 
 
-def _underlag(ax, sti, kal):
+def _underlay(ax, path, cal):
     import matplotlib.image as mpimg
-    img = mpimg.imread(sti)
-    M, par = _affin(kal)
+    img = mpimg.imread(path)
+    M, pairs = _affine(cal)
     tr = Affine2D(np.vstack([M, [0, 0, 1]])) + ax.transData
     h, w = img.shape[:2]
     ax.imshow(img, extent=(0, w, h, 0), transform=tr, alpha=0.55, zorder=0, interpolation="bilinear",
               cmap="gray" if img.ndim == 2 else None)
-    rest = []
-    for (px, py), (x, y) in par:
+    residual = []
+    for (px, py), (x, y) in pairs:
         xm = M @ np.array([px, py, 1])
-        rest.append(math.dist(xm, (x, y)))
+        residual.append(math.dist(xm, (x, y)))
         ax.plot([x], [y], marker="+", color="blue", ms=10, zorder=9)
-    return max(rest) if rest else 0.0
+    return max(residual) if residual else 0.0
 
 
 # ------------------------------------------------------------------ plan
-def plan_data(f, former, etage, snithoejde=1000.0):
-    """Plangeometri i model-mm: snit (fyldt), under snit, over snit (bjælker), rum og dørsymboler."""
-    z0 = float(etage.Elevation or 0.0)
-    zc = z0 + snithoejde
-    mine = [fm for fm in former if fm.etage is not None and fm.etage.id() == etage.id()]
-    n, akser = np.array([0.0, 0.0, 1.0]), (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]))
-    d = {"z0": z0, "zc": zc, "snit": [], "under": [], "over": [], "rum": [], "doere": [], "mine": mine}
-    for fm in mine:
-        if fm.klasse == "IfcSpace":
-            p = polys_af(til_2d(snit_polygoner(fm.v, fm.f, n, z0 + 50), akser))
+def plan_data(f, shapes, storey, cut_height=1000.0):
+    """Plan geometry in model mm: cut (filled), below cut, above cut (beams), spaces and door symbols."""
+    z0 = float(storey.Elevation or 0.0)
+    zc = z0 + cut_height
+    own = [fm for fm in shapes if fm.storey is not None and fm.storey.id() == storey.id()]
+    n, axes = np.array([0.0, 0.0, 1.0]), (np.array([1.0, 0, 0]), np.array([0, 1.0, 0]))
+    d = {"z0": z0, "zc": zc, "snit": [], "under": [], "over": [], "rum": [], "doere": [], "mine": own}
+    for fm in own:
+        if fm.ifc_class == "IfcSpace":
+            p = polys_from(to_2d(section_segments(fm.v, fm.f, n, z0 + 50), axes))
             if p:
                 d["rum"].append((fm, unary_union(p)))
             continue
-        if fm.zmin < zc < fm.zmax and fm.klasse != "IfcDoor":  # døre vises med slagsymbol
-            p = polys_af(til_2d(snit_polygoner(fm.v, fm.f, n, zc), akser))
+        if fm.zmin < zc < fm.zmax and fm.ifc_class != "IfcDoor":  # doors are shown with a swing symbol
+            p = polys_from(to_2d(section_segments(fm.v, fm.f, n, zc), axes))
             if p:
                 d["snit"].append((fm, unary_union(p)))
-            if fm.klasse == "IfcStair":
-                d["under"].append((fm, projektion(fm, akser)))
-        elif fm.zmax <= zc and fm.zmax > z0 + 1 and fm.klasse not in ("IfcSlab", "IfcCovering"):
-            d["under"].append((fm, projektion(fm, akser)))
-        elif fm.zmin >= zc and fm.klasse == "IfcBeam" and fm.zmin < z0 + snithoejde + 3000:
-            d["over"].append((fm, projektion(fm, akser)))
+            if fm.ifc_class == "IfcStair":
+                d["under"].append((fm, projection(fm, axes)))
+        elif fm.zmax <= zc and fm.zmax > z0 + 1 and fm.ifc_class not in ("IfcSlab", "IfcCovering"):
+            d["under"].append((fm, projection(fm, axes)))
+        elif fm.zmin >= zc and fm.ifc_class == "IfcBeam" and fm.zmin < z0 + cut_height + 3000:
+            d["over"].append((fm, projection(fm, axes)))
     d["under"] = [(fm, g) for fm, g in d["under"] if g is not None]
     d["over"] = [(fm, g) for fm, g in d["over"] if g is not None]
-    d["doere"] = doersymboler(mine, zc)
+    d["doere"] = door_symbols(own, zc)
     return d
 
 
-def doersymboler(mine, zc):
-    """Dørblad (90° åbent) og slagbue som linjer i model-mm: [(fm, LineString blad, LineString bue)]."""
+def door_symbols(own, zc):
+    """Door leaf (90° open) and swing arc as lines in model mm: [(fm, LineString leaf, LineString arc)]."""
     from shapely.geometry import LineString
-    ud = []
-    for fm in mine:
-        if fm.klasse != "IfcDoor" or not (fm.zmin < zc < fm.zmax):
+    out = []
+    for fm in own:
+        if fm.ifc_class != "IfcDoor" or not (fm.zmin < zc < fm.zmax):
             continue
         d = fm.ent
         W = float(d.OverallWidth or 0)
@@ -246,67 +246,67 @@ def doersymboler(mine, zc):
             continue
         o, x, y = M[:2, 3], M[:2, 0], M[:2, 1]
         h = o + x * (W if "RIGHT" in op else 0)
-        fri = o + x * (0 if "RIGHT" in op else W)
-        blad = h + y * W  # bladet åbner mod dørens lokale +y
-        a0 = math.atan2(*(fri - h)[::-1])
-        a1 = math.atan2(*(blad - h)[::-1])
+        free = o + x * (0 if "RIGHT" in op else W)
+        leaf = h + y * W  # the leaf opens towards the door's local +y
+        a0 = math.atan2(*(free - h)[::-1])
+        a1 = math.atan2(*(leaf - h)[::-1])
         da = (a1 - a0 + math.pi) % (2 * math.pi) - math.pi
-        bue = [h + W * np.array([math.cos(a0 + da * t / 16), math.sin(a0 + da * t / 16)]) for t in range(17)]
-        ud.append((fm, LineString([h, blad]), LineString(bue)))
-    return ud
+        arc = [h + W * np.array([math.cos(a0 + da * t / 16), math.sin(a0 + da * t / 16)]) for t in range(17)]
+        out.append((fm, LineString([h, leaf]), LineString(arc)))
+    return out
 
 
-def plan(f, former, etage, snithoejde, ud, vis_id=False, maal=False, underlag=None, kal=None):
-    d = plan_data(f, former, etage, snithoejde)
+def plan(f, shapes, storey, cut_height, out, show_id=False, dims=False, underlay=None, cal=None):
+    d = plan_data(f, shapes, storey, cut_height)
     if not d["mine"]:
         return None
-    alle = [g for _, g in d["snit"]] + [g for _, g in d["rum"]]
-    if not alle:
+    combined = [g for _, g in d["snit"]] + [g for _, g in d["rum"]]
+    if not combined:
         return None
-    b = unary_union(alle).bounds
+    b = unary_union(combined).bounds
     m = 1500
     bounds = (b[0] - m, b[1] - m, b[2] + m, b[3] + m)
-    titel = (f"{f.by_type('IfcProject')[0].Name} – plan {etage.Name} (kote {d['z0']:+.0f}, snit +{snithoejde:.0f})"
+    title = (f"{f.by_type('IfcProject')[0].Name} – plan {storey.Name} (kote {d['z0']:+.0f}, snit +{cut_height:.0f})"
              f"  {dt.date.today()}")
-    fig, ax = _figur(bounds, titel)
-    rest = None
-    if underlag:
-        rest = _underlag(ax, underlag, kal)
+    fig, ax = _figure(bounds, title)
+    residual = None
+    if underlay:
+        residual = _underlay(ax, underlay, cal)
     for fm, g in d["rum"]:
-        fyld_poly(ax, g, facecolor=FYLD["IfcSpace"], edgecolor="none", zorder=1, alpha=0.4 if underlag else 1)
+        fill_poly(ax, g, facecolor=FILL["IfcSpace"], edgecolor="none", zorder=1, alpha=0.4 if underlay else 1)
     for fm, g in d["under"]:
-        fyld_poly(ax, g, facecolor="none", edgecolor=_kant(fm, "#555"), lw=0.5, zorder=2)
+        fill_poly(ax, g, facecolor="none", edgecolor=_edge_colour(fm, "#555"), lw=0.5, zorder=2)
     for fm, g in d["over"]:
-        fyld_poly(ax, g, facecolor="none", edgecolor="#555", lw=0.6, ls=(0, (4, 3)), zorder=2)
+        fill_poly(ax, g, facecolor="none", edgecolor="#555", lw=0.6, ls=(0, (4, 3)), zorder=2)
     for fm, g in d["snit"]:
-        farve = FYLD.get(fm.klasse, "#8c8c8c")
+        colour = FILL.get(fm.ifc_class, "#8c8c8c")
         if fm.status == "NEW":
-            farve = "#f2a3a3"
+            colour = "#f2a3a3"
         ls = (0, (3, 2)) if fm.status == "DEMOLISH" else "solid"
-        fyld_poly(ax, g, facecolor="none" if underlag else farve, edgecolor=_kant(fm, "#c00000" if underlag else "#000"),
-                  lw=1.3 if fm.klasse != "IfcWindow" else 0.6, ls=ls, zorder=3)
-        if vis_id:
+        fill_poly(ax, g, facecolor="none" if underlay else colour, edgecolor=_edge_colour(fm, "#c00000" if underlay else "#000"),
+                  lw=1.3 if fm.ifc_class != "IfcWindow" else 0.6, ls=ls, zorder=3)
+        if show_id:
             c = g.representative_point()
             ax.text(c.x, c.y, fm.tag, fontsize=5, ha="center", va="center", color="#003c8f", zorder=6)
-    for fm, blad, bue in d["doere"]:
-        ax.plot(*blad.xy, color="#c00000" if underlag else "#000", lw=0.8, zorder=5)
-        ax.plot(*bue.xy, color="#c00000" if underlag else "#000", lw=0.5, zorder=5)
+    for fm, leaf, arc in d["doere"]:
+        ax.plot(*leaf.xy, color="#c00000" if underlay else "#000", lw=0.8, zorder=5)
+        ax.plot(*arc.xy, color="#c00000" if underlay else "#000", lw=0.5, zorder=5)
     for fm, g in d["rum"]:
         c = g.representative_point()
         q = ue.get_psets(fm.ent).get("Qto_SpaceBaseQuantities", {})
         a = q.get("NetFloorArea") or g.area / 1e6
-        ax.text(c.x, c.y, f"{fm.navn}\n{fm.tag} · {a:.1f} m²", fontsize=7, ha="center", va="center", zorder=7,
+        ax.text(c.x, c.y, f"{fm.name}\n{fm.tag} · {a:.1f} m²", fontsize=7, ha="center", va="center", zorder=7,
                 color="#1a1a1a", bbox=dict(boxstyle="round,pad=0.2", fc="white", ec="none", alpha=0.7))
-    if maal:
-        _maal(ax, f, d["snit"], bounds)
-    _maalestok(ax, bounds)
-    _nordpil(ax, f, bounds)
-    _forklaring(ax, f)
-    if rest is not None:
-        ax.text(0.01, 0.97, f"Underlag kalibreret: største restafvigelse {rest:.0f} mm", transform=ax.transAxes,
+    if dims:
+        _dimensions(ax, f, d["snit"], bounds)
+    _scale_bar(ax, bounds)
+    _north_arrow(ax, f, bounds)
+    _legend(ax, f)
+    if residual is not None:
+        ax.text(0.01, 0.97, f"Underlag kalibreret: største restafvigelse {residual:.0f} mm", transform=ax.transAxes,
                 fontsize=7, color="blue")
-    navn = f"plan-{_slug(etage.Name)}" + ("-underlag" if underlag else "") + ".png"
-    return _gem(fig, ud, navn)
+    name = f"plan-{_slug(storey.Name)}" + ("-underlag" if underlay else "") + ".png"
+    return _save(fig, out, name)
 
 
 def _slug(s):
@@ -316,11 +316,11 @@ def _slug(s):
     return "".join(ch for ch in t if ch.isalnum() or ch == "-")
 
 
-def _maal(ax, f, snit, bounds):
-    vaegge = [(fm, g) for fm, g in snit if fm.klasse == "IfcWall"]
-    if not vaegge:
+def _dimensions(ax, f, cut, bounds):
+    walls = [(fm, g) for fm, g in cut if fm.ifc_class == "IfcWall"]
+    if not walls:
         return
-    u = unary_union([g for _, g in vaegge])
+    u = unary_union([g for _, g in walls])
     x0, y0, x1, y1 = u.bounds
     for (a, b, y, lbl) in ((x0, x1, y0 - 700, x1 - x0),):
         ax.annotate("", xy=(a, y), xytext=(b, y), arrowprops=dict(arrowstyle="|-|", lw=0.6, shrinkA=0, shrinkB=0))
@@ -328,7 +328,7 @@ def _maal(ax, f, snit, bounds):
     xx = x0 - 700
     ax.annotate("", xy=(xx, y0), xytext=(xx, y1), arrowprops=dict(arrowstyle="|-|", lw=0.6, shrinkA=0, shrinkB=0))
     ax.text(xx - 120, (y0 + y1) / 2, f"{y1 - y0:.0f}", ha="right", va="center", fontsize=7, rotation=90)
-    for fm, g in vaegge:
+    for fm, g in walls:
         q = ue.get_psets(fm.ent).get("Qto_WallBaseQuantities", {})
         L = q.get("Length")
         if not L:
@@ -338,28 +338,28 @@ def _maal(ax, f, snit, bounds):
         cs = list(r.exterior.coords)
         e1 = np.subtract(cs[1], cs[0])
         e2 = np.subtract(cs[2], cs[1])
-        lang = e1 if np.linalg.norm(e1) >= np.linalg.norm(e2) else e2
-        vink = math.degrees(math.atan2(lang[1], lang[0]))
-        if vink > 90:
-            vink -= 180
-        if vink < -90:
-            vink += 180
-        ax.text(c.x, c.y, f"{L:.0f}", fontsize=5.5, ha="center", va="center", rotation=vink, color="#7a0000", zorder=8,
+        long_edge = e1 if np.linalg.norm(e1) >= np.linalg.norm(e2) else e2
+        angle = math.degrees(math.atan2(long_edge[1], long_edge[0]))
+        if angle > 90:
+            angle -= 180
+        if angle < -90:
+            angle += 180
+        ax.text(c.x, c.y, f"{L:.0f}", fontsize=5.5, ha="center", va="center", rotation=angle, color="#7a0000", zorder=8,
                 bbox=dict(boxstyle="square,pad=0.05", fc="white", ec="none", alpha=0.75))
 
 
-# ------------------------------------------------------------------ snit, facade, 3D (malerens algoritme)
-def _lys(nn, se):
+# ------------------------------------------------------------------ section, elevation, 3D (painter's algorithm)
+def _light(nn, se):
     nn = nn / (np.linalg.norm(nn, axis=1, keepdims=True) + 1e-12)
-    lys = np.array([-0.4, -0.6, 0.7])
-    lys = lys / np.linalg.norm(lys)
-    return 0.55 + 0.45 * np.abs(nn @ lys)
+    light = np.array([-0.4, -0.6, 0.7])
+    light = light / np.linalg.norm(light)
+    return 0.55 + 0.45 * np.abs(nn @ light)
 
 
-def _overflade(styles):
+def _surface_colour(styles):
     for st in styles or []:
-        kand = [st] if st.is_a("IfcSurfaceStyle") else list(getattr(st, "Styles", None) or [])
-        for ss in kand:
+        candidates = [st] if st.is_a("IfcSurfaceStyle") else list(getattr(st, "Styles", None) or [])
+        for ss in candidates:
             if ss.is_a("IfcSurfaceStyle"):
                 for x in ss.Styles:
                     if x.is_a("IfcSurfaceStyleShading"):
@@ -368,8 +368,8 @@ def _overflade(styles):
     return None
 
 
-def _stilfarve(ent):
-    """Farve fra IfcStyledItem på geometrien, ellers fra materialets stil."""
+def _style_colour(ent):
+    """Colour from IfcStyledItem on the geometry, otherwise from the material's style."""
     for rep in getattr(ent.Representation, "Representations", None) or []:
         items = list(rep.Items)
         while items:
@@ -378,7 +378,7 @@ def _stilfarve(ent):
                 items += list(it.MappingSource.MappedRepresentation.Items)
                 continue
             for si in getattr(it, "StyledByItem", None) or []:
-                c = _overflade(si.Styles)
+                c = _surface_colour(si.Styles)
                 if c is not None:
                     return c
     mat = ue.get_material(ent, should_skip_usage=True)
@@ -392,36 +392,36 @@ def _stilfarve(ent):
         for dr in getattr(m, "HasRepresentation", None) or []:
             for r in dr.Representations:
                 for si in r.Items:
-                    c = _overflade(si.Styles)
+                    c = _surface_colour(si.Styles)
                     if c is not None:
                         return c
     return None
 
 
-def _farve(fm):
+def _colour(fm):
     import matplotlib.colors as mc
-    if fm.status in STATUSFARVE:
-        return np.array(mc.to_rgb(STATUSFARVE[fm.status]))
-    c = _stilfarve(fm.ent)
-    return c if c is not None else np.array(mc.to_rgb(FYLD.get(fm.klasse, "#bbbbbb")))
+    if fm.status in STATUS_COLOUR:
+        return np.array(mc.to_rgb(STATUS_COLOUR[fm.status]))
+    c = _style_colour(fm.ent)
+    return c if c is not None else np.array(mc.to_rgb(FILL.get(fm.ifc_class, "#bbbbbb")))
 
 
-def raster(former, R, bounds, px_pr_mm, klip=None, bleg=False, med_id=False):
-    """Z-buffer: rasteriserer trekanterne ortografisk i rammen R=(u, w, d) (d = synsretning).
-    Returnerer RGB-billede med konturer, hvor element eller fladeorientering skifter. 2× supersampling."""
+def raster(shapes, R, bounds, px_per_mm, clip=None, faded=False, ids_only=False):
+    """Z-buffer: rasterises the triangles orthographically in the frame R=(u, w, d) (d = view direction).
+    Returns an RGB image with outlines where the element or face orientation changes. 2× supersampling."""
     u, w, d = R
     x0, y0, x1, y1 = bounds
     ss = 2
-    s = px_pr_mm * ss
+    s = px_per_mm * ss
     W, H = int((x1 - x0) * s) + 1, int((y1 - y0) * s) + 1
-    dyb = np.full((H, W), np.inf)
-    farve = np.ones((H, W, 3))
+    depth = np.full((H, W), np.inf)
+    colour = np.ones((H, W, 3))
     eid = np.full((H, W), -1, dtype=np.int32)
     nrm = np.zeros((H, W, 3))
-    for k, fm in enumerate(former):
+    for k, fm in enumerate(shapes):
         P = fm.v[fm.f]
-        if klip is not None:
-            P = P[(P @ klip[0] - klip[1]).max(axis=1) > 0]
+        if clip is not None:
+            P = P[(P @ clip[0] - clip[1]).max(axis=1) > 0]
         if not len(P):
             continue
         X = (P @ u - x0) * s
@@ -429,10 +429,10 @@ def raster(former, R, bounds, px_pr_mm, klip=None, bleg=False, med_id=False):
         Z = P @ d
         N = np.cross(P[:, 1] - P[:, 0], P[:, 2] - P[:, 0])
         N /= np.linalg.norm(N, axis=1, keepdims=True) + 1e-12
-        base = _farve(fm)
-        if bleg:
+        base = _colour(fm)
+        if faded:
             base = base * 0.35 + 0.6
-        lys = 0.55 + 0.45 * np.abs(N @ (np.array([-0.4, -0.6, 0.7]) / np.linalg.norm([-0.4, -0.6, 0.7])))
+        light = 0.55 + 0.45 * np.abs(N @ (np.array([-0.4, -0.6, 0.7]) / np.linalg.norm([-0.4, -0.6, 0.7])))
         for t in range(len(P)):
             xs, ys, zs = X[t], Y[t], Z[t]
             a0, a1 = max(int(xs.min()), 0), min(int(xs.max()) + 1, W - 1)
@@ -446,173 +446,173 @@ def raster(former, R, bounds, px_pr_mm, klip=None, bleg=False, med_id=False):
             l0 = ((ys[1] - ys[2]) * (gx - xs[2]) + (xs[2] - xs[1]) * (gy - ys[2])) / den
             l1 = ((ys[2] - ys[0]) * (gx - xs[2]) + (xs[0] - xs[2]) * (gy - ys[2])) / den
             l2 = 1 - l0 - l1
-            ind = (l0 >= -1e-6) & (l1 >= -1e-6) & (l2 >= -1e-6)
+            inside = (l0 >= -1e-6) & (l1 >= -1e-6) & (l2 >= -1e-6)
             z = l0 * zs[0] + l1 * zs[1] + l2 * zs[2]
-            sub = dyb[b0:b1 + 1, a0:a1 + 1]
-            m = ind & (z < sub - 0.5)
+            sub = depth[b0:b1 + 1, a0:a1 + 1]
+            m = inside & (z < sub - 0.5)
             if not m.any():
                 continue
             sub[m] = z[m]
-            farve[b0:b1 + 1, a0:a1 + 1][m] = np.clip(base * lys[t], 0, 1)
+            colour[b0:b1 + 1, a0:a1 + 1][m] = np.clip(base * light[t], 0, 1)
             eid[b0:b1 + 1, a0:a1 + 1][m] = k
             nrm[b0:b1 + 1, a0:a1 + 1][m] = N[t]
-    kant = np.zeros((H, W), bool)
-    dyb[~np.isfinite(dyb)] = 1e12
+    edges = np.zeros((H, W), bool)
+    depth[~np.isfinite(depth)] = 1e12
     for ax_ in (0, 1):
         de = np.diff(eid, axis=ax_) != 0
         dn = (np.abs(np.diff(nrm, axis=ax_)).sum(axis=2) > 0.3) & (np.diff(eid, axis=ax_) == 0) & \
-             (np.abs(np.diff(dyb, axis=ax_)) < 1e11)
-        dz = (np.abs(np.diff(dyb, axis=ax_)) > 60) & (np.abs(np.diff(dyb, axis=ax_)) < 1e11)
+             (np.abs(np.diff(depth, axis=ax_)) < 1e11)
+        dz = (np.abs(np.diff(depth, axis=ax_)) > 60) & (np.abs(np.diff(depth, axis=ax_)) < 1e11)
         e = de | dn | dz
         if ax_ == 0:
-            kant[:-1] |= e
+            edges[:-1] |= e
         else:
-            kant[:, :-1] |= e
-    if med_id:
+            edges[:, :-1] |= e
+    if ids_only:
         return eid
-    farve[kant] = farve[kant] * 0.25
-    img = farve.reshape(H // ss, ss, W // ss, ss, 3).mean(axis=(1, 3)) if H % ss == 0 and W % ss == 0 else \
-        farve[: H - H % ss, : W - W % ss].reshape(H // ss, ss, W // ss, ss, 3).mean(axis=(1, 3))
+    colour[edges] = colour[edges] * 0.25
+    img = colour.reshape(H // ss, ss, W // ss, ss, 3).mean(axis=(1, 3)) if H % ss == 0 and W % ss == 0 else \
+        colour[: H - H % ss, : W - W % ss].reshape(H // ss, ss, W // ss, ss, 3).mean(axis=(1, 3))
     return img
 
 
-def _vis_raster(ax, img, bounds, zorder=1):
+def _show_raster(ax, img, bounds, zorder=1):
     x0, y0, x1, y1 = bounds
     ax.imshow(img, extent=(x0, x1, y0, y1), origin="upper", zorder=zorder, interpolation="bilinear")
 
 
-def _px_pr_mm(bounds):
+def _px_per_mm(bounds):
     return min(MAX_PX / max(bounds[2] - bounds[0], 1), MAX_PX / max(bounds[3] - bounds[1], 1))
 
 
-def _ramme_for_side(f, side):
-    """Facadeside → (u, w, d): u vandret mod højre, w op, d = synsretning (ind mod huset)."""
+def _frame_for_side(f, side):
+    """Elevation side → (u, w, d): u horizontal to the right, w up, d = view direction (towards the house)."""
     side = (side or "syd").lower()
-    lokal = {"x+": (1, 0), "x-": (-1, 0), "y+": (0, 1), "y-": (0, -1)}
-    if side in lokal:
-        ud_ = np.array([*lokal[side], 0.0])
+    local_dirs = {"x+": (1, 0), "x-": (-1, 0), "y+": (0, 1), "y-": (0, -1)}
+    if side in local_dirs:
+        outward = np.array([*local_dirs[side], 0.0])
     else:
         ctx = next((c for c in f.by_type("IfcGeometricRepresentationContext") if c.ContextType == "Model"
                     and not c.is_a("IfcGeometricRepresentationSubContext")), None)
         tn = getattr(ctx, "TrueNorth", None) if ctx else None
-        nord = np.array([tn.DirectionRatios[0], tn.DirectionRatios[1], 0.0]) if tn else np.array([0, 1.0, 0])
-        oest = np.array([nord[1], -nord[0], 0.0])
-        ud_ = {"nord": nord, "syd": -nord, "oest": oest, "øst": oest, "vest": -oest}.get(side)
-        if ud_ is None:
+        north = np.array([tn.DirectionRatios[0], tn.DirectionRatios[1], 0.0]) if tn else np.array([0, 1.0, 0])
+        east = np.array([north[1], -north[0], 0.0])
+        outward = {"nord": north, "syd": -north, "oest": east, "øst": east, "vest": -east}.get(side)
+        if outward is None:
             raise SystemExit("--side: nord|syd|oest|vest eller x+|x-|y+|y-")
-    d = -ud_ / np.linalg.norm(ud_)
-    return _hoejre(d), np.array([0, 0, 1.0]), d
+    d = -outward / np.linalg.norm(outward)
+    return _right(d), np.array([0, 0, 1.0]), d
 
 
-def _hoejre(d):
-    # set fra beskueren, der kigger i retning d: højre = d × z
+def _right(d):
+    # seen from the viewer looking in direction d: right = d × z
     return np.cross(d, np.array([0, 0, 1.0]))
 
 
-def facade(f, former, side, ud):
-    former = [fm for fm in former if fm.klasse != "IfcSpace"]
-    u, w, d = _ramme_for_side(f, side)
-    alle = np.vstack([fm.v for fm in former])
-    bx = alle @ u
-    bz = alle @ w
+def elevation(f, shapes, side, out):
+    shapes = [fm for fm in shapes if fm.ifc_class != "IfcSpace"]
+    u, w, d = _frame_for_side(f, side)
+    combined = np.vstack([fm.v for fm in shapes])
+    bx = combined @ u
+    bz = combined @ w
     m = 1500
     bounds = (bx.min() - m, bz.min() - m, bx.max() + m, bz.max() + m)
-    fig, ax = _figur(bounds, f"{f.by_type('IfcProject')[0].Name} – facade {side}  {dt.date.today()}")
-    _vis_raster(ax, raster(former, (u, w, d), bounds, _px_pr_mm(bounds)), bounds)
-    _etagelinjer(ax, f, bounds)
-    _maalestok(ax, bounds)
-    return _gem(fig, ud, f"facade-{_slug(side)}.png")
+    fig, ax = _figure(bounds, f"{f.by_type('IfcProject')[0].Name} – facade {side}  {dt.date.today()}")
+    _show_raster(ax, raster(shapes, (u, w, d), bounds, _px_per_mm(bounds)), bounds)
+    _storey_lines(ax, f, bounds)
+    _scale_bar(ax, bounds)
+    return _save(fig, out, f"facade-{_slug(side)}.png")
 
 
-def _etagelinjer(ax, f, bounds):
+def _storey_lines(ax, f, bounds):
     for st in f.by_type("IfcBuildingStorey"):
         z = float(st.Elevation or 0)
         ax.plot([bounds[0] + 200, bounds[0] + 900], [z, z], color="#1f77b4", lw=0.8)
         ax.text(bounds[0] + 950, z, f"{st.Name} {z:+.0f}", fontsize=6, va="center", color="#1f77b4")
 
 
-def snit(f, former, linje, ud, vis_id=False):
-    x1, y1, x2, y2 = map(float, linje.split(","))
+def section(f, shapes, line, out, show_id=False):
+    x1, y1, x2, y2 = map(float, line.split(","))
     p1, p2 = np.array([x1, y1, 0.0]), np.array([x2, y2, 0.0])
     u = (p2 - p1) / np.linalg.norm(p2 - p1)
     w = np.array([0, 0, 1.0])
-    d = np.cross(w, u)  # synsretning: mod venstre for linjen
+    d = np.cross(w, u)  # view direction: to the left of the line
     n, dd = d, float(p1 @ d)
-    former = [fm for fm in former if fm.klasse not in ("IfcSpace",)]
-    alle = np.vstack([fm.v for fm in former])
-    bu, bz = alle @ u - p1 @ u, alle @ w
+    shapes = [fm for fm in shapes if fm.ifc_class not in ("IfcSpace",)]
+    combined = np.vstack([fm.v for fm in shapes])
+    bu, bz = combined @ u - p1 @ u, combined @ w
     m = 1500
     bounds = (bu.min() - m, bz.min() - m, bu.max() + m, bz.max() + m)
-    fig, ax = _figur(bounds, f"{f.by_type('IfcProject')[0].Name} – snit {linje} (set mod venstre)  {dt.date.today()}")
-    bag = [fm for fm in former if (fm.v @ n).max() > dd]
+    fig, ax = _figure(bounds, f"{f.by_type('IfcProject')[0].Name} – snit {line} (set mod venstre)  {dt.date.today()}")
+    behind = [fm for fm in shapes if (fm.v @ n).max() > dd]
     ob = (bounds[0] + float(p1 @ u), bounds[1], bounds[2] + float(p1 @ u), bounds[3])
-    img = raster(bag, (u, w, d), ob, _px_pr_mm(bounds), klip=(n, dd), bleg=True)
-    _vis_raster(ax, img, bounds)
-    for fm in former:
+    img = raster(behind, (u, w, d), ob, _px_per_mm(bounds), clip=(n, dd), faded=True)
+    _show_raster(ax, img, bounds)
+    for fm in shapes:
         if (fm.v @ n).min() < dd < (fm.v @ n).max():
-            segs = snit_polygoner(fm.v, fm.f, n, dd)
-            ps = polys_af([[(float(p @ u) - float(p1 @ u), float(p @ w)) for p in s] for s in segs])
+            segs = section_segments(fm.v, fm.f, n, dd)
+            ps = polys_from([[(float(p @ u) - float(p1 @ u), float(p @ w)) for p in s] for s in segs])
             if ps:
                 g = unary_union(ps)
-                fyld_poly(ax, g, facecolor="#333333" if fm.klasse != "IfcWindow" else "#bfe0f0",
-                          edgecolor=_kant(fm), lw=1.0, zorder=4)
-                if vis_id:
+                fill_poly(ax, g, facecolor="#333333" if fm.ifc_class != "IfcWindow" else "#bfe0f0",
+                          edgecolor=_edge_colour(fm), lw=1.0, zorder=4)
+                if show_id:
                     c = g.representative_point()
                     ax.text(c.x, c.y, fm.tag, fontsize=5, color="#ffd400", ha="center", va="center", zorder=6)
-    _etagelinjer(ax, f, bounds)
-    _maalestok(ax, bounds)
-    return _gem(fig, ud, f"snit-{int(x1)}-{int(y1)}-{int(x2)}-{int(y2)}.png")
+    _storey_lines(ax, f, bounds)
+    _scale_bar(ax, bounds)
+    return _save(fig, out, f"snit-{int(x1)}-{int(y1)}-{int(x2)}-{int(y2)}.png")
 
 
-def tre_d(f, former, fra, ud):
-    former = [fm for fm in former if fm.klasse not in ("IfcSpace",)]
-    retn = {"sv": (-1, -1), "so": (1, -1), "nv": (-1, 1), "no": (1, 1), "s": (0, -1), "n": (0, 1), "v": (-1, 0),
-            "o": (1, 0)}.get((fra or "sv").lower(), (-1, -1))
-    beskuer = np.array([retn[0], retn[1], 0.9])
-    d = -beskuer / np.linalg.norm(beskuer)
+def three_d(f, shapes, view_from, out):
+    shapes = [fm for fm in shapes if fm.ifc_class not in ("IfcSpace",)]
+    direction = {"sv": (-1, -1), "so": (1, -1), "nv": (-1, 1), "no": (1, 1), "s": (0, -1), "n": (0, 1), "v": (-1, 0),
+            "o": (1, 0)}.get((view_from or "sv").lower(), (-1, -1))
+    viewer = np.array([direction[0], direction[1], 0.9])
+    d = -viewer / np.linalg.norm(viewer)
     u = np.cross(d, np.array([0, 0, 1.0]))
     u /= np.linalg.norm(u)
     w = np.cross(u, d)
-    alle = np.vstack([fm.v for fm in former])
-    bu, bw = alle @ u, alle @ w
+    combined = np.vstack([fm.v for fm in shapes])
+    bu, bw = combined @ u, combined @ w
     m = 1000
     bounds = (bu.min() - m, bw.min() - m, bu.max() + m, bw.max() + m)
-    fig, ax = _figur(bounds, f"{f.by_type('IfcProject')[0].Name} – 3D fra {fra}  {dt.date.today()}")
-    _vis_raster(ax, raster(former, (u, w, d), bounds, _px_pr_mm(bounds)), bounds)
-    return _gem(fig, ud, f"3d-{_slug(fra)}.png")
+    fig, ax = _figure(bounds, f"{f.by_type('IfcProject')[0].Name} – 3D fra {view_from}  {dt.date.today()}")
+    _show_raster(ax, raster(shapes, (u, w, d), bounds, _px_per_mm(bounds)), bounds)
+    return _save(fig, out, f"3d-{_slug(view_from)}.png")
 
 
-# ------------------------------------------------------------------ indgang
-def tegn(ifc, hvad, etage=None, linje=None, side=None, fra="sv", underlag=None, kal=None, vis_id=False, maal=False,
-         ud=None, snithoejde=1000.0):
+# ------------------------------------------------------------------ entry point
+def draw(ifc, what, storey=None, line=None, side=None, view_from="sv", underlay=None, cal=None, show_id=False, dims=False,
+         out=None, cut_height=1000.0):
     f = ifcopenshell.open(str(ifc))
-    ud = pathlib.Path(ud) if ud else pathlib.Path(ifc).parent / "tegninger"
-    former = hent(f)
-    filer = []
-    etager = sorted(f.by_type("IfcBuildingStorey"), key=lambda s: float(s.Elevation or 0))
-    if hvad in ("plan", "alle"):
-        valgt = etager
-        if etage:
-            valgt = [s for s in etager if s.Name == etage or s.GlobalId == etage or _slug(s.Name) == _slug(etage)
-                     or (s.Name or "").lower().startswith(etage.lower())]
-            if not valgt:
-                raise SystemExit(f"Etage '{etage}' findes ikke: {', '.join(s.Name for s in etager)}")
-        if underlag and not kal:
+    out = pathlib.Path(out) if out else pathlib.Path(ifc).parent / "tegninger"
+    shapes = fetch_shapes(f)
+    files = []
+    storeys = sorted(f.by_type("IfcBuildingStorey"), key=lambda s: float(s.Elevation or 0))
+    if what in ("plan", "alle"):
+        selected = storeys
+        if storey:
+            selected = [s for s in storeys if s.Name == storey or s.GlobalId == storey or _slug(s.Name) == _slug(storey)
+                     or (s.Name or "").lower().startswith(storey.lower())]
+            if not selected:
+                raise SystemExit(f"Etage '{storey}' findes ikke: {', '.join(s.Name for s in storeys)}")
+        if underlay and not cal:
             raise SystemExit("--underlag kræver --kal")
-        for st in valgt:
-            p = plan(f, former, st, snithoejde, ud, vis_id, maal, underlag if etage else None, kal)
+        for st in selected:
+            p = plan(f, shapes, st, cut_height, out, show_id, dims, underlay if storey else None, cal)
             if p:
-                filer.append(p)
-    if hvad == "snit":
-        if not linje:
+                files.append(p)
+    if what == "snit":
+        if not line:
             raise SystemExit("snit kræver --linje x1,y1,x2,y2 (mm, lokale koordinater; der ses mod venstre)")
-        filer.append(snit(f, former, linje, ud, vis_id))
-    if hvad == "facade":
-        filer.append(facade(f, former, side or "syd", ud))
-    if hvad == "alle":
-        har_nord = any(getattr(c, "TrueNorth", None) for c in f.by_type("IfcGeometricRepresentationContext"))
-        for s in (("syd", "nord", "oest", "vest") if har_nord else ("y-", "y+", "x+", "x-")):
-            filer.append(facade(f, former, s, ud))
-    if hvad in ("3d", "alle"):
-        filer.append(tre_d(f, former, fra, ud))
-    return filer
+        files.append(section(f, shapes, line, out, show_id))
+    if what == "facade":
+        files.append(elevation(f, shapes, side or "syd", out))
+    if what == "alle":
+        has_north = any(getattr(c, "TrueNorth", None) for c in f.by_type("IfcGeometricRepresentationContext"))
+        for s in (("syd", "nord", "oest", "vest") if has_north else ("y-", "y+", "x+", "x-")):
+            files.append(elevation(f, shapes, s, out))
+    if what in ("3d", "alle"):
+        files.append(three_d(f, shapes, view_from, out))
+    return files

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Låser plugin-værktøjernes Python-miljøer: requirements*.in (direkte afhængigheder) → requirements*.txt (alle
-pakker fastlåst, også de transitive, for alle platforme og Python >= 3.11).
+"""Locks the plugin tools' Python environments: requirements*.in (direct dependencies) → requirements*.txt (all
+packages pinned, transitive ones too, for all platforms and Python >= 3.11).
 
-  python3 scripts/lock_environment.py             Lås efter en ændring i en .in-fil (beholder de øvrige låste versioner)
-  python3 scripts/lock_environment.py --opgrader  Løft alle transitive pakker til nyeste tilladte version
-  python3 scripts/lock_environment.py --check     Uden netværk: findes låsen, og har den præcis .in-filens versioner?
+  python3 scripts/lock_environment.py             Lock after a change to an .in file (keeps the other locked versions)
+  python3 scripts/lock_environment.py --opgrader  Raise all transitive packages to the newest allowed version
+  python3 scripts/lock_environment.py --check     Without network: does the lock exist, and does it have exactly the .in file's versions?
 
-Kræver uv (https://docs.astral.sh/uv/) – kun til at låse; brugerne kan installere med både uv og pip.
-Kør derefter `bim.py opsaet` / `fem.py opsaet` og testene, før du committer.
+Requires uv (https://docs.astral.sh/uv/) – only for locking; users can install with both uv and pip.
+Then run `bim.py opsaet` / `fem.py opsaet` and the tests before you commit.
 """
 import pathlib
 import re
@@ -15,9 +15,9 @@ import shutil
 import subprocess
 import sys
 
-ROD = pathlib.Path(__file__).resolve().parent.parent
-PYTHON = "3.11"  # = MIN_PYTHON i faelles/environment.py
-LAASE = [
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+PYTHON = "3.11"  # = MIN_PYTHON in faelles/environment.py
+LOCKS = [
     "plugins/byg-bim/skills/bim-viden/scripts/requirements.in",
     "plugins/byg-bim/skills/bim-viden/scripts/requirements-test.in",
     "plugins/byg-statik/skills/statik-viden/scripts/requirements-fem.in",
@@ -25,49 +25,49 @@ LAASE = [
 PIN = re.compile(r"^([A-Za-z0-9._-]+)==([^\s;]+)")
 
 
-def norm(navn: str) -> str:
-    return re.sub(r"[-_.]+", "-", navn).lower()
+def norm(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
 
 
-def direkte(ind: pathlib.Path) -> dict[str, str]:
+def direct_pins(in_file: pathlib.Path) -> dict[str, str]:
     """Pins in a .in file, following -r includes."""
     pins = {}
-    for linje in ind.read_text(encoding="utf-8").splitlines():
-        linje = linje.split("#", 1)[0].strip()
-        if linje.startswith("-r "):
-            pins.update(direkte(ind.parent / linje[3:].strip()))
-        elif m := PIN.match(linje):
+    for line in in_file.read_text(encoding="utf-8").splitlines():
+        line = line.split("#", 1)[0].strip()
+        if line.startswith("-r "):
+            pins.update(direct_pins(in_file.parent / line[3:].strip()))
+        elif m := PIN.match(line):
             pins[norm(m[1])] = m[2]
-        elif linje:
-            raise SystemExit(f"{ind.relative_to(ROD)}: '{linje}' – direkte afhængigheder skal fastlåses med ==")
+        elif line:
+            raise SystemExit(f"{in_file.relative_to(ROOT)}: '{line}' – direkte afhængigheder skal fastlåses med ==")
     return pins
 
 
-def laaste(txt: pathlib.Path) -> dict[str, set[str]]:
+def locked_pins(txt: pathlib.Path) -> dict[str, set[str]]:
     pins: dict[str, set[str]] = {}
-    for linje in txt.read_text(encoding="utf-8").splitlines():
-        if m := PIN.match(linje):
+    for line in txt.read_text(encoding="utf-8").splitlines():
+        if m := PIN.match(line):
             pins.setdefault(norm(m[1]), set()).add(m[2])
     return pins
 
 
 def check() -> int:
-    fejl = []
-    for rel in LAASE:
-        ind = ROD / rel
-        txt = ind.with_suffix(".txt")
+    errors = []
+    for rel in LOCKS:
+        in_file = ROOT / rel
+        txt = in_file.with_suffix(".txt")
         if not txt.exists():
-            fejl.append(f"{txt.relative_to(ROD)} mangler")
+            errors.append(f"{txt.relative_to(ROOT)} mangler")
             continue
-        l = laaste(txt)
-        for navn, v in direkte(ind).items():
-            if l.get(navn) != {v}:
-                fejl.append(f"{txt.relative_to(ROD)}: {navn}=={v} i .in, men {sorted(l.get(navn, [])) or 'mangler'} i låsen")
-    for f in fejl:
+        locked = locked_pins(txt)
+        for name, v in direct_pins(in_file).items():
+            if locked.get(name) != {v}:
+                errors.append(f"{txt.relative_to(ROOT)}: {name}=={v} i .in, men {sorted(locked.get(name, [])) or 'mangler'} i låsen")
+    for f in errors:
         print(f)
-    if fejl:
+    if errors:
         print("Kør: python3 scripts/lock_environment.py")
-    return 1 if fejl else 0
+    return 1 if errors else 0
 
 
 def main() -> int:
@@ -77,16 +77,16 @@ def main() -> int:
     if not uv:
         print("uv mangler: https://docs.astral.sh/uv/getting-started/installation/", file=sys.stderr)
         return 2
-    for rel in LAASE:
-        ind = ROD / rel
+    for rel in LOCKS:
+        in_file = ROOT / rel
         cmd = [uv, "pip", "compile", "-q", "--universal", "--python-version", PYTHON,
-               "--custom-compile-command", "python3 scripts/lock_environment.py", ind.name, "-o", ind.with_suffix(".txt").name]
+               "--custom-compile-command", "python3 scripts/lock_environment.py", in_file.name, "-o", in_file.with_suffix(".txt").name]
         if "--opgrader" in sys.argv:
             cmd.append("--upgrade")
-        r = subprocess.run(cmd, cwd=ind.parent)
+        r = subprocess.run(cmd, cwd=in_file.parent)
         if r.returncode:
             return r.returncode
-        print(f"Låst: {ind.with_suffix('.txt').relative_to(ROD)}")
+        print(f"Låst: {in_file.with_suffix('.txt').relative_to(ROOT)}")
     return check()
 
 

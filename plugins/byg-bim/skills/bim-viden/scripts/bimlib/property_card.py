@@ -1,178 +1,178 @@
-"""Ejendomskortet som en del af hovedmodellen (én source of truth).
+"""The property card as part of the main model (one source of truth).
 
-Husets fakta står i model.yaml under `ejendomskort:` (titel, indledning, afsnit med kolonner, filsti) og `fakta:`
-(én række pr. oplysning med id og afsnit). Markdown-kortet genereres herfra og rettes aldrig i hånden.
+The house's facts live in model.yaml under `ejendomskort:` (titel, indledning, afsnit with kolonner, file path) and `fakta:`
+(one row per fact with id and afsnit). The Markdown card is generated from there and is never edited by hand.
 
-  ejendomskort <model.yaml>                 → skriv kortet (ejendomskort.fil, relativ til model.yaml)
-  ejendomskort <model.yaml> --tjek          → 1, hvis kortet på disken afviger fra modellen
-  ejendomskort <model.yaml> --importer <md> → forslag/ejendomskort-import.yaml med kortets indhold (flettes med flet)
+  ejendomskort <model.yaml>                 → write the card (ejendomskort.fil, relative to model.yaml)
+  ejendomskort <model.yaml> --tjek          → 1 if the card on disk differs from the model
+  ejendomskort <model.yaml> --importer <md> → forslag/ejendomskort-import.yaml with the card's content (merged with flet)
 """
 import os
 import pathlib
 import re
 
-from .spec import SpecFejl, _laes
+from .spec import SpecError, _read
 
-GENERERET = "<!-- GENERERET fra {model} med bim.py ejendomskort – RET IKKE HER. Ret fakta i hovedmodellen via forslag + bim.py flet. -->"
-NØGLER = {"ID": "id", "Emne": "emne", "Værdi": "vaerdi", "Dato": "dato", "Kilde": "kilde", "Spørgsmål": "spoergsmaal",
+GENERATED_BANNER = "<!-- GENERERET fra {model} med bim.py ejendomskort – RET IKKE HER. Ret fakta i hovedmodellen via forslag + bim.py flet. -->"
+HEADER_KEYS = {"ID": "id", "Emne": "emne", "Værdi": "vaerdi", "Dato": "dato", "Kilde": "kilde", "Spørgsmål": "spoergsmaal",
           "Hvem afklarer": "hvem", "Sag": "sag", "Tidligere værdi": "tidligere", "Erstattet (dato)": "erstattet",
           "Grund": "grund"}
 
 
-def _nøgle(overskrift: str) -> str:
-    if overskrift in NØGLER:
-        return NØGLER[overskrift]
-    k = overskrift.lower().translate(str.maketrans({"æ": "ae", "ø": "oe", "å": "aa"}))
+def _key(heading: str) -> str:
+    if heading in HEADER_KEYS:
+        return HEADER_KEYS[heading]
+    k = heading.lower().translate(str.maketrans({"æ": "ae", "ø": "oe", "å": "aa"}))
     return re.sub(r"[^a-z0-9]+", "_", k).strip("_")
 
 
-def _afsnit_id(titel: str) -> str:
-    return _nøgle(titel.split(":")[0].split("(")[0].strip())
+def _section_id(title: str) -> str:
+    return _key(title.split(":")[0].split("(")[0].strip())
 
 
-def _celler(linje: str):
-    return [c.strip() for c in linje.strip().strip("|").split("|")]
+def _cells(line: str):
+    return [c.strip() for c in line.strip().strip("|").split("|")]
 
 
-def laes_md(tekst: str):
-    """Markdown-kort → (ejendomskort-hoved, fakta). Tabeller i '## '-afsnit; alt andet bevares som tekst."""
-    linjer = tekst.rstrip("\n").split("\n")
-    linjer = [l for l in linjer if not l.startswith("<!-- GENERERET")]
-    titel = linjer[0][2:] if linjer and linjer[0].startswith("# ") else ""
-    i, indledning = 1, []
-    while i < len(linjer) and not linjer[i].startswith("## "):
-        indledning.append(linjer[i])
+def read_md(text: str):
+    """Markdown card → (ejendomskort header, fakta). Tables in '## ' sections; everything else is kept as text."""
+    lines = text.rstrip("\n").split("\n")
+    lines = [l for l in lines if not l.startswith("<!-- GENERERET")]
+    title = lines[0][2:] if lines and lines[0].startswith("# ") else ""
+    i, intro = 1, []
+    while i < len(lines) and not lines[i].startswith("## "):
+        intro.append(lines[i])
         i += 1
-    afsnit, fakta, brugt = [], [], set()
-    while i < len(linjer):
-        t = linjer[i][3:]
-        a = {"id": _afsnit_id(t), "titel": t}
+    sections, facts, used = [], [], set()
+    while i < len(lines):
+        t = lines[i][3:]
+        a = {"id": _section_id(t), "titel": t}
         i += 1
-        før, efter, kolonner, rækker = [], [], None, []
-        while i < len(linjer) and not linjer[i].startswith("## "):
-            l = linjer[i]
-            if l.startswith("|") and kolonner is None:
-                kolonner = _celler(l)
-                i += 2   # overskrift + |---|
+        before, after, columns, rows = [], [], None, []
+        while i < len(lines) and not lines[i].startswith("## "):
+            l = lines[i]
+            if l.startswith("|") and columns is None:
+                columns = _cells(l)
+                i += 2   # header + |---|
                 continue
-            if l.startswith("|") and kolonner is not None and not efter:
-                rækker.append(_celler(l))
-            elif kolonner is None:
-                før.append(l)
+            if l.startswith("|") and columns is not None and not after:
+                rows.append(_cells(l))
+            elif columns is None:
+                before.append(l)
             else:
-                efter.append(l)
+                after.append(l)
             i += 1
-        a["kolonner"] = [[k, _nøgle(k)] for k in kolonner or []]
-        if any(x.strip() for x in før):
-            a["foer"] = før
-        while efter and not efter[-1].strip():
-            efter.pop()
-        if efter:
-            a["efter"] = efter
-        afsnit.append(a)
-        for r in rækker:
-            række = {"id": None, "afsnit": a["id"]}
+        a["kolonner"] = [[k, _key(k)] for k in columns or []]
+        if any(x.strip() for x in before):
+            a["foer"] = before
+        while after and not after[-1].strip():
+            after.pop()
+        if after:
+            a["efter"] = after
+        sections.append(a)
+        for r in rows:
+            row = {"id": None, "afsnit": a["id"]}
             for (_, k), v in zip(a["kolonner"], r):
-                række[k] = v
-            rid = række["id"]
-            nøgle, n = rid, 2
-            while nøgle in brugt:      # samme ID flere gange (fx under "Erstattede oplysninger")
-                nøgle = f"{rid}@{n}"
+                row[k] = v
+            rid = row["id"]
+            key, n = rid, 2
+            while key in used:      # same ID several times (e.g. under "Erstattede oplysninger")
+                key = f"{rid}@{n}"
                 n += 1
-            brugt.add(nøgle)
-            række["id"] = nøgle
-            fakta.append(række)
-    return {"titel": titel, "indledning": indledning, "afsnit": afsnit}, fakta
+            used.add(key)
+            row["id"] = key
+            facts.append(row)
+    return {"titel": title, "indledning": intro, "afsnit": sections}, facts
 
 
-def skriv_md(ek: dict, fakta: list, model_navn: str = "model.yaml") -> str:
-    ud = [GENERERET.format(model=model_navn), f"# {ek.get('titel', '')}"] + list(ek.get("indledning") or [])
-    for a in ek.get("afsnit") or []:
-        ud.append(f"## {a['titel']}")
-        ud += a.get("foer", [])
-        kol = a.get("kolonner") or []
-        if kol:
-            ud.append("| " + " | ".join(k for k, _ in kol) + " |")
-            ud.append("|" + "---|" * len(kol))
-            for r in fakta:
+def write_md(card: dict, facts: list, model_name: str = "model.yaml") -> str:
+    out = [GENERATED_BANNER.format(model=model_name), f"# {card.get('titel', '')}"] + list(card.get("indledning") or [])
+    for a in card.get("afsnit") or []:
+        out.append(f"## {a['titel']}")
+        out += a.get("foer", [])
+        cols = a.get("kolonner") or []
+        if cols:
+            out.append("| " + " | ".join(k for k, _ in cols) + " |")
+            out.append("|" + "---|" * len(cols))
+            for r in facts:
                 if r.get("afsnit") == a["id"]:
-                    vis = {**r, "id": str(r["id"]).split("@")[0]}
-                    ud.append("| " + " | ".join(str(vis.get(k, "") if vis.get(k) is not None else "") for _, k in kol) + " |")
-        ud += a.get("efter", [])
-        ud.append("")
-    return "\n".join(ud).rstrip("\n") + "\n"
+                    shown = {**r, "id": str(r["id"]).split("@")[0]}
+                    out.append("| " + " | ".join(str(shown.get(k, "") if shown.get(k) is not None else "") for _, k in cols) + " |")
+        out += a.get("efter", [])
+        out.append("")
+    return "\n".join(out).rstrip("\n") + "\n"
 
 
-def tjek_fakta(d: dict) -> list:
-    fejl = []
-    ek, fakta = d.get("ejendomskort"), d.get("fakta")
-    if fakta is None and ek is None:
-        return fejl
-    if not isinstance(ek, dict) or not ek.get("afsnit"):
+def check_facts(d: dict) -> list:
+    errors = []
+    card, facts = d.get("ejendomskort"), d.get("fakta")
+    if facts is None and card is None:
+        return errors
+    if not isinstance(card, dict) or not card.get("afsnit"):
         return ["ejendomskort: mangler (titel, indledning, afsnit, fil), når der er fakta"]
-    afs = {a.get("id") for a in ek["afsnit"]}
-    set_ = set()
-    for i, r in enumerate(fakta or []):
+    section_ids = {a.get("id") for a in card["afsnit"]}
+    seen = set()
+    for i, r in enumerate(facts or []):
         if not isinstance(r, dict) or not r.get("id"):
-            fejl.append(f"fakta[{i}]: id mangler")
+            errors.append(f"fakta[{i}]: id mangler")
             continue
-        if r["id"] in set_:
-            fejl.append(f"fakta.{r['id']}: id bruges to gange (brug {r['id']}@2 for en ekstra række)")
-        set_.add(r["id"])
-        if r.get("afsnit") not in afs:
-            fejl.append(f"fakta.{r['id']}: ukendt afsnit '{r.get('afsnit')}' (findes: {', '.join(sorted(afs))})")
-    return fejl
+        if r["id"] in seen:
+            errors.append(f"fakta.{r['id']}: id bruges to gange (brug {r['id']}@2 for en ekstra række)")
+        seen.add(r["id"])
+        if r.get("afsnit") not in section_ids:
+            errors.append(f"fakta.{r['id']}: ukendt afsnit '{r.get('afsnit')}' (findes: {', '.join(sorted(section_ids))})")
+    return errors
 
 
-def _fil(model: pathlib.Path, d: dict) -> pathlib.Path:
+def _card_path(model: pathlib.Path, d: dict) -> pathlib.Path:
     f = (d.get("ejendomskort") or {}).get("fil")
     if not f:
-        raise SpecFejl(["ejendomskort.fil mangler i hovedmodellen"])
+        raise SpecError(["ejendomskort.fil mangler i hovedmodellen"])
     return (model.parent / f).resolve()
 
 
-def generer(model, tjek=False, stille=False) -> int:
+def generate(model, check=False, quiet=False) -> int:
     model = pathlib.Path(model).resolve()
-    d = _laes(model)
+    d = _read(model)
     if d.get("basis"):
         print("Ejendomskortet genereres kun fra hovedmodellen (ikke fra et forslag)")
         return 1
-    fejl = tjek_fakta(d)
-    if fejl:
-        print("FAKTA-FEJL:\n  - " + "\n  - ".join(fejl))
+    errors = check_facts(d)
+    if errors:
+        print("FAKTA-FEJL:\n  - " + "\n  - ".join(errors))
         return 1
     if not d.get("ejendomskort"):
         return 0
-    md = skriv_md(d["ejendomskort"], d.get("fakta") or [], model.name)
-    fil = _fil(model, d)
-    if tjek:
-        ok = fil.exists() and fil.read_text(encoding="utf-8") == md
-        print(f"{'OK' if ok else 'AFVIGER'}: {fil} {'svarer til' if ok else 'svarer ikke til'} {model.name}"
+    md = write_md(d["ejendomskort"], d.get("fakta") or [], model.name)
+    card_path = _card_path(model, d)
+    if check:
+        ok = card_path.exists() and card_path.read_text(encoding="utf-8") == md
+        print(f"{'OK' if ok else 'AFVIGER'}: {card_path} {'svarer til' if ok else 'svarer ikke til'} {model.name}"
               + ("" if ok else " – nogen har rettet i kortet; flyt rettelsen til et forslag, og generér igen"))
         return 0 if ok else 1
-    fil.write_text(md, encoding="utf-8")
-    if not stille:
-        print(f"SKREVET {fil} ({len(d.get('fakta') or [])} fakta)")
+    card_path.write_text(md, encoding="utf-8")
+    if not quiet:
+        print(f"SKREVET {card_path} ({len(d.get('fakta') or [])} fakta)")
     return 0
 
 
-def importer(model, md) -> int:
-    """Kortets indhold → forslag/ejendomskort-import.yaml (flettes med bim.py flet; derefter genereres kortet)."""
-    from .merge import _flow, opret
+def import_card(model, md) -> int:
+    """The card's content → forslag/ejendomskort-import.yaml (merged with bim.py flet; the card is then generated)."""
+    from .merge import _flow, create
     model, md = pathlib.Path(model).resolve(), pathlib.Path(md).resolve()
-    ek, fakta = laes_md(md.read_text(encoding="utf-8"))
-    ek = {"fil": os.path.relpath(md, model.parent), **ek}
+    card, facts = read_md(md.read_text(encoding="utf-8"))
+    card = {"fil": os.path.relpath(md, model.parent), **card}
     orig = md.read_text(encoding="utf-8")
-    if skriv_md(ek, fakta).split("\n", 1)[1] != "\n".join(l for l in orig.split("\n") if not l.startswith("<!-- GENERERET")):
+    if write_md(card, facts).split("\n", 1)[1] != "\n".join(l for l in orig.split("\n") if not l.startswith("<!-- GENERERET")):
         print("STOP: kortet kan ikke gengives 1:1 fra det indlæste – formatet afviger fra tabelformen")
         return 1
-    rc = opret(model, "ejendomskort-import", note=f"Import af {md.name} ({len(fakta)} fakta)")
+    rc = create(model, "ejendomskort-import", note=f"Import af {md.name} ({len(facts)} fakta)")
     if rc:
         return rc
     f = model.parent / "forslag" / "ejendomskort-import.yaml"
-    linjer = ["ejendomskort:"] + [f"  {k}: {_flow(v)}" for k, v in ek.items() if k != "afsnit"]
-    linjer += ["  afsnit:"] + [f"    - {_flow(a)}" for a in ek["afsnit"]]
-    linjer += ["fakta:"] + [f"  - {_flow(r)}" for r in fakta]
-    f.write_text(f.read_text(encoding="utf-8") + "\n".join(linjer) + "\n", encoding="utf-8")
-    print(f"  {len(fakta)} fakta i {len(ek['afsnit'])} afsnit → {f.name}; gengivelse 1:1 kontrolleret")
+    lines = ["ejendomskort:"] + [f"  {k}: {_flow(v)}" for k, v in card.items() if k != "afsnit"]
+    lines += ["  afsnit:"] + [f"    - {_flow(a)}" for a in card["afsnit"]]
+    lines += ["fakta:"] + [f"  - {_flow(r)}" for r in facts]
+    f.write_text(f.read_text(encoding="utf-8") + "\n".join(lines) + "\n", encoding="utf-8")
+    print(f"  {len(facts)} fakta i {len(card['afsnit'])} afsnit → {f.name}; gengivelse 1:1 kontrolleret")
     return 0

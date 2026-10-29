@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests the control arm (scripts/review_ab.py): verdict parsing, classification and summary. No tokens.
 
-Kør:  python3 tests/test_review_ab.py
+Run:  python3 tests/test_review_ab.py
 """
 import pathlib
 import sys
@@ -32,13 +32,13 @@ def main() -> int:
            '{"id": "F1", "klasse": "væsentlig", "status": "nyt", "paastand": "forkert", "krav": "k", "kilde": "s"},' \
            '{"id": "F2", "klasse": "mindre", "status": "nyt"},' \
            '{"id": "F3", "klasse": "kritisk", "status": "lukket"}]}\n```'
-    dom = review_ab.parse_dom(text)
-    expect("parse_dom finder den sidste JSON-blok med dom", dom is not None and dom["dom"] == "afvist")
-    fund = review_ab.blocking_findings(dom)
-    expect("kun åbne kritiske/væsentlige fund er blokerende", [f["id"] for f in fund] == ["F1"], fund)
-    expect("parse_dom uden dom giver None", review_ab.parse_dom('svar {"a": 1} slut') is None)
+    verdict = review_ab.parse_verdict(text)
+    expect("parse_verdict finder den sidste JSON-blok med dom", verdict is not None and verdict["dom"] == "afvist")
+    findings = review_ab.blocking_findings(verdict)
+    expect("kun åbne kritiske/væsentlige fund er blokerende", [f["id"] for f in findings] == ["F1"], findings)
+    expect("parse_verdict uden dom giver None", review_ab.parse_verdict('svar {"a": 1} slut') is None)
     nested = 'tekst {"x": {"dom": "nej"}} og til sidst {"dom": "godkendt", "fund": []}'
-    expect("parse_dom tager den sidste dom", review_ab.parse_dom(nested)["dom"] == "godkendt")
+    expect("parse_verdict tager den sidste dom", review_ab.parse_verdict(nested)["dom"] == "godkendt")
     expect("ingen dom → ingen blokerende", review_ab.blocking_findings(None) == [])
 
     c = review_ab.classify
@@ -62,7 +62,7 @@ def main() -> int:
     expect("sammendrag: pris pr. bestået", s["pris_pr_bestaaet_plugin"] == 0.14
            and s["pris_pr_bestaaet_med_kontrol"] == round((0.42 + 0.30 + 0.32) / 4, 4), s)
 
-    reg = review_ab.control_agent("byg-el")
+    reg = review_ab.review_agent("byg-el")
     expect("kontrolagent slås op i fagregistret", reg == "el-kontrol", reg)
 
     print(f"\n{len(FAILURES)} fejl")
