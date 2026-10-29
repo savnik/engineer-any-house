@@ -4,7 +4,7 @@
 Usage:   python3 scripts/new_trade.py <fag-id> "<Fagnavn>" <agentnavn> [--color green]
 Example: python3 scripts/new_trade.py kloak "Kloakmester" kloakmester --color orange
 
-Registers in: .claude-plugin/marketplace.json, byg-team (dependencies), byg-kontrol/hooks/fagregister.json,
+Registers in: .claude-plugin/marketplace.json, byg-team (dependencies), byg-review/hooks/trade-registry.json,
 the project manager's trade table and the quality review's agent pairs. Then runs sync_protocol.py.
 """
 import argparse
@@ -16,7 +16,7 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-TEMPLATES = ROOT / "skabelon"
+TEMPLATES = ROOT / "template"
 COLORS = {"red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"}
 NAME_RE = re.compile(r"^[a-z][a-z0-9-]{1,30}$")
 
@@ -69,24 +69,24 @@ def main() -> int:
     if a.color not in COLORS:
         sys.exit(f"Farve skal være en af: {', '.join(sorted(COLORS))}")
     plugin = f"byg-{a.fag_id}"
-    reg_path = ROOT / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
+    reg_path = ROOT / "plugins" / "byg-review" / "hooks" / "trade-registry.json"
     reg = json.loads(reg_path.read_text(encoding="utf-8"))
     existing = {p.stem for p in ROOT.glob("plugins/*/agents/*.md")}
-    if a.fag_id in reg["fag"] or a.fag_id == "projekt":
+    if a.fag_id in reg["fag"] or a.fag_id == "project":
         sys.exit(f"Faget '{a.fag_id}' findes allerede.")
-    if a.agent in existing or f"{a.fag_id}-kontrol" in existing:
+    if a.agent in existing or f"{a.fag_id}-review" in existing:
         sys.exit("Agentnavnet eller kontrolagentens navn findes allerede.")
     if (ROOT / "plugins" / plugin).exists():
         sys.exit(f"plugins/{plugin} findes allerede.")
 
-    v = {"SLUG": a.fag_id, "AGENT": a.agent, "FAGNAVN": a.fagnavn, "PLUGIN": plugin,
-         "FARVE": a.color, "DATO": datetime.date.today().isoformat()}
-    copy_template(TEMPLATES / "fag-plugin", ROOT / "plugins" / plugin, v)
-    copy_template(TEMPLATES / "kontrol" / "agents", ROOT / "plugins" / "byg-kontrol" / "agents", v)
-    trade_file = ROOT / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "references" / "fag" / f"{a.fag_id}.md"
-    trade_file.write_text(replace_vars((TEMPLATES / "kontrol" / "fag.md").read_text(encoding="utf-8"), v), encoding="utf-8")
+    v = {"SLUG": a.fag_id, "AGENT": a.agent, "TRADE_NAME": a.fagnavn, "PLUGIN": plugin,
+         "COLOR": a.color, "DATE": datetime.date.today().isoformat()}
+    copy_template(TEMPLATES / "trade-plugin", ROOT / "plugins" / plugin, v)
+    copy_template(TEMPLATES / "review" / "agents", ROOT / "plugins" / "byg-review" / "agents", v)
+    trade_file = ROOT / "plugins" / "byg-review" / "skills" / "review-knowledge" / "references" / "trades" / f"{a.fag_id}.md"
+    trade_file.write_text(replace_vars((TEMPLATES / "review" / "trade.md").read_text(encoding="utf-8"), v), encoding="utf-8")
 
-    reg["fag"][a.fag_id] = {"agent": a.agent, "kontrol": f"{a.fag_id}-kontrol"}
+    reg["fag"][a.fag_id] = {"agent": a.agent, "kontrol": f"{a.fag_id}-review"}
     save_json(reg_path, reg)
     mp_path = ROOT / ".claude-plugin" / "marketplace.json"
     mp = json.loads(mp_path.read_text(encoding="utf-8"))
@@ -99,21 +99,21 @@ def main() -> int:
         team["dependencies"].append(plugin)
     save_json(team_path, team)
 
-    ok1 = insert_row(ROOT / "plugins" / "byg" / "skills" / "projektleder" / "SKILL.md", "| Fag-id | Agent |",
+    ok1 = insert_row(ROOT / "plugins" / "byg" / "skills" / "project-manager" / "SKILL.md", "| Fag-id | Agent |",
                          f"| {a.fag_id} | `{a.agent}` | TODO: typiske opgaver |")
-    ok2 = insert_row(ROOT / "plugins" / "byg-kontrol" / "skills" / "kvalitetskontrol" / "SKILL.md",
-                         "| Fag | Fagagent | Kontrolagent |", f"| {a.fag_id} | `{a.agent}` | `{a.fag_id}-kontrol` |",
-                         before="| projekt |")
-    kv = ROOT / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "SKILL.md"
+    ok2 = insert_row(ROOT / "plugins" / "byg-review" / "skills" / "quality-review" / "SKILL.md",
+                         "| Fag | Fagagent | Kontrolagent |", f"| {a.fag_id} | `{a.agent}` | `{a.fag_id}-review` |",
+                         before="| project |")
+    kv = ROOT / "plugins" / "byg-review" / "skills" / "review-knowledge" / "SKILL.md"
     t = kv.read_text(encoding="utf-8")
-    kv.write_text(t.replace(", `projekt`.", f", `{a.fag_id}`, `projekt`.", 1), encoding="utf-8")
+    kv.write_text(t.replace(", `project`.", f", `{a.fag_id}`, `project`.", 1), encoding="utf-8")
     subprocess.run([sys.executable, str(ROOT / "scripts" / "sync_protocol.py")], check=True)
 
-    print(f"\nOprettet plugins/{plugin}, kontrolagent {a.fag_id}-kontrol og kontrolfil fag/{a.fag_id}.md.")
+    print(f"\nOprettet plugins/{plugin}, kontrolagent {a.fag_id}-review og kontrolfil trades/{a.fag_id}.md.")
     if not (ok1 and ok2):
-        print("Bemærk: en fagtabel blev ikke fundet – tilføj faget manuelt i projektleder- og kvalitetskontrol-skillen.")
+        print("Bemærk: en fagtabel blev ikke fundet – tilføj faget manuelt i skillene project-manager og quality-review.")
     print("Næste skridt: udfyld alle TODO (fagagent, videnbase med V/T-status, kontrolpunkter, fejlkatalog, eval),"
-          " opdatér README.md, README.da.md og koordinering.md, og kør: python3 scripts/validate.py --claude")
+          " opdatér README.md, README.da.md og coordination.md, og kør: python3 scripts/validate.py --claude")
     return 0
 
 

@@ -2,9 +2,9 @@
 """Kører et fag-plugins evals, så pluginet faktisk indlæses.
 
 Brug:  python3 scripts/eval_trade.py <plugin> [flere argumenter til claude plugin eval …]
-       fx  python3 scripts/eval_trade.py byg-vvs --runs 2
+       fx  python3 scripts/eval_trade.py byg-plumbing --runs 2
 
-Fag-plugins afhænger af byg-kontrol, som ikke findes i eval-sandkassen. Så indlæser Claude Code slet ikke
+Fag-plugins afhænger af byg-review, som ikke findes i eval-sandkassen. Så indlæser Claude Code slet ikke
 pluginet, og evalen tester kun den bare model (uddelegerings-graderen fejler altid). Scriptet kører derfor
 evalen på en midlertidig kopi uden "dependencies" i plugin.json. Kontrol-hooken er ikke med i kørslen.
 Kræver login og koster tokens.

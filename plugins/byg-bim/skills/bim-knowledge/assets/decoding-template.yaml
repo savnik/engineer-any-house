@@ -1,0 +1,43 @@
+# Skabelon til decoding.yaml – alle nøgler, værktøjet bruger. Se references/decoding.md.
+kilde:
+  id: K1
+  fil: byggesag-p24.png                 # rasteriseret side (relativ sti)
+  dokument: "Byggesagsarkiv, sag 1, s. 24"
+  titel: "Kælderplan 1:100"
+  maalestok: "1:100"
+  dpi: 200                                 # rasteriseringens dpi – bruges til kontrol af målestokken
+  dato: 1937
+  enhed_paa_tegning: m                     # sådan står tallene: m ("4,50"), cm ("450") eller mm
+  maaltype: raahus                         # raahus (murværk) | faerdig | akse | ukendt
+visninger:
+  - id: V1
+    type: plan                             # plan | snit | facade | detalje | situationsplan | tekst
+    etage: K                               # modellens etage-id (plan) · snit: linje: [x1,y1,x2,y2] · facade: side: syd
+    bbox: [180, 220, 1650, 1480]           # visningen i pixel
+    snithoejde: 1000                       # valgfri – snithøjden i modellens plantegning
+    kal:                                   # px → model-mm (plan: x,y · snit/facade: u langs visningen, z = højde)
+      - {px: [212, 1402], model: [0, 0], note: "SV-hjørne yderside"}
+      - {px: [1590, 1398], model: [10500, 0], note: "SØ-hjørne yderside (M1)"}
+      - {px: [1593, 300], model: [10500, 8300], note: "NØ-hjørne (M9)"}
+      - {px: [209, 305], model: [0, 8300]}
+    maal:
+      - {id: M1, tekst: "10,50", vaerdi: 10500, fra: [212, 1402], til: [1590, 1398], retning: x, kaede: S, total: true}
+      - {id: M2, tekst: "1,20", vaerdi: 1200, fra: [212, 1402], til: [370, 1401], retning: x, kaede: S}
+      - {id: M3, tekst: "4,50", vaerdi: 4500, fra: [250, 1450], til: [841, 1450], retning: x, paa_maalelinje: true}
+    rum:
+      - {navn: Fyrrum, punkt: [500, 900], areal: null, tekst: "Fyr"}
+    aabninger:
+      - {id: O1, type: vindue, punkt: [450, 1400], bredde: 800, tekst: "80"}
+      - {id: O2, type: doer, punkt: [930, 860], bredde: 800, slag: "mod øst, hængsel nord"}
+    vaegge:
+      - {punkt: [215, 900], tykkelse: 300, materiale: beton, tekst: "30 Beton"}
+    koter:
+      - {punkt: [300, 1500], kote: 34.60, beskrivelse: kældergulv, datum: "ukendt (DNN?)"}   # m; datum: DVR90 | DNN | lokalt | relativ (til ±0)
+    trapper:
+      - {punkt: [900, 700], stigninger: 13, retning: "op mod nord", tekst: "13 Tr."}
+    tekster:
+      - {punkt: [800, 1550], tekst: "Kælderen må ikke benyttes til beboelse", betydning: myndighed}
+    snitmarkeringer:
+      - {navn: A-A, fra: [600, 200], til: [600, 1500]}
+    usikre:
+      - {punkt: [1200, 700], beskrivelse: "mål ved trappen ulæseligt (2,?5)"}

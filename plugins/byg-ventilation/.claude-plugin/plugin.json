@@ -19,6 +19,6 @@
     "danmark"
   ],
   "dependencies": [
-    "byg-kontrol"
+    "byg-review"
   ]
 }

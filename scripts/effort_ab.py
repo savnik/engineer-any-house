@@ -2,7 +2,7 @@
 """A/B-test af agenternes effort: kører et plugins evals med agenternes nuværende effort (A) og med en anden (B).
 
 Brug:  python3 scripts/effort_ab.py <plugin> [<plugin> …] [--effort medium] [--runs 3] [--max-cost-usd 20] [-j 3] [--out <mappe>]
-       plugin: sti eller navn under plugins/ (fx byg-vvs). Standard for --out: en ny midlertidig mappe.
+       plugin: sti eller navn under plugins/ (fx byg-plumbing). Standard for --out: en ny midlertidig mappe.
 
 Begge arme er kopier af pluginet. Casenes prompt får en linje, der beder om fagagenten, så det er agenten,
 der svarer (ellers svarer hovedmodellen ofte selv, og effort måles ikke). I B-armen er `effort:` i agents/*.md skiftet. Begge arme køres med
@@ -92,7 +92,7 @@ def main() -> int:
             copy_dir = arms[arm] = out / f"{plugin.name}-{arm}"
             shutil.rmtree(copy_dir, ignore_errors=True)
             shutil.copytree(plugin, copy_dir)
-            # Dependencies (byg-kontrol) are missing in the eval sandbox, and then the plugin is not loaded at all
+            # Dependencies (byg-review) are missing in the eval sandbox, and then the plugin is not loaded at all
             mf = copy_dir / ".claude-plugin" / "plugin.json"
             m = json.loads(mf.read_text(encoding="utf-8"))
             m.pop("dependencies", None)

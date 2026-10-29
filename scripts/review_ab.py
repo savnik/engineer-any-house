@@ -7,7 +7,7 @@ Brug:  python3 scripts/review_ab.py run <fag> [--id EL-001,...] [--parallel 3] [
 
 For hver udviklingsopgave:
   1. fagagenten svarer (plugin-armen fra exam.py) og svaret rettes efter facit,
-  2. fagets kontrolagent (byg-kontrol) dømmer svaret uden at kende facit,
+  2. fagets kontrolagent (byg-review) dømmer svaret uden at kende facit,
   3. afviser kontrollen med blokerende fund, får fagagenten fundene ordret og retter én gang (som forsøg 2 i
      kontrol-loopet), og det rettede svar rettes igen efter facit.
 
@@ -22,8 +22,8 @@ Baggrund: forskningen i multi-agent-systemer (Google/MIT 2025, Apple 2026) viser
 når de fanger fejl, som den enkelte agent ikke selv fanger, og at gevinsten falder, jo bedre den enkelte agent er.
 Eksamen målte hidtil kun fagagenten. Denne arm måler kontrollens præcision, recall og nettoværdi.
 
-Kun udviklingssættet bruges. Kontrolagenten kører med kun læseværktøjer på en kopi af byg-kontrol uden hooks og
-uden internet. Resultater gemmes i eksamen/<fag>/results/kontrol/ (ignoreres af git og indgår ikke i exam.py's
+Kun udviklingssættet bruges. Kontrolagenten kører med kun læseværktøjer på en kopi af byg-review uden hooks og
+uden internet. Resultater gemmes i exam/<fag>/results/review/ (ignoreres af git og indgår ikke i exam.py's
 rapporter). Kræver login og koster tokens: ca. 2–3 gange plugin-armen.
 """
 import argparse
@@ -39,14 +39,14 @@ import threading
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import exam  # noqa: E402
 
-LEVELS = {"light": "let", "full": "fuld"}  # CLI choice → review level (KONTROLNIVEAU)
+LEVELS = {"light": "let", "full": "fuld"}  # CLI choice → review level (REVIEW-LEVEL)
 
 ROOT = exam.ROOT
-REGISTRY = ROOT / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
+REGISTRY = ROOT / "plugins" / "byg-review" / "hooks" / "trade-registry.json"
 BLOCKING = {"kritisk", "væsentlig", "vaesentlig"}
 
-REVIEW_PROMPT = """LEVERANCE: eksamen/{fag}/{id}
-KONTROLNIVEAU: {niveau}
+REVIEW_PROMPT = """DELIVERABLE: exam/{fag}/{id}
+REVIEW-LEVEL: {niveau}
 FORSØG: 1
 
 Dette er en kontrol af en skriftlig besvarelse, ikke en sag: der er ingen sagsmappe, ingen tidligere domme og intet
@@ -57,12 +57,12 @@ besvarelsen er fagligt forkert eller mangler noget, opgaven kræver – ikke for
 kildehenvisninger. Afslut med JSON-dommen (felterne dom og fund er nok; blokerende fund skal have paastand,
 krav, kilde og handling).
 
-OPGAVE:
+TASK:
 <<<
 {opgave}
 >>>
 
-BESVARELSE FRA FAGAGENTEN:
+RESPONSE (fra fagagenten):
 <<<
 {svar}
 >>>"""
@@ -127,12 +127,12 @@ def review_agent(trade_plugin: str) -> str:
     for trade_id, entry in reg["fag"].items():
         if trade_plugin == f"byg-{trade_id}":
             return entry["kontrol"]
-    raise SystemExit(f"Ingen kontrolagent for {trade_plugin} i fagregister.json")
+    raise SystemExit(f"Ingen kontrolagent for {trade_plugin} i trade-registry.json")
 
 
 def prepare_review(tmp: pathlib.Path) -> pathlib.Path:
-    """byg-kontrol without hooks: the hooks guard real cases (LEVERANCE state, Stop) and would interfere here."""
-    dst = exam.prepare_plugin("byg-kontrol", tmp)
+    """byg-review without hooks: the hooks guard real cases (LEVERANCE state, Stop) and would interfere here."""
+    dst = exam.prepare_plugin("byg-review", tmp)
     shutil.rmtree(dst / "hooks", ignore_errors=True)
     return dst
 
@@ -271,7 +271,7 @@ def cmd_run(args) -> int:
                 reused_rows[r["id"]] = r
         tasks = [t for t in tasks if t["id"] in reused_rows]
     agent = f"{goals['plugin']}:{goals['agent']}"
-    reviewer = f"byg-kontrol:{review_agent(goals['plugin'])}"
+    reviewer = f"byg-review:{review_agent(goals['plugin'])}"
     print(f"{args.fag}: {len(tasks)} udviklingsopgaver · fag {agent} · kontrol {reviewer}", flush=True)
     rows, lock = [], threading.Lock()
     with tempfile.TemporaryDirectory(prefix="kontrol-ab-") as tmpname:
@@ -287,7 +287,7 @@ def cmd_run(args) -> int:
                     rows.append(r)
                     print(f"  {r['id']:9} {r.get('kategori') or r.get('note')}", flush=True)
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    out_dir = exam.EXAM_DIR / args.fag / "results" / "kontrol"
+    out_dir = exam.EXAM_DIR / args.fag / "results" / "review"
     out_dir.mkdir(parents=True, exist_ok=True)
     out = out_dir / f"{stamp}-kontrol-udvikling.json"
     rows.sort(key=lambda r: r["id"])

@@ -1,0 +1,486 @@
+{
+  "fag": "electrical",
+  "plugin": "byg-electrical",
+  "agent": "electrician",
+  "note": "Kompetencemål (ordret fra uddannelsesordningen), EVU's 11 el-teoretiske temaer og autorisationsprøvens indholdskrav. Rolle 'uden' = ligger uden for agentens rolle eller kan ikke prøves som faglig viden; begrundelsen står ved målet. Mesterniveau udvidet med de nationale fagelementer i installatøruddannelsen (AK), ordret: Indhold og læringsmål (viden, færdigheder, kompetencer).",
+  "kilder": [
+    {
+      "id": "UO-EL-2026",
+      "titel": "Uddannelsesordning for elektrikeruddannelsen, gældende fra 1. august 2026 (STIL, regelgrundlag 29256)",
+      "url": "https://uddannelser.stil.dk/uddannelser-api/api/uddannelser/19443/regelgrundlag/29256/forside",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-460-2026",
+      "titel": "BEK nr. 460 af 11/05/2026 om erhvervsuddannelsen til elektriker",
+      "url": "https://www.retsinformation.dk/eli/lta/2026/460/pdf",
+      "dato": "2026-08-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "EVU-TEMA-2026",
+      "titel": "EVU: Vejledning til el-teoretiske temaer, delsvendeprøven 2026",
+      "url": "https://viewer.ipaper.io/evu/elektrikeruddannelsen/proever/vejledning-for-el-teoretiske-temaer-h2-delsvendeproeve-2026/",
+      "dato": "2026-08",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "SIK-AUT-EL",
+      "titel": "Sikkerhedsstyrelsens krav til el-autorisationsprøven (gengivet i Fredericia Maskinmesterskole, PE 004 rev. 11, bilag, mail 23/05/2022)",
+      "url": "https://fms.improvenet.dk/documents/03_Kvalitetsh%C3%A5ndbog_Procedurer/02_Procedurer%20for%20eksamen%20og%20evaluering%20-%20PE/PE%20004%20-%20Fremstilling%20af%20opgaver%20til%20el-autorisationspr%C3%B8ver",
+      "dato": "2022-05-23",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "AK-EL-2022",
+      "titel": "Studieordning El-installatør (AK), national del 2022, fagelement 'Bekendtgørelser og standarder' (Zealand 2024)",
+      "url": "https://zealand.dk/wp-content/uploads/2016/09/Samlet-studieordning-El-installator-2024.pdf",
+      "dato": "2022-08-15",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-1415-2018",
+      "titel": "BEK nr. 1415 af 03/12/2018 om godkendelse af fagligt ansvarlige på el-, vvs- og kloakinstallationsområdet",
+      "url": "https://www.retsinformation.dk/eli/lta/2018/1415/pdf",
+      "dato": "2019-01-01",
+      "laest": "2026-10-17"
+    },
+    {
+      "id": "BEK-725-2024",
+      "titel": "BEK nr. 725 af 12/06/2024 om kvalitetsledelsessystemer for autoriserede virksomheder",
+      "url": "https://www.retsinformation.dk/eli/lta/2024/725/pdf",
+      "dato": "2024-06-12",
+      "laest": "2026-10-17"
+    }
+  ],
+  "maal": [
+    {
+      "id": "EL-KM-01",
+      "kilde": "UO-EL-2026 kompetencemål 1",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan dimensionere, installere og tilslutte stikledning, tavler, el-installationer, enkle styringsanlæg, belysning og brugsgenstande.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-02",
+      "kilde": "UO-EL-2026 kompetencemål 2",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere og programmere simple intelligente installationer og belysningsanlæg i henhold til fabrikantens forskrifter.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-03",
+      "kilde": "UO-EL-2026 kompetencemål 3",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan projektere, opbygge og installere mindre kommunikationsnetværk med fokus på data- og cybersikkerhed.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-04",
+      "kilde": "UO-EL-2026 kompetencemål 4",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan dimensionere, installere og tilslutte automatiske anlæg og motorinstallationer samt ventilationsanlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-05",
+      "kilde": "UO-EL-2026 kompetencemål 5",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan programmere elektriske installationer og kan identificere basale strukturer i programmeringssprog.",
+      "rolle": "uden",
+      "begrundelse": "Programmering er ikke en del af rådgiverrollen i eksisterende boliger og prøves ikke meningsfuldt skriftligt"
+    },
+    {
+      "id": "EL-KM-06",
+      "kilde": "UO-EL-2026 kompetencemål 6",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan tilslutte almindeligt forekommende installationer til forsyningsnettet og/eller lokal elproduktion og energilagring.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-07",
+      "kilde": "UO-EL-2026 kompetencemål 7",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan tilslutte sikringsanlæg- og alarmsystemer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-08",
+      "kilde": "UO-EL-2026 kompetencemål 8",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan anvende IoT, dataopsamling, dataanalyse og data- og cybersikkerhed i forbindelse med styring og regulering af installationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-09",
+      "kilde": "UO-EL-2026 kompetencemål 9",
+      "niveau": "svend",
+      "tekst": "Lærlingen har viden om forskellige typer industri- og procesanlæg og automatisering samt digitalisering, datakommunikation, data- og cybersikkerhed og IIoT.",
+      "rolle": "uden",
+      "begrundelse": "Industri- og procesanlæg ligger uden for agentens rolle (boliginstallationer)"
+    },
+    {
+      "id": "EL-KM-10",
+      "kilde": "UO-EL-2026 kompetencemål 10",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan planlægge, kvalitetssikre og dokumentere eget arbejde samt udarbejde brugervejledninger, service- og vedligeholdelsesplaner ved anvendelse af digitale værktøjer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-11",
+      "kilde": "UO-EL-2026 kompetencemål 11",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan selvstændigt promte generativ kunstig intelligens samt vurdere output ved udarbejdelse af fx dokumentation, programmering, dataanalyse m.m.",
+      "rolle": "uden",
+      "begrundelse": "Ikke fagligt indhold; agenten er selv generativ AI"
+    },
+    {
+      "id": "EL-KM-12",
+      "kilde": "UO-EL-2026 kompetencemål 12",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan vælge sikkerhedsmæssigt og teknisk korrekt værktøj, måleudstyr og måleteknikker i forbindelse med udførelse af arbejde på og nær ved spændingsløse installationer samt foretage måling og fejlfinding på spændingsførende installationer under instruktion og opsyn.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-13",
+      "kilde": "UO-EL-2026 kompetencemål 13",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan risikovurdere el-sikkerhed, arbejdsmiljøforhold, og tilrettelægge arbejdet herefter.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-14",
+      "kilde": "UO-EL-2026 kompetencemål 14",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan selvstændigt udføre verifikation af installationsarbejde med installationstester i henhold til gældende standarder.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-15",
+      "kilde": "UO-EL-2026 kompetencemål 15",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan vejlede om energieffektivisering, indregulering og energibesparende løsninger i forbindelse med installationsopgaver i boliger.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-16",
+      "kilde": "UO-EL-2026 kompetencemål 16",
+      "niveau": "svend",
+      "tekst": "Lærlingen har viden om bæredygtighed og grøn omstilling og kan udarbejde innovative el-tekniske løsninger.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-17",
+      "kilde": "UO-EL-2026 kompetencemål 17",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan deltage i projektarbejde og gennemføre projekter.",
+      "rolle": "uden",
+      "begrundelse": "Procesmål, der ikke kan prøves som faglig viden"
+    },
+    {
+      "id": "EL-KM-18",
+      "kilde": "UO-EL-2026 kompetencemål 18",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan grundbegreberne ved vekselstrøm (AC), kredsløb og transformere samt udføre el-tekniske målinger og beregninger.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-19",
+      "kilde": "UO-EL-2026 kompetencemål 19",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan søge og vurdere teknisk information med relevans for arbejdsområdet og formidle resultatet til kolleger under anvendelse af korrekt faglig terminologi.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-20",
+      "kilde": "UO-EL-2026 kompetencemål 20",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan udvikle eksisterende eller nye el-tekniske løsninger, tænke helhedsorienteret, søge ny viden, skabe overblik og kombinere teknologi med salgs- og forretningsforståelse til skabelse af merværdi for kunder eller internt i virksomheden.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-21",
+      "kilde": "UO-EL-2026 kompetencemål 21",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan installere, programmere og idriftsætte elektriske installationer og elektriske anlæg, fx kommunikationstekniske installationer og anlæg samt automatiske anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-22",
+      "kilde": "UO-EL-2026 kompetencemål 22",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan fejlfinde, reparere og vedligeholde elektriske installationer og elektriske anlæg, fx kommunikationstekniske installationer og anlæg samt automatiske anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-23",
+      "kilde": "UO-EL-2026 kompetencemål 23",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan energieffektivisere elektriske installationer og automatiske anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-24",
+      "kilde": "UO-EL-2026 kompetencemål 24",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan integrere og optimere teknologier, fx velfærdsteknologiske løsninger, i intelligente installationer og anlæg.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-25",
+      "kilde": "UO-EL-2026 kompetencemål 25",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan sikre el-sikkerhed og arbejdsmiljø for eget arbejde samt vurdere el-sikkerhed for samarbejdspartnere og brugere.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-26",
+      "kilde": "UO-EL-2026 kompetencemål 26",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan tage ansvar for planlægning og styring af eget arbejde, herunder inddragelse af innovative, tværfaglige og samfundsmæssige perspektiver i opgaveløsningen.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-27",
+      "kilde": "UO-EL-2026 kompetencemål 27",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan verificere, dokumentere og kvalitetssikre eget arbejde samt vurdere kvaliteten af andres arbejde ud fra gældende love, regler og standarder.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-28",
+      "kilde": "UO-EL-2026 kompetencemål 28",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan kommunikere i korrekt fagterminologi på dansk og engelsk med samarbejdspartnere og brugere.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-KM-29",
+      "kilde": "UO-EL-2026 kompetencemål 29",
+      "niveau": "svend",
+      "tekst": "Lærlingen kan anvende it i det daglige arbejde, herunder opsøge faglig viden samt dele viden med kolleger og samarbejdspartnere.",
+      "rolle": "uden",
+      "begrundelse": "Generisk it-brug, ikke faglig viden"
+    },
+    {
+      "id": "EL-KM-30",
+      "kilde": "UO-EL-2026 kompetencemål 30",
+      "niveau": "svend",
+      "tekst": "(Elektriker 2) Lærlingen kan udføre udviklingsorienterede opgaver inden for det el-tekniske område og i denne forbindelse indgå i tværfaglige udviklingsprocesser.",
+      "rolle": "uden",
+      "begrundelse": "Procesmål for Elektriker 2; kan ikke prøves som faglig viden"
+    },
+    {
+      "id": "EL-KM-31",
+      "kilde": "UO-EL-2026 kompetencemål 31",
+      "niveau": "svend",
+      "tekst": "(Elektriker 2) Lærlingen har specialiserede el-tekniske kompetencer inden for fx kommunikationsnetværk, procesanlæg, robotteknologi, Building Management Systemer, energieffektivisering eller sikringsanlæg- og alarmsystemer.",
+      "rolle": "uden",
+      "begrundelse": "Valgfri specialisering; de boligrelevante dele dækkes af mål 3, 7, 15 og 23"
+    },
+    {
+      "id": "EL-TEMA-01",
+      "kilde": "EVU-TEMA-2026 tema 1",
+      "niveau": "svend",
+      "tekst": "Dimensionering af boliginstallationer: belastningsberegninger, komponentvalg, oplægnings- og montageforhold, systemjording, beskyttende potentialudligning, TT/TN.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-02",
+      "kilde": "EVU-TEMA-2026 tema 2",
+      "niveau": "svend",
+      "tekst": "Vekselstrømsteori: effektfaktor, vektorer, 1- og 3-faset AC, R, Z, XL, XC, P, Q, S, cos φ og sammenlægning af strømme.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-03",
+      "kilde": "EVU-TEMA-2026 tema 3",
+      "niveau": "svend",
+      "tekst": "Love og regler: Elsikkerhedsloven og BEK 1082, DS/HD 60364-serien, DS/EN 60204-1, Fællesregulativet, DS/EN 61439, Bygningsreglementet og Maskinforordningen.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-04",
+      "kilde": "EVU-TEMA-2026 tema 4",
+      "niveau": "svend",
+      "tekst": "Industriinstallationer: overbelastnings- og kortslutningsbeskyttelse, Ik min og Ik max, AC-klasser, udligning/EMC og indstilling af udstyr.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-05",
+      "kilde": "EVU-TEMA-2026 tema 5",
+      "niveau": "svend",
+      "tekst": "Verifikation og måleteknik: eftersyn, afprøvning, rapportering, sikkerhed ved måling og fejlfindingsteknik.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-06",
+      "kilde": "EVU-TEMA-2026 tema 6",
+      "niveau": "svend",
+      "tekst": "Kommunikationsnetværk.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-07",
+      "kilde": "EVU-TEMA-2026 tema 7",
+      "niveau": "svend",
+      "tekst": "Sikringsanlæg: AIA og kendskab til TVO og ABA.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-08",
+      "kilde": "EVU-TEMA-2026 tema 8",
+      "niveau": "svend",
+      "tekst": "Højspænding og vedvarende energi: transformerberegninger, solceller, batterilager, varmepumper og PtX.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-09",
+      "kilde": "EVU-TEMA-2026 tema 9",
+      "niveau": "svend",
+      "tekst": "El-sikkerhed og arbejdsmiljø ved udførsel: L-AUS efter DS/EN 50110 og BEK 1082, risikovurdering, ulykker og ansvar.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-10",
+      "kilde": "EVU-TEMA-2026 tema 10",
+      "niveau": "svend",
+      "tekst": "El-motorer og automatik efter DS/EN 60204-1.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-TEMA-11",
+      "kilde": "EVU-TEMA-2026 tema 11",
+      "niveau": "svend",
+      "tekst": "Energieffektivisering og tilbagebetalingstid: brugsmønstre, forbrugsstyring og simple tilbagebetalingskalkulationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-01",
+      "kilde": "SIK-AUT-EL hovedområde 1 (20 %)",
+      "niveau": "mester",
+      "tekst": "Udførsel og drift af elektriske anlæg: grundbeskyttelse, fejlbeskyttelse, overstrømsbeskyttelse (overbelastnings- og kortslutningsbeskyttelse).",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-02",
+      "kilde": "SIK-AUT-EL hovedområde 2 (60 %)",
+      "niveau": "mester",
+      "tekst": "Udførsel og drift af elektriske installationer: grundbeskyttelse, fejlbeskyttelse, overstrømsbeskyttelse (overbelastnings- og kortslutningsbeskyttelse).",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-03",
+      "kilde": "SIK-AUT-EL hovedområde 3 (20 %)",
+      "niveau": "mester",
+      "tekst": "Lov, bekendtgørelser og standarder: Elsikkerhedsloven, bekendtgørelserne om udførelse og drift af elektriske installationer og anlæg, DS/HD 60364-serien, EN 50110-serien, EN 61936-1 og EN 50522.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-04",
+      "kilde": "AK-EL-2022 Bekendtgørelser og standarder, kompetencer",
+      "niveau": "mester",
+      "tekst": "Varetage rollen som fagligt ansvarlig og driftsansvarlig person, herunder tekniske, sikkerhedsmæssige og kvalitetsledelsesmæssige opgaver (KLS: instruktion, tilsyn, slutkontrol og dokumentation, jf. BEK 725/2024).",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AUT-05",
+      "kilde": "AK-EL-2022 Bekendtgørelser og standarder, viden",
+      "niveau": "mester",
+      "tekst": "Projektering og dimensionering af installationer og anlæg samt mellemspændingsdistributionsanlæg.",
+      "rolle": "uden",
+      "begrundelse": "Mellemspændingsdistributionsanlæg ligger uden for boliginstallationer; dimensionering af installationer dækkes af EL-KM-01 og EL-AUT-02"
+    },
+    {
+      "id": "EL-AK-01",
+      "kilde": "AK-EL-2022 fagelement 'Bygningsinstallationer 1' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Planlægning, projektering og udførelse af elektriske bygningsinstallationer i boliger, liberalt erhverv og mindre industri bygninger. | Viden: Skal have udviklingsbaseret viden om elektriske bygningsinstallationers opbygning, anvendte komponenter og deres funktion. • Skal have viden om gældende love og regler, samt anvendelse af disse inden for området. • Skal have viden om begreber og metoder og anvendelse af disse i relation til området. • Skal kunne forstå praksis og central anvendt teori og metode samt kunne forstå erhvervets anvendelse af teori og metode | Færdigheder: Skal kunne anvende gældende love og regler til projektering af elektriske bygningsinstallationer. • Skal kunne vurdere praksisnære problemstillinger samt vælge relevante, tidssvarende og økonomisk fordelagtige løsninger inden for området. • Skal kunne formidle anvendte løsninger og begrunde disse med relevant teori. | Kompetencer: Skal kunne deltage i tværfaglige projektering inden for området. • Skal kunne håndtere projektering og tilrettelæggelse af elektriske bygningsinstallationer under anvendelse af den nyeste teknologi og udvikle relevante løsninger. • Skal i en struktureret sammenhæng kunne tilegne sig ny viden om problemstillinger og situationer med henblik på, at udvikle egne kompetencer i relation til bygningsinstallationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AK-02",
+      "kilde": "AK-EL-2022 fagelement 'Bygningsinstallationer 2' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Planlægning, projektering, udførelse og verifikation af elektriske installationer i bygninger og i lavspændings distributionsanlæg. | Viden: Skal have forståelse for elektriske bygningsinstallationers opbygning, anvendelse af komponenter og deres funktion. • Skal have forståelse for gældende love og regler, samt anvendelse af disse inden for området. • Skal have forståelse af begreber og metoder samt anvendelse af disse i relation til området. • Skal have udviklingsbaseret viden om elektriske bygningsinstallationer dertilhørende praksis og centralt anvendt teori og metode | Færdigheder: Skal kunne anvende gældende love og regler til projektering af elektriske bygningsinstallationer. • Skal kunne vurdere praksisnære problemstillinger samt vælge relevante, tidssvarende og økonomisk fordelagtige løsninger inden for området med hensyntagen til energioptimering. • Skal kunne formidle komplekse anvendte løsninger og begrunde disse med relevant teori. | Kompetencer: Skal kunne deltage i tværfaglige projektbeskrivelser inden for området. • Skal kunne håndtere projektering og tilrettelæggelse af elektriske bygningsinstallationer under anvendelse af den nyeste teknologi og udvikle relevante løsninger. • Skal kunne vurdere praksisnære problemstillinger og situationer med henblik på, at udvikle egne kompetencer i relation til bygningsinstallationer.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AK-03",
+      "kilde": "AK-EL-2022 fagelement 'bygningsautomation' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Planlægning, projektering og udførelse af Intelligente Bygningsinstallationer (IBI) samt automatik på mindre anlæg med fokus på drift- og energioptimering. | Viden: Skal have udviklingsbaseret viden om elektriske og elektroniske systemer til styring og regulering. • Skal have viden om anvendte komponenter og deres anvendelse og funktion. • Skal have forståelser for begreber og metoder og anvendelse af disse i relation til området. • Skal have forståelse for gældende regler, standarder og normer, samt anvendelse af disse i relation til området. | Færdigheder: Skal kunne anvende elektriske og elektroniske systemer til styring og regulering af intelligente systemer. • Skal kunne vurdere anlægsformer samt vælge relevante, tidssvarende og økonomisk fordelagtige løsninger inden for området, under hensyntagen til drifts-, sikkerheds- og miljømæssige forhold. • Skal kunne formidle og gennemføre praksisnære problemløsninger til mindre automatiske anlæg. | Kompetencer: Skal kunne deltage i fagligt og tværfagligt samarbejde inden for området med en professionel tilgang. • Skal kunne håndtere projektering, tilrettelæggelse og styring af udførelsen af mindre automatiske anlæg under anvendelse af den nyeste teknologi. • Skal i en struktureret sammenhæng kunne tilegne sig ny viden og udvikle problemstillinger og situationer i relation til bygningautomatik.",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AK-04",
+      "kilde": "AK-EL-2022 fagelement 'Bekendtgørelse og standarder' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Emner inden for tekniske-, sikkerhedsmæssige- og kvalitetsledelsesmæssige opgaver som varetages af en faglig ansvarlig i en autoriseret el-installationsvirksomhed. Indholdet skal være i overensstemmelse med de fagkrav, der stilles forud for tilmelding til Sikkerhedsstyrelsens autorisationsprøve. | Viden: Skal have viden om nyeste love, bekendtgørelser og standarder. • Skal have udviklingsbaseret viden om krav vedrørende dimensionering, udførelse, verifikation og drift af elektriske installationer omfattet af elsikkerhedsloven. • Skal have forståelse for projektering og dimensionering af elektriske installationer og anlæg samt mellemspændingsdistributionsanlæg. | Færdigheder: Skal kunne anvende nyeste love, bekendtgørelser og standarder i praksis • Skal kunne vurdere praksisnære problemstillinger i elektriske installationer og anlæg samt mellemspændingsdistributionsanlæg. • Skal kunne opstille, vælge og formidle løsningsmuligheder i elektriske installationer og anlæg samt mellemspændingsdistribitionsanlæg | Kompetencer: Skal have mulighed for varetage rollen som faglig ansvarlig og driftsansvarlig person og indgå i udviklingsorienterede situationer hertil. • Skal kunne håndtere projektering og dimensionering af elektriske installationer og anlæg samt mellemspændingsdistributionsanlæg. • Skal kunne tilegne sig nyeste viden inden for autorisationskrævende arbejdsområder. • Skal kunne deltage i fagligt og tværfagligt samarbejde med professionel tilgang inden for de autorisationskrævende arbejdsområder",
+      "rolle": "uden",
+      "begrundelse": "Dækkes af EL-AUT-01–04, som bygger på samme fagelement og autorisationsprøvens indhold"
+    },
+    {
+      "id": "EL-AK-05",
+      "kilde": "AK-EL-2022 fagelement 'Elforsyningsanlæg' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Planlægning, projektering, drift, eftersyn og vedligeholdelse af elforsyningsanlæg i mellem‐ spændingsdistributionsanlæg. | Viden: Skal have viden om det danske forsyningsnets struktur. • Skal have udviklingsbaseret viden om praksis i relation til projektering af distributionsnettet og tilhørende netstationer. • Skal have forståelse af praksis for anvendte teorier og metoder til beregning inden for mellemspændingssystemer og tilhørende komponenter. | Færdigheder: Skal kunne anvende relevante metoder til at projektere, dimensionere og dokumentere løsninger til distributionsnet og netstationer. • Skal kunne vurdere praksisnære problemstillinger og løsningsmuligheder inden for mellemspændingssystemer • Skal kunne opstille, vælge og formidle praksisnære problemstillinger og løsningsmuligheder inden for mellemspændingssystemer | Kompetencer: Skal kunne håndtere afgrænsede ledelses- og planlægningsfunktioner for mellemspændingssystemer og udviklingsorienterede situationer i relation til mellemspændingssystemer. • Skal kunne deltage i fagligt og tværfagligt samarbejde med en professionel tilgang i relation til mellemspændingssystemer. • Skal i en struktureret sammenhæng kunne tilegne sig ny viden, færdigheder og kompetencer inden for mellemspændingssystemer med henblik på at kunne videreudvikle sig i forskellige læringsmiljøer.",
+      "rolle": "uden",
+      "begrundelse": "Mellemspændingsdistribution og netstationer ligger uden for boliginstallationer (jf. EL-AUT-05)"
+    },
+    {
+      "id": "EL-AK-06",
+      "kilde": "AK-EL-2022 fagelement 'projektledelse og entreprisestyring' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Planlægning, organisering samt ledelse og styring af opgaver, projekter og entrepriser. Udbuds- og tilbudsmateriale samt kalkulation. Tilbudsgivning og entrepriseret | Viden: Skal have udviklingbaseret viden om og anvendelse af projektmodeller og anvendelse af interessentanalyser • Skal have forståelse af projektprocesser og –metoder samt projekt- og entrepriselederens funktioner, opgaver og roller, samt ansvar ved udførelsen af projekter og entrepriser. • Skal have forståelse for afdækning af projektrisici. • Skal have udviklingsbaseret viden om commissioning og entrepriseret, herunder offentlige udbudsregler. | Færdigheder: Skal kunne anvende og vurdere relevante værktøjer til planlægning, styring og gennemførelse af projekter og entrepriser. • Skal kunne opbygge en projektorganisation, håndtere samarbejdsprocesser samt etablere og formidle et tværfagligt samarbejde. • Skal kunne vurdere arbejdsgange og –processer ved bemanding og organisering af projekter og entrepriser. | Kompetencer: Skal kunne håndtere planlægning, organisering og styring af daglige arbejdsopgaver for projektorganisationen, som projekt- eller entrepriseleder. • Skal kunne deltage i ledelse og rådgivning om installationstekniske projekter og entrepriser. • Skal kunne deltage i faglige og tværfaglige entrepriser, med anvendelse af entrepriseretlige regler. • Skal i en struktureret sammenhæng kunne tilegne sig ny viden, færdigheder og kompetencer i relation til projektledelse og entreprisestyring",
+      "rolle": "uden",
+      "begrundelse": "Projektledelse og entreprisestyring hører til projektlederens (byg) rolle og testes i et senere sæt"
+    },
+    {
+      "id": "EL-AK-07",
+      "kilde": "AK-EL-2022 fagelement 'Forretningsforståelse og virksomhedsdrift' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Virksomhedsøkonomi og –styring samt regnskabsforståelse. Relevante emner inden for erhvervsjura. | Viden: Skal have udviklingsbaseret viden om ordrestyring såsom indkøb, bemanding, likviditet etc. • Skal have forståelse for regnskaber, budgetter, økonomisk analyse og kalkuler. • Skal have forståelse for kalkulationsmetoder og viden om programmer til prisberegning. • Skal have udviklingsbaseret viden om investering og finansiering. • Skal have forståelse for økonomisk og administrativ styring af virksomhedens aktiviteter. • Skal have viden om og forståelse af de i praksis anvendte centrale love og regler, der regulerer forholdet mellem en virksomhed og dens interessenter. | Færdigheder: Skal kunne vurdere og anvende økonomi-/regnskabsinformation, intern som ekstern, som grundlag for beslutninger. • Skal kunne vurdere, justere og formidle en virksomheds og en entreprises økonomi. • Skal kunne opstille og formidle budgetter samt vurdere investeringsbehov og økonomi. • Skal kunne anvende og kombinere relevante analyseværktøjer vedrørende økonomi og drift. • Skal kunne formidle og justere praksisnære handlingsplaner for økonomi og drift. | Kompetencer: Skal kunne håndtere beregning af pris og afgivelse af tilbud. • Skal kunne deltage i tværfaglige ledelsesopgaver i forbindelse med styring af drift og økonomi. • Skal i en struktureret sammenhæng kunne tilegne sig ny viden, færdigheder og kompetencer inden for forretningsforståelse og virksomhedsdrift",
+      "rolle": "uden",
+      "begrundelse": "Virksomhedsdrift og økonomi ligger uden for fagagentens rådgivende rolle"
+    },
+    {
+      "id": "EL-AK-08",
+      "kilde": "AK-EL-2022 fagelement 'kvalitet, sikkerhed og miljø' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Kvalitet, kvalitetssikring og kvalitetsstyring. Arbejdsmiljø, sikkerhed og trivsel. Miljø og miljøledelse. Relevante love og regler vedrørende kvalitet, arbejdsmiljø og miljø. | Viden: Skal have viden om gældende lovgivning, branchekrav og praksis vedrørende kvalitet, arbejdsmiljø og miljø. • Skal have udviklingsbaseret viden om relevante styresystemer til ledelse og sikring af kvalitet, arbejdsmiljø og miljø. • Skal have viden om arbejdsbetingede sygdomme og brancherelevante arbejdsmiljøproblemer. • Skal have viden om og forståelse for miljøpolitik, herunder internationale tendenser. • Skal kunne forstå centrale teorier, metoder og relevante styresystemer til ledelse og sikring af kvalitet, arbejdsmiljø og miljø | Færdigheder: Skal kunne vurdere kvalitetsbehov, arbejdsmiljømæssige problemstillinger og miljøforhold. • Skal kunne kvalitetssikre og udarbejde vedligeholdelsesplan for installationer og formidle den til rette vedkommende. • Skal kunne udvikle, opbygge, implementere, vedligeholde og anvende relevante styresystemer til sikring af kvalitet, arbejdsmiljø og miljø i overensstemmelse med gældende lovgivning, regler og branchekrav. | Kompetencer: Skal kunne tilegne sig ny viden om ledelsespraksis inden for kvalitet, arbejdsmiljø, og miljø over for medarbejdere og interessenter i en struktureret sammenhæng. • Skal kunne deltage i fagligt og tværfagligt samarbejde med kunder og myndigheder. • Skal kunne håndtere udviklingsorienterede situationer inden for udvikling, opbygning implementering af systemer inden for kvalitet, sikkerhed og miljø",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AK-09",
+      "kilde": "AK-EL-2022 fagelement 'Organisation og ledelse' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Organisationer og organisationsudvikling. Ledelse af organisationer og personale. Arbejdsret og personalejura. | Viden: Skal have udviklingsbaseret viden om og forståelse af organisationsmodeller, innovation og organisationsudvikling, herunder arbejdspladsens formelle og uformelle organisationer. • Skal have forståelse af gruppedynamiske arbejdsprocesser. • Skal have udviklingsbaseret viden om og forståelse af danske arbejdsmarkedsforhold. • Skal have viden om personalejura. • Skal have udviklingsbaseret viden om etablering og opbygning af en virksomheds forretningsplan. | Færdigheder: Skal kunne vurdere hvorledes en virksomheds organisation opbygges, justeres og udvikles i forhold til det omgivende miljø. • Skal kunne anvende strategiske ledelsesværktøjer. • Skal kunne anvende, vurdere og formidle innovative løsninger på virksomhedens udfordringer og problemer. • Skal kunne anvende og kombinere forandringsprocesser. • Skal kunne vurdere ledelsesprocesser og opstille samt udvælge løsningsmodeller, der sikrer trivsel og motivation • Skal kunne anvende metoder til informationssøgning inden for faglige og retslige områder. | Kompetencer: Skal kunne deltage i en installatørvirksomheds ledelsesfunktioner og påtage sig et personaleansvar. • Skal kunne håndtere samarbejds- og personaleforhold efter gældende love og regler • Skal kunne deltage i udviklingsopgaver af organisation og personale i takt med den samfundsmæssige og teknologiske udvikling. • Skal kunne håndtere forandrings- og implementeringsprocesser i forbindelse med innovation.",
+      "rolle": "uden",
+      "begrundelse": "Organisation og personaleledelse ligger uden for rollen; fagligt ansvarliges instruktion og tilsyn testes i AUT-/AK-målene for KLS"
+    },
+    {
+      "id": "EL-AK-10",
+      "kilde": "AK-EL-2022 fagelement 'Kommunikations- og formidlingsteknik' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Organisationer og organisationsudvikling. Ledelse af organisationer og personale. Arbejdsret og personalejura. Læringsmål for Organisation og ledelse Viden • Skal have udviklingsbaseret viden om og forståelse af organisationsmodeller, innovation og organisationsudvikling, herunder arbejdspladsens formelle og uformelle organisationer. • Skal have forståelse af gruppedynamiske arbejdsprocesser. • Skal have udviklingsbaseret viden om og forståelse af danske arbejdsmarkedsforhold. • Skal have viden om personalejura. • Skal have udviklingsbaseret viden om etablering og opbygning af en virksomheds forretningsplan. Færdigheder • Skal kunne vurdere hvorledes en virksomheds organisation opbygges, justeres og udvikles i forhold til det omgivende miljø. • Skal kunne anvende strategiske ledelsesværktøjer. • Skal kunne anvende, vurdere og formidle innovative løsninger på virksomhedens udfordringer og problemer. • Skal kunne anvende og kombinere forandringsprocesser. • Skal kunne vurdere ledelsesprocesser og opstille samt udvælge løsningsmodeller, der sikrer trivsel og motivation • Skal kunne anvende metoder til informationssøgning inden for faglige og retslige områder. Kompetencer • Skal kunne deltage i en installatørvirksomheds ledelsesfunktioner og påtage sig et personaleansvar. • Skal kunne håndtere samarbejds- og personaleforhold efter gældende love og regler • Skal kunne deltage i udviklingsopgaver af organisation og personale i takt med den samfundsmæssige og teknologiske udvikling. • Skal kunne håndtere forandrings- og implementeringsprocesser i forbindelse med innovation. ECTS-omfang Fagelementet Organisation og ledelse har et omfang på 5 ECTS-point. 2.10. Kommunikations- og formidlingsteknik Faglig/erhvervsmæssig kommunikation og kulturforståelse tværfagligt som internationalt. Læsning og forståelse af manualer og datablade på fremmedsprog. Struktureret mundtlig og skriftlig præsentation af et emne. | Viden: Skal have udviklingsbaseret viden om kommunikation og formidling inden for tekniske og virksomhedsrelaterede emner i forhold til nationale og internationale samarbejdspartnere. • Skal have udviklingsbaseret viden om forhandlingsteknik. • Skal have forståelse for opbygning af projektrapporter og manualer. | Færdigheder: Skal kunne vurdere og formidle tekniske instruktioner til interessenter. • Skal kunne justere og formidle forslag og løsninger til interessenter, på dansk eller fremmedsprog. • Skal kunne anvende kommunikations- og formidlingsteknikker med henblik på ledelsesmæssig kommunikation. • Skal kunne anvende og kombinere tidssvarende kommunikationsteknologier. • Skal kunne vurdere, planlægge og afholde effektive møder. | Kompetencer: Skal kunne varetage samt håndtere i kommunikationen med nationale og internationale interessenter. • Skal kunne udvikle egen praksisnær kommunikation inden for sit felt under hensyntagen til kulturelle forskelle. • Skal kunne tilegne sig ny viden, færdigheder og kompetencer inden for intern kommunikation.",
+      "rolle": "uden",
+      "begrundelse": "Formidlingsteknik er et procesmål, der ikke kan prøves som faglig viden; formidling bedømmes i fri- og case-opgaverne"
+    },
+    {
+      "id": "EL-AK-11",
+      "kilde": "AK-EL-2022 fagelement 'Teknisk beregning' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Relevant matematik og fysik til beregninger af elektriske kredsløb og elektriske maskiner, samt opbygning og virkemåde. | Viden: Skal have udviklingsbaseret viden om anvendelse af metode og teori for beregninger af elektriske installationer og elektriske maskiner. • Skal have forståelse for de vigtigste anvendte teorier for beregningsmetoder inden for det el- tekniske fagområde. | Færdigheder: Skal kunne anvende færdigheder af matematiske beregninger til det el-tekniske område. • Skal kunne vurdere praktiske problemstillinger ud fra el-tekniske beregninger på elektriske kredsløb og elektriske maskiner. • Skal kunne formidle praksisnære problemstillinger i forhold til beregninger på elektriske kredsløb og elektriske maskiner. | Kompetencer: Skal kunne deltage i tværfaglige og udviklingsorienterede situationer med henblik på problemløsning af elektrotekniske opgaver. • Skal kunne håndtere ansvaret for elektrotekniske beregninger. • Skal i en struktureret sammenhæng kunne tilegne sig ny viden og udvikle egne muligheder inden for det el-tekniske område",
+      "rolle": "i"
+    },
+    {
+      "id": "EL-AK-12",
+      "kilde": "AK-EL-2022 fagelement 'Teknisk dokumentation' (læringsmål ordret)",
+      "niveau": "mester",
+      "tekst": "Indhold: Udarbejdelse af dokumentationsmateriale, herunder teknisk tegning samt anvendelse af programmer der anvendes til projektering i el-entrepriser. | Viden: Skal have viden om gældende standarder for udarbejdelse af dokumentation til elinstallationer. • Skal have viden om opbygning af tegninger og andre tekniske kredsløbsskemaer, som anvendes inden for området. • Skal have forståelse for anvendelse af programmer, der anvendes til projektering og dokumentation af elinstallation. | Færdigheder: Skal kunne anvende software til dokumentation i forbindelse med udførsel af elektriske installationer. • Skal kunne vurdere praksisnære problemstillinger og udvælge relevant software og beskrivelsesværktøj til dokumentation af elektriske installationer. • Skal kunne formidle teknisk dokumentation til relevante samarbejdspartner. | Kompetencer: Skal kunne deltage i fagligt og tværfagligt samarbejde for udarbejdelse og brug af teknisk dokumentation. • Skal kunne håndtere ansvaret for dokumentstyring i forbindelse med elektriske entrepriser. • Skal kunne tilegne sig ny viden om udviklingstendenser inden for teknisk dokumentation og udvikle kompetencer inden for området.",
+      "rolle": "i"
+    }
+  ]
+}

@@ -2,10 +2,10 @@
 """Release: collects the version notes and raises the versions – in a release branch from main, after merge.
 
 Feature branches never raise versions themselves (that is the biggest source of merge conflicts).
-Instead each branch adds one version note in versionsnoter/<branch>.md:
+Instead each branch adds one version note in release-notes/<branch>.md:
 
     ---
-    byg-kontrol: minor
+    byg-review: minor
     byg: patch
     ---
     Short description of the change (becomes the release note).
@@ -14,9 +14,9 @@ Usage: python3 scripts/release.py            raise versions, write CHANGELOG.md,
        python3 scripts/release.py --dry-run  show what would happen
        python3 scripts/release.py --check    validate the notes (used by validate.py)
 main is protected, so the release also goes through a PR:
-       git switch -c udgivelse/<version> origin/main && python3 scripts/release.py
+       git switch -c release/<version> origin/main && python3 scripts/release.py
        git commit -am "Udgivelse <version>" && git push -u origin HEAD   → PR, CI green, merge
-(pre-commit allows version changes in branches named udgivelse/*).
+(pre-commit allows version changes in branches named release/*).
 """
 import datetime
 import json
@@ -25,7 +25,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-NOTES_DIR = ROOT / "versionsnoter"
+NOTES_DIR = ROOT / "release-notes"
 MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 CHANGELOG = ROOT / "CHANGELOG.md"
 LEVEL = {"patch": 0, "minor": 1, "major": 2}
@@ -135,7 +135,7 @@ def main() -> int:
     CHANGELOG.write_text(new_log, encoding="utf-8")
     for f in notes:
         f.unlink()
-    print(f"\nCHANGELOG.md opdateret, {len(notes)} note(r) udgivet. Commit i grenen udgivelse/{mp_new}: git commit -am \"Udgivelse {mp_new}\" – og åbn en PR")
+    print(f"\nCHANGELOG.md opdateret, {len(notes)} note(r) udgivet. Commit i grenen release/{mp_new}: git commit -am \"Udgivelse {mp_new}\" – og åbn en PR")
     return 0
 
 

@@ -3,14 +3,15 @@
 
 Run:  python3 tests/test_fem_result.py   (requires the statik environment: fem.py setup)
 """
+import os
 import pathlib
 import subprocess
 import sys
 import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-FEM = ROOT / "plugins" / "byg-statik" / "skills" / "statik-viden" / "scripts" / "fem.py"
-VPY = pathlib.Path.home() / ".local" / "share" / "byg-statik" / "venv" / "bin" / "python"
+FEM = ROOT / "plugins" / "byg-structural" / "skills" / "structural-knowledge" / "scripts" / "fem.py"
+VPY = pathlib.Path(os.environ.get("BYG_STATIK_VENV", pathlib.Path.home() / ".local" / "share" / "byg-structural" / "venv")) / "bin" / "python"
 FAILURES = []
 
 

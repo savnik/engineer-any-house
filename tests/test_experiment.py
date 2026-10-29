@@ -36,24 +36,24 @@ def measurement(groups):
 
 def test_assess():
     def run(before, after, category="videnbase"):
-        return experiment.assess(category, {"el": {"foer": measurement(before), "efter": measurement(after)}})[0]
+        return experiment.assess(category, {"electrical": {"foer": measurement(before), "efter": measurement(after)}})[0]
 
-    base = {"udvikling/opgaver-a": group(30, 24), "holdout/opgaver-a": group(15, 12)}
+    base = {"udvikling/tasks-a": group(30, 24), "holdout/tasks-a": group(15, 12)}
     expect("bedre ud over støj → behold",
-           run(base, {"udvikling/opgaver-a": group(30, 28), "holdout/opgaver-a": group(15, 12)}) == "behold")
+           run(base, {"udvikling/tasks-a": group(30, 28), "holdout/tasks-a": group(15, 12)}) == "behold")
     expect("inden for støj → uafklaret",
-           run(base, {"udvikling/opgaver-a": group(30, 25), "holdout/opgaver-a": group(15, 12)}) == "uafklaret")
+           run(base, {"udvikling/tasks-a": group(30, 25), "holdout/tasks-a": group(15, 12)}) == "uafklaret")
     expect("holdout falder 2 → forkast",
-           run(base, {"udvikling/opgaver-a": group(30, 29), "holdout/opgaver-a": group(15, 10)}) == "forkast")
+           run(base, {"udvikling/tasks-a": group(30, 29), "holdout/tasks-a": group(15, 10)}) == "forkast")
     expect("uden holdout → uafklaret",
-           run({"udvikling/opgaver-a": group(30, 24)}, {"udvikling/opgaver-a": group(30, 29)}) == "uafklaret")
+           run({"udvikling/tasks-a": group(30, 24)}, {"udvikling/tasks-a": group(30, 29)}) == "uafklaret")
     expect("ikke samme opgaver → uafklaret",
-           run(base, {"udvikling/opgaver-a": group(29, 28), "holdout/opgaver-a": group(15, 12)}) == "uafklaret")
+           run(base, {"udvikling/tasks-a": group(29, 28), "holdout/tasks-a": group(15, 12)}) == "uafklaret")
     expect("samme kvalitet, meget billigere → behold",
-           run(base, {"udvikling/opgaver-a": group(30, 24, cost=1.5), "holdout/opgaver-a": group(15, 12, cost=0.7)})
+           run(base, {"udvikling/tasks-a": group(30, 24, cost=1.5), "holdout/tasks-a": group(15, 12, cost=0.7)})
            == "behold")
     expect("ingen gevinst, dyrere → forkast",
-           run(base, {"udvikling/opgaver-a": group(30, 24, cost=3.0), "holdout/opgaver-a": group(15, 12, cost=1.5)})
+           run(base, {"udvikling/tasks-a": group(30, 24, cost=3.0), "holdout/tasks-a": group(15, 12, cost=1.5)})
            == "forkast")
     expect("rettemaske afgøres manuelt", run(base, base, "rettemaske") == "manuel")
 
@@ -61,7 +61,7 @@ def test_assess():
 def test_summarize():
     with tempfile.TemporaryDirectory() as tmp:
         tmp = pathlib.Path(tmp)
-        _, tasks = experiment.exam.load_trade("el")
+        _, tasks = experiment.exam.load_trade("electrical")
         dev = [t for t in tasks if t["saet"] == "udvikling"][:3]
         held = [t for t in tasks if t["saet"] == "holdout"][:2]
 
@@ -70,12 +70,12 @@ def test_summarize():
                     "maal": t["maal"], "bestaaet": ok, "pris_usd": 0.1, "sek": 10.0, "note": note}
         old = tmp / "20261001-000000-plugin.json"
         new = tmp / "20261002-000000-plugin.json"
-        old.write_text(json.dumps({"fag": "el", "plugin_rev": "aaa", "resultater":
+        old.write_text(json.dumps({"fag": "electrical", "plugin_rev": "aaa", "resultater":
                                    [row(t, "plugin", False) for t in dev + held]}))
-        new.write_text(json.dumps({"fag": "el", "plugin_rev": "bbb", "resultater":
+        new.write_text(json.dumps({"fag": "electrical", "plugin_rev": "bbb", "resultater":
                                    [row(dev[0], "plugin", True), row(dev[0], "plugin", True),
                                     row(dev[1], "plugin", True, "kørselsfejl: grænse")]}))
-        s = experiment.summarize([old, new])["el"]
+        s = experiment.summarize([old, new])["electrical"]
         g = s["grupper"]
         dev_group = next(k for k in g if k.startswith("udvikling/"))
         expect("nyeste fil vinder pr. opgave", g[dev_group]["plugin"]["bestaaet"] == 1, g)
@@ -90,7 +90,7 @@ def test_summarize():
 def test_validate():
     holdout = experiment.holdout_ids()
     some = sorted(holdout)[0]
-    log = {"forsoeg": [{"id": "F-001", "dato": "2026-10-18", "fag": ["el"], "kategori": "videnbase",
+    log = {"forsoeg": [{"id": "F-001", "dato": "2026-10-18", "fag": ["electrical"], "kategori": "videnbase",
                         "hypotese": f"lukke {some}", "status": "afsluttet", "beslutning": "behold", "laering": "x"}]}
     expect("holdout-ID i loggen afvises", any("holdout" in e for e in experiment.validate(log, {"fag": {}}, holdout)))
     log["forsoeg"][0]["hypotese"] = "lukke huller"
@@ -104,40 +104,40 @@ def test_validate():
 def test_guard():
     root = str(ROOT)
     deny = lambda tool, inp: holdout_guard.check(tool, inp, root) is not None  # noqa: E731
-    expect("Read af opgavefil afvises", deny("Read", {"file_path": f"{root}/eksamen/el/opgaver-a.json"}))
-    expect("Read af resultatfil afvises", deny("Read", {"file_path": f"{root}/eksamen/vvs/results/x.json"}))
-    expect("Edit af opgavefil afvises", deny("Edit", {"file_path": f"{root}/eksamen/el/opgaver-c.json"}))
-    expect("Read af forsøgslog tilladt", not deny("Read", {"file_path": f"{root}/eksamen/forsoeg.json"}))
-    expect("Read af læringsmål tilladt", not deny("Read", {"file_path": f"{root}/eksamen/el/laeringsmaal.json"}))
-    expect("Read af videnbase tilladt", not deny("Read", {"file_path": f"{root}/plugins/byg-el/agents/x.md"}))
+    expect("Read af opgavefil afvises", deny("Read", {"file_path": f"{root}/exam/electrical/tasks-a.json"}))
+    expect("Read af resultatfil afvises", deny("Read", {"file_path": f"{root}/exam/plumbing/results/x.json"}))
+    expect("Edit af opgavefil afvises", deny("Edit", {"file_path": f"{root}/exam/electrical/tasks-c.json"}))
+    expect("Read af forsøgslog tilladt", not deny("Read", {"file_path": f"{root}/exam/experiments.json"}))
+    expect("Read af læringsmål tilladt", not deny("Read", {"file_path": f"{root}/exam/electrical/learning-goals.json"}))
+    expect("Read af videnbase tilladt", not deny("Read", {"file_path": f"{root}/plugins/byg-electrical/agents/x.md"}))
     expect("Grep med indhold i hele repoet afvises", deny("Grep", {"pattern": "x", "output_mode": "content"}))
     expect("Grep med filnavne tilladt", not deny("Grep", {"pattern": "x"}))
     expect("Grep i plugins tilladt", not deny("Grep", {"pattern": "x", "path": "plugins", "output_mode": "content"}))
-    expect("Grep i eksamen med md-glob tilladt",
-           not deny("Grep", {"pattern": "x", "path": "eksamen", "output_mode": "content", "glob": "*.md"}))
+    expect("Grep i exam med md-glob tilladt",
+           not deny("Grep", {"pattern": "x", "path": "exam", "output_mode": "content", "glob": "*.md"}))
     expect("show uden --set development afvises",
-           deny("Bash", {"command": "python3 scripts/exam.py show el --answer-key"}))
+           deny("Bash", {"command": "python3 scripts/exam.py show electrical --answer-key"}))
     expect("show --set holdout afvises",
-           deny("Bash", {"command": "python3 scripts/exam.py show el --set holdout --answer-key"}))
+           deny("Bash", {"command": "python3 scripts/exam.py show electrical --set holdout --answer-key"}))
     expect("show --set development tilladt",
-           not deny("Bash", {"command": "python3 scripts/exam.py show el --set development --answer-key"}))
+           not deny("Bash", {"command": "python3 scripts/exam.py show electrical --set development --answer-key"}))
     expect("show --set=development tilladt",
-           not deny("Bash", {"command": "python3 scripts/exam.py show el --set=development"}))
-    expect("run tilladt", not deny("Bash", {"command": "python3 scripts/exam.py run el --only-failed"}))
+           not deny("Bash", {"command": "python3 scripts/exam.py show electrical --set=development"}))
+    expect("run tilladt", not deny("Bash", {"command": "python3 scripts/exam.py run electrical --only-failed"}))
     expect("experiment.py tilladt", not deny("Bash", {"command": "python3 scripts/experiment.py status"}))
     expect("script kædet med anden kommando afvises",
-           deny("Bash", {"command": "python3 scripts/experiment.py status; cat eksamen/el/opgaver-a.json"}))
-    expect("cat af opgavefil afvises", deny("Bash", {"command": "cat eksamen/el/opgaver-b.json"}))
-    expect("git show af opgavefil afvises", deny("Bash", {"command": "git show HEAD:eksamen/vvs/opgaver-a.json"}))
+           deny("Bash", {"command": "python3 scripts/experiment.py status; cat exam/electrical/tasks-a.json"}))
+    expect("cat af opgavefil afvises", deny("Bash", {"command": "cat exam/electrical/tasks-b.json"}))
+    expect("git show af opgavefil afvises", deny("Bash", {"command": "git show HEAD:exam/plumbing/tasks-a.json"}))
     expect("rekursiv grep i roden afvises", deny("Bash", {"command": "grep -rn BEK ."}))
-    expect("rekursiv grep i plugins tilladt", not deny("Bash", {"command": "grep -rn BEK plugins/byg-el"}))
-    expect("rg med eksamen udeladt tilladt", not deny("Bash", {"command": "rg BEK --glob '!eksamen'"}))
+    expect("rekursiv grep i plugins tilladt", not deny("Bash", {"command": "grep -rn BEK plugins/byg-electrical"}))
+    expect("rg med exam udeladt tilladt", not deny("Bash", {"command": "rg BEK --glob '!exam'"}))
     expect("git status tilladt", not deny("Bash", {"command": "git status"}))
 
 
 def test_answers_hide_holdout():
     held = sorted(t for t in experiment.holdout_ids() if t.startswith("EL-"))[0]
-    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "answers", "el", "--id", held],
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "answers", "electrical", "--id", held],
                        capture_output=True, text=True)
     expect("exam.py answers viser aldrig holdout", r.returncode == 1 and "Holdout" in r.stdout, r.stdout[:200])
 

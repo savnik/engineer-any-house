@@ -16,17 +16,17 @@
   ],
   "dependencies": [
     "byg",
-    "byg-kontrol",
-    "byg-vvs",
-    "byg-el",
-    "byg-murer",
+    "byg-review",
+    "byg-plumbing",
+    "byg-electrical",
+    "byg-masonry",
     "byg-ventilation",
-    "byg-maler",
-    "byg-toemrer",
+    "byg-painting",
+    "byg-carpentry",
     "byg-data",
     "byg-bim",
-    "byg-statik",
-    "byg-arkitekt",
-    "byg-anlaeg"
+    "byg-structural",
+    "byg-architecture",
+    "byg-landscape"
   ]
 }

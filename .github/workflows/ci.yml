@@ -53,14 +53,14 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        working-directory: plugins/byg-bim/skills/bim-viden
+        working-directory: plugins/byg-bim/skills/bim-knowledge
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: plugins/byg-bim/skills/bim-viden/scripts/requirements-test.txt
+          cache-dependency-path: plugins/byg-bim/skills/bim-knowledge/scripts/requirements-test.txt
       - run: pip install -r scripts/requirements-test.txt
       - run: python -m pytest -q scripts/tests
 
@@ -74,11 +74,11 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: plugins/byg-statik/skills/statik-viden/scripts/requirements-fem.txt
+          cache-dependency-path: plugins/byg-structural/skills/structural-knowledge/scripts/requirements-fem.txt
       # fem.py installs into and re-executes itself in its own venv (BYG_STATIK_VENV).
       - name: FEM self-test against hand formulas
         env:
           BYG_STATIK_VENV: ${{ runner.temp }}/byg-statik-venv
         run: |
-          python plugins/byg-statik/skills/statik-viden/scripts/fem.py setup
-          python plugins/byg-statik/skills/statik-viden/scripts/fem.py test
+          python plugins/byg-structural/skills/structural-knowledge/scripts/fem.py setup
+          python plugins/byg-structural/skills/structural-knowledge/scripts/fem.py test

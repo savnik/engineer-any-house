@@ -23,8 +23,8 @@ def expect(name, ok, detail=""):
 
 
 def test_parsing():
-    expect("svar-linje findes", exam.extract_answer("bla\n**SVAR: B**") == "B")
-    expect("sidste svar-linje vinder", exam.extract_answer("SVAR: A\n...\nSVAR: C") == "C")
+    expect("svar-linje findes", exam.extract_answer("bla\n**ANSWER: B**") == "B")
+    expect("sidste svar-linje vinder", exam.extract_answer("ANSWER: A\n...\nANSWER: C") == "C")
     expect("ingen svar-linje", exam.extract_answer("Jeg mener B") is None)
     for raw, want in [("30 mA", 30), ("2,5 mm²", 2.5), ("1.500 W", 1500), ("1,234.5", 1234.5),
                       ("1.234,5 kWh", 1234.5), ("0.4 s", 0.4), ("−3,2 %", -3.2), ("12 345 l", 12345)]:
@@ -34,31 +34,31 @@ def test_parsing():
 
 def test_grading():
     choice = {"type": "valg", "facit": "B", "valgmuligheder": {"A": "a", "B": "b", "C": "c"}}
-    expect("valg rigtigt", exam.grade_choice(choice, "SVAR: B) 30 mA")[0])
-    expect("valg forkert", not exam.grade_choice(choice, "SVAR: A")[0])
+    expect("valg rigtigt", exam.grade_choice(choice, "ANSWER: B) 30 mA")[0])
+    expect("valg forkert", not exam.grade_choice(choice, "ANSWER: A")[0])
     number = {"type": "tal", "facit": {"vaerdi": 10.0, "enhed": "A", "tolerance_pct": 5}}
-    expect("tal inden for tolerance", exam.grade_number(number, "SVAR: 10,4 A")[0])
-    expect("tal uden for tolerance", not exam.grade_number(number, "SVAR: 10,6 A")[0])
+    expect("tal inden for tolerance", exam.grade_number(number, "ANSWER: 10,4 A")[0])
+    expect("tal uden for tolerance", not exam.grade_number(number, "ANSWER: 10,6 A")[0])
     exact = {"type": "tal", "facit": {"vaerdi": 30, "enhed": "mA"}}
-    expect("tal eksakt", exam.grade_number(exact, "SVAR: 30 mA")[0])
-    expect("dom bestået", exam.grade_verdict("K1: ja\nDOM: BESTÅET")[0])
-    expect("dom ikke bestået", not exam.grade_verdict("K1: nej\nDOM: IKKE BESTÅET")[0])
+    expect("tal eksakt", exam.grade_number(exact, "ANSWER: 30 mA")[0])
+    expect("dom bestået", exam.grade_verdict("K1: ja\nVERDICT: BESTÅET")[0])
+    expect("dom ikke bestået", not exam.grade_verdict("K1: nej\nVERDICT: IKKE BESTÅET")[0])
     expect("ingen dom", not exam.grade_verdict("K1: ja")[0])
 
 
 def write_fixture(base: pathlib.Path, tasks: list[dict]):
-    d = base / "el"
+    d = base / "electrical"
     d.mkdir(parents=True)
     goals = {
-        "fag": "el", "plugin": "byg-el", "agent": "el-installatoer",
+        "fag": "electrical", "plugin": "byg-electrical", "agent": "electrician",
         "kilder": [{"id": "K1", "titel": "Kilde", "url": "https://example.org", "laest": "2026-10-17"}],
         "maal": [
             {"id": "M1", "kilde": "K1 pkt. 1", "tekst": "Mål 1", "rolle": "i"},
             {"id": "M2", "kilde": "K1 pkt. 2", "tekst": "Mål 2", "rolle": "uden", "begrundelse": "industri"},
         ],
     }
-    (d / "laeringsmaal.json").write_text(json.dumps(goals), encoding="utf-8")
-    (d / "opgaver.json").write_text(json.dumps({"opgaver": tasks}), encoding="utf-8")
+    (d / "learning-goals.json").write_text(json.dumps(goals), encoding="utf-8")
+    (d / "tasks.json").write_text(json.dumps({"opgaver": tasks}), encoding="utf-8")
 
 
 def task(tid, set_id, **kw):
@@ -76,7 +76,7 @@ def test_report_skips_run_errors():
     ]
     with tempfile.TemporaryDirectory() as tmp:
         f = pathlib.Path(tmp) / "r.json"
-        f.write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+        f.write_text(json.dumps({"fag": "electrical", "resultater": rows}), encoding="utf-8")
         text = exam.report([f])
     expect("kørselsfejl tæller ikke som regression", "## Regressioner" in text and "- X-1" not in text.split("## Regressioner")[1])
     expect("kørselsfejl vises", "1 kørselsfejl er ikke talt med" in text)
@@ -89,12 +89,12 @@ def test_efficiency_helpers():
     try:
         with tempfile.TemporaryDirectory() as tmp:
             exam.EXAM_DIR = pathlib.Path(tmp)
-            res = exam.EXAM_DIR / "el" / "results"
+            res = exam.EXAM_DIR / "electrical" / "results"
             res.mkdir(parents=True)
             (res / "ugyldig").mkdir()
 
             def write(name, rows, folder=res):
-                (folder / name).write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+                (folder / name).write_text(json.dumps({"fag": "electrical", "resultater": rows}), encoding="utf-8")
             write("1-basis.json", [{**row, "id": "X-1", "arm": "basis", "bestaaet": False}])
             write("2-basis.json", [{**row, "id": "X-1", "arm": "basis", "bestaaet": True},
                                    {**row, "id": "X-2", "arm": "basis", "bestaaet": True, "fejl": True}])
@@ -103,10 +103,10 @@ def test_efficiency_helpers():
                                     {**row, "id": "X-3", "arm": "plugin", "bestaaet": True, "sek": 8.0,
                                      "tokens_ud": 100}])
             write("9-ugyldig.json", [{**row, "id": "X-3", "arm": "plugin", "bestaaet": False}], res / "ugyldig")
-            basis, sources = exam.latest_basis("el", {"X-1", "X-2"})
+            basis, sources = exam.latest_basis("electrical", {"X-1", "X-2"})
             expect("nyeste basis genbruges", len(basis) == 1 and basis[0]["bestaaet"] and sources == {"2-basis.json"})
             expect("basis med kørselsfejl genbruges ikke", all(r["id"] != "X-2" for r in basis))
-            expect("kun-fejlede finder sidste plugin-fejl", exam.latest_failed_plugin("el") == {"X-1"})
+            expect("kun-fejlede finder sidste plugin-fejl", exam.latest_failed_plugin("electrical") == {"X-1"})
             text = exam.report([res / "3-plugin.json"], basis, sources)
             expect("rapport med genbrugt basis viser regression", "## Regressioner" in text and "- X-1" in text)
             expect("rapport viser tid pr. opgave", "| Tid pr. opgave (s) |" in text and "10.0" in text)
@@ -115,9 +115,9 @@ def test_efficiency_helpers():
     finally:
         exam.EXAM_DIR = original
     with tempfile.TemporaryDirectory() as tmp:
-        dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp))
+        dst = exam.prepare_plugin("byg-electrical", pathlib.Path(tmp))
         expect("videnbasens størrelse måles", exam.knowledge_base_bytes(dst) > 10_000)
-    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "run", "el", "--set", "holdout"],
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "run", "electrical", "--set", "holdout"],
                        capture_output=True, text=True)
     expect("holdout kræver --release", r.returncode == 1 and "--release" in r.stdout)
 
@@ -127,13 +127,13 @@ def test_holdout_gaps_are_not_listed():
              "bestaaet": False}]
     with tempfile.TemporaryDirectory() as tmp:
         f = pathlib.Path(tmp) / "r.json"
-        f.write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+        f.write_text(json.dumps({"fag": "electrical", "resultater": rows}), encoding="utf-8")
         text = exam.report([f])
     expect("holdout-fejl listes ikke som huller", "- H-1" not in text and "1 holdout-opgaver er ikke bestået" in text)
     rows.append({**rows[0], "arm": "basis", "bestaaet": True})
     with tempfile.TemporaryDirectory() as tmp:
         f = pathlib.Path(tmp) / "r.json"
-        f.write_text(json.dumps({"fag": "el", "resultater": rows}), encoding="utf-8")
+        f.write_text(json.dumps({"fag": "electrical", "resultater": rows}), encoding="utf-8")
         text = exam.report([f])
     expect("holdout-regression vises kun som antal", "H-1" not in text and "- og 1 i holdout" in text, text)
 
@@ -157,31 +157,31 @@ def test_case():
     expect("case-prompt har delene", "Del a) Strøm?" in prompt and "Del c) Fald?" in prompt)
     expect("case-prompt har blandede valgmuligheder", f"{key}) A" in prompt)
     other = next(k for k in options if k != key)
-    answer = f"Del a ...\nSVAR a: 16 A\nDel b\nSVAR b: {key}\nDel c\nSVAR c: 2,5 %\nSVAR: 16"
+    answer = f"Del a ...\nANSWER a: 16 A\nDel b\nANSWER b: {key}\nDel c\nANSWER c: 2,5 %\nANSWER: 16"
     g = exam.grade_case(t, answer, pathlib.Path("."), None)
     expect("case-dele rettes hver for sig", g["dele"] == {"a": True, "b": True, "c": False}, str(g))
     expect("case bestået ved 2/3 ≥ 60 %", g["bestaaet"] and abs(g["point"] - 0.667) < 0.01, str(g))
-    g = exam.grade_case(t, f"SVAR a: 10 A\nSVAR b: {other}\nSVAR c: 2 %", pathlib.Path("."), None)
+    g = exam.grade_case(t, f"ANSWER a: 10 A\nANSWER b: {other}\nANSWER c: 2 %", pathlib.Path("."), None)
     expect("case ikke bestået ved 1/3", not g["bestaaet"], str(g))
     leak = case_task(dele=[{"del": "a", "type": "tal", "spoergsmaal": "Ik?", "facit": {"vaerdi": 170, "enhed": "A"}},
                            {"del": "b", "type": "valg", "spoergsmaal": "Er 170 A nok?", "facit": "A",
                             "valgmuligheder": {"A": "ja", "B": "nej", "C": "måske"}}])
     expect("case-lækage af tal opdages", any("170" in w for w in exam.case_leaks(leak)), str(exam.case_leaks(leak)))
     expect("ingen falsk lækage", exam.case_leaks(case_task()) == [], str(exam.case_leaks(case_task())))
-    expect("SVAR uden del ignorerer deludsvar", exam.extract_answer("SVAR a: 3\nSVAR: 7") == "7")
+    expect("ANSWER uden del ignorerer deludsvar", exam.extract_answer("ANSWER a: 3\nANSWER: 7") == "7")
     original = exam.EXAM_DIR
     try:
         with tempfile.TemporaryDirectory() as tmp:
             exam.EXAM_DIR = pathlib.Path(tmp)
             write_fixture(exam.EXAM_DIR, [case_task(), case_task(id="C-2", saet="holdout")])
-            errors, _ = exam.validate("el")
+            errors, _ = exam.validate("electrical")
             expect("gyldig case", not errors, str(errors))
         with tempfile.TemporaryDirectory() as tmp:
             exam.EXAM_DIR = pathlib.Path(tmp)
             bad = case_task(dele=[{"del": "a", "type": "valg", "spoergsmaal": "?", "facit": "Z",
                                    "valgmuligheder": {"A": "1", "B": "2", "C": "3"}}])
             write_fixture(exam.EXAM_DIR, [bad, case_task(id="C-2", saet="holdout")])
-            errors, _ = exam.validate("el")
+            errors, _ = exam.validate("electrical")
             expect("case med én del afvises", any("mindst 2 dele" in e for e in errors), str(errors))
             expect("case-del med forkert facit afvises", any("C-1/a" in e and "facit" in e for e in errors), str(errors))
     finally:
@@ -205,18 +205,18 @@ def test_validation():
         with tempfile.TemporaryDirectory() as tmp:
             exam.EXAM_DIR = pathlib.Path(tmp)
             write_fixture(exam.EXAM_DIR, [task("E1", "udvikling"), task("E2", "holdout")])
-            errors, _ = exam.validate("el")
+            errors, _ = exam.validate("electrical")
             expect("gyldigt sæt", not errors, str(errors))
         with tempfile.TemporaryDirectory() as tmp:
             exam.EXAM_DIR = pathlib.Path(tmp)
             write_fixture(exam.EXAM_DIR, [task("E1", "udvikling")])
-            errors, _ = exam.validate("el")
+            errors, _ = exam.validate("electrical")
             expect("mål uden holdout afvises", any("holdout" in e for e in errors), str(errors))
         with tempfile.TemporaryDirectory() as tmp:
             exam.EXAM_DIR = pathlib.Path(tmp)
             write_fixture(exam.EXAM_DIR, [task("E1", "udvikling", facit="D"), task("E2", "holdout", maal=["M9"]),
                                           task("E3", "holdout", type="tal", facit=5)])
-            errors, _ = exam.validate("el")
+            errors, _ = exam.validate("electrical")
             expect("facit uden for valgmuligheder", any("facit 'D'" in e for e in errors), str(errors))
             expect("ukendt mål", any("M9" in e for e in errors), str(errors))
             expect("tal uden facit-objekt", any("tal kræver" in e for e in errors), str(errors))
@@ -226,19 +226,19 @@ def test_validation():
 
 def test_plugin_copy_without_memory():
     with tempfile.TemporaryDirectory() as tmp:
-        dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp))
-        agent = (dst / "agents" / "el-installatoer.md").read_text(encoding="utf-8")
+        dst = exam.prepare_plugin("byg-electrical", pathlib.Path(tmp))
+        agent = (dst / "agents" / "electrician.md").read_text(encoding="utf-8")
         head = agent[:agent.find("\n---", 4)]
         expect("plugin-kopi uden memory", "memory:" not in head)
-        expect("plugin-kopi beholder resten af frontmatter", "name: el-installatoer" in head and "model:" in head)
+        expect("plugin-kopi beholder resten af frontmatter", "name: electrician" in head and "model:" in head)
         manifest = json.loads((dst / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
         expect("plugin-kopi uden afhængigheder", "dependencies" not in manifest)
         expect("plugin-kopi uden evals", not (dst / "evals").exists())
     with tempfile.TemporaryDirectory() as tmp:
-        dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp), keep_memory=True)
+        dst = exam.prepare_plugin("byg-electrical", pathlib.Path(tmp), keep_memory=True)
         expect("--med-hukommelse beholder memory",
-               "memory: user" in (dst / "agents" / "el-installatoer.md").read_text(encoding="utf-8"))
-    original = (ROOT / "plugins" / "byg-el" / "agents" / "el-installatoer.md").read_text(encoding="utf-8")
+               "memory: user" in (dst / "agents" / "electrician.md").read_text(encoding="utf-8"))
+    original = (ROOT / "plugins" / "byg-electrical" / "agents" / "electrician.md").read_text(encoding="utf-8")
     expect("originalen er urørt", "memory: user" in original)
 
 
@@ -247,13 +247,13 @@ def test_plugin_arm_can_read_its_plugin():
         web = False
         max_turns = 12
         model = ""
-    extra = exam.arm_args("plugin", Args, pathlib.Path("/tmp/x/byg-el"), "byg-el:el-installatoer")
+    extra = exam.arm_args("plugin", Args, pathlib.Path("/tmp/x/byg-electrical"), "byg-electrical:electrician")
     expect("plugin-armen får læseadgang til plugin-kopien (--add-dir)",
-           extra[extra.index("--add-dir") + 1] == "/tmp/x/byg-el" if "--add-dir" in extra else False)
+           extra[extra.index("--add-dir") + 1] == "/tmp/x/byg-electrical" if "--add-dir" in extra else False)
     expect("basis-armen har ingen plugin", "--plugin-dir" not in exam.arm_args("basis", Args, None, ""))
     with tempfile.TemporaryDirectory() as tmp:
-        dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp), rev="HEAD")
-        expect("plugin fra git-revision", (dst / "agents" / "el-installatoer.md").is_file())
+        dst = exam.prepare_plugin("byg-electrical", pathlib.Path(tmp), rev="HEAD")
+        expect("plugin fra git-revision", (dst / "agents" / "electrician.md").is_file())
 
 
 def test_real_sets():

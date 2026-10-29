@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Format check of the frame files (references/rammer.md) so rows can be added over time.
+"""Format check of the frame files (references/frames.md) so rows can be added over time.
 
 Use: python3 scripts/check_frames.py
 Checks: table header, six cells per row, ID format and uniqueness, status in the source column
@@ -61,16 +61,16 @@ def check(files: dict[str, str], others: dict[str, str] | None = None) -> tuple[
                 errors.append(f"{loc}: P-række skal have fagrolle og dato, fx 'P – murermester, 2026-11-02'")
     for name, text in {**files, **(others or {})}.items():
         for rid in sorted(set(ID.findall(text)) - set(ids)):
-            errors.append(f"{name}: henviser til {rid}, som ikke findes i nogen rammer.md")
+            errors.append(f"{name}: henviser til {rid}, som ikke findes i nogen frames.md")
     return errors, counts
 
 
 def main() -> int:
     files = {str(f.relative_to(ROOT)): f.read_text(encoding="utf-8")
-             for f in sorted(ROOT.glob("plugins/*/skills/*/references/rammer.md"))}
+             for f in sorted(ROOT.glob("plugins/*/skills/*/references/frames.md"))}
     others = {str(f.relative_to(ROOT)): f.read_text(encoding="utf-8")
-             for pattern in ("plugins/**/*.md", "faelles/*.md", "skabelon/**/*.md")
-             for f in sorted(ROOT.glob(pattern)) if f.name != "rammer.md"}
+             for pattern in ("plugins/**/*.md", "shared/*.md", "template/**/*.md")
+             for f in sorted(ROOT.glob(pattern)) if f.name != "frames.md"}
     errors, counts = check(files, others)
     for f in errors:
         print(f"FEJL  {f}")

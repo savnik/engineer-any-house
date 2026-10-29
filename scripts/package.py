@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Builds distribution files in dist/.
 
-  dist/cowork/<plugin>.plugin  one per trade plugin and byg-kontrol (without evals) – trades require byg-kontrol
+  dist/cowork/<plugin>.plugin  one per trade plugin and byg-review (without evals) – trades require byg-review
   dist/cowork/byg.plugin       combined Cowork package: all agents, skills and hooks in one plugin named "byg"
   dist/engineer-any-house.zip  the whole repo (marketplace for Claude Code)
 

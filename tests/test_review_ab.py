@@ -62,8 +62,8 @@ def main() -> int:
     expect("sammendrag: pris pr. bestået", s["pris_pr_bestaaet_plugin"] == 0.14
            and s["pris_pr_bestaaet_med_kontrol"] == round((0.42 + 0.30 + 0.32) / 4, 4), s)
 
-    reg = review_ab.review_agent("byg-el")
-    expect("kontrolagent slås op i fagregistret", reg == "el-kontrol", reg)
+    reg = review_ab.review_agent("byg-electrical")
+    expect("kontrolagent slås op i fagregistret", reg == "electrical-review", reg)
 
     print(f"\n{len(FAILURES)} fejl")
     return 1 if FAILURES else 0

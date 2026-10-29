@@ -4,7 +4,7 @@
 Usage:  python3 scripts/check_data.py        (also runs from validate.py and the git pre-commit hook)
 
 Checks:
-  1. Structure  – no case folders (byg-sager/), case files, property reports, PDFs or review state in the repo.
+  1. Structure  – no case folders (byg-cases/), case files, property reports, PDFs or review state in the repo.
   2. Secrets    – no API keys: the local Datafordeler key and generic key patterns.
   3. Private terms – no case IDs from the local knowledge bank and no terms from ~/.config/engineer-any-house/private-termer.txt.
   4. Fingerprints – no text lines (>= 60 characters) copied from the local case folders. Lines that are already in
@@ -28,10 +28,10 @@ SKIP = {".git", ".claude", "dist", "__pycache__", "results", "node_modules", ".D
 TEXT_SUFFIXES = {".md", ".json", ".py", ".txt", ".yml", ".yaml", ".toml", ".sh", ".html", ".csv", ""}
 
 # Files that belong only in a case folder or the plugin's data folder
-CASE_FILES = {"projektgrundlag.md", "beslutningslog.md", "kontrollog.md", "budget.md", "tidsplan.md", "risici.md",
-             "graenseflader.md", "kontrolplan.md", "erfaringer.md", "status.md", "ejendomsdata.json",
-             "ejendomsdata.md", "tilstand.json", "forankringskoe.md", "sager.md"}
-CASE_DIRS = {"byg-sager", "fagnotater", "kvalitet", "bilag", "videnbank", "ejendomme"}
+CASE_FILES = {"project-basis.md", "decision-log.md", "review-log.md", "budget.md", "schedule.md", "risks.md",
+             "interfaces.md", "review-plan.md", "lessons-learned.md", "status.md", "ejendomsdata.json",
+             "ejendomsdata.md", "state.json", "anchoring-queue.md", "cases.md"}
+CASE_DIRS = {"byg-cases", "trade-notes", "quality", "attachments", "knowledge-bank", "properties"}
 KEY_PATTERNS = [re.compile(r"apiKey=[A-Za-z0-9_\-]{20,}"),
                    re.compile(r"(?i)(api[_-]?key|secret|password|token)\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{32,}")]
 CASE_ID = re.compile(r"\b\d{4}-\d{2}-\d{2}-[a-z0-9æøå-]+\b")
@@ -57,14 +57,14 @@ def local_secrets():
 
 
 def knowledge_banks():
-    return sorted((HOME / ".claude" / "plugins" / "data").glob("*/videnbank"))
+    return sorted((HOME / ".claude" / "plugins" / "data").glob("*/knowledge-bank"))
 
 
 def private_terms():
-    """Case IDs from the knowledge bank's sager.md + the user's own terms (address, names, companies …)."""
+    """Case IDs from the knowledge bank's cases.md + the user's own terms (address, names, companies …)."""
     terms = set()
     for vb in knowledge_banks():
-        s = vb / "sager.md"
+        s = vb / "cases.md"
         if s.exists():
             for line in s.read_text(encoding="utf-8").splitlines():
                 cell = line.split("|")[1].strip() if line.startswith("|") and line.count("|") > 2 else ""
@@ -79,18 +79,18 @@ def private_terms():
 
 
 def case_dirs():
-    """Paths from the knowledge bank's sager.md (the Sti column) and from ~/.config/engineer-any-house/sagsmapper.txt,
-    plus the property cards in byg-sager/ejendomme/ next to the case folders."""
+    """Paths from the knowledge bank's cases.md (the Sti column) and from ~/.config/engineer-any-house/case-dirs.txt,
+    plus the property cards in byg-cases/properties/ next to the case folders."""
     paths = set()
     for vb in knowledge_banks():
-        s = vb / "sager.md"
+        s = vb / "cases.md"
         if s.exists():
             paths |= {pathlib.Path(m).expanduser() for m in re.findall(r"`(/[^`]+|~/[^`]+)`", s.read_text(encoding="utf-8"))}
-    for f in (k / "sagsmapper.txt" for k in CONFIG_DIRS):
+    for f in (k / "case-dirs.txt" for k in CONFIG_DIRS):
         if f.exists():
             paths |= {pathlib.Path(line.strip()).expanduser() for line in f.read_text(encoding="utf-8").splitlines()
                       if line.strip() and not line.startswith("#")}
-    paths |= {p.parent / "ejendomme" for p in list(paths)}
+    paths |= {p.parent / "properties" for p in list(paths)}
     return sorted(p for p in paths if p.is_dir() and ROOT not in (p, *p.parents))
 
 
@@ -98,7 +98,7 @@ def fingerprints(dirs):
     lines = set()
     for m in dirs:
         for f in m.rglob("*.md"):
-            if "bilag" in f.relative_to(m).parts:
+            if "attachments" in f.relative_to(m).parts:
                 continue  # external and generated documents (e.g. ejendomsdata.md from the plugin's own script)
             rows = f.read_text(encoding="utf-8", errors="ignore").splitlines()
             for i, line in enumerate(rows):
@@ -149,21 +149,21 @@ def main() -> int:
     secrets = local_secrets()
     dirs = case_dirs()
     # property IDs (the file name of the property card) are typically an address
-    properties = {f.stem for m in dirs if m.name == "ejendomme" for f in m.glob("*.md")}
+    properties = {f.stem for m in dirs if m.name == "properties" for f in m.glob("*.md")}
     terms = sorted(set(private_terms()) | properties, key=len, reverse=True)
     prints = fingerprints(dirs) - template_lines()
     prints -= published_lines(prints)
 
     for f, rel in repo_files():
         # 1. Structure
-        if CASE_DIRS & set(rel.parts[:-1]) and "skabelon" not in rel.parts:
+        if CASE_DIRS & set(rel.parts[:-1]) and "template" not in rel.parts:
             errors.append(f"{rel}: ligger i en sags-/datamappe – hører ikke hjemme i repoet")
-        elif f.name in CASE_FILES and not {"skabelon", "evals", "tests"} & set(rel.parts):
+        elif f.name in CASE_FILES and not {"template", "evals", "tests"} & set(rel.parts):
             errors.append(f"{rel}: sagsfil – hører hjemme i en sagsmappe eller pluginets datamappe")
         # docs/img: README images rendered from the repo's own examples (scripts/demo_site.py --images)
         elif (f.suffix.lower() in (".pdf", ".docx", ".xlsx", ".jpg", ".jpeg", ".heic", ".png") and "evals" not in rel.parts
               and rel.parts[:2] != ("docs", "img")):
-            errors.append(f"{rel}: bilag/dokument – hører hjemme i sagsmappens bilag/")
+            errors.append(f"{rel}: attachments/dokument – hører hjemme i sagsmappens attachments/")
         if f.suffix.lower() not in TEXT_SUFFIXES:
             continue
         text = f.read_text(encoding="utf-8", errors="ignore")

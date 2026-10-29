@@ -34,15 +34,15 @@ def expect(name, ok, out=""):
 def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         home, repo = pathlib.Path(tmp) / "hjem", pathlib.Path(tmp) / "repo"
-        case_dir = pathlib.Path(tmp) / "arbejde" / "byg-sager" / CASE
+        case_dir = pathlib.Path(tmp) / "arbejde" / "byg-cases" / CASE
         case_dir.mkdir(parents=True)
-        (case_dir / "projektgrundlag.md").write_text(f"# Projektgrundlag\n\n{LINE}\n", encoding="utf-8")
-        properties = case_dir.parent / "ejendomme"
+        (case_dir / "project-basis.md").write_text(f"# Projektgrundlag\n\n{LINE}\n", encoding="utf-8")
+        properties = case_dir.parent / "properties"
         properties.mkdir()
         (properties / "lindevej-7b.md").write_text(f"# Ejendomskort\n\n| E-VVS-01 | Kedel | {PROPERTY_LINE} |\n", encoding="utf-8")
-        vb = home / ".claude" / "plugins" / "data" / "byg-test" / "videnbank"
+        vb = home / ".claude" / "plugins" / "data" / "byg-test" / "knowledge-bank"
         vb.mkdir(parents=True)
-        (vb / "sager.md").write_text(f"| Sag-id | Sti |\n|---|---|\n| {CASE} | `{case_dir}` |\n| lindevej-7b | – |\n", encoding="utf-8")
+        (vb / "cases.md").write_text(f"| Sag-id | Sti |\n|---|---|\n| {CASE} | `{case_dir}` |\n| lindevej-7b | – |\n", encoding="utf-8")
         (home / ".config" / "byg-data").mkdir(parents=True)
         (home / ".config" / "byg-data" / "datafordeler_api_key").write_text(KEY, encoding="utf-8")
         (home / ".config" / "engineer-any-house").mkdir(parents=True)
@@ -54,7 +54,7 @@ def main() -> int:
         (case_dir / "status.md").write_text(f"# Status\n{TEMPLATE_LINE}\n", encoding="utf-8")  # template used in the case
 
         code, out = run(home, repo)
-        expect("rent repo med testdata godkendes (sagsmappe + ejendomme)", code == 0 and "2 sagsmappe(r)" in out, out)
+        expect("rent repo med testdata godkendes (sagsmappe + properties)", code == 0 and "2 sagsmappe(r)" in out, out)
 
         cases = {
             "sag-id fra videnbanken afvises": ("plugins/p/eksempel.md", f"Se sagen {CASE}."),
@@ -62,11 +62,11 @@ def main() -> int:
             "privat term afvises": ("plugins/p/eksempel.md", "Huset på Solsikkevej 99 har …"),
             "kopieret sagstekst afvises": ("plugins/p/references/praksis.md", f"- **Erfaring:** {LINE}"),
             "kopieret tekst fra ejendomskort afvises": ("plugins/p/references/praksis.md", f"- {PROPERTY_LINE}"),
-            "ejendomskort i repoet afvises": ("ejendomme/lindevej-7b.md", "kort"),
+            "ejendomskort i repoet afvises": ("properties/lindevej-7b.md", "kort"),
             "lokal API-nøgle afvises": ("tests/fixture.py", f'KEY = "{KEY}"'),
             "nøgle i URL afvises": ("plugins/p/x.md", "https://graphql.datafordeler.dk/BBR/v3?apiKey=" + "A1b2" * 8),
-            "sagsmappe i repoet afvises": ("byg-sager/2031-01-01-x/noter.md", "noter"),
-            "sagsfil i repoet afvises": ("plugins/p/beslutningslog.md", "log"),
+            "sagsmappe i repoet afvises": ("byg-cases/2031-01-01-x/noter.md", "noter"),
+            "sagsfil i repoet afvises": ("plugins/p/decision-log.md", "log"),
             "PDF-bilag afvises": ("plugins/p/energimaerke.pdf", "%PDF"),
         }
         for name, (path, content) in cases.items():

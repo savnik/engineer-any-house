@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
-"""Forsøgslog og benchmark for forbedringer af fag-plugins (bruges af CI-agenten `ci-forbedring`).
+"""Forsøgslog og benchmark for forbedringer af fag-plugins (bruges af CI-agenten `ci-improvement`).
 
 Brug:
-  python3 scripts/experiment.py status [--trade el]        benchmark, åbne forsøg, forslag og udestående huller
-  python3 scripts/experiment.py list [--trade el] [--category videnbase] [--status afsluttet]
+  python3 scripts/experiment.py status [--trade electrical]        benchmark, åbne forsøg, forslag og udestående huller
+  python3 scripts/experiment.py list [--trade electrical] [--category videnbase] [--status afsluttet]
   python3 scripts/experiment.py show F-001
   python3 scripts/experiment.py search <ord> [<ord> ...]   er en idé eller en opgave afprøvet før?
-  python3 scripts/experiment.py new --trade el[,vvs] --category K --hypothesis "…" [--change "…"] [--tasks EL-012,…]
+  python3 scripts/experiment.py new --trade electrical[,plumbing] --category K --hypothesis "…" [--change "…"] [--tasks EL-012,…]
                                [--proposal]
   python3 scripts/experiment.py start F-007                gør et forslag til et åbent forsøg (noterer rev_foer)
   python3 scripts/experiment.py measure F-001 (--before | --after) <resultatfil> [<resultatfil> ...] [--rev REV]
   python3 scripts/experiment.py assess F-001               beslutningsreglen på de gemte målinger
   python3 scripts/experiment.py close F-001 --decision keep|discard|undecided --learning "…"
                                [--rationale "…"] [--rev-after REV] [--pr "#7"]
-  python3 scripts/experiment.py benchmark [--trade el]
+  python3 scripts/experiment.py benchmark [--trade electrical]
   python3 scripts/experiment.py check                      format, og at ingen holdout-ID'er står i loggen
 
 --decision keep|discard|undecided gemmes som behold|forkast|uafklaret i loggen.
 
-Loggen (`eksamen/forsoeg.json`) og benchmarket (`eksamen/benchmark.json`) ligger i repoet. De rummer kun
+Loggen (`exam/experiments.json`) og benchmarket (`exam/benchmark.json`) ligger i repoet. De rummer kun
 sammendrag pr. gruppe (sæt × opgavefil). Holdout-opgaver gemmes kun som antal og en hash af ID-listen, så
 loggen aldrig peger på enkelte holdout-opgaver. Resultatfilerne bag målingerne ligger lokalt og ignoreres af git.
 """
@@ -35,7 +35,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import exam  # noqa: E402
 
 ROOT = exam.ROOT
-LOG_FILE = exam.EXAM_DIR / "forsoeg.json"
+LOG_FILE = exam.EXAM_DIR / "experiments.json"
 BENCHMARK_FILE = exam.EXAM_DIR / "benchmark.json"
 CATEGORIES = {
     "videnbase": "ny eller ændret tekst i references/ eller SKILL.md",
@@ -101,7 +101,7 @@ def today() -> str:
 def task_files(trade: str) -> dict[str, str]:
     """Task id -> the task file it lives in (opgaver-a, opgaver-c, …). Files are separate sets, e.g. AK in -c."""
     out = {}
-    for f in sorted((exam.EXAM_DIR / trade).glob("opgaver*.json")):
+    for f in sorted((exam.EXAM_DIR / trade).glob("tasks*.json")):
         for t in json.loads(f.read_text(encoding="utf-8"))["opgaver"]:
             out[t["id"]] = f.stem
     return out
@@ -168,7 +168,7 @@ def totals(groups: dict, arm: str, prefix: str = "") -> dict:
 # ---------- decision rule ----------
 
 def assess(category: str, measurements: dict) -> tuple[str, list[str]]:
-    """Suggested decision and the reasons, per the rule in eksamen/README.md ("Forbedringsforsøg").
+    """Suggested decision and the reasons, per the rule in exam/README.md ("Forbedringsforsøg").
 
     behold:    the plugin arm passes at least NOISE_TASKS more of the same tasks, holdout was measured,
                no group falls by NOISE_TASKS or more, and cost per passed task rises at most PRICE_TOLERANCE;

@@ -14,11 +14,11 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-BIM = ROOT / "plugins/byg-bim/skills/bim-viden/scripts/bim.py"
-FEM = ROOT / "plugins/byg-statik/skills/statik-viden/scripts/fem.py"
-BIM_SPEC = ROOT / "plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml"
-FEM_SPEC = ROOT / "plugins/byg-statik/skills/statik-viden/assets/fem-eksempel-hus.yaml"
-VVS_DIAGRAM = ROOT / "plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg"
+BIM = ROOT / "plugins/byg-bim/skills/bim-knowledge/scripts/bim.py"
+FEM = ROOT / "plugins/byg-structural/skills/structural-knowledge/scripts/fem.py"
+BIM_SPEC = ROOT / "plugins/byg-bim/skills/bim-knowledge/assets/eksempel/model.yaml"
+FEM_SPEC = ROOT / "plugins/byg-structural/skills/structural-knowledge/assets/fem-example-house.yaml"
+VVS_DIAGRAM = ROOT / "plugins/byg-plumbing/skills/plumbing-knowledge/assets/schematic-example-house.svg"
 IMG = ROOT / "docs/img"
 REPO = "https://github.com/savnik/engineer-any-house"
 MODEL_VIEWER = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"
@@ -45,7 +45,7 @@ model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7
 </style></head><body>
 <header><h1>BIM model of the example house</h1>
 <p>The same house as the FEM model: structure, roof windows and the full plumbing and heating installation, with the south and west facades and the south roof face see-through.
-IFC4 built with <code>bim.py build</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
+IFC4 built with <code>bim.py build</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-knowledge/assets/eksempel/model.yaml">model.yaml</a>,
 exported with <code>bim.py export</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
 <model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
   camera-orbit="-35deg 75deg auto" shadow-intensity="0.6" exposure="0.85" tone-mapping="neutral" environment-image="neutral"></model-viewer>
@@ -65,7 +65,7 @@ main {{ max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16p
 <p>Generated in CI from the examples in the repository. · <a href="{repo}">GitHub</a></p></header>
 <main>
 <a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house with roof windows, central heating, hot and cold water and drains. Two facades and one roof face are see-through so the inside shows.</p></div></a>
-<a class="card" href="vvs/principdiagram.svg"><img src="vvs/principdiagram.svg" alt="" style="object-fit: contain; background: #fff"><div><h2>Plumbing and heating diagram</h2><p>The same house's central heating, hot and cold water and drains as a schematic, drawn by the VVS agent's method (Danish labels).</p></div></a>
+<a class="card" href="plumbing/schematic.svg"><img src="plumbing/schematic.svg" alt="" style="object-fit: contain; background: #fff"><div><h2>Plumbing and heating diagram</h2><p>The same house's central heating, hot and cold water and drains as a schematic, drawn by the VVS agent's method (Danish labels).</p></div></a>
 <a class="card" href="fem/"><img src="fem.png" alt=""><div><h2>FEM model</h2><p>The same house, with walls and slabs as shell elements: stresses, forces and deflection per load combination (Danish UI).</p></div></a>
 </main></body></html>
 """
@@ -93,8 +93,8 @@ def build(out: pathlib.Path):
         sys.exit(f"Forventede én HTML fra fem.py view i {work}, fandt {len(html)}")
     (out / "fem").mkdir()
     shutil.copy(html[0], out / "fem/index.html")
-    (out / "vvs").mkdir()
-    shutil.copy(VVS_DIAGRAM, out / "vvs/principdiagram.svg")
+    (out / "plumbing").mkdir()
+    shutil.copy(VVS_DIAGRAM, out / "plumbing/schematic.svg")
     (out / "index.html").write_text(INDEX_PAGE.format(style=STYLE, repo=REPO), encoding="utf-8")
     for name in ("bim.png", "fem.png"):
         if (IMG / name).exists():
@@ -132,13 +132,13 @@ def thumbnails(out: pathlib.Path):
         pg.wait_for_timeout(2500)
         pg.locator("#fem").screenshot(path=str(IMG / "fem.png"))
         pg.set_viewport_size({"width": 1400, "height": 1040})
-        pg.goto(f"{base}/vvs/principdiagram.svg")
-        pg.screenshot(path=str(IMG / "vvs.png"))
+        pg.goto(f"{base}/plumbing/schematic.svg")
+        pg.screenshot(path=str(IMG / "plumbing.png"))
         b.close()
     srv.shutdown()
     for name in ("bim.png", "fem.png"):
         shutil.copy(IMG / name, out / name)
-    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png, {IMG}/vvs.png")
+    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png, {IMG}/plumbing.png")
 
 
 def main():

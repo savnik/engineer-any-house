@@ -30,9 +30,9 @@ One example house from the repository, built and computed by the tools in CI. Th
 | [![BIM model of the example house](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM model with von Mises stresses](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
 | Built with `bim.py build`, exported to glTF with `bim.py export` | Computed with `fem.py calc`, shown with `fem.py view`: pick a load combination and a result |
 
-The VVS agent draws the same house's plumbing and heating as a schematic ([SVG source](plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg), method in [principdiagram.md](plugins/byg-vvs/skills/vvs-viden/references/principdiagram.md)). Click to open it full size.
+The VVS agent draws the same house's plumbing and heating as a schematic ([SVG source](plugins/byg-plumbing/skills/plumbing-knowledge/assets/schematic-example-house.svg), method in [schematic.md](plugins/byg-plumbing/skills/plumbing-knowledge/references/schematic.md)). Click to open it full size.
 
-[![Plumbing and heating schematic of the example house](docs/img/vvs.png)](https://savnik.github.io/engineer-any-house/vvs/principdiagram.svg)
+[![Plumbing and heating schematic of the example house](docs/img/plumbing.png)](https://savnik.github.io/engineer-any-house/plumbing/schematic.svg)
 
 ## Plugins
 
@@ -40,15 +40,15 @@ The VVS agent draws the same house's plumbing and heating as a schematic ([SVG s
 |---|---|
 | `byg-team` | Meta plugin that installs everything below |
 | `byg` | Project lead (skill and agent), `/byg:…` commands, case folders and knowledge bank |
-| `byg-kontrol` | Reviewer agents for every trade and the project lead, plus the hooks that enforce the review loop |
+| `byg-review` | Reviewer agents for every trade and the project lead, plus the hooks that enforce the review loop |
 | `byg-data` | Property lookup from an address: building record, cadastre, local plan, listing status, soil contamination, groundwater, climate, energy label and valuation |
-| `byg-vvs` · `byg-el` · `byg-murer` · `byg-ventilation` · `byg-maler` · `byg-toemrer` | Plumbing and heating, electrical, masonry, ventilation, painting and carpentry specialists |
-| `byg-statik` | Structural engineer with FEM and load calculation tools |
-| `byg-arkitekt` | Architect: layout, extensions, dormers, facades and planning-permission screening |
-| `byg-anlaeg` | Landscaper: paving, terraces, rainwater, drainage, grading, fences and trees |
+| `byg-plumbing` · `byg-electrical` · `byg-masonry` · `byg-ventilation` · `byg-painting` · `byg-carpentry` | Plumbing and heating, electrical, masonry, ventilation, painting and carpentry specialists |
+| `byg-structural` | Structural engineer with FEM and load calculation tools |
+| `byg-architecture` | Architect: layout, extensions, dormers, facades and planning-permission screening |
+| `byg-landscape` | Landscaper: paving, terraces, rainwater, drainage, grading, fences and trees |
 | `byg-bim` | BIM modeller, drawing comparer and the `bim.py` tool (IFC4, drawings, sections, 3D, drawing import) |
 
-The trade plugins depend on `byg-kontrol`, so quality control is always installed with them.
+The trade plugins depend on `byg-review`, so quality control is always installed with them.
 
 ## Installation
 
@@ -67,16 +67,16 @@ Or from a local clone: `claude plugin marketplace add ./engineer-any-house`. Res
 
 | Command | Purpose |
 |---|---|
-| `/byg:nyt-projekt <description>` | Start a project: interview → case folder → reviewed project brief → plan |
-| `/byg:koordiner [case]` | Ask the specialists, review their answers and combine them into a plan |
+| `/byg:new-project <description>` | Start a project: interview → case folder → reviewed project brief → plan |
+| `/byg:coordinate [case]` | Ask the specialists, review their answers and combine them into a plan |
 | `/byg:status [case]` | Phase, next steps, open questions and review status |
-| `/byg:spoerg <trade> <question>` | Quick question to one specialist, with a reviewed answer |
-| `/byg:erfaring [case]` | Harvest lessons from a finished case into the knowledge bank |
-| `/byg:nyt-fag <trade-id>` | Add a new trade with its own reviewer |
+| `/byg:ask <trade> <question>` | Quick question to one specialist, with a reviewed answer |
+| `/byg:lessons [case]` | Harvest lessons from a finished case into the knowledge bank |
+| `/byg:new-trade <trade-id>` | Add a new trade with its own reviewer |
 
-You can also run the project lead as the main agent: `claude --agent byg:projektleder`. You write in Danish, and the agents answer in Danish.
+You can also run the project lead as the main agent: `claude --agent byg:project-manager`. You write in Danish, and the agents answer in Danish.
 
-Cases are stored in `byg-sager/<YYYY-MM-DD>-<name>/` in your working directory. Keep sessions short and continue a case in a new session with `/byg:status <case-id>`, since the case folder remembers the rest.
+Cases are stored in `byg-cases/<YYYY-MM-DD>-<name>/` in your working directory. Keep sessions short and continue a case in a new session with `/byg:status <case-id>`, since the case folder remembers the rest.
 
 ## Data and privacy
 
@@ -84,17 +84,17 @@ Cases and your data stay on your machine: case folders in your working directory
 
 ## Measured, not assumed
 
-Specialists are measured with exams built from the official learning objectives for the trade, so far for electrical, plumbing and heating, ventilation and structural engineering. Each exam has a held-out set that the improvement agent cannot read. Changes to a knowledge base or prompt are run against the exam with and without the plugin and kept only if they measurably help. See `eksamen/README.md` (Danish).
+Specialists are measured with exams built from the official learning objectives for the trade, so far for electrical, plumbing and heating, ventilation and structural engineering. Each exam has a held-out set that the improvement agent cannot read. Changes to a knowledge base or prompt are run against the exam with and without the plugin and kept only if they measurably help. See `exam/README.md` (Danish).
 
 ## Contributing
 
 Contributions are welcome, especially:
 
 - **New countries.** The protocols, review loop, hooks, BIM tools and exam framework are country-neutral. A new edition needs its own knowledge bases, reviewer knowledge and exams based on that country's regulations.
-- **New trades** via `/byg:nyt-fag` or `python3 scripts/new_trade.py`.
+- **New trades** via `/byg:new-trade` or `python3 scripts/new_trade.py`.
 - **Corrections** to the knowledge bases, with a source.
 
-The developer documentation is in Danish: the development section of [README.da.md](README.da.md#udvikling) and [ARKITEKTUR.md](ARKITEKTUR.md). In short, run `python3 scripts/sync_protocol.py && python3 scripts/validate.py` after changes, and put a version note in `versionsnoter/` instead of raising versions on a branch. Everyone is welcome to open issues and pull requests. `main` is protected: every change goes through a pull request, CI (structure validation, ruff, BIM tests and the FEM self-test) must pass, and only maintainers with write access can merge.
+The developer documentation is in Danish: the development section of [README.da.md](README.da.md#udvikling) and [ARCHITECTURE.md](ARCHITECTURE.md). In short, run `python3 scripts/sync_protocol.py && python3 scripts/validate.py` after changes, and put a version note in `release-notes/` instead of raising versions on a branch. Everyone is welcome to open issues and pull requests. `main` is protected: every change goes through a pull request, CI (structure validation, ruff, BIM tests and the FEM self-test) must pass, and only maintainers with write access can merge.
 
 ## License
 

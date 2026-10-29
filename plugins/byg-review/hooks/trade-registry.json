@@ -1,0 +1,97 @@
+{
+  "fag": {
+    "plumbing": {
+      "agent": "plumber",
+      "kontrol": "plumbing-review"
+    },
+    "electrical": {
+      "agent": "electrician",
+      "kontrol": "electrical-review"
+    },
+    "masonry": {
+      "agent": "mason",
+      "kontrol": "masonry-review"
+    },
+    "ventilation": {
+      "agent": "ventilation-expert",
+      "kontrol": "ventilation-review"
+    },
+    "painting": {
+      "agent": "painter",
+      "kontrol": "painting-review"
+    },
+    "carpentry": {
+      "agent": "carpenter",
+      "kontrol": "carpentry-review"
+    },
+    "bim": {
+      "agent": "bim-modeller",
+      "kontrol": "bim-review",
+      "hjaelpere": [
+        "bim-comparer"
+      ],
+      "opslag": [
+        "bim-lookup"
+      ],
+      "skriv": [
+        "bim/proposals/*",
+        "bim/sources/*"
+      ],
+      "skriv_ny": [
+        "bim/model.yaml"
+      ],
+      "git_ekstra": [
+        "bim/history/*",
+        "bim/comparison/*"
+      ],
+      "vaerktoejskontrol": true
+    },
+    "structural": {
+      "agent": "structural-engineer",
+      "kontrol": "structural-review",
+      "regnevaerktoej": [
+        "statik.py",
+        "fem.py"
+      ],
+      "skriv": [
+        "fem/*"
+      ],
+      "kontrol_skrivefri": {
+        "fem.py": {
+          "calc": "--no-files",
+          "test": "",
+          "template": "",
+          "result": ""
+        }
+      }
+    },
+    "architecture": {
+      "agent": "architect",
+      "kontrol": "architecture-review"
+    },
+    "landscape": {
+      "agent": "landscaper",
+      "kontrol": "landscape-review"
+    }
+  },
+  "skriv_alle": [
+    "trade-notes/{fag}.md",
+    "trade-notes/{fag}-*.md",
+    "attachments/{fag}/*",
+    "proposals/{fag}-*__*.md"
+  ],
+  "projekt_kontrol": "project-review",
+  "kontrol_plugin": "byg-review",
+  "samlet_plugin": "byg",
+  "maks_forsoeg": 2,
+  "maks_runder": 2,
+  "maks_sammenligninger": 3,
+  "stikproeve": {
+    "andel": 0.34,
+    "aldrig_fag": [
+      "electrical",
+      "structural"
+    ],
+    "begrundelse": "F-012 (2026-10-20): på enkeltstående fagspørgsmål fangede let kontrol 0 af 7 forkerte svar og afviste 6 rigtige. Stikprøve kun for spørgsmål uden sag; el og statik altid kontrolleret."
+  }
+}

@@ -42,7 +42,7 @@ def frontmatter(path: pathlib.Path) -> dict | None:
 
 # Runs with the system python3 before any venv exists: standard library and sibling modules only.
 # bim.py/fem.py: only module-level imports (their libraries are imported after switching into the venv).
-STDLIB_ONLY = ["plugins/*/hooks/*.py", "scripts/hooks/*.py", "faelles/environment.py",
+STDLIB_ONLY = ["plugins/*/hooks/*.py", "scripts/hooks/*.py", "shared/environment.py",
               "plugins/*/skills/*/scripts/environment.py", "plugins/*/skills/*/scripts/statik.py"]
 STDLIB_ONLY_TOP = ["plugins/*/skills/*/scripts/bim.py", "plugins/*/skills/*/scripts/fem.py"]
 
@@ -124,8 +124,8 @@ def main() -> int:
                 ERRORS.append(f"Agentnavn '{a.stem}' findes i både {agents[a.stem]} og {p.name} (konflikt i samlet pakke)")
             agents[a.stem] = p.name
             tools = {t.strip() for t in fm.get("tools", "").split(",")}
-            if p.name == "byg-kontrol":
-                calc_reviewers = {v["kontrol"] for v in (read_json(PLUGINS / "byg-kontrol" / "hooks" / "fagregister.json")
+            if p.name == "byg-review":
+                calc_reviewers = {v["kontrol"] for v in (read_json(PLUGINS / "byg-review" / "hooks" / "trade-registry.json")
                                                 or {"fag": {}})["fag"].values() if v.get("regnevaerktoej")}
                 forbidden = {"Write", "Edit", "MultiEdit", "Agent", "NotebookEdit"} | (set() if a.stem in calc_reviewers else {"Bash"})
                 if tools & forbidden:
@@ -133,7 +133,7 @@ def main() -> int:
                                 " (Bash kun i fag med regneværktøj, låst af hooks/calc_guard.py)")
                 if "memory" in fm:
                     ERRORS.append(f"{rel}: kontrolagenter må ikke have memory (giver Write/Edit)")
-                # Default model sonnet; KONTROLNIVEAU: fuld is called with model "opus" (enforced by review_gate.py)
+                # Default model sonnet; REVIEW-LEVEL: full is called with model "opus" (enforced by review_gate.py)
                 if fm.get("model") not in ("sonnet", "opus"):
                     WARNINGS.append(f"{rel}: kontrolagenten skal køre på sonnet (let) eller opus")
                 if not str(fm.get("maxTurns") or "").isdigit():
@@ -141,10 +141,10 @@ def main() -> int:
             elif p.name != "byg":
                 if "Agent" in tools:
                     ERRORS.append(f"{rel}: fagagenter må ikke have Agent-værktøjet (de kalder ikke selv kontrollen)")
-                helper_names = {h for v in (read_json(PLUGINS / "byg-kontrol" / "hooks" / "fagregister.json") or {"fag": {}})["fag"].values()
+                helper_names = {h for v in (read_json(PLUGINS / "byg-review" / "hooks" / "trade-registry.json") or {"fag": {}})["fag"].values()
                       for h in v.get("hjaelpere", []) + v.get("opslag", [])}
-                if a.stem not in helper_names and "FÆLLES-PROTOKOL:START" not in a.read_text(encoding="utf-8"):
-                    ERRORS.append(f"{rel}: mangler FÆLLES-PROTOKOL-markører")
+                if a.stem not in helper_names and "SHARED-PROTOCOL:START" not in a.read_text(encoding="utf-8"):
+                    ERRORS.append(f"{rel}: mangler SHARED-PROTOCOL-markører")
         for s in sorted(p.glob("skills/*/SKILL.md")):
             fm = frontmatter(s) or {}
             rel = s.relative_to(ROOT)
@@ -156,31 +156,31 @@ def main() -> int:
                 ERRORS.append(f"Skill '{s.parent.name}' findes i både {skills[s.parent.name]} og {p.name} (konflikt i samlet pakke)")
             skills[s.parent.name] = p.name
 
-    reg = read_json(PLUGINS / "byg-kontrol" / "hooks" / "fagregister.json") or {"fag": {}}
-    review_agents = {a.stem for a in (PLUGINS / "byg-kontrol" / "agents").glob("*.md")}
+    reg = read_json(PLUGINS / "byg-review" / "hooks" / "trade-registry.json") or {"fag": {}}
+    review_agents = {a.stem for a in (PLUGINS / "byg-review" / "agents").glob("*.md")}
     registered = {v["kontrol"] for v in reg["fag"].values()} | {reg.get("projekt_kontrol")}
     for trade, v in reg["fag"].items():
         if v["agent"] not in agents:
-            ERRORS.append(f"fagregister: fagagent '{v['agent']}' ({trade}) findes ikke")
+            ERRORS.append(f"trade-registry: fagagent '{v['agent']}' ({trade}) findes ikke")
         if v["kontrol"] not in review_agents:
-            ERRORS.append(f"fagregister: kontrolagent '{v['kontrol']}' ({trade}) findes ikke i byg-kontrol")
-        if not (PLUGINS / "byg-kontrol" / "skills" / "kontrol-viden" / "references" / "fag" / f"{trade}.md").exists():
-            ERRORS.append(f"kontrol-viden mangler fagfil for '{trade}'")
+            ERRORS.append(f"trade-registry: kontrolagent '{v['kontrol']}' ({trade}) findes ikke i byg-review")
+        if not (PLUGINS / "byg-review" / "skills" / "review-knowledge" / "references" / "trades" / f"{trade}.md").exists():
+            ERRORS.append(f"review-knowledge mangler fagfil for '{trade}'")
     for k in review_agents - registered:
-        ERRORS.append(f"Kontrolagent '{k}' er ikke registreret i fagregister.json")
+        ERRORS.append(f"Kontrolagent '{k}' er ikke registreret i trade-registry.json")
     helpers = {h for v in reg["fag"].values() for h in v.get("hjaelpere", [])}
     lookups = {h for v in reg["fag"].values() for h in v.get("opslag", [])}
     for h in sorted(helpers - set(agents)):
-        ERRORS.append(f"fagregister: hjælpeagent '{h}' findes ikke")
+        ERRORS.append(f"trade-registry: hjælpeagent '{h}' findes ikke")
     for h in sorted(lookups - set(agents)):
-        ERRORS.append(f"fagregister: opslagsagent '{h}' findes ikke")
+        ERRORS.append(f"trade-registry: opslagsagent '{h}' findes ikke")
     for h in sorted(lookups & helpers):
-        ERRORS.append(f"fagregister: '{h}' er både hjælpe- og opslagsagent")
+        ERRORS.append(f"trade-registry: '{h}' er både hjælpe- og opslagsagent")
     for n, plugin in agents.items():
-        if plugin.startswith("byg-") and plugin not in ("byg-kontrol", "byg-team") and n not in {v["agent"] for v in reg["fag"].values()} \
+        if plugin.startswith("byg-") and plugin not in ("byg-review", "byg-team") and n not in {v["agent"] for v in reg["fag"].values()} \
                 and n not in helpers | lookups:
-            ERRORS.append(f"Fagagent '{n}' ({plugin}) har ingen modsvarende kontrolagent i fagregister.json")
-        if n in helpers | lookups and agents[n] not in ("byg-kontrol",):
+            ERRORS.append(f"Fagagent '{n}' ({plugin}) har ingen modsvarende kontrolagent i trade-registry.json")
+        if n in helpers | lookups and agents[n] not in ("byg-review",):
             fm = frontmatter(next(PLUGINS.glob(f"*/agents/{n}.md"))) or {}
             if {t.strip() for t in fm.get("tools", "").split(",")} & {"Write", "Edit", "MultiEdit", "Agent", "NotebookEdit"} \
                     or "memory" in fm:
@@ -234,10 +234,10 @@ def main() -> int:
         for path in sorted({f for m in patterns for f in ROOT.glob(m)}):
             if foreign := non_stdlib(path, top_only):
                 ERRORS.append(f"{path.relative_to(ROOT)}: importerer {', '.join(foreign)} – hooks og opstartsscripts må kun "
-                            "bruge standardbiblioteket (ARKITEKTUR.md, Python-miljøer)")
+                            "bruge standardbiblioteket (ARCHITECTURE.md, Python-miljøer)")
     r = subprocess.run([sys.executable, str(ROOT / "scripts" / "release.py"), "--check"], capture_output=True, text=True)
     if r.returncode:
-        ERRORS.append("Versionsnoter er ugyldige (versionsnoter/README.md):\n" + r.stdout)
+        ERRORS.append("Versionsnoter er ugyldige (release-notes/README.md):\n" + r.stdout)
     r = subprocess.run([sys.executable, str(ROOT / "tests" / "test_review_gate.py")], capture_output=True, text=True)
     if r.returncode:
         ERRORS.append("Hook-tests fejlede:\n" + r.stdout[-2000:])
@@ -247,7 +247,7 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROOT / "tests" / "test_calc_guard.py")], capture_output=True, text=True)
     if r.returncode:
         ERRORS.append("Tests af regnevagten fejlede:\n" + r.stdout[-2000:])
-    for v in sorted(PLUGINS.glob("*/skills/*-viden/scripts/statik.py")):
+    for v in sorted(PLUGINS.glob("*/skills/*-knowledge/scripts/statik.py")):
         r = subprocess.run([sys.executable, str(v), "test"], capture_output=True, text=True)
         if r.returncode:
             ERRORS.append(f"Selvtest af {v.relative_to(ROOT)} fejlede:\n" + r.stdout[-2000:])
@@ -265,7 +265,7 @@ def main() -> int:
         ERRORS.append("Kontrol-armen (parsing af domme eller opgørelse) fejlede:\n" + r.stdout[-2000:])
     r = subprocess.run([sys.executable, str(ROOT / "tests" / "test_frames.py")], capture_output=True, text=True)
     if r.returncode:
-        ERRORS.append("Rammefilerne (references/rammer.md: format, status eller ID'er) fejlede:\n" + r.stdout[-2000:])
+        ERRORS.append("Rammefilerne (references/frames.md: format, status eller ID'er) fejlede:\n" + r.stdout[-2000:])
     r = subprocess.run([sys.executable, str(ROOT / "scripts" / "check_data.py")], capture_output=True, text=True)
     if r.returncode:
         ERRORS.append("Dataseparation – sagsdata eller hemmeligheder i repoet:\n" + r.stdout[-2000:])

@@ -1,0 +1,224 @@
+{
+  "fag": "structural",
+  "plugin": "byg-structural",
+  "agent": "structural-engineer",
+  "note": "Svendeniveau = læringsmål fra studieordningen for bygningskonstruktør (PBA), ordret, for de dele der handler om konstruktioner og statik, suppleret med BR18 kap. 15 (funktionskravet). Mesterniveau = de faglige krav til certificering som statiker for konstruktionsklasse 2–4 efter BEK 1693/2023 § 12, ordret, suppleret med BR18 kap. 26 (indplacering i konstruktionsklasse). Agenten er rådgivende og ikke ansvarlig statiker; mesteropgaverne prøver, om den forstår og kan forklare reglerne, regne overslag og pege på, hvornår en certificeret statiker skal ind. Rolle 'uden' = ligger uden for agentens rolle.",
+  "kilder": [
+    {
+      "id": "PBA-BK-2025",
+      "titel": "Samlet studieordning, Bygningskonstruktør (professionsbachelor), 2025, Zealand – Sjællands Erhvervsakademi (nationale læringsmål for kerneområderne)",
+      "url": "https://www.zealand.dk/wp-content/uploads/2016/09/Samlet-studieordning-Bygningskonstruktor-2025.pdf",
+      "dato": "2025-08-01",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "BEK-1693-2023",
+      "titel": "BEK nr. 1693 af 12/12/2023 om certificeringsordninger for dokumentation af tekniske forhold i bygningsreglementet (§ 12, faglige krav til certificerede statikere)",
+      "url": "https://www.retsinformation.dk/eli/lta/2023/1693/pdf",
+      "dato": "2024-01-01",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "BR18-K15",
+      "titel": "Bygningsreglement 2018, kapitel 15 Konstruktioner (§§ 340–357)",
+      "url": "https://www.bygningsreglementet.dk/media/52dac0sr/krav.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "BR18-K26",
+      "titel": "Bygningsreglement 2018, kapitel 26 Konstruktionsklasser (§§ 485–489)",
+      "url": "https://www.bygningsreglementet.dk/media/g0cg2i4y/krav.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "BR18-K28",
+      "titel": "Bygningsreglement 2018, kapitel 28 Dokumentation af bærende konstruktioner (§§ 494–505)",
+      "url": "https://www.bygningsreglementet.dk/media/gc0nas1o/krav.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "BR18-K30",
+      "titel": "Bygningsreglement 2018, kapitel 30 Kontrol af bærende konstruktioner (§§ 523–528)",
+      "url": "https://www.bygningsreglementet.dk/media/bs3hnbfc/krav.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1990-NA",
+      "titel": "DS/EN 1990 DK NA:2024, Projekteringsgrundlag – nationalt anneks (KFI, partialkoefficienter, ψ-faktorer, konsekvensklasser, kontrol)",
+      "url": "https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1991-1-1-NA",
+      "titel": "DS/EN 1991-1-1 DK NA:2024, Egenlast og nyttelast – nationalt anneks",
+      "url": "https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1991-1-3-NA",
+      "titel": "DS/EN 1991-1-3 DK NA:2024, Snelast – nationalt anneks",
+      "url": "https://www.bygningsreglementet.dk/media/acwmshr5/ds-en-199113-dk-na-2024-rev-20231219-final-version20240701-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1992-NA",
+      "titel": "DS/EN 1992-1-1 DK NA:2024, Betonkonstruktioner – nationalt anneks",
+      "url": "https://www.bygningsreglementet.dk/media/rtdfjh4m/ds-en-1992-1-1-dk-na-2024_2024-07-01-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1993-NA",
+      "titel": "DS/EN 1993-1-1 DK NA:2019, Stålkonstruktioner – nationalt anneks",
+      "url": "https://www.bygningsreglementet.dk/media/cbckb4eq/ds-en-1993-1-1-dk-na-2019_2024-07-01-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1995-NA",
+      "titel": "DS/EN 1995-1-1 DK NA:2024, Trækonstruktioner – nationalt anneks",
+      "url": "https://www.bygningsreglementet.dk/media/bntpjiqk/ds-en-1995-1-1-dk-na-2024_01-07-2024-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "DSEN1996-NA",
+      "titel": "DS/EN 1996-1-1 DK NA:2019, Murværkskonstruktioner – nationalt anneks",
+      "url": "https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf",
+      "laest": "2026-10-18"
+    },
+    {
+      "id": "BEK-2107-2021",
+      "titel": "BEK nr. 2107 af 12/11/2021 om bygge- og anlægsarbejde (Arbejdstilsynet)",
+      "url": "https://www.retsinformation.dk/eli/lta/2021/2107/pdf",
+      "laest": "2026-10-18"
+    }
+  ],
+  "maal": [
+    {
+      "id": "STAT-BK-01",
+      "kilde": "PBA-BK-2025 kerneområde 2.1 Boligbyggeri, viden",
+      "niveau": "svend",
+      "tekst": "have viden om grundlæggende, anvendte matematiske og bygningsfysiske principper herunder tekniske installationer og statik",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-BK-02",
+      "kilde": "PBA-BK-2025 kerneområde 2.1 Boligbyggeri, kompetencer",
+      "niveau": "svend",
+      "tekst": "håndtere konstruktionsløsninger og dokumentationsmateriale på et grundlæggende niveau",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-BK-03",
+      "kilde": "PBA-BK-2025 kerneområde 2.2 Byggeri op til 2½ etage, viden",
+      "niveau": "svend",
+      "tekst": "kunne forstå og reflektere over almindelige konstruktioner og bygningsfysiske principper herunder statik og tekniske installationer",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-BK-04",
+      "kilde": "PBA-BK-2025 kerneområde 2.2 Byggeri op til 2½ etage, færdigheder",
+      "niveau": "svend",
+      "tekst": "vurdere teoretiske og praksisnære problemstillinger i projektering og produktion af mindre byggerier og begrunde de valgte handlinger og løsninger",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-BK-05",
+      "kilde": "PBA-BK-2025 kerneområde 2.5 Renovering, viden",
+      "niveau": "svend",
+      "tekst": "have udviklingsbaseret viden om registrering og vurdering af eksisterende forhold",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-BK-06",
+      "kilde": "PBA-BK-2025 kerneområde 2.2 Byggeri op til 2½ etage, viden",
+      "niveau": "svend",
+      "tekst": "have viden om teorier, metoder og værktøjer til styrring af byggeriets økonomi i projekteringsfasen",
+      "rolle": "uden",
+      "begrundelse": "Økonomistyring hører til projektlederen, ikke til den statiske rådgivning."
+    },
+    {
+      "id": "STAT-BK-07",
+      "kilde": "PBA-BK-2025 kerneområde 2.2 Byggeri op til 2½ etage, færdigheder",
+      "niveau": "svend",
+      "tekst": "anvende metoder, værktøjer og standarder, herunder brugen af digitale bygningsinformations-modeller",
+      "rolle": "uden",
+      "begrundelse": "BIM-modellering varetages af den særskilte BIM-agent (byg-bim); statikeren bruger modellen som grundlag, men bygger den ikke."
+    },
+    {
+      "id": "STAT-BR15",
+      "kilde": "BR18-K15 § 344, stk. 1",
+      "niveau": "svend",
+      "tekst": "Konstruktioner skal projekteres og udføres, så de kan modstå de normalt forekommende statiske og dynamiske påvirkninger i forhold til konstruktionens placering og anvendelse.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-BR26",
+      "kilde": "BR18-K26 § 485",
+      "niveau": "mester",
+      "tekst": "De bærende konstruktioner i et byggeri skal indplaceres i en konstruktionsklasse på baggrund af: 1. konstruktionens konsekvensklasse, jf. DS/EN 1990 Projekteringsgrundlag for bærende konstruktioner, og tilhørende DS/EN 1990 DK NA, 2. konstruktionens kompleksitet og 3. erfaringer med konstruktionstypen.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-2a",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 2, litra a",
+      "niveau": "mester",
+      "tekst": "Konstruktiv forståelse og redegørelse for virkemåde af bygningers hovedkonstruktioner, konstruktionsafsnit og samlinger.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-2b",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 2, litra b",
+      "niveau": "mester",
+      "tekst": "Udpegning af kritiske forhold af betydning for sikkerheden og anvendeligheden af bærende konstruktioner.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-2c",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 2, litra c",
+      "niveau": "mester",
+      "tekst": "Redegørelse for terminologi, principper, hovedregler og sammenhæng i standarder for bærende konstruktioner og relevante regler for CE-mærkning af bygningsdele.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-3a",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 3, litra a",
+      "niveau": "mester",
+      "tekst": "Fortolkning og vurdering af resultater af forundersøgelser samt formulering af projektgrundlag.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-3b",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 3, litra b",
+      "niveau": "mester",
+      "tekst": "Strukturering og udformning af dokumentation for bærende konstruktioner.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-3c",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 3, litra c",
+      "niveau": "mester",
+      "tekst": "Udarbejdelse af statiske beregninger, vurdering af fundne resultater og redegørelse for anvendte simuleringsmodellers brug og begrænsninger.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-4a",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 4, litra a",
+      "niveau": "mester",
+      "tekst": "Planlægning, gennemførelse og dokumentation for kontrol af statisk dokumentation, jf. bygningsreglement 2018, kapitel 30, og udformning af kontrolplaner og kontrolrapporter for statisk dokumentation.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-4b",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 4, litra b",
+      "niveau": "mester",
+      "tekst": "Planlægning, gennemførelse og dokumentation for kontrol af udførelse af bærende konstruktioner, herunder udarbejdelse af kontrolplaner og kontrolrapporter.",
+      "rolle": "i"
+    },
+    {
+      "id": "STAT-CERT-5",
+      "kilde": "BEK-1693-2023 § 12, stk. 1, nr. 5",
+      "niveau": "mester",
+      "tekst": "Viden om udformning af dokumentation for det færdige byggeri, jf. bygningsreglement 2018, kapitel 28 samt god praksis for dokumentation af bærende konstruktioner som anført i SBi-anvisning 271, Dokumentation og kontrol af bærende konstruktioner.",
+      "rolle": "i"
+    }
+  ]
+}

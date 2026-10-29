@@ -1,5 +1,5 @@
 {
-  "description": "byg-bim: bim-sammenligner og bim-opslag er skrivebeskyttede – de må kun køre læsende bim.py-kommandoer.",
+  "description": "byg-bim: bim-comparer og bim-lookup er skrivebeskyttede – de må kun køre læsende bim.py-kommandoer.",
   "hooks": {
     "PreToolUse": [
       {

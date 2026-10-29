@@ -16,11 +16,11 @@ import subprocess
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-PYTHON = "3.11"  # = MIN_PYTHON in faelles/environment.py
+PYTHON = "3.11"  # = MIN_PYTHON in shared/environment.py
 LOCKS = [
-    "plugins/byg-bim/skills/bim-viden/scripts/requirements.in",
-    "plugins/byg-bim/skills/bim-viden/scripts/requirements-test.in",
-    "plugins/byg-statik/skills/statik-viden/scripts/requirements-fem.in",
+    "plugins/byg-bim/skills/bim-knowledge/scripts/requirements.in",
+    "plugins/byg-bim/skills/bim-knowledge/scripts/requirements-test.in",
+    "plugins/byg-structural/skills/structural-knowledge/scripts/requirements-fem.in",
 ]
 PIN = re.compile(r"^([A-Za-z0-9._-]+)==([^\s;]+)")
 

@@ -18,7 +18,7 @@ måles plugin + hukommelse). Begge kører headless i en tom mappe uden brugerens
 (medmindre --web). Standard er kun plugin-armen: basis afhænger ikke af videnbasen, så rapporten genbruger det nyeste
 basis-svar pr. opgave. Holdout-sættet bruges kun til måling – aldrig som grundlag for ny tekst i videnbasen – og
 kræver --release. --only-failed kører kun de udviklingsopgaver, plugin-armen ikke bestod sidst.
-Resultater gemmes i eksamen/<fag>/results/ (ignoreres af git). 'run' kræver login og koster tokens.
+Resultater gemmes i exam/<fag>/results/ (ignoreres af git). 'run' kræver login og koster tokens.
 """
 import argparse
 import concurrent.futures
@@ -34,7 +34,7 @@ import tempfile
 import threading
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-EXAM_DIR = ROOT / "eksamen"
+EXAM_DIR = ROOT / "exam"
 TYPES = {"valg", "tal", "fri", "case"}
 PART_TYPES = {"valg", "tal", "fri"}
 CASE_PASS_SHARE = 0.6  # like the written trade exams: about 60 of 100 points to pass
@@ -45,11 +45,11 @@ LEVELS = {"svend", "mester"}
 ROLES = {"i", "uden"}
 
 ANSWER_INSTRUCTIONS = {
-    "valg": "Afslut med én linje i formatet `SVAR: <bogstav>`.",
-    "tal": "Vis kort beregningen, og afslut med én linje i formatet `SVAR: <tal> <enhed>`.",
+    "valg": "Afslut med én linje i formatet `ANSWER: <bogstav>`.",
+    "tal": "Vis kort beregningen, og afslut med én linje i formatet `ANSWER: <tal> <enhed>`.",
     "fri": "Svar fagligt og konkret, højst ca. 300 ord.",
     "case": "Besvar hver del under overskriften 'Del <bogstav>'. Afslut regnedele med én linje "
-            "`SVAR <bogstav>: <tal> <enhed>` og valgdele med `SVAR <bogstav>: <bogstav for svaret>`. "
+            "`ANSWER <bogstav>: <tal> <enhed>` og valgdele med `ANSWER <bogstav>: <bogstav for svaret>`. "
             "Skøn- og rådgivningsdele besvares fagligt og konkret med højst ca. 200 ord pr. del.",
 }
 EXAM_PREAMBLE = (
@@ -59,7 +59,7 @@ EXAM_PREAMBLE = (
 )
 GRADER_PROMPT = """Du er censor ved en dansk fagprøve. Bedøm besvarelsen strengt efter kriterierne og intet andet.
 
-OPGAVE:
+TASK:
 {question}
 
 KRITERIER FOR BESTÅET (alle skal være opfyldt):
@@ -68,14 +68,14 @@ KRITERIER FOR BESTÅET (alle skal være opfyldt):
 IKKE BESTÅET, hvis noget af dette gælder:
 {fail_if}
 
-BESVARELSE:
+RESPONSE:
 <<<
 {answer}
 >>>
 
 Bedøm det faglige indhold. Henvisninger i parentes i et kriterium (paragraffer, normer, afsnit) er censorens kilde og skal ikke citeres i besvarelsen, medmindre kriteriet udtrykkeligt kræver en henvisning. Et fagligt korrekt svar, der siger det samme med andre ord, opfylder kriteriet. Et forsigtigt forbehold er ikke en fejl.
 
-Tag stilling til hvert kriterium med én linje (`K1: ja|nej – kort begrundelse`). Afslut med præcis én linje: `DOM: BESTÅET` eller `DOM: IKKE BESTÅET`."""
+Tag stilling til hvert kriterium med én linje (`K1: ja|nej – kort begrundelse`). Afslut med præcis én linje: `VERDICT: BESTÅET` eller `VERDICT: IKKE BESTÅET`."""
 
 
 CASE_GRADER_PROMPT = """Du er censor ved en dansk mesterprøve. Bedøm kun de nævnte dele af besvarelsen strengt efter deres kriterier.
@@ -87,28 +87,28 @@ CASE:
 
 {parts}
 
-BESVARELSE:
+RESPONSE:
 <<<
 {answer}
 >>>
 
-For hver del: én linje pr. kriterium (`<del>K1: ja|nej – kort begrundelse`) og derefter præcis én linje `DOM <del>: BESTÅET` eller `DOM <del>: IKKE BESTÅET`. En del er kun bestået, hvis alle dens kriterier er opfyldt og intet af dens 'ikke bestået'-forhold gælder."""
+For hver del: én linje pr. kriterium (`<del>K1: ja|nej – kort begrundelse`) og derefter præcis én linje `VERDICT <del>: BESTÅET` eller `VERDICT <del>: IKKE BESTÅET`. En del er kun bestået, hvis alle dens kriterier er opfyldt og intet af dens 'ikke bestået'-forhold gælder."""
 
 
 # ---------- loading and validation ----------
 
 def load_trade(trade: str) -> tuple[dict, list[dict]]:
     d = EXAM_DIR / trade
-    goals = json.loads((d / "laeringsmaal.json").read_text(encoding="utf-8"))
-    # Tasks may be split across opgaver*.json (one writer per file); they are validated as one set.
+    goals = json.loads((d / "learning-goals.json").read_text(encoding="utf-8"))
+    # Tasks may be split across tasks*.json (one writer per file); they are validated as one set.
     tasks = []
-    for f in sorted(d.glob("opgaver*.json")):
+    for f in sorted(d.glob("tasks*.json")):
         tasks += json.loads(f.read_text(encoding="utf-8"))["opgaver"]
     return goals, tasks
 
 
 def all_trades() -> list[str]:
-    return sorted(p.name for p in EXAM_DIR.iterdir() if (p / "laeringsmaal.json").is_file()) if EXAM_DIR.is_dir() else []
+    return sorted(p.name for p in EXAM_DIR.iterdir() if (p / "learning-goals.json").is_file()) if EXAM_DIR.is_dir() else []
 
 
 def validate(trade: str) -> tuple[list[str], list[str]]:
@@ -120,7 +120,7 @@ def validate(trade: str) -> tuple[list[str], list[str]]:
         return [f"{trade}: kan ikke indlæses ({e})"], []
     for key in ("fag", "plugin", "agent", "kilder", "maal"):
         if key not in goals:
-            errors.append(f"{trade}/laeringsmaal.json: mangler '{key}'")
+            errors.append(f"{trade}/learning-goals.json: mangler '{key}'")
     plugin_dir = ROOT / "plugins" / goals.get("plugin", "")
     if not (plugin_dir / "agents" / f"{goals.get('agent')}.md").is_file():
         errors.append(f"{trade}: agenten {goals.get('plugin')}:{goals.get('agent')} findes ikke")
@@ -327,12 +327,12 @@ def format_key(t: dict) -> str:
 # Claude Code returns these as an ordinary result text when the account limit is hit.
 LIMIT_RE = re.compile(r"hit your (session|usage|weekly) limit|rate.?limit|overloaded", re.IGNORECASE)
 
-ANSWER_RE = re.compile(r"^\W*SVAR\W*:\s*(.+?)\s*$", re.IGNORECASE | re.MULTILINE)
+ANSWER_RE = re.compile(r"^\W*ANSWER\W*:\s*(.+?)\s*$", re.IGNORECASE | re.MULTILINE)
 
 
 def extract_answer(text: str, part: str = "") -> str | None:
     if part:
-        pattern = re.compile(rf"^\W*SVAR\s*{re.escape(part)}\W*:\s*(.+?)\s*$", re.IGNORECASE | re.MULTILINE)
+        pattern = re.compile(rf"^\W*ANSWER\s*{re.escape(part)}\W*:\s*(.+?)\s*$", re.IGNORECASE | re.MULTILINE)
         matches = pattern.findall(text or "")
     else:
         matches = [m for m in ANSWER_RE.findall(text or "") if not re.match(r"[a-h]\W*:", m, re.IGNORECASE)]
@@ -360,7 +360,7 @@ def parse_number(s: str) -> float | None:
 def grade_choice(task: dict, text: str, part: str = "") -> tuple[bool, str]:
     ans = extract_answer(text, part)
     if ans is None:
-        return False, "ingen SVAR-linje"
+        return False, "ingen ANSWER-linje"
     letter = re.match(r"([A-Za-z])\b", ans)
     got = letter.group(1).upper() if letter else ans[:1].upper()
     return got == str(task["facit"]).upper(), f"svarede {got}, facit {task['facit']}"
@@ -369,7 +369,7 @@ def grade_choice(task: dict, text: str, part: str = "") -> tuple[bool, str]:
 def grade_number(task: dict, text: str, part: str = "") -> tuple[bool, str]:
     ans = extract_answer(text, part)
     if ans is None:
-        return False, "ingen SVAR-linje"
+        return False, "ingen ANSWER-linje"
     value = parse_number(ans)
     if value is None:
         return False, f"intet tal i '{ans}'"
@@ -381,7 +381,7 @@ def grade_number(task: dict, text: str, part: str = "") -> tuple[bool, str]:
 
 
 def grade_verdict(text: str) -> tuple[bool, str]:
-    m = re.findall(r"DOM:\s*(IKKE BESTÅET|BESTÅET)", text or "", re.IGNORECASE)
+    m = re.findall(r"VERDICT:\s*(IKKE BESTÅET|BESTÅET)", text or "", re.IGNORECASE)
     if not m:
         return False, "bedømmeren gav ingen dom"
     return m[-1].upper() == "BESTÅET", m[-1].upper()
@@ -418,7 +418,7 @@ def strip_memory(agent_file: pathlib.Path) -> bool:
 
 
 def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, rev: str = "") -> pathlib.Path:
-    """Copy of the plugin without dependencies, so it loads without byg-kontrol (same as eval_trade.py).
+    """Copy of the plugin without dependencies, so it loads without byg-review (same as eval_trade.py).
 
     By default the agents' 'memory: user' is removed: the exam then measures the plugin alone, not the
     plugin plus the local agent memory (which may hold experience from the user's own cases)."""
@@ -520,7 +520,7 @@ def grade(task: dict, text: str, work: pathlib.Path, args) -> dict:
         fail_if="\n".join(f"- {c}" for c in task.get("fail_hvis", [])) or "- (ingen)",
         answer=text)
     g = run_claude(grader, work, ["--tools", "", "--max-turns", "1", "--model", args.grader], args.timeout)
-    if g.get("is_error") or LIMIT_RE.search((g.get("result") or "")[:300]) and "DOM:" not in (g.get("result") or ""):
+    if g.get("is_error") or LIMIT_RE.search((g.get("result") or "")[:300]) and "VERDICT:" not in (g.get("result") or ""):
         return {"bestaaet": False, "fejl": True, "note": "kørselsfejl i bedømmelsen: "
                 + (g.get("fejl") or (g.get("result") or "")[:120]), "pris_bedoemmelse": g.get("total_cost_usd") or 0}
     ok, note = grade_verdict(g.get("result", ""))
@@ -552,12 +552,12 @@ def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
                        ["--tools", "", "--max-turns", "1", "--model", args.grader], args.timeout)
         verdict = g.get("result") or ""
         out["pris_bedoemmelse"] = g.get("total_cost_usd") or 0
-        if g.get("is_error") or "DOM" not in verdict:
+        if g.get("is_error") or "VERDICT" not in verdict:
             return {**out, "bestaaet": False, "fejl": True, "note": "kørselsfejl i bedømmelsen: "
                     + (g.get("fejl") or verdict[:120])}
         out["bedoemmelse"] = verdict
         for d in free:
-            m = re.findall(rf"DOM\s*{d['del']}\W*:\s*(IKKE BESTÅET|BESTÅET)", verdict, re.IGNORECASE)
+            m = re.findall(rf"VERDICT\s*{d['del']}\W*:\s*(IKKE BESTÅET|BESTÅET)", verdict, re.IGNORECASE)
             results[d["del"]] = bool(m) and m[-1].upper() == "BESTÅET"
             notes.append(f"{d['del']}: {m[-1].upper() if m else 'ingen dom'}")
     share = sum(results.values()) / len(task["dele"])
@@ -640,7 +640,7 @@ def cmd_run(args) -> int:
     by_task = {t["id"]: t for t in tasks}
     lock = threading.Lock()
     results = []
-    with tempfile.TemporaryDirectory(prefix="eksamen-") as tmpname:
+    with tempfile.TemporaryDirectory(prefix="exam-") as tmpname:
         tmp = pathlib.Path(tmpname)
         plugin_dir = (prepare_plugin(goals["plugin"], tmp, args.with_memory, args.plugin_rev)
                       if "plugin" in arms else None)
@@ -885,7 +885,7 @@ def main() -> int:
     p.add_argument("--grader", default="sonnet")
     p.add_argument("--timeout", type=int, default=600)
     args = ap.parse_args()
-    # English CLI choices → the Danish values stored in eksamen data and result files.
+    # English CLI choices → the Danish values stored in exam data and result files.
     if getattr(args, "set", None):
         args.set = CLI_VALUES.get(args.set, args.set)
     if getattr(args, "arm", None):

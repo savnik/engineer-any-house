@@ -24,23 +24,23 @@
       "description": "Ejendomsdata: BBR, matrikel, plan, fredning, jord og grundvand, klima, energimærke og vurdering ud fra en adresse."
     },
     {
-      "name": "byg-kontrol",
-      "source": "./plugins/byg-kontrol",
+      "name": "byg-review",
+      "source": "./plugins/byg-review",
       "description": "Uafhængige kontrolagenter pr. fag, kontrolviden og hook-håndhævet loop (højst 3 forsøg pr. runde, RCA og forbedring af fagagenten, højst 3 runder)."
     },
     {
-      "name": "byg-vvs",
-      "source": "./plugins/byg-vvs",
+      "name": "byg-plumbing",
+      "source": "./plugins/byg-plumbing",
       "description": "VVS-mester: vand, afløb, varme, varmepumper og vådrumsinstallationer."
     },
     {
-      "name": "byg-el",
-      "source": "./plugins/byg-el",
+      "name": "byg-electrical",
+      "source": "./plugins/byg-electrical",
       "description": "El-installatør: installationer, kapacitet, elbil, solceller og særlige rum."
     },
     {
-      "name": "byg-murer",
-      "source": "./plugins/byg-murer",
+      "name": "byg-masonry",
+      "source": "./plugins/byg-masonry",
       "description": "Murermester: murværk, puds, fugt i mur og kælder, vådrum og fliser."
     },
     {
@@ -49,13 +49,13 @@
       "description": "Ventilationsekspert: luftskifte, udsugning, anlæg, skimmel og indeklima."
     },
     {
-      "name": "byg-maler",
-      "source": "./plugins/byg-maler",
+      "name": "byg-painting",
+      "source": "./plugins/byg-painting",
       "description": "Malermester: underlag, systemvalg, vinduer, facader, bly/PCB og vådrumsmaling."
     },
     {
-      "name": "byg-toemrer",
-      "source": "./plugins/byg-toemrer",
+      "name": "byg-carpentry",
+      "source": "./plugins/byg-carpentry",
       "description": "Tømrermester: tage, undertag, efterisolering, dampspærre, vinduer og bærende træ."
     },
     {
@@ -64,18 +64,18 @@
       "description": "BIM-modellør: IFC-model af huset ud fra tegninger, opmåling og BBR – tegningsimport med uafhængig sammenligning, kontrol, tegninger og redigering af IFC-filer."
     },
     {
-      "name": "byg-statik",
-      "source": "./plugins/byg-statik",
+      "name": "byg-structural",
+      "source": "./plugins/byg-structural",
       "description": "Statiker: hvad er bærende, vægfjernelse, bjælker og vederlag, tag og bjælkelag, fundering, revner og sætninger – overslag og review af statisk dokumentation (rådgivende)."
     },
     {
-      "name": "byg-arkitekt",
-      "source": "./plugins/byg-arkitekt",
+      "name": "byg-architecture",
+      "source": "./plugins/byg-architecture",
       "description": "Arkitekt: planløsning og disposition, tilbygning, kvist og facade, myndighedsscreening (byggetilladelse, bebyggelsesprocent, afstand til skel, lokalplan, bevaring) – skitser og BIM-forslag (rådgivende)."
     },
     {
-      "name": "byg-anlaeg",
-      "source": "./plugins/byg-anlaeg",
+      "name": "byg-landscape",
+      "source": "./plugins/byg-landscape",
       "description": "Anlægsgartner: belægning og terrasser, regnvand og faskiner, omfangsdræn og terrænfald, terrænregulering og støttemure, hegn, træer og beplantning."
     }
   ]

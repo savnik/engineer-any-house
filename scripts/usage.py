@@ -28,10 +28,10 @@ import sys
 WEIGHTS = {"input_tokens": 1.0, "cache_read_input_tokens": 0.1, "cache_creation_input_tokens": 1.25, "output_tokens": 5.0}
 CONTEXT_KEYS = ("input_tokens", "cache_creation_input_tokens", "cache_read_input_tokens")
 ATTEMPT_RE = re.compile(r"Fors(?:ø|o)g:\s*(\d)")
-DELIVERABLE_RE = re.compile(r"LEVERANCE:\s*(\S+)")
+DELIVERABLE_RE = re.compile(r"DELIVERABLE:\s*(\S+)")
 TARGET_TEXT = "hovedtråd og fagagenter under ca. 800, kontrolagenter under ca. 1.500"
 IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".webp")
-IMAGE_CAP, EDIT_CAP = 10, 5   # faelles/protokol.md: at most 10 images per call, about 5 Edit rounds
+IMAGE_CAP, EDIT_CAP = 10, 5   # shared/protocol.md: at most 10 images per call, about 5 Edit rounds
 
 
 def read_transcript(path: pathlib.Path) -> dict:

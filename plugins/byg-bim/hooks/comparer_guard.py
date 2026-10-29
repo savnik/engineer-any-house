@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""PreToolUse (Bash): bim-sammenligner and bim-opslag may only run read-only bim.py commands.
+"""PreToolUse (Bash): bim-comparer and bim-lookup may only run read-only bim.py commands.
 
 Allowed: [BIM=<path>; ] python3 <…/bim.py | "$BIM"> <command> …, where the command is in the agent's list in ALLOWED
-(the comparer: also 'decode check' and 'check --out <…/bim/sammenligning/…>').
+(the comparer: also 'decode check' and 'check --out <…/bim/comparison/…>').
 Everything else (several commands, redirection, rm/mv/cp, editing) is denied. Other agents are not affected.
 Fail-safe: an unexpected error does not block.
 """
@@ -12,12 +12,12 @@ import shlex
 import sys
 
 ALLOWED = {
-    "bim-sammenligner": {"compare", "grid", "lines", "draw", "show", "find", "info", "scale", "measure", "decode", "check"},
-    "bim-opslag": {"info", "find", "show", "measure"},
+    "bim-comparer": {"compare", "grid", "lines", "draw", "show", "find", "info", "scale", "measure", "decode", "check"},
+    "bim-lookup": {"info", "find", "show", "measure"},
 }
 REPLY = {
-    "bim-sammenligner": "Du retter aldrig selv – beskriv afvigelsen i dit svar.",
-    "bim-opslag": "Du slår kun op – ændringer i modellen laver bim-modelloer.",
+    "bim-comparer": "Du retter aldrig selv – beskriv afvigelsen i dit svar.",
+    "bim-lookup": "Du slår kun op – ændringer i modellen laver bim-modeller.",
 }
 
 
@@ -26,7 +26,7 @@ def deny(reason: str) -> None:
                                              "permissionDecisionReason": reason}}, ensure_ascii=False))
 
 
-def check(cmd: str, agent: str = "bim-sammenligner") -> str | None:
+def check(cmd: str, agent: str = "bim-comparer") -> str | None:
     """None = allowed; otherwise the reason for denial."""
     c = cmd.strip()
     m = re.match(r'^BIM=("[^"]+"|\'[^\']+\'|\S+)\s*(;|&&)\s*', c)
@@ -46,8 +46,8 @@ def check(cmd: str, agent: str = "bim-sammenligner") -> str | None:
         return "kun 'decode check'"
     if parts[2] == "check":
         out = parts[parts.index("--out") + 1] if "--out" in parts[:-1] else ""
-        if "/bim/sammenligning/" not in out.replace("\\", "/") + "/":
-            return "'check' kun med --out under <sagsmappe>/bim/sammenligning/"
+        if "/bim/comparison/" not in out.replace("\\", "/") + "/":
+            return "'check' kun med --out under <sagsmappe>/bim/comparison/"
         if "--draw" in parts:
             return "'check' uden --draw (brug 'draw' til tegninger)"
     return None
