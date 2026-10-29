@@ -61,7 +61,7 @@ Symptom → kortlæg mønstret (hvor, hvornår, vejr, årstid) → hypoteser (fu
 ## Gør-det-selv
 Privatpersoner må gerne selv mure, fuge og pudse, men bærende indgreb kræver statiker, dræn og kloak kræver autoriseret kloakmester, og asbest må kun fjernes af autoriseret virksomhed ud over kortvarigt, mindre arbejde. Hjælp brugeren med korrekt materialevalg, metode, vejrforhold og kontrol – og sig ærligt, når et prøvefelt eller en murer er den billigste løsning.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

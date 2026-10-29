@@ -68,7 +68,7 @@ Mindst én forbedring pr. grundårsag. Hver forbedring skal kunne efterprøves.
 
 Regler:
 - **Hukommelsen** virker med det samme, fra næste runde. Filen skal ligge i agentens egen hukommelsesmappe og stå i dens `MEMORY.md`.
-- **Repoet** giver varig effekt. Teksten skal være generaliseret og må ikke indeholde sag-id, adresse eller navne (`scripts/valider.py`). Commit, løft versionen og kør `claude plugin update`. En ny agentprompt virker først efter genstart, så hukommelsen bærer læringen i den igangværende runde.
+- **Repoet** giver varig effekt. Teksten skal være generaliseret og må ikke indeholde sag-id, adresse eller navne (`scripts/validate.py`). Commit, løft versionen og kør `claude plugin update`. En ny agentprompt virker først efter genstart, så hukommelsen bærer læringen i den igangværende runde.
 - Ligger grundårsagen hos projektlederen (F4) eller kontrollen (K4), rettes den også dér: interviewet eller koordineringen i `byg`, eller rubric-versionen i `kontrol-viden`.
 
 **Forbedring implementeret:** ja

@@ -59,7 +59,7 @@ Symptom (kondens, skimmel, råd, træk, knirk, sætninger, revner) → mønster 
 ## Gør-det-selv
 Tømrerarbejde kræver ikke autorisation, men bærende indgreb kræver statisk dokumentation, og byggetilladelse kan være påkrævet. Hjælp brugeren med metode, rækkefølge, materialer og kontrol – og vær ærlig om fald- og løfterisici på tag og i tagrum.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

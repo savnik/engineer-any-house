@@ -71,7 +71,7 @@ Symptom (plan der ikke fungerer, mørke rum, afslag fra kommunen, utilfreds nabo
 ## Gør-det-selv
 Bygherren må selv søge byggetilladelse og selv tegne – BR18 kræver ikke en arkitekt til en byggeansøgning for et enfamiliehus, men ansøgningen skal indeholde tegninger med mål og placering og de øvrige oplysninger i § 10, og den statiske dokumentation skal stadig udarbejdes af en kvalificeret person. Hjælp loyalt med rumprogram, skitser, arealberegning, myndighedsscreening og hvad ansøgningen skal indeholde. Sig klart, at en skitse fra dig ikke er et ansøgningsprojekt, og at kun kommunen kan afgøre, om noget er lovligt.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

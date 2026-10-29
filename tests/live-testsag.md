@@ -7,8 +7,8 @@ Tidsforbrug: 60–90 minutter. Kontrolagenterne kører på Opus, så en fuld kø
 ## Dækning – hvad er allerede testet, og hvad mangler
 | Niveau | Hvad | Status |
 |---|---|---|
-| Enhed | Hook-logikken (`tests/test_kontrol_gate.py`, 27 tests) | Består – men kun med simulerede hændelser |
-| Struktur | `scripts/valider.py --claude` (manifester, navne, stier, protokoller) | Består |
+| Enhed | Hook-logikken (`tests/test_review_gate.py`, 27 tests) | Består – men kun med simulerede hændelser |
+| Struktur | `scripts/validate.py --claude` (manifester, navne, stier, protokoller) | Består |
 | Evals | `claude plugin eval` pr. plugin | Ikke kørt |
 | **End-to-end** | **Denne testsag** | **Mangler – det er formålet** |
 | Cowork | Samlet `byg.plugin` med hooks | Mangler (fase F) |
@@ -38,7 +38,7 @@ Tidsforbrug: 60–90 minutter. Kontrolagenterne kører på Opus, så en fuld kø
 LOG=$(find ~/.claude -path '*kontrol/log.jsonl' 2>/dev/null | head -1); echo "$LOG"
 tail -n 5 "$LOG"
 BK=$(dirname "$(dirname "$LOG")")
-CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/kontrol_gate.py status
+CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/review_gate.py status
 ```
 Finder `find` intet, efter at der har været et fagkald, kører hooks ikke – se afsnit 6.
 
@@ -76,7 +76,7 @@ Kør `/byg:koordiner`.
 | B3 | Fag → modsvarende kontrol | Hver fagleverance følges af sit eget fags kontrolagent | `kvalitet/kontrollog.md`, hook-log |
 | B4 | Dommens form | JSON-blok; blokerende fund har krav, kilde og evidens; "godkendt" kun uden åbne kritiske/væsentlige fund | `kvalitet/*.json` |
 | B5 | Retur ved afvisning | Kun de blokerende fund sendes ordret retur (ingen mindre fund, ingen nye ønsker); fagnotatet får "Kontrolrespons" og "Revisioner"; forsøg 2 registreres | Fagnotat, status-kommandoen |
-| B5b | Effektivitet | Kontrolkald kører i forgrunden (ingen statuskald for at vente); prisopslag laves i en subagent; projektlederen foreslår en ny session med `/byg:status <sag-id>`, når opgaven er færdig, eller når hooken minder om kontekstbudgettet (> 200k) | Transcript, `scripts/forbrug.py` |
+| B5b | Effektivitet | Kontrolkald kører i forgrunden (ingen statuskald for at vente); prisopslag laves i en subagent; projektlederen foreslår en ny session med `/byg:status <sag-id>`, når opgaven er færdig, eller når hooken minder om kontekstbudgettet (> 200k) | Transcript, `scripts/usage.py` |
 | B5c | Ejendomskort og høst | Fakta om huset står i `byg-sager/ejendomme/<ejendom-id>.md` med kilde og dato og citeres med ID i fagnotaterne; fagagenten melder nye fakta under "Til ejendomskortet"; sagen høstes ved afslutning (`**Erfaringshøst:**` i status.md) | Ejendomskort, fagnotater, status.md |
 | B6 | Uafhængighed | Kontrolagenten bruger egne kilder (WebSearch/WebFetch) og retter ikke selv i notatet | Transcript, notatets historik |
 
@@ -97,7 +97,7 @@ Skriv: *"Test af kontrol-loopet: bed vvs-mester fastholde, at tæthedsprøvning 
 | D1 | Loop | Kontrollen afviser; fagagenten bestrider uden kilde eller retter ikke; forsøg 2 og 3 afvises | Status, `kvalitet/*.json` |
 | D2 | Stop | Et 4. fagkald på samme ID afvises af hooken | Transcript |
 | D3 | RCA | `kvalitet/RCA-<id>.md` følger skabelonen: hvad forsøg 1 manglede, 5 Why-kæde(r) med evidens og handlingsbar grundårsag, årsagskategori, forbedring af fagagenten og 'Forbedring implementeret: ja' | Sagsmappen |
-| D4 | Ny runde | Fagkald under samme ID afvises før forbedringslinjen og tillades efter. Status viser runde 2/3 forsøg 1/3 | `kontrol_gate.py status` |
+| D4 | Ny runde | Fagkald under samme ID afvises før forbedringslinjen og tillades efter. Status viser runde 2/3 forsøg 1/3 | `review_gate.py status` |
 | D4 | Eskalering | Du får en kort status og en konkret beslutning, du skal træffe | Samtalen |
 
 Bliver fagagenten "for fornuftig" og giver kontrollen ret, er det et godt resultat for kvaliteten – notér det, og betragt D som ikke udløst.
@@ -155,9 +155,9 @@ Installér `byg.plugin` i Cowork (ikke samtidig med marketplace-installationen) 
 | G | | |
 
 ## 6. Hvis noget fejler
-- **Hooks kører ikke:** tjek at `python3` findes i den terminal, Claude Code startes fra; se `/hooks`; start med `claude --debug` og se efter fejl fra `kontrol_gate.py`.
+- **Hooks kører ikke:** tjek at `python3` findes i den terminal, Claude Code startes fra; se `/hooks`; start med `claude --debug` og se efter fejl fra `review_gate.py`.
 - **Forkerte agentnavne:** sammenlign `/agents` med navnene i `plugins/byg-kontrol/hooks/fagregister.json`.
 - **Kontrollen er for streng eller for blød:** notér leverance-ID og dom – det er input til en ny rubric-version.
-- **Nulstil en leverance under test:** `CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/kontrol_gate.py nulstil <leverance-id>`
+- **Nulstil en leverance under test:** `CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/review_gate.py nulstil <leverance-id>`
 
 Send mig bagefter resultatskemaet, output fra status-kommandoen og de dele af sagsmappen, der fejlede. Så retter jeg pluginet og laver eval-cases, der fanger fejlene fremover.

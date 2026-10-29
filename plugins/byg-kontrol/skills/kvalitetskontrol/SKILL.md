@@ -130,7 +130,7 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 - Hovedtråden kan ikke afslutte, mens sessionens leverancer afventer kontrol eller er afvist (én påmindelse pr. stop). En stoppet leverance giver én påmindelse om at eskalere til brugeren. RCA kræves kun, når brugeren har bedt om en ny runde.
 - **Én skriver pr. fil:** en fagagents Write/Edit i `byg-sager/` uden for dens egne filer afvises (afsnit 8).
 - Hovedtråden kan heller ikke afslutte, mens et godkendt forslag ikke kunne flettes (konflikt), før konflikten er løst.
-- Status for alle leverancer: `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py" status`.
+- Status for alle leverancer: `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py" status`.
 
 ## 8. Én skriver pr. fil, forslag og revisionsstyring
 Fag- og kontrolkald kører parallelt (afsnit 2, punkt 7). For at de ikke skriver oven i hinanden, har hver fil i sagen én ejer:
@@ -143,7 +143,7 @@ Fag- og kontrolkald kører parallelt (afsnit 2, punkt 7). For at de ikke skriver
 | `bim/model.yaml` (BIM-hovedmodellen) | `bim.py flet` | BIM-forslag (skill `tegningsimport`) |
 
 - **Forslag flettes ved godkendelse.** Hooken gemmer målfilerne som basis, når fagkaldet starter, og fletter det ind, når kontrollen godkender leverancen: rækker med samme ID erstattes, nye ID'er tilføjes sidst i afsnittets tabel, og en ændret værdi i ejendomskortet flyttes til "Erstattede oplysninger". Forslaget flyttes til `forslag/flettet/` og logges i `forslag/flettelog.md`. Et afvist forslag bliver liggende.
-- **Konflikt:** har du ændret de samme rækker, siden forslaget blev skrevet, flettes intet, og Stop-hooken viser konflikten. Du ejer målfilen: ret den selv (eller forslaget), og flet med `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/kontrol_gate.py" flet <forslag> [--proev] [--tving]` eller i hånden. Flyt så forslaget til `forslag/flettet/`, eller slet det.
+- **Konflikt:** har du ændret de samme rækker, siden forslaget blev skrevet, flettes intet, og Stop-hooken viser konflikten. Du ejer målfilen: ret den selv (eller forslaget), og flet med `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py" flet <forslag> [--proev] [--tving]` eller i hånden. Flyt så forslaget til `forslag/flettet/`, eller slet det.
 - **Parallelle returer:** returer til fag, der berører samme rækker, sendes stadig i rækkefølge (afsnit 2, punkt 9b). Forslag gør det kun sikkert at køre fag parallelt, der skriver forskellige rækker.
 - **Revisionsstyring:** `byg-sager/` er et lokalt git-repo, som hooken opretter og committer til: hver fagaflevering (kun fagets egne filer), hver dom og fletning og dine egne ændringer, når din tur slutter. Beskeden starter med leverance-ID'et, så `git -C byg-sager log --oneline -- <fil>` viser, hvem der ændrede hvad. Repoet pushes aldrig (sagerne er brugerdata). Slå det fra med miljøvariablen `BYG_GIT=0`.
 - **Ændringer til kontrollen:** når fagagenten afleverer en ny version efter en dom, skriver hooken diffen fra den kontrollerede version til `kvalitet/<leverance-id med / erstattet af __>__aendringer.diff`. Giv stien under "Ændringer" i kontrolkaldet, så forsøg 2 og senere kun ser på det, der faktisk er ændret.

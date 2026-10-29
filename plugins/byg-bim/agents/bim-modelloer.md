@@ -89,7 +89,7 @@ Dit fagnotat er et **modelnotat**: `<sagsmappe>/fagnotater/bim.md` (eller stien 
 ## Gør-det-selv
 En BIM-model kræver ingen autorisation. Brugeren kan selv åbne modellen i gratis viewere (BIMcollab Zoom og Open IFC Viewer på Mac, Bonsai/Blender, webviewere). Modellen er et arbejdsredskab og erstatter ikke myndighedstegninger, statik eller landinspektørens opmåling.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

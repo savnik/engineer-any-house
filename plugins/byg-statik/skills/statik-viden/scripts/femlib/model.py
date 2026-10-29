@@ -15,7 +15,7 @@ import yaml
 HER = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(HER))
 import statik  # noqa: E402  (profiltabeller og materialer deles med overslagsværktøjet)
-from femlib import flader  # noqa: E402
+from femlib import shells  # noqa: E402
 
 N_PKT = 41  # punkter pr. element i resultatkurver
 
@@ -186,9 +186,9 @@ def laes_spec(sti: pathlib.Path, aendringer: list | None = None) -> dict:
             if l.get("retning", "ned") not in ("ned", "x", "y", "z") and "moment" not in l:
                 raise SpecFejl(f"{hvor}: retning skal være ned, x, y eller z")
     try:
-        flader.laes(s, MATERIALER | s["materialer"])
-        flader.mesh(s)
-    except flader.FladeFejl as e:
+        shells.laes(s, MATERIALER | s["materialer"])
+        shells.mesh(s)
+    except shells.FladeFejl as e:
         raise SpecFejl(str(e))
     return s
 
@@ -211,7 +211,7 @@ def byg(s: dict):
     mats = MATERIALER | s["materialer"]
     for navn in {e["materiale"] for e in s["elementer"].values()} | {f["materiale"] for f in s["flader"].values()}:
         mt = mats[navn]
-        nu = flader.nu(mt)
+        nu = shells.nu(mt)
         m.add_material(navn, float(mt["E"]) * 1e3, float(mt["G"]) * 1e3, nu if 0 <= nu < 0.5 else 0.3,
                        float(mt.get("rho", 0)))
     for n, e in s["elementer"].items():
@@ -219,7 +219,7 @@ def byg(s: dict):
         m.add_section(f"T_{n}", t["A"] * 1e-6, t["I_svag"] * 1e-12, t["I_staerk"] * 1e-12, t["J"] * 1e-12)
     brugt = {e[k] for e in s["elementer"].values() for k in ("fra", "til")} | set(s["understoetninger"]) \
         | {k for _, _, kn, _ in s["_quads"] for k in kn}
-    for k, v in flader.alle_knuder(s).items():
+    for k, v in shells.alle_knuder(s).items():
         if k in brugt:
             m.add_node(k, *P(v))
     for qn, fn, kn, _ in s["_quads"]:
@@ -241,7 +241,7 @@ def byg(s: dict):
         holdt[k] |= {pyn[d] for d in (STOETTE[v] if isinstance(v, str) else v)}
     for ls in s["understoetninger_linje"]:
         v = ls.get("type", "charnier")
-        for _, k in flader.knuder_paa_linje(s, s["knuder"][ls["fra"]], s["knuder"][ls["til"]]):
+        for _, k in shells.knuder_paa_linje(s, s["knuder"][ls["fra"]], s["knuder"][ls["til"]]):
             if k in holdt:
                 holdt[k] |= {pyn[d] for d in (STOETTE[v] if isinstance(v, str) else v)}
     if s["_plan"]:  # plan ramme: hold frihedsgraderne ud af planen i alle knuder
@@ -262,7 +262,7 @@ def byg(s: dict):
         lt = lt or {}
         if lt.get("egenvaegt") and s["elementer"]:
             m.add_member_self_weight("FY", -1.0, case=ltn)
-        for k, F in flader.knudelaster(s, ltn, mats).items():
+        for k, F in shells.knudelaster(s, ltn, mats).items():
             if k not in m.nodes:
                 raise SpecFejl(f"lasttilfælde {ltn}: last i knude '{k}', som hverken ligger på en flade eller et element")
             for d, v in zip(("FX", "FY", "FZ"), (F[0], F[2], -F[1])):
@@ -410,7 +410,7 @@ def ydre_last(s: dict, kombi: str) -> dict:
         if lt_d.get("egenvaegt"):
             for e in s["elementer"].values():
                 tot["z"] -= f * float(mats[e["materiale"]].get("rho", 0)) * e["_t"]["A"] * 1e-6 * e["_L"]
-        for F in flader.knudelaster(s, lt, mats).values():
+        for F in shells.knudelaster(s, lt, mats).values():
             for i, a in enumerate("xyz"):
                 tot[a] += f * float(F[i])
         for l in lt_d.get("laster") or []:
@@ -450,7 +450,7 @@ def resultater(s: dict, m, kommando: str) -> dict:
         talt = set()
         grupper = [(knude, [knude]) for knude in s["understoetninger"]]
         for ls in s["understoetninger_linje"]:
-            grupper.append((f"linje {ls['fra']}–{ls['til']}", [k for _, k in flader.knuder_paa_linje(
+            grupper.append((f"linje {ls['fra']}–{ls['til']}", [k for _, k in shells.knuder_paa_linje(
                 s, s["knuder"][ls["fra"]], s["knuder"][ls["til"]]) if k in m.nodes]))
         for gnavn, kn_liste in grupper:
             r = {}
@@ -499,7 +499,7 @@ def resultater(s: dict, m, kommando: str) -> dict:
                     er["nedboejning_ok"] = er["L_over_delta"] >= g
             kr["elementer"][en] = er
         if s["flader"]:
-            kr.update(flader.resume(s, flader.felter(s, m, kn)))
+            kr.update(shells.resume(s, shells.felter(s, m, kn)))
         res["kombinationer"][kn] = kr
     return res
 
@@ -524,7 +524,7 @@ def kurver_alle(s: dict, m) -> dict:
             fl[k] = (1000 * n.DX[kn], -1000 * n.DZ[kn], 1000 * n.DY[kn])
         ud[kn] = {"elementer": el, "flytning": fl, "delta": delta}
         if s["flader"]:
-            ud[kn]["flader"] = flader.felter(s, m, kn)
+            ud[kn]["flader"] = shells.felter(s, m, kn)
     ud["_lokal_y"] = {en: lokal_y(m.members[en]) for en in s["elementer"]}
     return ud
 

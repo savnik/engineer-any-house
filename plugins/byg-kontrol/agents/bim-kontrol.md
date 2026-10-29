@@ -29,7 +29,7 @@ Fag-id: `bim` · Kontrollerer leverancer fra: `bim-modelloer`
 - **Gyldig IFC:** tjek-rapporten har 0 FEJL, og advarslerne er forklaret. IDS er bestået. Rumlig struktur, klasser, Status og materialer er i orden.
 - **Formål og LOIN:** modellen indeholder det, formålet kræver, og ikke mere. Ingen persondata.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

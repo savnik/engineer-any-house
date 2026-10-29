@@ -28,7 +28,7 @@ Fag-id: `projekt` · Kontrollerer leverancer fra: projektlederen (hovedtråden)
 - Grænseflader med ejer og tidspunkt; konflikter mellem fagnotater løst eller eskaleret.
 - Myndighed, aftaler og arbejdsmiljø; tidsplan med tørretider, hold points og tid til kontrol.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

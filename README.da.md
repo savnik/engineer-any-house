@@ -43,7 +43,7 @@ Fag-plugins og `byg` afhænger af `byg-kontrol`, så kontrollen altid følger me
 ```
 eller i terminalen: `claude plugin marketplace add ./engineer-any-house` og `claude plugin install byg-team@engineer-any-house`. Genstart sessionen efter installation.
 
-**Claude Cowork** – upload den samlede pakke `byg.plugin` (bygges med `python3 scripts/pak.py`). Den indeholder alle agenter, skills og hooks i ét plugin ved navn `byg`, så navnene bliver `byg:vvs-mester`, `byg:vvs-kontrol` og kommandoerne `/byg:nyt-projekt` osv.
+**Claude Cowork** – upload den samlede pakke `byg.plugin` (bygges med `python3 scripts/package.py`). Den indeholder alle agenter, skills og hooks i ét plugin ved navn `byg`, så navnene bliver `byg:vvs-mester`, `byg:vvs-kontrol` og kommandoerne `/byg:nyt-projekt` osv.
 
 Installér **enten** marketplacet **eller** den samlede pakke – ikke begge (begge hedder `byg`).
 
@@ -77,11 +77,11 @@ Sager gemmes i `byg-sager/<ÅÅÅÅ-MM-DD>-<navn>/` i arbejdsmappen.
 
 Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol), korrekt kontrolagent, gyldig dom, fase-gate (plan i fase 3+ kun med godkendt designgrundlag), fund-fastlåsning (nye blokerende fund i forsøg 2–3 kræver `nyt_grundlag`), maks. 3 forsøg pr. runde og 3 runder, ny runde kun efter RCA med implementeret forbedring, ingen ændring af godkendte leverancer uden nyt ID, og ingen afslutning af sessionen med ukontrollerede eller afviste leverancer eller manglende RCA. Domme gemmes i `<sagsmappe>/kvalitet/`, tilstand og log i pluginets datamappe.
 
-**Parallelle fag uden skrivekonflikter:** hver fil i sagen har én ejer. Et fag skriver kun sit eget notat, bilag og sine egne mapper. Ændringer i grænseflader, risici, kontrolplan og ejendomskort lægger faget som forslag i `forslag/`, og hooken fletter dem ind på rækkeniveau, når leverancen godkendes (med konfliktstop, hvis projektlederen har ændret de samme rækker imens). `byg-sager/` er et lokalt git-repo, som hooken committer til ved hver aflevering, dom og fletning. Kontrollens forsøg 2–3 får diffen siden sidste kontrollerede version. Repoet pushes aldrig; slå det fra med `BYG_GIT=0`. Status: `python3 <byg-kontrol>/hooks/kontrol_gate.py status`.
+**Parallelle fag uden skrivekonflikter:** hver fil i sagen har én ejer. Et fag skriver kun sit eget notat, bilag og sine egne mapper. Ændringer i grænseflader, risici, kontrolplan og ejendomskort lægger faget som forslag i `forslag/`, og hooken fletter dem ind på rækkeniveau, når leverancen godkendes (med konfliktstop, hvis projektlederen har ændret de samme rækker imens). `byg-sager/` er et lokalt git-repo, som hooken committer til ved hver aflevering, dom og fletning. Kontrollens forsøg 2–3 får diffen siden sidste kontrollerede version. Repoet pushes aldrig; slå det fra med `BYG_GIT=0`. Status: `python3 <byg-kontrol>/hooks/review_gate.py status`.
 
 I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar som "IKKE UAFHÆNGIGT KVALITETSKONTROLLERET".
 
-**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <engineer-any-house>/scripts/forbrug.py --siden <dato>` fra din arbejdsmappe.
+**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <engineer-any-house>/scripts/usage.py --siden <dato>` fra din arbejdsmappe.
 
 ## Viden og forankring
 1. **Kanon** i pluginenes `references/` (normgrundlag med status V/T, faglig praksis, tjeklister, erfaringsblade) og kontrolviden i `byg-kontrol`.
@@ -101,51 +101,51 @@ faelles/protokol.md          fælles protokol for fagagenter
 faelles/kontrolprotokol.md   fælles protokol for kontrolagenter
 plugins/<plugin>/            plugins
 skabelon/                    skabelon til nye fag (fag-plugin + kontrolagent + kontrolfil)
-scripts/sync_protokol.py     indsætter protokollerne i agentfilerne (--check i CI)
-faelles/miljoe.py            fælles opsætning af værktøjernes Python-miljø (venv, uv eller pip)
-scripts/sync_miljoe.py       kopierer faelles/miljoe.py ind i byg-bim og byg-statik (--check i CI)
-scripts/laas_miljoe.py       låser værktøjernes miljøer: requirements*.in → requirements*.txt (kræver uv)
+scripts/sync_protocol.py     indsætter protokollerne i agentfilerne (--check i CI)
+faelles/environment.py            fælles opsætning af værktøjernes Python-miljø (venv, uv eller pip)
+scripts/sync_environment.py       kopierer faelles/environment.py ind i byg-bim og byg-statik (--check i CI)
+scripts/lock_environment.py       låser værktøjernes miljøer: requirements*.in → requirements*.txt (kræver uv)
 pyproject.toml, uv.lock      repoets udviklingsmiljø (scripts/ og tests/ bruger kun standardbiblioteket)
-scripts/nyt_fag.py           opretter et nyt fag og registrerer det overalt
-scripts/valider.py           strukturtjek, navne, stier, protokoller, evals og hook-tests
-scripts/tjek_data.py         dataseparation: ingen sager, brugerdata eller nøgler i repoet
-scripts/hooks/pre-commit     kører tjek_data.py og synk-tjek før hvert commit (git config core.hooksPath scripts/hooks)
-scripts/pak.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
-scripts/udgiv.py             udgivelse (gren udgivelse/<version> → PR): hæver versioner ud fra versionsnoter/ og skriver CHANGELOG.md
-.github/workflows/ci.yml     CI på hver PR: valider.py --claude, ruff, bim-tests og fem-self-test (krævet før merge til main)
+scripts/new_trade.py           opretter et nyt fag og registrerer det overalt
+scripts/validate.py           strukturtjek, navne, stier, protokoller, evals og hook-tests
+scripts/check_data.py         dataseparation: ingen sager, brugerdata eller nøgler i repoet
+scripts/hooks/pre-commit     kører check_data.py og synk-tjek før hvert commit (git config core.hooksPath scripts/hooks)
+scripts/package.py               bygger dist/cowork/*.plugin, samlet byg.plugin og repo-zip
+scripts/release.py             udgivelse (gren udgivelse/<version> → PR): hæver versioner ud fra versionsnoter/ og skriver CHANGELOG.md
+.github/workflows/ci.yml     CI på hver PR: validate.py --claude, ruff, bim-tests og fem-self-test (krævet før merge til main)
 versionsnoter/               én note pr. gren: hvilke plugins der ændres (patch/minor/major) og hvorfor
-scripts/forbrug.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --siden/--til
+scripts/usage.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --siden/--til
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
-scripts/eval_fag.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
-scripts/kontrol_ab.py         kontrol-armen: måler kontrollens præcision og nettogevinst på eksamenssættet (koster tokens)
+scripts/eval_trade.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
+scripts/review_ab.py         kontrol-armen: måler kontrollens præcision og nettogevinst på eksamenssættet (koster tokens)
 eksamen/<fag>/               eksamenslaget: officielle læringsmål og opgavesæt med facit (udvikling + holdout)
 scripts/exam.py              tjekker dækningen af læringsmålene og kører eksamen med og uden plugin (koer koster tokens)
-scripts/forsoeg.py           forsøgslog og benchmark for forbedringer (eksamen/forsoeg.json, eksamen/benchmark.json)
+scripts/experiment.py           forsøgslog og benchmark for forbedringer (eksamen/forsoeg.json, eksamen/benchmark.json)
 .claude/agents/ci-forbedring.md  CI-agenten: strukturerede forbedringsforsøg målt mod eksamenslaget
-scripts/hooks/holdout_vagt.py    CI-agentens vagt: holdout-opgaver og -svar kan ikke læses direkte
-tests/test_kontrol_gate.py   tests af kontrol-hooken
-tests/test_tjek_data.py      tests af dataseparationen
-tests/test_kontrol_ab.py     tests af kontrol-armens parsing og opgørelse
-tests/test_sagsflet.py       tests af skriveret pr. fag, forslag og fletning og git i byg-sager/
+scripts/hooks/holdout_guard.py    CI-agentens vagt: holdout-opgaver og -svar kan ikke læses direkte
+tests/test_review_gate.py   tests af kontrol-hooken
+tests/test_check_data.py      tests af dataseparationen
+tests/test_review_ab.py     tests af kontrol-armens parsing og opgørelse
+tests/test_case_merge.py       tests af skriveret pr. fag, forslag og fletning og git i byg-sager/
 tests/test_exam.py           tests af eksamenslaget (rettelogik, format og dækning)
-tests/test_forsoeg.py        tests af forsøgsloggen, beslutningsreglen og holdout-vagten
-tests/test_regne_vagt.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
+tests/test_experiment.py        tests af forsøgsloggen, beslutningsreglen og holdout-vagten
+tests/test_calc_guard.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session
 ```
-Efter ændringer: `python3 scripts/sync_protokol.py && python3 scripts/valider.py --claude`. Ændret en afhængighed i `requirements*.in`: `python3 scripts/laas_miljoe.py`, kør `opsaet` og testene (BIM: `bim.py opsaet --test` og `python -m pytest scripts/tests` i bim-miljøet).
+Efter ændringer: `python3 scripts/sync_protocol.py && python3 scripts/validate.py --claude`. Ændret en afhængighed i `requirements*.in`: `python3 scripts/lock_environment.py`, kør `opsaet` og testene (BIM: `bim.py opsaet --test` og `python -m pytest scripts/tests` i bim-miljøet).
 
 **main er beskyttet:** alt går gennem en PR, og CI (`validate`, `lint`, `bim-tests`, `fem-self-test`) skal være grøn, og grenen ajour med main, før der kan merges. Direkte push til main afvises, også for administratorer. Kun personer med skriveadgang (i dag kun ejeren) kan merge.
 
 **Parallelle sessioner** (flere Claude-sessioner i hver sin worktree):
 - Én opgave = én worktree = én kortlivet gren. Rebase på `origin/main` før PR, og merge PR'erne én ad gangen.
-- **Hæv aldrig versioner i en gren.** Læg en note i `versionsnoter/<gren>.md` (se `versionsnoter/README.md`). Efter merge laver du en gren `udgivelse/<version>` fra `origin/main`, kører `python3 scripts/udgiv.py` og merger den som en PR. Derefter tagger du `v<version>` på main, og CI bygger og udgiver releasen (`.github/workflows/release.yml`). Pre-commit-hooken afviser versionsændringer uden for `udgivelse/*` (`BYG_UDGIV=1` tilsidesætter).
-- `faelles/` og agentfilernes protokolblokke: konflikter i de genererede blokke løses ikke i hånden. Løs konflikten i `faelles/`, og kør `python3 scripts/sync_protokol.py`.
-- Opgaver, der begge ændrer `faelles/`, `fagregister.json` eller `kontrol_gate.py`, køres efter hinanden, ikke parallelt.
+- **Hæv aldrig versioner i en gren.** Læg en note i `versionsnoter/<gren>.md` (se `versionsnoter/README.md`). Efter merge laver du en gren `udgivelse/<version>` fra `origin/main`, kører `python3 scripts/release.py` og merger den som en PR. Derefter tagger du `v<version>` på main, og CI bygger og udgiver releasen (`.github/workflows/release.yml`). Pre-commit-hooken afviser versionsændringer uden for `udgivelse/*` (`BYG_UDGIV=1` tilsidesætter).
+- `faelles/` og agentfilernes protokolblokke: konflikter i de genererede blokke løses ikke i hånden. Løs konflikten i `faelles/`, og kør `python3 scripts/sync_protocol.py`.
+- Opgaver, der begge ændrer `faelles/`, `fagregister.json` eller `review_gate.py`, køres efter hinanden, ikke parallelt.
 
-Evals (kræver login og koster tokens): `python3 scripts/eval_fag.py byg-vvs`. Kør ikke `claude plugin eval ./plugins/byg-vvs` direkte: fag-plugins afhænger af `byg-kontrol`, som ikke findes i eval-sandkassen, og så indlæses pluginet slet ikke (evalen tester kun den bare model). Effort-sammenligning: `python3 scripts/effort_ab.py byg-vvs --effort medium`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
+Evals (kræver login og koster tokens): `python3 scripts/eval_trade.py byg-vvs`. Kør ikke `claude plugin eval ./plugins/byg-vvs` direkte: fag-plugins afhænger af `byg-kontrol`, som ikke findes i eval-sandkassen, og så indlæses pluginet slet ikke (evalen tester kun den bare model). Effort-sammenligning: `python3 scripts/effort_ab.py byg-vvs --effort medium`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
 
 Eksamen (kræver login og koster tokens): `python3 scripts/exam.py koer el` (plugin-armen; basis genbruges) eller `--kun-fejlede`. Den måler fagagenten mod basismodellen på opgaver bygget over de officielle læringsmål. Se `eksamen/README.md`, især reglen om holdout-sættet.
 
-Forbedringer (continuous improvement): `claude --agent ci-forbedring` i repoets rod. Agenten vælger ét forsøg ud fra `python3 scripts/forsoeg.py status`, måler før og efter, afgør forsøget efter beslutningsreglen og fører forsøgsloggen. Den afleverer en draft-PR. Se `eksamen/README.md`, afsnittet "Forbedringsforsøg".
+Forbedringer (continuous improvement): `claude --agent ci-forbedring` i repoets rod. Agenten vælger ét forsøg ud fra `python3 scripts/experiment.py status`, måler før og efter, afgør forsøget efter beslutningsreglen og fører forsøgsloggen. Den afleverer en draft-PR. Se `eksamen/README.md`, afsnittet "Forbedringsforsøg".
 
 Se `ARKITEKTUR.md` for designbeslutninger, platformnoter og roadmap.

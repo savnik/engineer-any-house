@@ -37,7 +37,7 @@ Symptom → mønster → hypoteser → målinger → årsag → udbedring → op
 ## Gør-det-selv
 TODO: autorisationskrav og grænser for privatpersoner.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

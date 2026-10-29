@@ -15,7 +15,7 @@ hooks:
     - matcher: "Read|Edit|Write|MultiEdit|NotebookEdit|Grep|Bash"
       hooks:
         - type: command
-          command: python3 "$CLAUDE_PROJECT_DIR/scripts/hooks/holdout_vagt.py"
+          command: python3 "$CLAUDE_PROJECT_DIR/scripts/hooks/holdout_guard.py"
           timeout: 10
 ---
 
@@ -27,14 +27,14 @@ Målet er, at pluginet bliver **bedre, billigere og hurtigere**. Kvalitet er and
 Pris er pris pr. bestået opgave, og tid er sekunder pr. opgave. Kvalitet går forud for pris.
 
 ## Sandhedskilder – læs ved opstart
-1. `python3 scripts/forsoeg.py status`: benchmark pr. fag, åbne forsøg, forslag og udestående huller, med de forsøg
+1. `python3 scripts/experiment.py status`: benchmark pr. fag, åbne forsøg, forslag og udestående huller, med de forsøg
    der allerede har ramt hvert hul.
 2. `eksamen/README.md`, afsnittene "Erfaringer" og "Forbedringsforsøg". De beskriver fremgangsmåden, faldgruberne og
    priserne. Gentag ikke fejl, der står der.
 3. `ARKITEKTUR.md`, afsnittet "Eksamenslag", og `CLAUDE.md`, hvis den findes.
 
 Forsøgsloggen (`eksamen/forsoeg.json`) og benchmarket (`eksamen/benchmark.json`) er din hukommelse. Du skriver kun
-til dem med `forsoeg.py`, aldrig med Edit.
+til dem med `experiment.py`, aldrig med Edit.
 
 ## Holdout – ufravigelig
 Holdout-sættet er det eneste uafhængige mål. Du må aldrig se holdout-opgaver, facit eller svar. En vagt (hook)
@@ -42,7 +42,7 @@ afviser direkte læsning af `eksamen/<fag>/opgaver*.json` og `eksamen/<fag>/resu
 - `exam.py vis <fag> --saet udvikling --facit` for opgaver, facit og kriterier i udviklingssættet
 - `exam.py svar <fag> [--id …]` for agentens seneste svar og censorens bedømmelse (kun udvikling)
 - `exam.py rapport <filer>` og `koer`. Rapporten skjuler holdout-ID'er.
-- `forsoeg.py`. Loggen gemmer holdout kun som antal og hash.
+- `experiment.py`. Loggen gemmer holdout kun som antal og hash.
 
 Forsøger du at omgå vagten, fx med `python3 -c` eller `git show`, er målingen værdiløs. Holdout må kun bruges til
 måling efter en ændring, med `--saet holdout --udgivelse`.
@@ -51,18 +51,18 @@ måling efter en ændring, med `--saet holdout --udgivelse`.
 Gør ét forsøg ad gangen, medmindre brugeren beder om flere. Brug TodoWrite til trinene.
 
 1. **Vælg.** Har du et åbent forsøg, så gør det færdigt. Ellers vælg et forslag fra status, et udestående hul eller
-   brugerens idé. Kør altid `forsoeg.py soeg <ord>` først. Er idéen forkastet før, gentager du den kun med en ny
+   brugerens idé. Kør altid `experiment.py soeg <ord>` først. Er idéen forkastet før, gentager du den kun med en ny
    begrundelse, og den skal stå i hypotesen.
 2. **Formulér.** Skriv hypotesen, så den kan falsificeres: hvad ændres, hvilke opgaver eller grupper flytter sig, og
-   hvad forventes for kvalitet og pris. Ændr kun én variabel. Brug kategorierne fra `forsoeg.py ny -h`: videnbase,
+   hvad forventes for kvalitet og pris. Ændr kun én variabel. Brug kategorierne fra `experiment.py ny -h`: videnbase,
    prompt, model, rettemaske, opgaver, vaerktoej og nulmaaling.
 3. **Budget.** Anslå prisen ud fra pristabellen i README. Koster forsøget over ca. 10 $, eller kører holdout for
    tredje gang i samme fag i dag, så spørg brugeren først.
 4. **Start.** Opret en gren `forsoeg/F-<nr>-<kort-navn>` fra `main`, med alt committet. Kør derefter
-   `forsoeg.py ny …` eller `forsoeg.py start F-<nr>`. Kommandoen noterer `rev_foer` som HEAD.
+   `experiment.py ny …` eller `experiment.py start F-<nr>`. Kommandoen noterer `rev_foer` som HEAD.
 5. **Mål før.** Genbrug benchmarkets resultatfiler, hvis de findes lokalt og passer til `rev_foer`. Se dem med
-   `forsoeg.py vis` for forsøget, der satte benchmarket. Ellers kør `exam.py koer <fag> --saet alle --udgivelse
-   --plugin-rev <rev_foer>`. Registrér med `forsoeg.py maal F-<nr> --foer <filer>`, og tag basisfilen med.
+   `experiment.py vis` for forsøget, der satte benchmarket. Ellers kør `exam.py koer <fag> --saet alle --udgivelse
+   --plugin-rev <rev_foer>`. Registrér med `experiment.py maal F-<nr> --foer <filer>`, og tag basisfilen med.
 6. **Diagnosticér og ændr.** Gå frem efter kategorien:
    - **videnbase/prompt:** Læs de fejlede svar med `exam.py svar`, og afgør for hver opgave, om det er et reelt
      videnshul eller en fejl i rettemasken. Fejl i rettemasken hører til et separat forsøg. Efterprøv hver regel mod
@@ -81,31 +81,31 @@ Gør ét forsøg ad gangen, medmindre brugeren beder om flere. Brug TodoWrite ti
       overvej at forkaste.
    2. Kør hele udviklingssættet og AK-sættene, som er regressionsværn.
    3. Kør holdout med `--saet holdout --udgivelse` på den nye revision.
-   Registrér med `forsoeg.py maal F-<nr> --efter <filer>`. Brug de samme opgaver som før, ellers kan reglen ikke
+   Registrér med `experiment.py maal F-<nr> --efter <filer>`. Brug de samme opgaver som før, ellers kan reglen ikke
    sammenligne.
-8. **Afgør.** Kør `forsoeg.py vurder F-<nr>`, og derefter
-   `forsoeg.py afslut F-<nr> --beslutning … --laering "…"`. Følg reglen. Afviger du fra den, kræves
+8. **Afgør.** Kør `experiment.py vurder F-<nr>`, og derefter
+   `experiment.py afslut F-<nr> --beslutning … --laering "…"`. Følg reglen. Afviger du fra den, kræves
    `--begrundelse`, og så skal du også sige det til brugeren. Læringen er det vigtigste felt. Skriv, hvad en
    fremtidig forbedrer skal vide, også når forsøget fejler. Skriv også, hvad der ikke blev målt (manglende
    opgaver, kun udviklingssæt, ingen holdout), og mærk anslåede tal som anslåede. Et billigt tjek med
    `--kun-fejlede` er aldrig grundlag for "behold".
 9. **Aflevér.**
    - **behold:** Lav en versionsnote i `versionsnoter/` for de berørte plugins, og hæv aldrig versionen på en
-     gren. Kør `python3 scripts/valider.py`. Commit log, benchmark og ændring, push, og opret en draft-PR.
+     gren. Kør `python3 scripts/validate.py`. Commit log, benchmark og ændring, push, og opret en draft-PR.
    - **forkast/uafklaret:** Rul ændringen tilbage med `git checkout <rev_foer> -- plugins/`. Commit kun loggen, så
      læringen bevares, push, og opret en draft-PR.
    - Opdag du en ny generel faldgrube, så tilføj den i README under "Erfaringer".
 
 ## Grænser
 - Du merger aldrig til `main` og hæver aldrig versioner. Det gør brugeren.
-- Du ændrer aldrig beslutningsreglen (`NOISE_TASKS`, `PRICE_TOLERANCE` og `HOLDOUT_BUDGET` i `forsoeg.py`) for at få
+- Du ændrer aldrig beslutningsreglen (`NOISE_TASKS`, `PRICE_TOLERANCE` og `HOLDOUT_BUDGET` i `experiment.py`) for at få
   et forsøg igennem. En ændring af reglen er et selvstændigt vaerktoej-forsøg, og brugeren skal godkende det.
 - Du ændrer aldrig holdout-opgaver. Er holdout-budgettet overskredet, foreslår du nye holdout-opgaver som et
   opgaver-forsøg, skrevet af en anden agent.
 - Videnbase bygges ikke til mesterniveauet. F-003 viser, at det ikke giver gevinst. Byg kun, hvis et nyt forsøg
   begrunder det.
 - Sagsdata, sag-id'er, ejeroplysninger og hemmeligheder hører aldrig til i repoet eller i forsøgsloggen.
-  `tjek_data.py` kører ved commit.
+  `check_data.py` kører ved commit.
 - Rammer du kontogrænsen, så stop, notér status i forsøget (det forbliver åbent), og fortæl brugeren, hvornår der
   kan fortsættes. Gentag de fejlede kørsler med `--id`.
 - Kør med højst `--parallel 3`.

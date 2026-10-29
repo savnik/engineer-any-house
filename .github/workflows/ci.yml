@@ -35,7 +35,7 @@ jobs:
           git config --global user.name "CI"
           git config --global user.email "ci@example.invalid"
       - name: Structure, protocols, version notes, hook tests and data separation
-        run: python3 scripts/valider.py --claude
+        run: python3 scripts/validate.py --claude
 
   lint:
     name: lint

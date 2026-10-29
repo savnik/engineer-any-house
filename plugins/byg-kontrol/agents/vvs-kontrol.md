@@ -28,7 +28,7 @@ Fag-id: `vvs` · Kontrollerer leverancer fra: `vvs-mester`
 - Tæthedsprøvning, gennemskylning og KLS-slutkontrol planlagt; korrekt DS 439-udgave (dec. 2024).
 - Afløb, udluftning og snitflade til kloakmester; tilbagestrømningssikring; legionella.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

@@ -13,7 +13,7 @@ Brug:
   python3 scripts/exam.py rebedoem <resultatfil> [--kun-fri]   ret gemte svar igen efter nyt facit/kriterier
 
 Armene: 'basis' er modellen uden plugin, 'plugin' er fagagenten med sin videnbase (plugin-kopi uden
-afhængigheder som i eval_fag.py og som standard uden agentens lokale hukommelse – med --med-hukommelse
+afhængigheder som i eval_trade.py og som standard uden agentens lokale hukommelse – med --med-hukommelse
 måles plugin + hukommelse). Begge kører headless i en tom mappe uden brugerens plugins og uden internet
 (medmindre --web). Standard er kun plugin-armen: basis afhænger ikke af videnbasen, så rapporten genbruger det nyeste
 basis-svar pr. opgave. Holdout-sættet bruges kun til måling – aldrig som grundlag for ny tekst i videnbasen – og
@@ -416,7 +416,7 @@ def strip_memory(agent_file: pathlib.Path) -> bool:
 
 
 def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, rev: str = "") -> pathlib.Path:
-    """Copy of the plugin without dependencies, so it loads without byg-kontrol (same as eval_fag.py).
+    """Copy of the plugin without dependencies, so it loads without byg-kontrol (same as eval_trade.py).
 
     By default the agents' 'memory: user' is removed: the exam then measures the plugin alone, not the
     plugin plus the local agent memory (which may hold experience from the user's own cases)."""

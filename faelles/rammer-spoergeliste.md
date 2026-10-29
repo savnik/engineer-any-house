@@ -31,4 +31,4 @@ Rammerne virker, selv om rækker mangler: en række med **T** eller **P – mang
 - **P** skrives kun efter svar fra en fagperson, aldrig af en agent alene: `P – <rolle>, <ÅÅÅÅ-MM-DD>` (fx `P – murermester, 2026-11-02`), eventuelt efterfulgt af kilden.
 - **V** kræver en primærkilde og dato: `V <ÅÅÅÅ-MM-DD> – <kilde>`.
 - Ny standardsituation: tilføj en række med næste ledige ID. ID'er omnummereres aldrig, og en udgået række får status `P – mangler` i stedet for at blive slettet. Agenternes videnslog foreslår kandidater som "Ramme-kandidat: …".
-- Kør `python3 scripts/tjek_rammer.py` (indgår i `scripts/valider.py`). Det tjekker format, status og ID'er.
+- Kør `python3 scripts/check_frames.py` (indgår i `scripts/validate.py`). Det tjekker format, status og ID'er.

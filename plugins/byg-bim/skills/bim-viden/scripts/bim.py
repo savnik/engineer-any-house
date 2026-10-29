@@ -42,7 +42,7 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
 import pathlib
 import sys
 
-from miljoe import Miljoe
+from environment import Miljoe
 
 HER = pathlib.Path(__file__).resolve().parent
 MILJOE = Miljoe("byg-bim", "BYG_BIM_VENV", HER / "requirements.txt",

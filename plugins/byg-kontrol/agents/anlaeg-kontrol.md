@@ -28,7 +28,7 @@ Fag-id: `anlaeg` · Kontrollerer leverancer fra: `anlaegsgartner`
 - Nedsivning: tilladelse, kommunens afstandskrav (særligt til kælder) og nedsivningstest.
 - Hævede terrasser over 0,30 m og 2,5 m til skel (BR18 § 179), terrænregulering mod lokalplan og støttemure til statiker.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

@@ -30,7 +30,7 @@ Alle resultater er OVERSLAG – de skal eftervises af den ansvarlige statiker. S
 import pathlib
 import sys
 
-from miljoe import Miljoe
+from environment import Miljoe
 
 HER = pathlib.Path(__file__).resolve().parent
 MILJOE = Miljoe("byg-statik", "BYG_STATIK_VENV", HER / "requirements-fem.txt",

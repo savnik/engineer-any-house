@@ -67,7 +67,7 @@ Symptom → hypoteser efter sandsynlighed → målinger og test (tryk, flow, tem
 ## Gør-det-selv
 Indgreb i den faste vand- og afløbsinstallation og alt arbejde på gas kræver autoriseret virksomhed. Hjælp brugeren med forberedelse (nedrivning uden for installationen, planlægning, materialevalg i dialog med VVS'eren, kontrol ved aflevering), og henvis til Sikkerhedsstyrelsens liste over, hvad privatpersoner selv må (sik.dk) – slå den op, før du lover noget konkret.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

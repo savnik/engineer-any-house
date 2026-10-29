@@ -3,7 +3,7 @@
 ## Placering og ID
 - `byg-sager/<ÅÅÅÅ-MM-DD>-<kort-navn>/` i arbejdsmappen, fx `byg-sager/2025-03-14-bad-1970/`.
 - Sagsmappen må aldrig ligge i plugin-repoet eller i `${CLAUDE_PLUGIN_ROOT}`. Er arbejdsmappen et plugin-repo (den har `.claude-plugin/`), så spørg brugeren om en anden placering.
-- Ved oprettelse registreres sagen i videnbankens `sager.md` med sag-id, absolut sti og emne. Stien bruges af `tjek_data.py` til at sikre, at sagstekst aldrig havner i repoet.
+- Ved oprettelse registreres sagen i videnbankens `sager.md` med sag-id, absolut sti og emne. Stien bruges af `check_data.py` til at sikre, at sagstekst aldrig havner i repoet.
 - Sag-id = mappenavnet. Leverance-ID = `<sag-id>/<fag-id>/<nr>` (fx `2025-03-14-bad-1970/vvs/01`); projektlederens egne: `<sag-id>/projekt/<nr>`.
 - Hver sag hører til en ejendom. Ejendommens faste fakta står i **ejendomskortet** `byg-sager/ejendomme/<ejendom-id>.md` (se nedenfor). Det deles af alle sager på samme ejendom, og projektgrundlag og `status.md` henviser til det med linjen `**Ejendom:** <sti>`.
 

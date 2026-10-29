@@ -9,7 +9,7 @@ der svarer (ellers svarer hovedmodellen ofte selv, og effort måles ikke). I B-a
 `claude plugin eval --ablation none`, og resultatet gemmes som <ud>/<plugin>-A.json og -B.json.
 Til sidst vises score og forbrug side om side. Beslutningsregel: B (lavere effort) vælges kun, hvis scoren
 holder (højst 0,05 lavere pr. case), og fagagenternes afvisningsrate i rigtige sager ikke stiger
-(mål med scripts/forbrug.py før og efter).
+(mål med scripts/usage.py før og efter).
 
 Kræver login og koster tokens: hver arm kører hver case --runs gange.
 """

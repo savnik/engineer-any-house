@@ -154,7 +154,7 @@ def resultat(args, argv) -> int:
 
 
 def tegn(args, argv) -> int:
-    from . import tegn as t
+    from . import draw as t
     uddir = _opt(args, "--ud")
     kombi = _opt(args, "--kombi")
     aendr = _saet(args)
@@ -198,7 +198,7 @@ def tegn(args, argv) -> int:
 
 
 def vis(args, argv) -> int:
-    from . import vis as v
+    from . import viewer as v
     uddir = _opt(args, "--ud")
     aendr = _saet(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()

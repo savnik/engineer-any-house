@@ -61,7 +61,7 @@ claude plugin install byg-team@engineer-any-house
 
 Or from a local clone: `claude plugin marketplace add ./engineer-any-house`. Restart the session after installing.
 
-**Claude Cowork:** build the combined package with `python3 scripts/pak.py` and upload `dist/cowork/byg.plugin`. Install either the marketplace or the combined package, not both.
+**Claude Cowork:** build the combined package with `python3 scripts/package.py` and upload `dist/cowork/byg.plugin`. Install either the marketplace or the combined package, not both.
 
 ## Usage
 
@@ -80,7 +80,7 @@ Cases are stored in `byg-sager/<YYYY-MM-DD>-<name>/` in your working directory. 
 
 ## Data and privacy
 
-Cases and your data stay on your machine: case folders in your working directory, the knowledge bank and review state in the plugin's data folder, and API keys in `~/.config/`. None of it goes into the plugins or this repository. Lessons from cases only reach the repository as generalised knowledge, and `scripts/tjek_data.py` blocks commits that contain case data, private terms or keys.
+Cases and your data stay on your machine: case folders in your working directory, the knowledge bank and review state in the plugin's data folder, and API keys in `~/.config/`. None of it goes into the plugins or this repository. Lessons from cases only reach the repository as generalised knowledge, and `scripts/check_data.py` blocks commits that contain case data, private terms or keys.
 
 ## Measured, not assumed
 
@@ -91,10 +91,10 @@ Specialists are measured with exams built from the official learning objectives 
 Contributions are welcome, especially:
 
 - **New countries.** The protocols, review loop, hooks, BIM tools and exam framework are country-neutral. A new edition needs its own knowledge bases, reviewer knowledge and exams based on that country's regulations.
-- **New trades** via `/byg:nyt-fag` or `python3 scripts/nyt_fag.py`.
+- **New trades** via `/byg:nyt-fag` or `python3 scripts/new_trade.py`.
 - **Corrections** to the knowledge bases, with a source.
 
-The developer documentation is in Danish: the development section of [README.da.md](README.da.md#udvikling) and [ARKITEKTUR.md](ARKITEKTUR.md). In short, run `python3 scripts/sync_protokol.py && python3 scripts/valider.py` after changes, and put a version note in `versionsnoter/` instead of raising versions on a branch. Everyone is welcome to open issues and pull requests. `main` is protected: every change goes through a pull request, CI (structure validation, ruff, BIM tests and the FEM self-test) must pass, and only maintainers with write access can merge.
+The developer documentation is in Danish: the development section of [README.da.md](README.da.md#udvikling) and [ARKITEKTUR.md](ARKITEKTUR.md). In short, run `python3 scripts/sync_protocol.py && python3 scripts/validate.py` after changes, and put a version note in `versionsnoter/` instead of raising versions on a branch. Everyone is welcome to open issues and pull requests. `main` is protected: every change goes through a pull request, CI (structure validation, ruff, BIM tests and the FEM self-test) must pass, and only maintainers with write access can merge.
 
 ## License
 

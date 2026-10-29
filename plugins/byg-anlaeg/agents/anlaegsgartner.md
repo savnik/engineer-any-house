@@ -61,7 +61,7 @@ Symptom (fugtig sokkel eller kælder, vand på terrassen, sætninger og løse fl
 ## Gør-det-selv
 Bygherren må selv lægge belægning, bygge træterrasser og støttemure i lav højde, plante hække og træer og som udgangspunkt etablere en selvstændig faskine på egen grund – med kommunens nedsivningstilladelse. Tilslutning til kloak, afkobling af tagvand fra kloakken, omfangsdræn tilsluttet kloak og indgreb i eksisterende afløb kræver autoriseret kloakmester. Høje støttemure og mure tæt på huset kræver statiker. Hjælp loyalt med opbygning, fald, materialer og mængder, og husk LER-forespørgsel, jordanmeldelse og sikring af udgravninger.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

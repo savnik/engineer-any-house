@@ -5,7 +5,7 @@ import time
 
 
 def _byg(a):
-    from .byg import byg
+    from .build import byg
     from .spec import SpecFejl, indlaes
     try:
         spec = indlaes(a.spec)
@@ -39,12 +39,12 @@ def _byg(a):
 
 
 def _tjek(a):
-    from .tjek import tjek
+    from .check import tjek
     return tjek(pathlib.Path(a.ifc), ids=a.ids, ud=a.ud, tegn=a.tegn, notat=a.notat)
 
 
 def _afkod(a):
-    from .afkod import skabelon, tjek
+    from .decode import skabelon, tjek
     if a.handling == "skabelon":
         return skabelon()
     if not a.fil:
@@ -54,8 +54,8 @@ def _afkod(a):
 
 
 def _sammenlign(a):
-    from .afkod import AfkodFejl
-    from .sammenlign import sammenlign
+    from .decode import AfkodFejl
+    from .compare import sammenlign
     try:
         return sammenlign(pathlib.Path(a.ifc), pathlib.Path(a.afkodning), visning=a.visning, ud=a.ud,
                           snithoejde=a.snithoejde, forrige=a.forrige)
@@ -67,7 +67,7 @@ def _sammenlign(a):
 
 
 def _tegn(a):
-    from .tegn import tegn
+    from .draw import tegn
     filer = tegn(pathlib.Path(a.ifc), a.hvad, etage=a.etage, linje=a.linje, side=a.side, fra=a.fra,
                  underlag=a.underlag, kal=a.kal, vis_id=a.id, maal=a.maal, ud=a.ud, snithoejde=a.snithoejde)
     for x in filer:
@@ -81,62 +81,62 @@ def _eksport(a):
 
 
 def _info(a):
-    from .inspicer import info
+    from .inspection import info
     return info(pathlib.Path(a.ifc))
 
 
 def _vis(a):
-    from .inspicer import vis
+    from .inspection import vis
     return vis(pathlib.Path(a.ifc), a.id)
 
 
 def _find(a):
-    from .inspicer import find
+    from .inspection import find
     return find(pathlib.Path(a.ifc), a.selector)
 
 
 def _maal(a):
-    from .maal import maal
+    from .measure import maal
     return maal(pathlib.Path(a.ifc), a.a, a.b, rum=a.rum, etage_navn=a.etage)
 
 
 def _diff(a):
-    from .inspicer import diff
+    from .inspection import diff
     return diff(pathlib.Path(a.gammel), pathlib.Path(a.ny))
 
 
 def _pdf(a):
-    from .kilde import pdf
+    from .source import pdf
     return pdf(pathlib.Path(a.pdf), a.sider, a.dpi, a.ud, a.oversigt)
 
 
 def _gitter(a):
-    from .kilde import gitter
+    from .source import gitter
     return gitter(pathlib.Path(a.billede), a.trin, a.beskaer, a.zoom, a.ud)
 
 
 def _linjer(a):
-    from .kilde import linjer
+    from .source import linjer
     return linjer(pathlib.Path(a.billede), a.beskaer, a.andel)
 
 
 def _skala(a):
-    from .kilde import skala
+    from .source import skala
     return skala(a.kal, a.maal)
 
 
 def _forslag(a):
-    from .flet import opret
+    from .merge import opret
     return opret(a.hoved, a.navn, a.note, a.ud)
 
 
 def _flet(a):
-    from .flet import flet
+    from .merge import flet
     return flet(a.forslag, proev=a.proev, tving=a.tving, note=a.note)
 
 
 def _ejendomskort(a):
-    from .ejendomskort import generer, importer
+    from .property_card import generer, importer
     return importer(a.model, a.importer) if a.importer else generer(a.model, tjek=a.tjek)
 
 

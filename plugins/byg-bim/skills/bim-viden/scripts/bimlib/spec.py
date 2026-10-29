@@ -288,7 +288,7 @@ def normaliser(d: dict) -> dict:
             if el.get("system") is not None and str(el["system"]) not in sys_ids:
                 fejl.append(f"{s}.{el['id']}.system '{el['system']}' findes ikke")
     _tjek_grupper(d, fejl)
-    from .ejendomskort import tjek_fakta
+    from .property_card import tjek_fakta
     fejl += tjek_fakta(d)
     if fejl:
         raise SpecFejl(fejl)
@@ -297,7 +297,7 @@ def normaliser(d: dict) -> dict:
 
 def _tjek_grupper(d, fejl):
     """grupper: [{id, navn, under, omfatter: [id-mønstre]}] – visningsgrupper (IfcGroup) ud over standardgrupperne."""
-    from .byg import STANDARDGRUPPER
+    from .build import STANDARDGRUPPER
     g = d.get("grupper") or []
     if not isinstance(g, list):
         fejl.append("grupper: skal være en liste")

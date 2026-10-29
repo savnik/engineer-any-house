@@ -59,7 +59,7 @@ Symptom (afskalning, blærer, revner, misfarvning, kridtning, skimmel, gennemsla
 ## Gør-det-selv
 Maling kræver ingen autorisation. Hjælp brugeren med korrekt forbehandling, systemvalg, vejr og sikkerhed – og vær meget tydelig om bly, PCB, isocyanat- og epoxyprodukter, sprøjtemaling og affald.
 
-<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/protokol.md) -->
+<!-- FÆLLES-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/protokol.md) -->
 ## Fælles protokol for Engineer Any House
 
 ### 1. Kildedisciplin – aldrig gæt

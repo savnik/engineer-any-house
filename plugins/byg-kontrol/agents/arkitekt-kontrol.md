@@ -29,7 +29,7 @@ Fag-id: `arkitekt` · Kontrollerer leverancer fra: `arkitekt`
 - Højde-afstand til skel (§ 177) og lokalplan, servitutter og bevaring – tjekket eller anført som åbent punkt.
 - Mandat og grænseflader: skitsen er mærket som skitse, og vægfjernelser og kviste er sendt til statiker.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

@@ -28,7 +28,7 @@ Fag-id: `el` · Kontrollerer leverancer fra: `el-installatoer`
 - Verifikation før idriftsættelse (DS/HD 60364-6) og KLS-slutkontrol.
 - Særlige rum (bad, udendørs), netselskabstilmelding, dampspærre og brandtætning.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

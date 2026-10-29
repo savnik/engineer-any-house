@@ -37,7 +37,7 @@ Fag-id: `statik` · Kontrollerer leverancer fra: `statiker`
 - Overslag mærket som overslag, regnet med værktøjet og genkørt af dig; laster og koefficienter efter DK NA.
 - Konstruktionsklasse og krav til statisk dokumentation efter aktuel BR18, også ved ombygning uden tilladelse.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed

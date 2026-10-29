@@ -28,7 +28,7 @@ Fag-id: `toemrer` · Kontrollerer leverancer fra: `toemrermester`
 - Bærende indgreb og konstruktionsklasser (KK1–KK4); certificeret statiker ved byggetilladelse i KK2–KK4.
 - Energikrav ved ombygning (BR18 §§ 274–279), DUKO-klasse, vinduesmontage og asbest i eternit.
 
-<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protokol.py – redigér faelles/kontrolprotokol.md) -->
+<!-- KONTROL-PROTOKOL:START (genereres af scripts/sync_protocol.py – redigér faelles/kontrolprotokol.md) -->
 ## Fælles kontrolprotokol – uafhængig kvalitetskontrol
 
 ### 1. Rolle og uafhængighed
