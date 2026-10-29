@@ -2,9 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(python3 scripts/exam.py:*)",
-      "Bash(python3 scripts/forsoeg.py:*)",
-      "Bash(python3 scripts/valider.py:*)",
-      "Bash(python3 scripts/tjek_data.py:*)"
+      "Bash(python3 scripts/experiment.py:*)",
+      "Bash(python3 scripts/validate.py:*)",
+      "Bash(python3 scripts/check_data.py:*)"
     ]
   }
 }

@@ -1,31 +1,31 @@
 #!/bin/sh
-# Aktivér:  git config core.hooksPath scripts/hooks
+# Enable:  git config core.hooksPath scripts/hooks
 
-# Dataseparation: stop commits med sager, brugerdata eller hemmeligheder (se ARKITEKTUR.md).
-python3 "$(git rev-parse --show-toplevel)/scripts/tjek_data.py" || {
+# Data separation: stop commits containing cases, user data or secrets (see ARCHITECTURE.md).
+python3 "$(git rev-parse --show-toplevel)/scripts/check_data.py" || {
   echo "Commit afvist af dataseparationen. Fjern sagsdata/hemmeligheder, eller generalisér teksten." >&2
   exit 1
 }
 
-# Protokoller: det committede indhold skal være i synk med faelles/ (ikke kun arbejdskopien).
-python3 "$(git rev-parse --show-toplevel)/scripts/sync_protokol.py" --staged || {
-  echo "Commit afvist: protokollerne er ude af synk i det, der committes. Kør scripts/sync_protokol.py og git add." >&2
+# Protocols: the committed content must be in sync with shared/ (not just the working copy).
+python3 "$(git rev-parse --show-toplevel)/scripts/sync_protocol.py" --staged || {
+  echo "Commit afvist: protokollerne er ude af synk i det, der committes. Kør scripts/sync_protocol.py og git add." >&2
   exit 1
 }
 
-# Shared environment module: the plugin copies must match faelles/miljoe.py in what is committed.
-python3 "$(git rev-parse --show-toplevel)/scripts/sync_miljoe.py" --staged || {
-  echo "Commit afvist: miljoe.py er ude af synk med faelles/miljoe.py. Kør scripts/sync_miljoe.py og git add." >&2
+# Shared environment module: the plugin copies must match shared/environment.py in what is committed.
+python3 "$(git rev-parse --show-toplevel)/scripts/sync_environment.py" --staged || {
+  echo "Commit afvist: environment.py er ude af synk med shared/environment.py. Kør scripts/sync_environment.py og git add." >&2
   exit 1
 }
 
-# Parallel development: versions are raised only on a release branch (udgivelse/*, scripts/udgiv.py), never on a feature branch.
-gren=$(git symbolic-ref --short -q HEAD)
-case "$gren" in udgivelse/*) BYG_UDGIV=1 ;; esac
+# Parallel development: versions are raised only on a release branch (release/*, scripts/release.py), never on a feature branch.
+branch=$(git symbolic-ref --short -q HEAD)
+case "$branch" in release/*) BYG_UDGIV=1 ;; esac
 if [ -z "$BYG_UDGIV" ] && \
    git diff --cached -U0 --diff-filter=M -- 'plugins/*/.claude-plugin/plugin.json' .claude-plugin/marketplace.json \
      | grep -qE '^[+-][[:space:]]*"version"'; then
-  echo "Commit afvist: versionen er ændret i grenen '$gren'. Læg i stedet en note i versionsnoter/$gren.md" >&2
-  echo "(se versionsnoter/README.md) – versionerne hæves i en gren udgivelse/<version> med scripts/udgiv.py." >&2
+  echo "Commit afvist: versionen er ændret i grenen '$branch'. Læg i stedet en note i release-notes/$branch.md" >&2
+  echo "(se release-notes/README.md) – versionerne hæves i en gren release/<version> med scripts/release.py." >&2
   exit 1
 fi

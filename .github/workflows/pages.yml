@@ -29,10 +29,10 @@ jobs:
           echo "BYG_BIM_VENV=$RUNNER_TEMP/byg-bim-venv" >> "$GITHUB_ENV"
           echo "BYG_STATIK_VENV=$RUNNER_TEMP/byg-statik-venv" >> "$GITHUB_ENV"
           export BYG_BIM_VENV="$RUNNER_TEMP/byg-bim-venv" BYG_STATIK_VENV="$RUNNER_TEMP/byg-statik-venv"
-          python plugins/byg-bim/skills/bim-viden/scripts/bim.py opsaet
-          python plugins/byg-statik/skills/statik-viden/scripts/fem.py opsaet
+          python plugins/byg-bim/skills/bim-knowledge/scripts/bim.py setup
+          python plugins/byg-structural/skills/structural-knowledge/scripts/fem.py setup
       - name: Build site
-        run: python scripts/demo_site.py --ud _site
+        run: python scripts/demo_site.py --out _site
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

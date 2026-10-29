@@ -66,11 +66,11 @@ jobs:
           echo "VERSION=$version" >> "$GITHUB_ENV"
 
       - name: Validate
-        run: python3 scripts/valider.py --claude
+        run: python3 scripts/validate.py --claude
 
       - name: Build distribution files
         run: |
-          python3 scripts/pak.py --validate
+          python3 scripts/package.py --validate
           # Flat names: release assets are downloaded without the cowork/ folder.
           { (cd dist && sha256sum engineer-any-house.zip); (cd dist/cowork && sha256sum *.plugin); } | tee dist/SHA256SUMS
 

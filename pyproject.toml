@@ -1,7 +1,7 @@
 # Udviklingsmiljø for repoets egne værktøjer (scripts/, tests/) – ikke en pakke og ikke en del af plugins.
 # scripts/ og tests/ bruger kun standardbiblioteket; den eneste udviklingsafhængighed er uv til at låse
-# plugin-værktøjernes miljøer (scripts/laas_miljoe.py). Med uv:  uv sync && uv run scripts/valider.py
-# Plugin-værktøjerne har hver deres låste miljø: bim.py/fem.py opsaet (se ARKITEKTUR.md, "Python-miljøer").
+# plugin-værktøjernes miljøer (scripts/lock_environment.py). Med uv:  uv sync && uv run scripts/validate.py
+# Plugin-værktøjerne har hver deres låste miljø: bim.py/fem.py setup (se ARCHITECTURE.md, "Python-miljøer").
 [project]
 name = "engineer-any-house-dev"
 version = "0"

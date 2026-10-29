@@ -1,13 +1,13 @@
 **/evals/results/
-eksamen/*/results/
+exam/*/results/
 dist/
 .DS_Store
 __pycache__/
 
-# Dataseparation – sager, brugerdata og hemmeligheder hører aldrig til i repoet (se ARKITEKTUR.md)
-byg-sager/
+# Dataseparation – sager, brugerdata og hemmeligheder hører aldrig til i repoet (se ARCHITECTURE.md)
+byg-cases/
 ejendomsdata/
-videnbank/
+knowledge-bank/
 *.pdf
 .env
 *.key

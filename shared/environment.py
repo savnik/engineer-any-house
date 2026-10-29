@@ -1,0 +1,68 @@
+"""Shared Python environment for the plugin tools (bim.py, fem.py): its own venv with locked versions.
+
+The tool script runs with the system python3, sets up the environment with the `setup` subcommand and otherwise
+switches into the venv with os.execv. Locked versions: requirements*.txt is generated from requirements*.in by
+scripts/lock_environment.py. Uses uv if it is installed (faster), otherwise venv + pip – the result is the same.
+Standard library only and Python 3.9-compatible: this file runs with the system python3, before the environment exists.
+"""
+from __future__ import annotations
+
+import os
+import pathlib
+import shutil
+import subprocess
+import sys
+
+MIN_PYTHON = (3, 11)  # the lowest version the lock files are resolved for (scripts/lock_environment.py)
+
+
+class Environment:
+    def __init__(self, plugin: str, envvar: str, lock: pathlib.Path, import_check: str):
+        """plugin: venv folder name; envvar: overrides the venv path; lock: lock file; import_check: code that
+        imports the key packages and prints their versions."""
+        self.venv = pathlib.Path(os.environ.get(envvar, pathlib.Path.home() / ".local" / "share" / plugin / "venv"))
+        self.python = self.venv / "bin" / "python"
+        self.lock = lock
+        self.import_check = import_check
+
+    def active(self) -> bool:
+        return pathlib.Path(sys.prefix).resolve() == self.venv.resolve()
+
+    def setup(self, lock: pathlib.Path | None = None) -> int:
+        """Creates/updates the venv from the lock file (default self.lock, e.g. a test lock instead)."""
+        lock = lock or self.lock
+        uv = shutil.which("uv")
+        new_enough = sys.version_info >= MIN_PYTHON
+        if not self.python.exists():
+            if not new_enough and not uv:
+                print(f"Miljøet kræver Python {'.'.join(map(str, MIN_PYTHON))} eller nyere (her: {sys.version.split()[0]}). "
+                      "Installér en nyere python3 – eller uv, som selv henter en passende Python.", file=sys.stderr)
+                return 2
+            print(f"Opretter miljø i {self.venv} …", flush=True)
+            if uv:
+                # too old a system Python: uv fetches a matching one
+                py = sys.executable if new_enough else ">=" + ".".join(map(str, MIN_PYTHON))
+                cmd = [uv, "venv", "-q", "--python", py, str(self.venv)]
+            else:
+                cmd = [sys.executable, "-m", "venv", str(self.venv)]
+            subprocess.run(cmd, check=True)
+        if uv:
+            # sync: exactly the lock file – packages from an earlier lock are removed
+            cmd = [uv, "pip", "sync", "-q", "--python", str(self.python), str(lock)]
+        else:
+            cmd = [str(self.python), "-m", "pip", "install", "-q", "--disable-pip-version-check", "-r", str(lock)]
+        r = subprocess.run(cmd)
+        if r.returncode:
+            return r.returncode
+        out = subprocess.run([str(self.python), "-c", self.import_check], capture_output=True, text=True)
+        print(out.stdout.strip() or out.stderr.strip())
+        return out.returncode
+
+    def switch(self, script: str, args: list[str]) -> int | None:
+        """Re-runs the script in the venv (does not return). None if we are already in it, 2 if it is missing."""
+        if self.active():
+            return None
+        if not self.python.exists():
+            print(f"Miljøet mangler. Kør først:  python3 {pathlib.Path(script).resolve()} setup", file=sys.stderr)
+            return 2
+        os.execv(str(self.python), [str(self.python), str(pathlib.Path(script).resolve())] + args)

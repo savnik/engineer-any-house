@@ -1,0 +1,24 @@
+{
+  "name": "byg-structural",
+  "displayName": "Byg · Statiker",
+  "version": "0.5.0",
+  "description": "Statiker som subagent: hvad er bærende, fjernelse af bærende vægge, bjælker og vederlag, bjælkelag og tag, ændrede laster, stabilitet, fundering, sætninger og revner, midlertidig understøtning og review af statisk dokumentation efter dansk regelgrundlag (BR18, Eurocodes med NA) – med videnbase, overslagsværktøj, hukommelse og evals. Rådgivende: erstatter ikke den ansvarlige statiker.",
+  "author": {
+    "name": "Peter Savnik"
+  },
+  "license": "MIT",
+  "keywords": [
+    "byggeri",
+    "statik",
+    "statiker",
+    "bærende",
+    "konstruktioner",
+    "eurocode",
+    "fundering",
+    "BR18",
+    "danmark"
+  ],
+  "dependencies": [
+    "byg-review"
+  ]
+}
