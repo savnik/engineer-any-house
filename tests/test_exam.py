@@ -117,9 +117,9 @@ def test_efficiency_helpers():
     with tempfile.TemporaryDirectory() as tmp:
         dst = exam.prepare_plugin("byg-el", pathlib.Path(tmp))
         expect("videnbasens størrelse måles", exam.knowledge_base_bytes(dst) > 10_000)
-    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "koer", "el", "--saet", "holdout"],
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "run", "el", "--set", "holdout"],
                        capture_output=True, text=True)
-    expect("holdout kræver --udgivelse", r.returncode == 1 and "--udgivelse" in r.stdout)
+    expect("holdout kræver --release", r.returncode == 1 and "--release" in r.stdout)
 
 
 def test_holdout_gaps_are_not_listed():

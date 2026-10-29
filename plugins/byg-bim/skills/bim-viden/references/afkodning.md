@@ -1,23 +1,23 @@
 # Afkodning af tegninger
 
-Afkodningen er det strukturerede udtræk af **alt** på en tegning, før der bygges. Den er grundlaget for modellen, for sammenligningen og for sporbarheden (hvert modelmål kan føres tilbage til et mål-id på en tegning). `bim.py afkod tjek` kontrollerer den mod tegningen selv.
+Afkodningen er det strukturerede udtræk af **alt** på en tegning, før der bygges. Den er grundlaget for modellen, for sammenligningen og for sporbarheden (hvert modelmål kan føres tilbage til et mål-id på en tegning). `bim.py decode check` kontrollerer den mod tegningen selv.
 
 ## Grundregler
 1. **Læs tal, mål ikke.** Påskrevne mål har altid forrang. Skalering fra billedet bruges kun, hvor der ikke står et mål, og bliver en usikkerhed på ca. 3 px × skala. Sprogmodeller læser tekst sikkert, men aflæser afstande i billeder upræcist.
-2. **Zoom, før du læser.** Brug `gitter --beskaer x0,y0,x1,y1 --trin 50 --zoom 2` på hver målkæde og hvert rum. Et helt A3-ark i ét billede bliver skaleret ned, og så er tallene ulæselige.
+2. **Zoom, før du læser.** Brug `grid --crop x0,y0,x1,y1 --step 50 --zoom 2` på hver målkæde og hvert rum. Et helt A3-ark i ét billede bliver skaleret ned, og så er tallene ulæselige.
 3. **Alt skal med, også det, modellen ikke skal bruge:** tekster om materialer, "bærende", koter, rettelser og stempler med betydning. Det ulæselige skrives under `usikre`. Personnavne udelades.
 4. **Pixelkoordinater er originalbilledets** (gitterets tal). Brug altid samme rasterisering (samme dpi) som `kilde.fil`.
 
 ## Fremgangsmåde
-1. `pdf <fil> --oversigt` → find tegningssiden. `pdf <fil> --sider <n> --dpi <d>` → `kilder/K<m>/`. Vælg en dpi tæt på scanningens ppi (udskriften viser den), typisk 200–300.
-2. **Overblik:** `gitter <side.png> --trin 200`. Find titelblok, målestok, nordpil og visningerne (plan, snit, facade), og notér hver visnings bbox.
+1. `pdf <fil> --overview` → find tegningssiden. `pdf <fil> --pages <n> --dpi <d>` → `kilder/K<m>/`. Vælg en dpi tæt på scanningens ppi (udskriften viser den), typisk 200–300.
+2. **Overblik:** `grid <side.png> --step 200`. Find titelblok, målestok, nordpil og visningerne (plan, snit, facade), og notér hver visnings bbox.
 3. **Pr. visning, systematisk:** ydre målkæder (alle sider), indre målkæder, vægtykkelser, rum, døre og vinduer, trapper, skorsten/søjler/bjælker, koter, tekster og snitmarkeringer.
-4. **Præcise punkter:** aflæs ikke pixelkoordinater med øjet, når der skal bruges præcision. Læg et smalt udsnit over stregen, og kør `linjer <png> --beskaer x0,y0,x1,y1`. Den giver stregens midte i originale pixel. Brug den til kalibreringspunkter (ydre hjørner = skæringen af to vægflader) og til hjælpelinjernes fod.
+4. **Præcise punkter:** aflæs ikke pixelkoordinater med øjet, når der skal bruges præcision. Læg et smalt udsnit over stregen, og kør `lines <png> --crop x0,y0,x1,y1`. Den giver stregens midte i originale pixel. Brug den til kalibreringspunkter (ydre hjørner = skæringen af to vægflader) og til hjælpelinjernes fod.
 5. **Origo og kalibrering:** vælg origo (fx ydervæggenes SV-hjørne) og regn modelkoordinaterne for 3–4 veldefinerede punkter langt fra hinanden **ud fra de påskrevne mål**: ydre hjørner, eller for snit og facade gulvlinjer og hjørner. Kalibreringen er affin, så X- og Y-skala kan afvige (papirkrymp, scanner).
-6. `afkod tjek` → 0 fejl. Passer et mål ikke med tegningen, så se på det igen i originalen. Enten er tallet fejllæst ("4,50"/"4,30", "1,18"/"1,78"), endepunkterne er forkerte, eller tegningen er ikke målfast. I det sidste tilfælde gælder det påskrevne tal for modellen, og stedet noteres under `usikre`.
+6. `decode check` → 0 fejl. Passer et mål ikke med tegningen, så se på det igen i originalen. Enten er tallet fejllæst ("4,50"/"4,30", "1,18"/"1,78"), endepunkterne er forkerte, eller tegningen er ikke målfast. I det sidste tilfælde gælder det påskrevne tal for modellen, og stedet noteres under `usikre`.
 
 ## Format (`kilder/K<m>/afkodning.yaml`)
-Formatet herunder er udtømmende. `bim.py afkod skabelon > afkodning.yaml` giver en kopi at udfylde. Værktøjets kildekode skal ikke læses.
+Formatet herunder er udtømmende. `bim.py decode template > afkodning.yaml` giver en kopi at udfylde. Værktøjets kildekode skal ikke læses.
 ```yaml
 kilde:
   id: K1

@@ -240,7 +240,7 @@ def storey(f, key) -> int:
               f"{q.get('Height', 0):.0f} | {k.get('Kilde', '?')}" + (f" ({k['Reference']})" if k.get("Reference") else ""))
     spaces = [s for s in f.by_type("IfcSpace") if ue.get_aggregate(s) == st]
     if spaces:
-        print("Rum: " + ", ".join(f"{s.Name} {s.LongName or ''}".strip() for s in spaces) + "  (mål: maal <ifc> --rum <navn>)")
+        print("Rum: " + ", ".join(f"{s.Name} {s.LongName or ''}".strip() for s in spaces) + "  (mål: measure <ifc> --space <navn>)")
     return 0
 
 
@@ -262,7 +262,7 @@ def measure(ifc: pathlib.Path, a=None, b=None, room=None, storey_name=None) -> i
         return storey(f, storey_name)
     keys = [x for x in (room, a, b) if x]
     if not keys:
-        print("Angiv et element, --rum <navn> eller --etage <navn> (se bim.py --help)")
+        print("Angiv et element, --space <navn> eller --storey <navn> (se bim.py --help)")
         return 2
     ents = []
     for n in keys:

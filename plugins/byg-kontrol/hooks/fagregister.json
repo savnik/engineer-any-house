@@ -58,10 +58,10 @@
       ],
       "kontrol_skrivefri": {
         "fem.py": {
-          "regn": "--ingen-filer",
+          "calc": "--no-files",
           "test": "",
-          "skabelon": "",
-          "resultat": ""
+          "template": "",
+          "result": ""
         }
       }
     },

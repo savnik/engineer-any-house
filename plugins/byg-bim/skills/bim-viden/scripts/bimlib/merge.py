@@ -1,8 +1,8 @@
 """Main model and proposals: one source of truth (the main model); changes are made in a proposal file on top of it
 and merged in only once the proposal is approved.
 
-  forslag <hoved.yaml> <navn>   → <main dir>/forslag/<navn>.yaml with basis and basis_sha256
-  flet <forslag.yaml> [--proev] → the proposal is merged into the main model; only the affected elements are rewritten,
+  propose <hoved.yaml> <navn>   → <main dir>/forslag/<navn>.yaml with basis and basis_sha256
+  merge <forslag.yaml> [--dry-run] → the proposal is merged into the main model; only the affected elements are rewritten,
                                   all other lines and comments are left untouched. The main model before and after
                                   is saved in historik/, the proposal is moved to historik/forslag/, and the merge
                                   is logged in historik/flettelog.md.
@@ -84,7 +84,7 @@ def _dict_text(lines, begin, stop, indent, g, n, replace, insert, path, ptext):
     and the comments stay."""
     bl = _blocks(lines, begin, stop, False, indent)
     if len(bl) != len(g):
-        raise SpecError([f"flet: kan ikke afgrænse nøglerne i '{'.'.join(path)}' ({len(bl)} blokke, {len(g)} nøgler)"
+        raise SpecError([f"merge: kan ikke afgrænse nøglerne i '{'.'.join(path)}' ({len(bl)} blokke, {len(g)} nøgler)"
                         f" – skriv hver nøgle på sin egen linje med {indent} mellemrums indrykning"])
 
     def new_text(key, value):
@@ -243,7 +243,7 @@ def _write_text(text: str, old: dict, new: dict, proposal_text: str = None) -> s
         bl = _blocks(lines, *sec, is_list)
         keys = [str(e.get("id")) for e in g] if is_list else list(g)
         if len(bl) != len(keys):
-            raise SpecError([f"flet: kan ikke afgrænse elementerne i '{k}' ({len(bl)} blokke, {len(keys)} elementer)"
+            raise SpecError([f"merge: kan ikke afgrænse elementerne i '{k}' ({len(bl)} blokke, {len(keys)} elementer)"
                             " – skriv hvert element på sin egen linje ('  - {id: …}' / '  nøgle: …')"])
         gpos = dict(zip(keys, bl))
         nmap = {str(e.get("id")): e for e in n} if is_list else n
@@ -310,7 +310,7 @@ def create(main, name, note=None, out=None) -> int:
         + (f"# {note}\n" if note else "")
         + "# Skriv kun det, der ændres: elementer med samme id overskriver felterne (null fjerner et felt), nye id'er\n"
           "# tilføjes, 'nedrives: [id, …]' = renovering, 'slet: [id, …]' = modelrettelse. Byg/kontrollér forslaget med\n"
-          f"#   bim.py byg {path.name}   ·   flet først ind efter godkendelse: bim.py flet {path.name}\n"
+          f"#   bim.py build {path.name}   ·   flet først ind efter godkendelse: bim.py merge {path.name}\n"
         f"basis: {rel.as_posix()}\n"
         f"basis_sha256: {_sha(main)}\n",
         encoding="utf-8")
@@ -351,7 +351,7 @@ def merge(proposal, dry_run=False, force=False, note=None) -> int:
                 print(f"KONFLIKT: {main.name} er ændret siden forslaget, og de samme elementer er ændret begge steder:")
                 for x in sorted(conflicts):
                     print("  - " + x)
-                print("  Opdatér forslaget mod den nuværende hovedmodel (og kontrollér igen), eller brug --tving.")
+                print("  Opdatér forslaget mod den nuværende hovedmodel (og kontrollér igen), eller brug --force.")
                 if not force:
                     return 1
             else:
@@ -424,5 +424,5 @@ def merge(proposal, dry_run=False, force=False, note=None) -> int:
     if (yaml.safe_load(new_text).get("ejendomskort") or {}).get("fil"):
         from .property_card import generate
         generate(main)
-    print(f"  næste: bim.py byg {main.name} og tjek – IFC'en er ikke bygget om")
+    print(f"  næste: bim.py build {main.name} og check – IFC'en er ikke bygget om")
     return 0

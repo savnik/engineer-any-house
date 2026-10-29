@@ -3,41 +3,41 @@
 
 Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit eget Python-miljø)
 
-  opsaet [--test]                          Opretter/opdaterer miljøet (~/.local/share/byg-bim/venv) fra den låste
+  setup [--test]                           Opretter/opdaterer miljøet (~/.local/share/byg-bim/venv) fra den låste
                                            requirements.txt (--test: + pytest til scripts/tests)
-  byg   <model.yaml> [--ud <fil.ifc>]      Spec → IFC (+ <fil>.byg.json). Standard: <specmappe>/ud/<navn>.ifc
-  tjek  <fil.ifc> [--ids <krav.ids>] [--ud <mappe>] [--tegn]
+  build <model.yaml> [--out <fil.ifc>]     Spec → IFC (+ <fil>.byg.json). Standard: <specmappe>/ud/<navn>.ifc
+  check <fil.ifc> [--ids <krav.ids>] [--out <mappe>] [--model-note <modelnotat.md>] [--draw]
                                            Skema, buildingSMART-regler, geometri, semantik, mængder, IDS
-  tegn  <fil.ifc> plan|snit|facade|3d|alle [--etage K] [--linje x1,y1,x2,y2] [--side syd] [--fra sv]
-        [--underlag <png> --kal "px,py=x,y;px,py=x,y"] [--id] [--maal] [--ud <mappe>]
-  eksport <fil.ifc> [--ud <fil.glb>] [--gennemsigtig <id-glob> …] [--alfa 0.25]
+  draw  <fil.ifc> plan|section|elevation|3d|all [--storey K] [--line x1,y1,x2,y2] [--side syd] [--from sv]
+        [--underlay <png> --cal "px,py=x,y;px,py=x,y"] [--id] [--dims] [--cut-height 1000] [--out <mappe>]
+  export <fil.ifc> [--out <fil.glb>] [--transparent <id-glob> …] [--alpha 0.25]
                                            3D til webvisning: glTF (.glb) i modellens farver, uden rum og huller;
-                                           --gennemsigtig gør fx facadevægge gennemsigtige, så konstruktionen ses
-  afkod skabelon                           Komplet skabelon til afkodning.yaml
-  afkod tjek <afkodning.yaml>              Kontrol af en tegningsafkodning (kalibrering, mål mod tegningen, kæder)
-  sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>] [--forrige <forrige rundes mappe>]
+                                           --transparent gør fx facadevægge gennemsigtige, så konstruktionen ses
+  decode template                          Komplet skabelon til afkodning.yaml
+  decode check <afkodning.yaml>            Kontrol af en tegningsafkodning (kalibrering, mål mod tegningen, kæder)
+  compare <fil.ifc> <afkodning.yaml> [--view V1] [--out <mappe>] [--previous <forrige rundes mappe>]
                                            Model i tegningens pixelramme + automatisk sammenligning
-  forslag <model.yaml> <navn> [--note …] [--ud <mappe>]  Ny forslagsfil forslag/<navn>.yaml (--ud: branch-sagens mappe) oven på hovedmodellen (ret aldrig i
+  propose <model.yaml> <navn> [--note …] [--out <mappe>]  Ny forslagsfil forslag/<navn>.yaml (--out: branch-sagens mappe) oven på hovedmodellen (ret aldrig i
                                            hovedmodellen selv – byg og kontrollér forslaget)
-  flet  <forslag.yaml> [--proev] [--note …] [--tving]
+  merge <forslag.yaml> [--dry-run] [--note …] [--force]
                                            Godkendt forslag → hovedmodellen (kun berørte elementer skrives om;
                                            historik/ + flettelog; stopper ved konflikt)
-  ejendomskort <model.yaml> [--tjek] [--importer <kort.md>]
+  property-card <model.yaml> [--check] [--import <kort.md>]
                                            Ejendomskortet genereres fra hovedmodellens fakta: (ret aldrig i kortet);
-                                           --tjek: afviger kortet?  --importer: kort → forslag/ejendomskort-import.yaml
+                                           --check: afviger kortet?  --import: kort → forslag/ejendomskort-import.yaml
   info  <fil.ifc>                          Overblik over en (fremmed) model
-  vis   <fil.ifc> <id|GlobalId|#step>       Ét element: attributter, egenskaber, materiale, placering
-  maal  <fil.ifc|model.yaml> <id> [<id2>] | --rum <navn> | --etage <navn>
+  show  <fil.ifc> <id|GlobalId|#step>      Ét element: attributter, egenskaber, materiale, placering
+  measure <fil.ifc|model.yaml> <id> [<id2>] | --space <navn> | --storey <navn>
                                            Mål i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger),
                                            rum (indvendige mål, areal, højde), afstand mellem to elementer,
                                            alle vægge på en etage. Altid med kilden (Byg_Kilde). En .yaml bygges først
   find  <fil.ifc> "<selector>"             Fx "IfcWall, /Status=EXISTING/" (ifcopenshell-selector)
   diff  <gammel.ifc> <ny.ifc>              Ændringer mellem to versioner
-  pdf   <fil.pdf> --oversigt                Kontaktark over alle sider (find tegningerne først)
-  pdf   <fil.pdf> [--sider 1,3-4] [--dpi 200] [--ud <mappe>]   Rasterisér tegninger til PNG
-  gitter <billede.png> [--trin 100] [--beskaer x0,y0,x1,y1] [--zoom 2]   Pixelgitter til aflæsning
-  linjer <billede.png> --beskaer x0,y0,x1,y1 [--andel 0.5]   Præcise pixelpositioner af streger (vægflader, hjælpelinjer)
-  skala --kal "x1,y1,x2,y2=mm[;…]" [--maal "x1,y1,x2,y2;…"]   Målestok fra kendte mål → mål i mm
+  pdf   <fil.pdf> --overview               Kontaktark over alle sider (find tegningerne først)
+  pdf   <fil.pdf> [--pages 1,3-4] [--dpi 200] [--out <mappe>]   Rasterisér tegninger til PNG
+  grid  <billede.png> [--step 100] [--crop x0,y0,x1,y1] [--zoom 2] [--out <mappe>]   Pixelgitter til aflæsning
+  lines <billede.png> --crop x0,y0,x1,y1 [--fraction 0.5]   Præcise pixelpositioner af streger (vægflader, hjælpelinjer)
+  scale --cal "x1,y1,x2,y2=mm[;…]" [--measured "x1,y1,x2,y2;…"]   Målestok fra kendte mål → mål i mm
 """
 import pathlib
 import sys
@@ -51,10 +51,10 @@ ENV = Environment("byg-bim", "BYG_BIM_VENV", HERE / "requirements.txt",
 
 def main() -> int:
     args = sys.argv[1:]
-    if not args or args[0] in ("-h", "--help", "hjaelp"):
+    if not args or args[0] in ("-h", "--help", "help"):
         print(__doc__)
         return 0
-    if args[0] == "opsaet":
+    if args[0] == "setup":
         return ENV.setup(HERE / "requirements-test.txt" if "--test" in args else None)
     if (r := ENV.switch(__file__, args)) is not None:
         return r

@@ -298,16 +298,16 @@ def main() -> int:
                 ERRORS.append(name)
         C = {"session_id": "s5", "cwd": str(cwd)}
         call_raw("pretool", {**C, "tool_input": {"subagent_type": FAG, "prompt": "LEVERANCE: 2026-09-25-bad/vvs/09"}}, env)
-        out = compact_call("efter_compact", {**C, "source": "compact"})
+        out = compact_call("after_compact", {**C, "source": "compact"})
         ctx = json.loads(out)["hookSpecificOutput"]["additionalContext"] if out.strip() else ""
         for name, ok in [
                 ("efter compact genindlæses status.md", "Næste skridt: tæthedsprøvning" in ctx),
                 ("efter compact afkortes en lang status.md", "afkortet" in ctx and len(ctx) < 16_000),
                 ("efter compact vises åbne leverancer fra tilstanden", "2026-09-25-bad/vvs/09: fagkald_igang" in ctx),
                 ("efter compact uden byg-sag giver intet",
-                 compact_call("efter_compact", {"session_id": "s9", "cwd": str(cwd), "source": "compact"}) == ""),
+                 compact_call("after_compact", {"session_id": "s9", "cwd": str(cwd), "source": "compact"}) == ""),
                 ("efter compact i sagsmappen uden leverancer genindlæses status.md",
-                 "tæthedsprøvning" in compact_call("efter_compact", {"session_id": "s9", "cwd": str(case_dir), "source": "compact"}))]:
+                 "tæthedsprøvning" in compact_call("after_compact", {"session_id": "s9", "cwd": str(case_dir), "source": "compact"}))]:
             print(("OK   " if ok else "FEJL ") + name)
             if not ok:
                 ERRORS.append(f"{name}: {ctx[:300]}")
@@ -358,20 +358,20 @@ def main() -> int:
 
         # Protection of an approved note
         fpath = str(case_dir / "fagnotater" / "vvs-07.md")
-        expect("subagent må ikke rette godkendt notat", call("beskyt", {**G, "agent_type": "byg-murer:murermester",
+        expect("subagent må ikke rette godkendt notat", call("protect", {**G, "agent_type": "byg-murer:murermester",
                 "tool_input": {"file_path": fpath}}, env), "afvist")
-        r = call("beskyt", {**G, "tool_input": {"file_path": fpath}}, env)
+        r = call("protect", {**G, "tool_input": {"file_path": fpath}}, env)
         ok = bool(r) and "systemMessage" in r and "hookSpecificOutput" in r and r["hookSpecificOutput"].get("permissionDecision") is None
         print(("OK   " if ok else "FEJL ") + "hovedtråden får advarsel ved godkendt notat")
         if not ok:
-            ERRORS.append(f"beskyt hovedtråd: {r}")
-        expect("andre filer påvirkes ikke", call("beskyt", {**G, "agent_type": "x", "tool_input": {"file_path": str(case_dir / "andet.md")}}, env), "tilladt")
+            ERRORS.append(f"protect hovedtråd: {r}")
+        expect("andre filer påvirkes ikke", call("protect", {**G, "agent_type": "x", "tool_input": {"file_path": str(case_dir / "andet.md")}}, env), "tilladt")
 
         # One writer per file also applies to temporary question folders in ~/byg-tmp/
         tmp_case = pathlib.Path(tmp) / "byg-tmp" / "2026-10-18-spoergsmaal"
-        expect("fagagent må ikke skrive fremmed fil i byg-tmp", call("beskyt", {**G, "agent_type": "byg-vvs:vvs-mester",
+        expect("fagagent må ikke skrive fremmed fil i byg-tmp", call("protect", {**G, "agent_type": "byg-vvs:vvs-mester",
                 "tool_input": {"file_path": str(tmp_case / "projektgrundlag.md")}}, env), "afvist")
-        expect("fagagent må skrive eget notat i byg-tmp", call("beskyt", {**G, "agent_type": "byg-vvs:vvs-mester",
+        expect("fagagent må skrive eget notat i byg-tmp", call("protect", {**G, "agent_type": "byg-vvs:vvs-mester",
                 "tool_input": {"file_path": str(tmp_case / "fagnotater" / "vvs.md")}}, env), "tilladt")
 
         # Manual status without CLAUDE_PLUGIN_DATA must find the plugin's data folder under ~/.claude/plugins/data/

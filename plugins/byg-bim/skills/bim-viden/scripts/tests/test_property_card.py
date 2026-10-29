@@ -1,4 +1,4 @@
-"""The property card is generated from the main model's facts: (bim.py opsaet --test, then in the bim env: python -m pytest scripts/tests)."""
+"""The property card is generated from the main model's facts: (bim.py setup --test, then in the bim env: python -m pytest scripts/tests)."""
 import pathlib
 import shutil
 import sys

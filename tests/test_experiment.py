@@ -115,10 +115,15 @@ def test_guard():
     expect("Grep i plugins tilladt", not deny("Grep", {"pattern": "x", "path": "plugins", "output_mode": "content"}))
     expect("Grep i eksamen med md-glob tilladt",
            not deny("Grep", {"pattern": "x", "path": "eksamen", "output_mode": "content", "glob": "*.md"}))
-    expect("vis uden --saet udvikling afvises", deny("Bash", {"command": "python3 scripts/exam.py vis el --facit"}))
-    expect("vis --saet udvikling tilladt",
-           not deny("Bash", {"command": "python3 scripts/exam.py vis el --saet udvikling --facit"}))
-    expect("koer tilladt", not deny("Bash", {"command": "python3 scripts/exam.py koer el --kun-fejlede"}))
+    expect("show uden --set development afvises",
+           deny("Bash", {"command": "python3 scripts/exam.py show el --answer-key"}))
+    expect("show --set holdout afvises",
+           deny("Bash", {"command": "python3 scripts/exam.py show el --set holdout --answer-key"}))
+    expect("show --set development tilladt",
+           not deny("Bash", {"command": "python3 scripts/exam.py show el --set development --answer-key"}))
+    expect("show --set=development tilladt",
+           not deny("Bash", {"command": "python3 scripts/exam.py show el --set=development"}))
+    expect("run tilladt", not deny("Bash", {"command": "python3 scripts/exam.py run el --only-failed"}))
     expect("experiment.py tilladt", not deny("Bash", {"command": "python3 scripts/experiment.py status"}))
     expect("script kædet med anden kommando afvises",
            deny("Bash", {"command": "python3 scripts/experiment.py status; cat eksamen/el/opgaver-a.json"}))
@@ -132,9 +137,9 @@ def test_guard():
 
 def test_answers_hide_holdout():
     held = sorted(t for t in experiment.holdout_ids() if t.startswith("EL-"))[0]
-    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "svar", "el", "--id", held],
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "answers", "el", "--id", held],
                        capture_output=True, text=True)
-    expect("exam.py svar viser aldrig holdout", r.returncode == 1 and "Holdout" in r.stdout, r.stdout[:200])
+    expect("exam.py answers viser aldrig holdout", r.returncode == 1 and "Holdout" in r.stdout, r.stdout[:200])
 
 
 def main() -> int:

@@ -169,7 +169,7 @@ def merge(proposal: pathlib.Path, case_dir: pathlib.Path, deliverable: str = "",
         text = target.read_text(encoding="utf-8")
         if GENERATED in text.split("\n", 1)[0]:
             res["besked"] = (f"{target.name} er genereret (fx fra BIM-hovedmodellen) og rettes ikke her – lav et "
-                             "BIM-forslag og flet det med bim.py flet.")
+                             "BIM-forslag og flet det med bim.py merge.")
             return res
         lines = text.split("\n")
         b = base_path(proposal)

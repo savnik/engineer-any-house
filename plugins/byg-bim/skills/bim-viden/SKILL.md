@@ -15,39 +15,39 @@ description: >-
 ## Værktøjet
 ```
 BIM="${CLAUDE_PLUGIN_ROOT}/skills/bim-viden/scripts/bim.py"
-python3 "$BIM" opsaet          # første gang: eget Python-miljø i ~/.local/share/byg-bim/venv (≈15 s)
+python3 "$BIM" setup          # første gang: eget Python-miljø i ~/.local/share/byg-bim/venv (≈15 s)
 ```
 Er `${CLAUDE_PLUGIN_ROOT}` ikke udfoldet, så find scriptet med Glob `**/bim-viden/scripts/bim.py` under `~/.claude/plugins/`.
 
 | Kommando | Gør | Tid |
 |---|---|---|
-| `pdf <fil.pdf> --oversigt` · `pdf <fil.pdf> --sider 23,25 --dpi 200 --ud <mappe>` | Kontaktark over alle sider · rasterisering af tegningssider | 2–10 s |
-| `gitter <png> [--beskaer x0,y0,x1,y1] [--trin 50] [--zoom 2]` | Pixelgitter i originale koordinater til aflæsning af punkter og mål | < 1 s |
-| `linjer <png> --beskaer x0,y0,x1,y1 [--andel 0.5]` | Præcise pixelpositioner af lodrette og vandrette streger i et smalt udsnit (vægflader, lysninger, hjælpelinjer) – til kalibreringspunkter og målenes fod | < 1 s |
-| `skala --kal "x1,y1,x2,y2=mm;…" [--maal …]` | Målestok fra kendte mål (X og Y hver for sig) | < 1 s |
-| `afkod skabelon` · `afkod tjek <afkodning.yaml>` | Skabelon med alle nøgler · kontrol af afkodningen: format, kalibrering (rest, skala mod målestok), hvert aflæst mål mod afstanden på tegningen, målkæders sum | < 1 s |
-| `forslag <model.yaml> <navn>` · `flet <forslag.yaml> [--proev] [--note …]` | Ny forslagsfil oven på hovedmodellen · godkendt forslag ind i hovedmodellen (kun berørte elementer, historik, konfliktstop) | < 2 s |
-| `ejendomskort <model.yaml> [--tjek] [--importer <kort.md>]` | Ejendomskortet genereret fra hovedmodellens `fakta:` (`references/spec.md`, "Ejendomskort fra hovedmodellen") | < 1 s |
-| `byg <model.yaml> [--ud fil.ifc]` | Spec → IFC + `<navn>.byg.json`. SPEC-FEJL vises samlet med sti til feltet | < 1 s |
-| `tjek <fil.ifc> [--tegn]` | Skema/EXPRESS, buildingSMART-regler, geometri, kollisioner, Status/materialer, kildefordeling, arealer mod BBR, IDS. Skriver `<navn>.tjek.md` | 1–3 s |
-| `sammenlign <fil.ifc> <afkodning.yaml> [--visning V1] [--ud <mappe>]` | Modellen tegnet i tegningens pixelramme: original · model · overlay (hele visningen og fliser) + automatisk sammenligning af alle afkodede mål, rum, åbninger og vægtykkelser med modellen | 3–10 s |
-| `tegn <fil.ifc> plan|snit|facade|3d|alle [--etage] [--linje] [--side] [--id] [--maal]` | Plan (snit +1 m), lodret snit, facader, 3D | 2–8 s |
-| `eksport <fil.ifc> [--ud <fil.glb>] [--gennemsigtig <glob>…] [--alfa 0.25]` | 3D til webvisning (model-viewer, three.js): glTF i modellens farver, uden rum og huller; `--gennemsigtig` gør elementer (id/Tag-glob, fx `"*-YV.1"`) gennemsigtige | 1–3 s |
-| `maal <fil.ifc|model.yaml> <id> [<id2>]` · `--rum <navn>` · `--etage <navn>` | Mål i mm i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger), rum (indvendige mål, areal), fri afstand mellem to elementer, alle vægge på en etage – altid med kilden. En `model.yaml` bygges først, så målet er fra den aktuelle model | < 1 s |
-| `info` · `vis <id>` · `find "<selector>"` · `diff <gammel> <ny>` | Inspektion og ændringer | < 5 s |
+| `pdf <fil.pdf> --overview` · `pdf <fil.pdf> --pages 23,25 --dpi 200 --out <mappe>` | Kontaktark over alle sider · rasterisering af tegningssider | 2–10 s |
+| `grid <png> [--crop x0,y0,x1,y1] [--step 50] [--zoom 2]` | Pixelgitter i originale koordinater til aflæsning af punkter og mål | < 1 s |
+| `lines <png> --crop x0,y0,x1,y1 [--fraction 0.5]` | Præcise pixelpositioner af lodrette og vandrette streger i et smalt udsnit (vægflader, lysninger, hjælpelinjer) – til kalibreringspunkter og målenes fod | < 1 s |
+| `scale --cal "x1,y1,x2,y2=mm;…" [--measured …]` | Målestok fra kendte mål (X og Y hver for sig) | < 1 s |
+| `decode template` · `decode check <afkodning.yaml>` | Skabelon med alle nøgler · kontrol af afkodningen: format, kalibrering (rest, skala mod målestok), hvert aflæst mål mod afstanden på tegningen, målkæders sum | < 1 s |
+| `propose <model.yaml> <navn>` · `merge <forslag.yaml> [--dry-run] [--note …]` | Ny forslagsfil oven på hovedmodellen · godkendt forslag ind i hovedmodellen (kun berørte elementer, historik, konfliktstop) | < 2 s |
+| `property-card <model.yaml> [--check] [--import <kort.md>]` | Ejendomskortet genereret fra hovedmodellens `fakta:` (`references/spec.md`, "Ejendomskort fra hovedmodellen") | < 1 s |
+| `build <model.yaml> [--out fil.ifc]` | Spec → IFC + `<navn>.byg.json`. SPEC-FEJL vises samlet med sti til feltet | < 1 s |
+| `check <fil.ifc> [--draw]` | Skema/EXPRESS, buildingSMART-regler, geometri, kollisioner, Status/materialer, kildefordeling, arealer mod BBR, IDS. Skriver `<navn>.tjek.md` | 1–3 s |
+| `compare <fil.ifc> <afkodning.yaml> [--view V1] [--out <mappe>]` | Modellen tegnet i tegningens pixelramme: original · model · overlay (hele visningen og fliser) + automatisk sammenligning af alle afkodede mål, rum, åbninger og vægtykkelser med modellen | 3–10 s |
+| `draw <fil.ifc> plan|section|elevation|3d|all [--storey] [--line] [--side] [--id] [--dims]` | Plan (snit +1 m), lodret snit, facader, 3D | 2–8 s |
+| `export <fil.ifc> [--out <fil.glb>] [--transparent <glob>…] [--alpha 0.25]` | 3D til webvisning (model-viewer, three.js): glTF i modellens farver, uden rum og huller; `--transparent` gør elementer (id/Tag-glob, fx `"*-YV.1"`) gennemsigtige | 1–3 s |
+| `measure <fil.ifc|model.yaml> <id> [<id2>]` · `--space <navn>` · `--storey <navn>` | Mål i mm i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger), rum (indvendige mål, areal), fri afstand mellem to elementer, alle vægge på en etage – altid med kilden. En `model.yaml` bygges først, så målet er fra den aktuelle model | < 1 s |
+| `info` · `show <id>` · `find "<selector>"` · `diff <gammel> <ny>` | Inspektion og ændringer | < 5 s |
 
 Udskrifterne er korte med vilje. Detaljer står i filerne – læs dem kun, når udskriften ikke er nok.
 
 ## Metoder
 - **Tegningsimport** (PDF → afkodning → model → uafhængig sammenligning → rettelse, højst 3 runder): skill `tegningsimport`. Hovedtråden orkestrerer; `bim-modelloer` afkoder og bygger; `bim-sammenligner` sammenligner. Afkodningens format: `references/afkodning.md`.
 - **Ny model uden tegninger** (opmåling, fotos, BBR): spec direkte efter `references/spec.md`.
-- **Ændringer i en eksisterende model:** altid som forslag oven på hovedmodellen – `forslag` → byg/kontrol → `flet` efter godkendelse (`references/spec.md`, "Hovedmodel og forslag"). Hovedmodellen rettes aldrig direkte.
+- **Ændringer i en eksisterende model:** altid som forslag oven på hovedmodellen – `propose` → byg/kontrol → `merge` efter godkendelse (`references/spec.md`, "Hovedmodel og forslag"). Hovedmodellen rettes aldrig direkte.
 - **Renovering:** projektspec med `basis:` (`references/spec.md`, "Renovering") – også et forslag; den valgte variant flettes ind.
-- **Fremmed IFC:** kopi → `info`/`tjek` → ret efter `references/rediger.md` → `diff` → `tjek`.
+- **Fremmed IFC:** kopi → `info`/`check` → ret efter `references/rediger.md` → `diff` → `check`.
 
 ## Filer i sagen
 ```
-<sagsmappe>/bim/model.yaml                     hovedmodellen – eneste source of truth (ændres kun med `flet`)
+<sagsmappe>/bim/model.yaml                     hovedmodellen – eneste source of truth (ændres kun med `merge`)
 <sagsmappe>/bim/forslag/<navn>.yaml            forslag/varianter oven på hovedmodellen (her arbejdes der)
 <sagsmappe>/bim/historik/                      versioner før/efter hver fletning, flettede forslag, flettelog.md
 <sagsmappe>/bim/kilder/<K-id>/                 sider som PNG, gitter, beskæringer og afkodning.yaml

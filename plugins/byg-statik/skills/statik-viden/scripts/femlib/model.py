@@ -90,7 +90,7 @@ def cross_section(name: str, custom: dict) -> dict:
 def set_value(s: dict, expr: str) -> None:
     """Change one input without touching the file: 'lasttilfaelde.Q.laster.0.linjelast=4.0' (list index from 0)."""
     if "=" not in expr:
-        raise SpecError(f"--saet '{expr}': skriv sti=værdi")
+        raise SpecError(f"--set '{expr}': skriv sti=værdi")
     path, value = expr.split("=", 1)
     parts = path.strip().split(".")
     o = s
@@ -98,14 +98,14 @@ def set_value(s: dict, expr: str) -> None:
         try:
             o = o[int(d)] if isinstance(o, list) else o[d]
         except (KeyError, IndexError, ValueError):
-            raise SpecError(f"--saet: '{path}' findes ikke i spec'en")
+            raise SpecError(f"--set: '{path}' findes ikke i spec'en")
     last_key = parts[-1]
     if isinstance(o, list):
         o[int(last_key)] = yaml.safe_load(value)
     elif isinstance(o, dict):
         o[last_key] = yaml.safe_load(value)
     else:
-        raise SpecError(f"--saet: '{path}' peger ikke på et felt")
+        raise SpecError(f"--set: '{path}' peger ikke på et felt")
 
 
 def read_spec(path: pathlib.Path, changes: list | None = None) -> dict:
@@ -121,7 +121,7 @@ def read_spec(path: pathlib.Path, changes: list | None = None) -> dict:
     s["_sti"] = str(path)
     for k in ("knuder", "lasttilfaelde", "kombinationer"):
         if not s.get(k):
-            raise SpecError(f"'{k}' mangler eller er tom (se: fem.py skabelon)")
+            raise SpecError(f"'{k}' mangler eller er tom (se: fem.py template)")
     if not s.get("elementer") and not s.get("flader"):
         raise SpecError("modellen skal have 'elementer' (stænger) og/eller 'flader' (vægge, dæk)")
     if not s.get("understoetninger") and not s.get("understoetninger_linje"):

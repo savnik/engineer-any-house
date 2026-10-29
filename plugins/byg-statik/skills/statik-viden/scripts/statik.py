@@ -9,13 +9,13 @@ All arithmetic happens here – including sums, tributary width and unit convers
 the command, so the appendix can be re-run by the reviewer.
 
 Commands:
-  statik.py regn "<udtryk>" [--var navn=værdi ...]   arithmetic (+ - * / **, sqrt, sin, cos, tan, radians, pi, min, max)
-  statik.py last --lag navn:værdi ... [--opland M]    load take-down: sum layers (kN/m2 or thickness_m*kN/m3) → area load and line load
-  statik.py profiler [--serie IPE|HEA|HEB]       section properties (computed from the geometry)
-  statik.py bjaelke  ...                         simply supported beam: M, V, deflection
-  statik.py tryk     --last KN --areal M2 --styrke KPA|MPA   contact pressure (bearing, foundation)
-  statik.py test                                 self-test against table values
-Run `statik.py bjaelke -h` for all parameters.
+  statik.py calc "<udtryk>" [--var navn=værdi ...]          arithmetic (+ - * / **, sqrt, sin, cos, tan, radians, pi, min, max)
+  statik.py load --layers navn:værdi ... [--tributary M]    load take-down: sum layers (kN/m2 or thickness_m*kN/m3) → area load and line load
+  statik.py profiles [--series IPE|HEA|HEB]                 section properties (computed from the geometry)
+  statik.py beam  ...                                       simply supported beam: M, V, deflection
+  statik.py pressure --load KN --area M2 --strength KPA|MPA contact pressure (bearing, foundation)
+  statik.py test                                            self-test against table values
+Run `statik.py beam -h` for all parameters.
 """
 import argparse
 import ast
@@ -73,7 +73,7 @@ COEFFS = {
 }
 # T: DS/EN 1995-1-1 table 3.1 (solid timber and glulam, service class 1 and 2). Duration per DK NA table 2.2 (V):
 # imposed load = medium, snow = short, wind = instantaneous.
-KMOD = {"permanent": 0.6, "lang": 0.7, "mellem": 0.8, "kort": 0.9, "oejeblikkelig": 1.1}
+KMOD = {"permanent": 0.6, "long": 0.7, "medium": 0.8, "short": 0.9, "instantaneous": 1.1}
 KDEF = {1: 0.6, 2: 0.8}  # T: DS/EN 1995-1-1 table 3.2, solid timber and glulam
 
 
@@ -131,16 +131,16 @@ def calc(a):
             sys.exit(f"Ugyldigt variabelnavn '{name}'")
         variables[name] = evaluate(value, variables)
     try:
-        r = evaluate(a.udtryk, variables)
+        r = evaluate(a.expression, variables)
     except (ValueError, SyntaxError, ZeroDivisionError, TypeError) as e:
-        sys.exit(f"Kan ikke beregne '{a.udtryk}': {e}")
-    output({"variable": variables, "udtryk": a.udtryk, "resultat": r})
+        sys.exit(f"Kan ikke beregne '{a.expression}': {e}")
+    output({"variable": variables, "udtryk": a.expression, "resultat": r})
 
 
 def load(a):
     """Sum layers: 'name:0.5' (kN/m2) or 'name:0.05*18' (thickness m × unit weight kN/m3)."""
     layers, total = [], 0.0
-    for s in a.lag:
+    for s in a.layers:
         name, _, v = s.rpartition(":")
         if not name:
             sys.exit(f"Lag '{s}' skal være navn:værdi")
@@ -151,12 +151,12 @@ def load(a):
         layers.append({"lag": name, "udtryk": v, "kN_m2": round(value, 4)})
         total += value
     res = {"lag": layers, "fladelast_kN_m2": round(total, 4)}
-    if a.faktor != 1.0:
-        res["faktor"] = a.faktor
-        res["fladelast_x_faktor_kN_m2"] = round(total * a.faktor, 4)
-    if a.opland:
-        res["opland_m"] = a.opland
-        res["linjelast_kN_m"] = round(total * a.faktor * a.opland, 4)
+    if a.factor != 1.0:
+        res["faktor"] = a.factor
+        res["fladelast_x_faktor_kN_m2"] = round(total * a.factor, 4)
+    if a.tributary:
+        res["opland_m"] = a.tributary
+        res["linjelast_kN_m"] = round(total * a.factor * a.tributary, 4)
     output(res)
 
 
@@ -226,10 +226,10 @@ def read_points(raw):
 
 
 def beam(a):
-    L = a.spaend
-    g = a.g + a.g_flade * a.opland + (a.egenvaegt or 0.0)
-    q = a.q + a.q_flade * a.opland
-    pts = read_points(a.punkt)
+    L = a.span
+    g = a.g + a.g_area * a.tributary + (a.self_weight or 0.0)
+    q = a.q + a.q_area * a.tributary
+    pts = read_points(a.point)
     for _, _, x in pts:
         if not 0 < x < L:
             sys.exit("Punktlastens placering skal ligge mellem vederlagene.")
@@ -247,15 +247,15 @@ def beam(a):
     }
     res = {"OVERSLAG": "skal eftervises af den ansvarlige statiker",
            "input": {"spaend_m": L, "g_kN_m": round(g, 3), "q_kN_m": round(q, 3),
-                     "punktlaster_G_Q_a": pts, "materiale": a.materiale, "koefficienter": k}}
+                     "punktlaster_G_Q_a": pts, "materiale": a.material, "koefficienter": k}}
 
-    mat = MATERIALS.get(a.materiale)
+    mat = MATERIALS.get(a.material)
     if not mat:
-        sys.exit(f"Ukendt materiale '{a.materiale}'. Kendte: {', '.join(MATERIALS)}")
+        sys.exit(f"Ukendt materiale '{a.material}'. Kendte: {', '.join(MATERIALS)}")
     if mat["art"] == "stål":
-        if not a.profil:
-            sys.exit("Stål kræver --profil, fx HEB160.")
-        name, ts = find_profile(a.profil)
+        if not a.profile:
+            sys.exit("Stål kræver --profile, fx HEB160.")
+        name, ts = find_profile(a.profile)
         W, I, Av, E = ts["Wy"], ts["Iy"], ts["Av"], mat["E"]
         gm0 = k.get("gamma_m") if a.gamma_m else k["gamma_m0"]
         fmd = mat["fy"] / gm0
@@ -264,15 +264,15 @@ def beam(a):
                  "Wy_el_cm3": round(W / 1e3, 1), "Av_cm2": round(Av / 100, 1)}
         kmod = 1.0
     else:
-        if not (a.bredde and a.hoejde):
-            sys.exit("Træ kræver --bredde og --hoejde i mm.")
-        b, h = a.bredde, a.hoejde
+        if not (a.width and a.height):
+            sys.exit("Træ kræver --width og --height i mm.")
+        b, h = a.width, a.height
         W, I, E = b * h ** 2 / 6, b * h ** 3 / 12, mat["E"]
         gm = k.get("gamma_m") if a.gamma_m else (k["gamma_m_trae"] if mat["art"] == "træ" else k["gamma_m_limtrae"])
-        kmod_g, kmod_q = KMOD["permanent"], KMOD[a.lastvarighed]
+        kmod_g, kmod_q = KMOD["permanent"], KMOD[a.load_duration]
         section = {"tvaersnit_mm": f"{b:g}x{h:g}", "Iy_cm4": round(I / 1e4), "Wy_cm3": round(W / 1e3, 1),
                  "gamma_M": gm, "kmod_6.10a": kmod_g, "kmod_6.10b": kmod_q,
-                 "anvendelsesklasse": a.anvendelsesklasse}
+                 "anvendelsesklasse": a.service_class}
         if h / b > 4:
             section["ADVARSEL"] = "h/b > 4: kipning (kcrit) ikke eftervist – kræver sideafstivning af trykranden"
     res["tvaersnit"] = section
@@ -296,12 +296,12 @@ def beam(a):
     EI = E * I
     u_g = deflection(L, g, [(G, x) for G, _, x in pts], EI)
     u_q = deflection(L, q, [(Q, x) for _, Q, x in pts], EI)
-    kd = 0.0 if mat["art"] == "stål" else KDEF[a.anvendelsesklasse]
-    g_lim, q_lim = L * 1000 / a.graense, L * 1000 / (a.graense_q or a.graense)
+    kd = 0.0 if mat["art"] == "stål" else KDEF[a.service_class]
+    g_lim, q_lim = L * 1000 / a.limit, L * 1000 / (a.limit_q or a.limit)
     u_g_fin = u_g * (1 + kd)
     sls = {"u_inst_g_mm": round(u_g, 1), "kdef": kd, "u_fin_g_mm": round(u_g_fin, 1),
-           "graense_g": f"L/{a.graense:g} = {g_lim:.1f} mm", "udnyttelse_g": round(u_g_fin / g_lim, 2),
-           "u_inst_q_mm": round(u_q, 1), "graense_q": f"L/{(a.graense_q or a.graense):g} = {q_lim:.1f} mm",
+           "graense_g": f"L/{a.limit:g} = {g_lim:.1f} mm", "udnyttelse_g": round(u_g_fin / g_lim, 2),
+           "u_inst_q_mm": round(u_q, 1), "graense_q": f"L/{(a.limit_q or a.limit):g} = {q_lim:.1f} mm",
            "udnyttelse_q": round(u_q / q_lim, 2),
            "info_u_fin_samlet_mm": round(u_g_fin + u_q * (1 + k["psi2"] * kd), 1)}
     sls["udnyttelse"] = max(sls["udnyttelse_g"], sls["udnyttelse_q"])
@@ -318,15 +318,15 @@ def beam(a):
 
 
 def pressure(a):
-    strength = a.styrke * (1000 if a.enhed == "MPa" else 1)  # kPa
-    p = a.last / a.areal  # kN/m2 = kPa
+    strength = a.strength * (1000 if a.unit == "MPa" else 1)  # kPa
+    p = a.load / a.area  # kN/m2 = kPa
     output({"OVERSLAG": "skal eftervises af den ansvarlige statiker", "tryk_kPa": round(p, 1),
         "styrke_kPa": strength, "udnyttelse": round(p / strength, 2)})
 
 
 def list_profiles(a):
     for series, table in PROFILES.items():
-        if a.serie and series != a.serie.upper():
+        if a.series and series != a.series.upper():
             continue
         for n, geo in table.items():
             ts = section_i(*geo)
@@ -359,43 +359,43 @@ def test(_a):
 def main():
     ap = argparse.ArgumentParser(description="Statiske overslag (OVERSLAG – skal eftervises af ansvarlig statiker).")
     sub = ap.add_subparsers(dest="kmd", required=True)
-    p = sub.add_parser("profiler")
-    p.add_argument("--serie")
+    p = sub.add_parser("profiles")
+    p.add_argument("--series")
     p.set_defaults(fn=list_profiles)
-    r = sub.add_parser("regn", help="Aritmetik – brug den til ALLE mellemregninger")
-    r.add_argument("udtryk")
+    r = sub.add_parser("calc", help="Aritmetik – brug den til ALLE mellemregninger")
+    r.add_argument("expression")
     r.add_argument("--var", action="append", help="navn=værdi (kan gentages; værdien må være et udtryk)")
     r.set_defaults(fn=calc)
-    la = sub.add_parser("last", help="Lastopgørelse: summér lag til fladelast og evt. linjelast")
-    la.add_argument("--lag", action="append", required=True, help="navn:kN/m2 eller navn:tykkelse*tyngde")
-    la.add_argument("--faktor", type=number, default=1.0, help="Fx formfaktor eller omregning fra tagflade til vandret")
-    la.add_argument("--opland", type=number, default=0.0, help="Oplandsbredde [m] → linjelast")
+    la = sub.add_parser("load", help="Lastopgørelse: summér lag til fladelast og evt. linjelast")
+    la.add_argument("--layers", action="append", required=True, help="navn:kN/m2 eller navn:tykkelse*tyngde")
+    la.add_argument("--factor", type=number, default=1.0, help="Fx formfaktor eller omregning fra tagflade til vandret")
+    la.add_argument("--tributary", type=number, default=0.0, help="Oplandsbredde [m] → linjelast")
     la.set_defaults(fn=load)
     t = sub.add_parser("test")
     t.set_defaults(fn=test)
-    k = sub.add_parser("tryk", help="Kontakttryk: last [kN] / areal [m2] mod regningsmæssig styrke")
-    k.add_argument("--last", type=number, required=True, help="Regningsmæssig last [kN]")
-    k.add_argument("--areal", type=number, required=True, help="Kontaktareal [m2]")
-    k.add_argument("--styrke", type=number, required=True, help="Regningsmæssig styrke (fra statiker/geotekniker/norm)")
-    k.add_argument("--enhed", choices=["kPa", "MPa"], default="kPa")
+    k = sub.add_parser("pressure", help="Kontakttryk: last [kN] / areal [m2] mod regningsmæssig styrke")
+    k.add_argument("--load", type=number, required=True, help="Regningsmæssig last [kN]")
+    k.add_argument("--area", type=number, required=True, help="Kontaktareal [m2]")
+    k.add_argument("--strength", type=number, required=True, help="Regningsmæssig styrke (fra statiker/geotekniker/norm)")
+    k.add_argument("--unit", choices=["kPa", "MPa"], default="kPa")
     k.set_defaults(fn=pressure)
-    b = sub.add_parser("bjaelke", help="Simpelt understøttet bjælke")
-    b.add_argument("--spaend", type=number, required=True, help="Regningsmæssigt spænd [m]")
-    b.add_argument("--materiale", required=True, help=", ".join(MATERIALS))
-    b.add_argument("--profil", help="Stålprofil, fx HEB160")
-    b.add_argument("--bredde", type=number, help="Træ: bredde [mm]")
-    b.add_argument("--hoejde", type=number, help="Træ: højde [mm]")
+    b = sub.add_parser("beam", help="Simpelt understøttet bjælke")
+    b.add_argument("--span", type=number, required=True, help="Regningsmæssigt spænd [m]")
+    b.add_argument("--material", required=True, help=", ".join(MATERIALS))
+    b.add_argument("--profile", help="Stålprofil, fx HEB160")
+    b.add_argument("--width", type=number, help="Træ: bredde [mm]")
+    b.add_argument("--height", type=number, help="Træ: højde [mm]")
     b.add_argument("--g", type=number, default=0.0, help="Linjelast, egenlast [kN/m] (karakteristisk)")
     b.add_argument("--q", type=number, default=0.0, help="Linjelast, nyttelast/sne [kN/m] (karakteristisk)")
-    b.add_argument("--g-flade", dest="g_flade", type=number, default=0.0, help="Fladelast egenlast [kN/m2]")
-    b.add_argument("--q-flade", dest="q_flade", type=number, default=0.0, help="Fladelast nyttelast [kN/m2]")
-    b.add_argument("--opland", type=number, default=0.0, help="Oplandsbredde for fladelaster [m]")
-    b.add_argument("--egenvaegt", type=number, help="Bjælkens egenvægt [kN/m]")
-    b.add_argument("--punkt", action="append", help="Punktlast G:Q:a (kN, kN, m) – kan gentages")
-    b.add_argument("--lastvarighed", choices=list(KMOD), default="mellem", help="Træ: varighed for den variable last")
-    b.add_argument("--anvendelsesklasse", type=int, choices=[1, 2], default=1, help="Træ: 1 inde/opvarmet, 2 uopvarmet/overdækket")
-    b.add_argument("--graense", type=number, default=400, help="Egenlast: w_fin ≤ L/x (DK NA EN 1995 tabel 7.2: 400)")
-    b.add_argument("--graense-q", dest="graense_q", type=number, help="Variabel last: w_inst ≤ L/x (400; vind 250). Standard = --graense")
+    b.add_argument("--g-area", dest="g_area", type=number, default=0.0, help="Fladelast egenlast [kN/m2]")
+    b.add_argument("--q-area", dest="q_area", type=number, default=0.0, help="Fladelast nyttelast [kN/m2]")
+    b.add_argument("--tributary", type=number, default=0.0, help="Oplandsbredde for fladelaster [m]")
+    b.add_argument("--self-weight", type=number, help="Bjælkens egenvægt [kN/m]")
+    b.add_argument("--point", action="append", help="Punktlast G:Q:a (kN, kN, m) – kan gentages")
+    b.add_argument("--load-duration", choices=list(KMOD), default="medium", help="Træ: varighed for den variable last")
+    b.add_argument("--service-class", type=int, choices=[1, 2], default=1, help="Træ: 1 inde/opvarmet, 2 uopvarmet/overdækket")
+    b.add_argument("--limit", type=number, default=400, help="Egenlast: w_fin ≤ L/x (DK NA EN 1995 tabel 7.2: 400)")
+    b.add_argument("--limit-q", dest="limit_q", type=number, help="Variabel last: w_inst ≤ L/x (400; vind 250). Standard = --limit")
     b.add_argument("--kfi", type=number, help="KFI (CC1 0,9 · CC2 1,0 · CC3 1,1)")
     b.add_argument("--gamma-g", dest="gamma_g", type=number)
     b.add_argument("--gamma-g-a", dest="gamma_g_a", type=number)

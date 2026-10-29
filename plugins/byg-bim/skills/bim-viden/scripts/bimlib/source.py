@@ -43,7 +43,7 @@ def overview(doc, path, out, columns=8, width=260):
     if max(sheet.size) > MAX_PX * 2:
         sheet.thumbnail((MAX_PX * 2, MAX_PX * 2))
     sheet.save(file)
-    print(f"{file}  {len(thumbs)} sider – vælg tegningssider og kør: bim.py pdf {path} --sider <n,…> --dpi 200")
+    print(f"{file}  {len(thumbs)} sider – vælg tegningssider og kør: bim.py pdf {path} --pages <n,…> --dpi 200")
     return 0
 
 
@@ -74,7 +74,7 @@ def pdf(path: pathlib.Path, pages, dpi, out, show_overview=False) -> int:
         w_mm, h_mm = page.rect.width / 72 * 25.4, page.rect.height / 72 * 25.4
         print(f"{file}  {pix.width}×{pix.height} px · side {w_mm:.0f}×{h_mm:.0f} mm · {dpi} dpi{scan}")
         if max(pix.width, pix.height) > MAX_PX:
-            print(f"  for stort til at læse i ét billede – brug: bim.py gitter {file} --beskaer x0,y0,x1,y1")
+            print(f"  for stort til at læse i ét billede – brug: bim.py grid {file} --crop x0,y0,x1,y1")
     return 0
 
 
@@ -95,7 +95,7 @@ def grid(path: pathlib.Path, step, crop, zoom, out) -> int:
         font = ImageFont.load_default(size=max(11, int(12 * max(1.0, z))))
     except TypeError:
         font = ImageFont.load_default()
-    # lines in ORIGINAL pixel coordinates, so readings can be used directly in --kal and skala
+    # lines in ORIGINAL pixel coordinates, so readings can be used directly in --cal and scale
     start_x = (x0 // step + 1) * step
     start_y = (y0 // step + 1) * step
     for gx in range(start_x, x0 + int(img.width / z) + 1, step):
@@ -149,7 +149,7 @@ def lines(path: pathlib.Path, crop, fraction=0.5, threshold=128) -> int:
     print("  lodrette (x): " + (", ".join(f"{x:.1f} ({b} px, {d:.0%})" for x, b, d in vertical) or "ingen"))
     print("  vandrette (y): " + (", ".join(f"{y:.1f} ({b} px, {d:.0%})" for y, b, d in horizontal) or "ingen"))
     if not vertical and not horizontal:
-        print("  tip: gør udsnittet smallere omkring stregen, eller sænk --andel")
+        print("  tip: gør udsnittet smallere omkring stregen, eller sænk --fraction")
     return 0
 
 
@@ -168,12 +168,12 @@ def _pairs(text, with_dim=True):
 
 
 def scale(cal, dims) -> int:
-    """--kal "x1,y1,x2,y2=mm;…": known dimensions in the image. With dimensions in different directions the X and Y scale
+    """--cal "x1,y1,x2,y2=mm;…": known dimensions in the image. With dimensions in different directions the X and Y scale
     are determined separately (mm² = (sx·dx)² + (sy·dy)²)."""
     import numpy as np
     k = _pairs(cal)
     if not k:
-        print("--kal mangler: \"x1,y1,x2,y2=mm;…\"")
+        print("--cal mangler: \"x1,y1,x2,y2=mm;…\"")
         return 1
     rows, rhs = [], []
     for (x1, y1, x2, y2), mm in k:

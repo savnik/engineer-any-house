@@ -158,6 +158,6 @@ Installér `byg.plugin` i Cowork (ikke samtidig med marketplace-installationen) 
 - **Hooks kører ikke:** tjek at `python3` findes i den terminal, Claude Code startes fra; se `/hooks`; start med `claude --debug` og se efter fejl fra `review_gate.py`.
 - **Forkerte agentnavne:** sammenlign `/agents` med navnene i `plugins/byg-kontrol/hooks/fagregister.json`.
 - **Kontrollen er for streng eller for blød:** notér leverance-ID og dom – det er input til en ny rubric-version.
-- **Nulstil en leverance under test:** `CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/review_gate.py nulstil <leverance-id>`
+- **Nulstil en leverance under test:** `CLAUDE_PLUGIN_DATA="$BK" python3 ~/engineer-any-house/plugins/byg-kontrol/hooks/review_gate.py reset <leverance-id>`
 
 Send mig bagefter resultatskemaet, output fra status-kommandoen og de dele af sagsmappen, der fejlede. Så retter jeg pluginet og laver eval-cases, der fanger fejlene fremover.

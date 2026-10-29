@@ -80,5 +80,5 @@ jobs:
         env:
           BYG_STATIK_VENV: ${{ runner.temp }}/byg-statik-venv
         run: |
-          python plugins/byg-statik/skills/statik-viden/scripts/fem.py opsaet
+          python plugins/byg-statik/skills/statik-viden/scripts/fem.py setup
           python plugins/byg-statik/skills/statik-viden/scripts/fem.py test

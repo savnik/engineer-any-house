@@ -2,19 +2,21 @@
 """Forsøgslog og benchmark for forbedringer af fag-plugins (bruges af CI-agenten `ci-forbedring`).
 
 Brug:
-  python3 scripts/experiment.py status [--fag el]          benchmark, åbne forsøg, forslag og udestående huller
-  python3 scripts/experiment.py liste [--fag el] [--kategori videnbase] [--status afsluttet]
-  python3 scripts/experiment.py vis F-001
-  python3 scripts/experiment.py soeg <ord> [<ord> ...]     er en idé eller en opgave afprøvet før?
-  python3 scripts/experiment.py ny --fag el[,vvs] --kategori K --hypotese "…" [--aendring "…"] [--opgaver EL-012,…]
-                               [--forslag]
+  python3 scripts/experiment.py status [--trade el]        benchmark, åbne forsøg, forslag og udestående huller
+  python3 scripts/experiment.py list [--trade el] [--category videnbase] [--status afsluttet]
+  python3 scripts/experiment.py show F-001
+  python3 scripts/experiment.py search <ord> [<ord> ...]   er en idé eller en opgave afprøvet før?
+  python3 scripts/experiment.py new --trade el[,vvs] --category K --hypothesis "…" [--change "…"] [--tasks EL-012,…]
+                               [--proposal]
   python3 scripts/experiment.py start F-007                gør et forslag til et åbent forsøg (noterer rev_foer)
-  python3 scripts/experiment.py maal F-001 (--foer | --efter) <resultatfil> [<resultatfil> ...] [--rev REV]
-  python3 scripts/experiment.py vurder F-001               beslutningsreglen på de gemte målinger
-  python3 scripts/experiment.py afslut F-001 --beslutning behold|forkast|uafklaret --laering "…"
-                               [--begrundelse "…"] [--rev-efter REV] [--pr "#7"]
-  python3 scripts/experiment.py benchmark [--fag el]
-  python3 scripts/experiment.py tjek                       format, og at ingen holdout-ID'er står i loggen
+  python3 scripts/experiment.py measure F-001 (--before | --after) <resultatfil> [<resultatfil> ...] [--rev REV]
+  python3 scripts/experiment.py assess F-001               beslutningsreglen på de gemte målinger
+  python3 scripts/experiment.py close F-001 --decision keep|discard|undecided --learning "…"
+                               [--rationale "…"] [--rev-after REV] [--pr "#7"]
+  python3 scripts/experiment.py benchmark [--trade el]
+  python3 scripts/experiment.py check                      format, og at ingen holdout-ID'er står i loggen
+
+--decision keep|discard|undecided gemmes som behold|forkast|uafklaret i loggen.
 
 Loggen (`eksamen/forsoeg.json`) og benchmarket (`eksamen/benchmark.json`) ligger i repoet. De rummer kun
 sammendrag pr. gruppe (sæt × opgavefil). Holdout-opgaver gemmes kun som antal og en hash af ID-listen, så
@@ -48,6 +50,8 @@ CATEGORIES = {
 PLUGIN_CATEGORIES = {"videnbase", "prompt", "model"}
 STATUSES = ["forslag", "aaben", "afsluttet"]
 DECISIONS = {"behold", "forkast", "uafklaret"}
+# CLI choice (English) → stored decision (Danish).
+DECISION_CHOICES = {"keep": "behold", "discard": "forkast", "undecided": "uafklaret"}
 NOISE_TASKS = 2         # one run moves about ±2 free-text tasks per set
 PRICE_TOLERANCE = 0.10  # cost per passed task may rise at most 10 % without a quality gain
 HOLDOUT_BUDGET = 8      # holdout measurements per trade before new holdout tasks should be written
@@ -133,7 +137,7 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
             g["ids"].append(tid)
             if sum(r["bestaaet"] for r in rows) * 2 <= len(rows):
                 g["failed"].append(tid)
-            # Mean per task, so repeats (--gentag-fri) do not make an arm look more expensive.
+            # Mean per task, so repeats (--repeat-free) do not make an arm look more expensive.
             g["cost"] += sum(r.get("pris_usd") or 0 for r in rows) / len(rows)
             g["secs"] += [r["sek"] for r in rows if r.get("sek") is not None]
             g["toks"] += [r["tokens_ud"] for r in rows if r.get("tokens_ud") is not None]
@@ -208,7 +212,7 @@ def assess(category: str, measurements: dict) -> tuple[str, list[str]]:
     if unclear:
         return "uafklaret", notes + ["mål før og efter på de samme opgaver"]
     if not holdout_seen:
-        return "uafklaret", notes + ["holdout er ikke målt før og efter (--saet holdout --udgivelse --plugin-rev)"]
+        return "uafklaret", notes + ["holdout er ikke målt før og efter (--set holdout --release --plugin-rev)"]
     if gain >= NOISE_TASKS and change <= PRICE_TOLERANCE:
         return "behold", notes + ["bedre ud over støj, og prisen pr. bestået holder"]
     if gain >= NOISE_TASKS:
@@ -217,7 +221,7 @@ def assess(category: str, measurements: dict) -> tuple[str, list[str]]:
         return "behold", notes + ["samme kvalitet, og prisen pr. bestået faldt"]
     if change > PRICE_TOLERANCE:
         return "forkast", notes + ["ingen gevinst, og prisen pr. bestået steg"]
-    return "uafklaret", notes + ["inden for støj – gentag med --gentag-fri 3, eller forkast"]
+    return "uafklaret", notes + ["inden for støj – gentag med --repeat-free 3, eller forkast"]
 
 
 # ---------- commands ----------
@@ -250,7 +254,7 @@ def print_benchmark(bench: dict, trades: list[str]) -> None:
 
 def cmd_status(args) -> int:
     log, bench = load_log(), load_benchmark()
-    trades = [args.fag] if args.fag else sorted(set(bench["fag"]) | set(exam.all_trades()))
+    trades = [args.trade] if args.trade else sorted(set(bench["fag"]) | set(exam.all_trades()))
     print("# Status for forbedringsarbejdet")
     print_benchmark(bench, trades)
     tried: dict[str, list[str]] = {}
@@ -269,7 +273,7 @@ def cmd_status(args) -> int:
         print(f"Holdout målt {uses} {'gang' if uses == 1 else 'gange'}" + (f" – over budgettet på {HOLDOUT_BUDGET}: skriv nye holdout-opgaver"
                                                if uses > HOLDOUT_BUDGET else ""))
     for status in ("aaben", "forslag"):
-        sel = [e for e in log["forsoeg"] if e["status"] == status and (not args.fag or args.fag in e["fag"])]
+        sel = [e for e in log["forsoeg"] if e["status"] == status and (not args.trade or args.trade in e["fag"])]
         print(f"\n## {'Åbne forsøg' if status == 'aaben' else 'Forslag'}\n")
         print("\n".join(f"- {line(e)}" for e in sel) or "- ingen")
     return 0
@@ -277,7 +281,7 @@ def cmd_status(args) -> int:
 
 def cmd_list(args) -> int:
     for e in load_log()["forsoeg"]:
-        if (not args.fag or args.fag in e["fag"]) and (not args.kategori or e["kategori"] == args.kategori) \
+        if (not args.trade or args.trade in e["fag"]) and (not args.category or e["kategori"] == args.category) \
                 and (not args.status or e["status"] == args.status):
             print(line(e))
     return 0
@@ -311,7 +315,7 @@ def cmd_show(args) -> int:
 
 
 def cmd_search(args) -> int:
-    words = [w.lower() for w in args.ord]
+    words = [w.lower() for w in args.words]
     hits = [e for e in load_log()["forsoeg"] if all(w in json.dumps(
         {k: e.get(k) for k in ("hypotese", "aendring", "laering", "begrundelse", "opgaver", "fag", "kategori")},
         ensure_ascii=False).lower() for w in words)]
@@ -322,20 +326,20 @@ def cmd_search(args) -> int:
 
 def cmd_new(args) -> int:
     log = load_log()
-    trades = [t for t in args.fag.split(",") if t]
+    trades = [t for t in args.trade.split(",") if t]
     unknown = [t for t in trades if t not in exam.all_trades() and t != "alle"]
     if unknown:
         raise SystemExit(f"Ukendt fag: {', '.join(unknown)}")
-    if args.kategori not in CATEGORIES:
+    if args.category not in CATEGORIES:
         raise SystemExit(f"Ukendt kategori – brug en af: {', '.join(CATEGORIES)}")
-    tasks = [t for t in args.opgaver.split(",") if t]
+    tasks = [t for t in args.tasks.split(",") if t]
     holdout = holdout_ids()
     if set(tasks) & holdout:
         raise SystemExit("Et forsøg må aldrig sigte på holdout-opgaver – kun udviklingsopgaver.")
-    e = {"id": next_id(log), "dato": today(), "fag": trades, "kategori": args.kategori,
-         "hypotese": args.hypotese, "aendring": args.aendring, "opgaver": tasks,
-         "status": "forslag" if args.forslag else "aaben", "beslutning": None, "maalinger": {}}
-    if not args.forslag:
+    e = {"id": next_id(log), "dato": today(), "fag": trades, "kategori": args.category,
+         "hypotese": args.hypothesis, "aendring": args.change, "opgaver": tasks,
+         "status": "forslag" if args.proposal else "aaben", "beslutning": None, "maalinger": {}}
+    if not args.proposal:
         e["rev_foer"] = git_rev()
         if plugins_dirty():
             print("ADVARSEL: plugins/ har ucommittede ændringer – rev_foer svarer ikke til det, der måles.")
@@ -361,8 +365,8 @@ def cmd_measure(args) -> int:
     e = find(log, args.id)
     if e["status"] == "afsluttet":
         raise SystemExit(f"{e['id']} er afsluttet")
-    side = "foer" if args.foer else "efter"
-    files = [pathlib.Path(f) for f in args.filer]
+    side = "foer" if args.before else "efter"
+    files = [pathlib.Path(f) for f in args.files]
     missing = [str(f) for f in files if not f.is_file()]
     if missing:
         raise SystemExit(f"Findes ikke: {', '.join(missing)}")
@@ -406,19 +410,19 @@ def cmd_close(args) -> int:
     if e["status"] == "afsluttet":
         raise SystemExit(f"{e['id']} er allerede afsluttet")
     suggestion, notes = assess(e["kategori"], e.get("maalinger") or {})
-    if suggestion not in ("manuel", args.beslutning) and not args.begrundelse:
+    if suggestion not in ("manuel", args.decision) and not args.rationale:
         print("\n".join(notes))
-        raise SystemExit(f"Reglen foreslår '{suggestion}'. Vælger du '{args.beslutning}', skal det begrundes "
-                         "med --begrundelse.")
-    if suggestion == "manuel" and not args.begrundelse:
-        raise SystemExit(f"Kategorien '{e['kategori']}' kræver --begrundelse.")
-    e.update(status="afsluttet", beslutning=args.beslutning, laering=args.laering, slut=today(),
+        raise SystemExit(f"Reglen foreslår '{suggestion}'. Vælger du '{args.decision}', skal det begrundes "
+                         "med --rationale.")
+    if suggestion == "manuel" and not args.rationale:
+        raise SystemExit(f"Kategorien '{e['kategori']}' kræver --rationale.")
+    e.update(status="afsluttet", beslutning=args.decision, laering=args.learning, slut=today(),
              vurdering=suggestion)
-    for k, v in (("begrundelse", args.begrundelse), ("rev_efter", args.rev_efter), ("pr", args.pr)):
+    for k, v in (("begrundelse", args.rationale), ("rev_efter", args.rev_after), ("pr", args.pr)):
         if v:
             e[k] = v
-    msg = f"{e['id']} afsluttet: {args.beslutning}"
-    if args.beslutning == "behold":
+    msg = f"{e['id']} afsluttet: {args.decision}"
+    if args.decision == "behold":
         changed = update_benchmark(bench, e)
         save(BENCHMARK_FILE, bench)
         msg += f" · benchmark opdateret for {', '.join(changed) or 'ingen fag (ingen målinger)'}"
@@ -429,7 +433,7 @@ def cmd_close(args) -> int:
 
 def cmd_benchmark(args) -> int:
     bench = load_benchmark()
-    print_benchmark(bench, [args.fag] if args.fag else sorted(bench["fag"]))
+    print_benchmark(bench, [args.trade] if args.trade else sorted(bench["fag"]))
     return 0
 
 
@@ -487,48 +491,49 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("status")
-    p.add_argument("--fag", default="")
-    p = sub.add_parser("liste")
-    p.add_argument("--fag", default="")
-    p.add_argument("--kategori", default="")
+    p.add_argument("--trade", default="")
+    p = sub.add_parser("list")
+    p.add_argument("--trade", default="")
+    p.add_argument("--category", default="")
     p.add_argument("--status", default="")
-    p = sub.add_parser("vis")
+    p = sub.add_parser("show")
     p.add_argument("id")
-    p = sub.add_parser("soeg")
-    p.add_argument("ord", nargs="+")
-    p = sub.add_parser("ny")
-    p.add_argument("--fag", required=True)
-    p.add_argument("--kategori", required=True)
-    p.add_argument("--hypotese", required=True)
-    p.add_argument("--aendring", default="")
-    p.add_argument("--opgaver", default="", help="udviklingsopgaver, forsøget sigter på")
-    p.add_argument("--forslag", action="store_true", help="kun en idé til senere – ingen rev_foer endnu")
+    p = sub.add_parser("search")
+    p.add_argument("words", nargs="+")
+    p = sub.add_parser("new")
+    p.add_argument("--trade", required=True)
+    p.add_argument("--category", required=True)
+    p.add_argument("--hypothesis", required=True)
+    p.add_argument("--change", default="")
+    p.add_argument("--tasks", default="", help="udviklingsopgaver, forsøget sigter på")
+    p.add_argument("--proposal", action="store_true", help="kun en idé til senere – ingen rev_foer endnu")
     p = sub.add_parser("start")
     p.add_argument("id")
-    p = sub.add_parser("maal")
+    p = sub.add_parser("measure")
     p.add_argument("id")
     g = p.add_mutually_exclusive_group(required=True)
-    g.add_argument("--foer", action="store_true")
-    g.add_argument("--efter", action="store_true")
-    p.add_argument("filer", nargs="+")
+    g.add_argument("--before", action="store_true")
+    g.add_argument("--after", action="store_true")
+    p.add_argument("files", nargs="+")
     p.add_argument("--rev", default="", help="pluginets git-revision, når kørslen var på arbejdstræet")
-    p = sub.add_parser("vurder")
+    p = sub.add_parser("assess")
     p.add_argument("id")
-    p = sub.add_parser("afslut")
+    p = sub.add_parser("close")
     p.add_argument("id")
-    p.add_argument("--beslutning", required=True, choices=sorted(DECISIONS))
-    p.add_argument("--laering", required=True)
-    p.add_argument("--begrundelse", default="")
-    p.add_argument("--rev-efter", default="")
+    p.add_argument("--decision", required=True, choices=sorted(DECISION_CHOICES))
+    p.add_argument("--learning", required=True)
+    p.add_argument("--rationale", default="")
+    p.add_argument("--rev-after", default="")
     p.add_argument("--pr", default="")
     p = sub.add_parser("benchmark")
-    p.add_argument("--fag", default="")
-    sub.add_parser("tjek")
+    p.add_argument("--trade", default="")
+    sub.add_parser("check")
     args = ap.parse_args()
-    return {"status": cmd_status, "liste": cmd_list, "vis": cmd_show, "soeg": cmd_search, "ny": cmd_new,
-            "start": cmd_start, "maal": cmd_measure, "vurder": cmd_assess, "afslut": cmd_close,
-            "benchmark": cmd_benchmark, "tjek": cmd_check}[args.cmd](args)
-
+    if getattr(args, "decision", None):
+        args.decision = DECISION_CHOICES[args.decision]  # English CLI choice → stored Danish value
+    return {"status": cmd_status, "list": cmd_list, "show": cmd_show, "search": cmd_search, "new": cmd_new,
+            "start": cmd_start, "measure": cmd_measure, "assess": cmd_assess, "close": cmd_close,
+            "benchmark": cmd_benchmark, "check": cmd_check}[args.cmd](args)
 
 if __name__ == "__main__":
     sys.exit(main())

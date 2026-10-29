@@ -25,7 +25,7 @@ Fag-id: `bim` · Kontrollerer leverancer fra: `bim-modelloer`
 
 ## Særligt fokus
 - **Kildegrundlag:** kan hvert mål føres tilbage til en kilde (afkodningens mål-id, opmåling eller foto)? Er andelen med kilde A tydelig i konklusionen? Er usikre steder på opmålingslisten?
-- **Tegningsimporten:** findes der en afkodning med `afkod tjek` = 0 fejl, og en uafhængig sammenligning med `resultat: ok` eller med resterende afvigelser forklaret? En leverance uden uafhængig sammenligning af en importeret tegning er væsentlig.
+- **Tegningsimporten:** findes der en afkodning med `decode check` = 0 fejl, og en uafhængig sammenligning med `resultat: ok` eller med resterende afvigelser forklaret? En leverance uden uafhængig sammenligning af en importeret tegning er væsentlig.
 - **Gyldig IFC:** tjek-rapporten har 0 FEJL, og advarslerne er forklaret. IDS er bestået. Rumlig struktur, klasser, Status og materialer er i orden.
 - **Formål og LOIN:** modellen indeholder det, formålet kræver, og ikke mere. Ingen persondata.
 

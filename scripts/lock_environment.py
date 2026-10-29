@@ -3,11 +3,11 @@
 packages pinned, transitive ones too, for all platforms and Python >= 3.11).
 
   python3 scripts/lock_environment.py             Lock after a change to an .in file (keeps the other locked versions)
-  python3 scripts/lock_environment.py --opgrader  Raise all transitive packages to the newest allowed version
+  python3 scripts/lock_environment.py --upgrade   Raise all transitive packages to the newest allowed version
   python3 scripts/lock_environment.py --check     Without network: does the lock exist, and does it have exactly the .in file's versions?
 
 Requires uv (https://docs.astral.sh/uv/) – only for locking; users can install with both uv and pip.
-Then run `bim.py opsaet` / `fem.py opsaet` and the tests before you commit.
+Then run `bim.py setup` / `fem.py setup` and the tests before you commit.
 """
 import pathlib
 import re
@@ -81,7 +81,7 @@ def main() -> int:
         in_file = ROOT / rel
         cmd = [uv, "pip", "compile", "-q", "--universal", "--python-version", PYTHON,
                "--custom-compile-command", "python3 scripts/lock_environment.py", in_file.name, "-o", in_file.with_suffix(".txt").name]
-        if "--opgrader" in sys.argv:
+        if "--upgrade" in sys.argv:
             cmd.append("--upgrade")
         r = subprocess.run(cmd, cwd=in_file.parent)
         if r.returncode:

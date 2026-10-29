@@ -28,7 +28,7 @@ def export_glb(ifc: pathlib.Path, out: pathlib.Path | None = None, transparent=(
     see_through = {e.GlobalId: e for e in elements
                    if any(fnmatch.fnmatchcase(getattr(e, "Tag", None) or e.GlobalId, g) for g in transparent)}
     if transparent and not see_through:
-        print(f"Ingen elementer matcher --gennemsigtig {' '.join(transparent)}")
+        print(f"Ingen elementer matcher --transparent {' '.join(transparent)}")
         return 1
     s = ifcopenshell.geom.settings()
     s.set("use-world-coords", True)

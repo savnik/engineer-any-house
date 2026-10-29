@@ -168,7 +168,7 @@ def _affine(cal):
         x, y = map(float, b.split(","))
         pairs.append(((px, py), (x, y)))
     if len(pairs) < 2:
-        raise SystemExit("--kal kræver mindst 2 punktpar: \"px,py=x,y;px,py=x,y\"")
+        raise SystemExit("--cal kræver mindst 2 punktpar: \"px,py=x,y;px,py=x,y\"")
     if len(pairs) == 2:
         (p1, m1), (p2, m2) = pairs
         P1, P2 = complex(p1[0], -p1[1]), complex(p2[0], -p2[1])
@@ -590,7 +590,7 @@ def draw(ifc, what, storey=None, line=None, side=None, view_from="sv", underlay=
     shapes = fetch_shapes(f)
     files = []
     storeys = sorted(f.by_type("IfcBuildingStorey"), key=lambda s: float(s.Elevation or 0))
-    if what in ("plan", "alle"):
+    if what in ("plan", "all"):
         selected = storeys
         if storey:
             selected = [s for s in storeys if s.Name == storey or s.GlobalId == storey or _slug(s.Name) == _slug(storey)
@@ -598,21 +598,21 @@ def draw(ifc, what, storey=None, line=None, side=None, view_from="sv", underlay=
             if not selected:
                 raise SystemExit(f"Etage '{storey}' findes ikke: {', '.join(s.Name for s in storeys)}")
         if underlay and not cal:
-            raise SystemExit("--underlag kræver --kal")
+            raise SystemExit("--underlay kræver --cal")
         for st in selected:
             p = plan(f, shapes, st, cut_height, out, show_id, dims, underlay if storey else None, cal)
             if p:
                 files.append(p)
-    if what == "snit":
+    if what == "section":
         if not line:
-            raise SystemExit("snit kræver --linje x1,y1,x2,y2 (mm, lokale koordinater; der ses mod venstre)")
+            raise SystemExit("section kræver --line x1,y1,x2,y2 (mm, lokale koordinater; der ses mod venstre)")
         files.append(section(f, shapes, line, out, show_id))
-    if what == "facade":
+    if what == "elevation":
         files.append(elevation(f, shapes, side or "syd", out))
-    if what == "alle":
+    if what == "all":
         has_north = any(getattr(c, "TrueNorth", None) for c in f.by_type("IfcGeometricRepresentationContext"))
         for s in (("syd", "nord", "oest", "vest") if has_north else ("y-", "y+", "x+", "x-")):
             files.append(elevation(f, shapes, s, out))
-    if what in ("3d", "alle"):
+    if what in ("3d", "all"):
         files.append(three_d(f, shapes, view_from, out))
     return files

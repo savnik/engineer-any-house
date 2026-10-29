@@ -1,4 +1,4 @@
-"""Main model and proposals: bim.py forslag/flet (bim.py opsaet --test, then in the bim env: python -m pytest scripts/tests)."""
+"""Main model and proposals: bim.py propose/merge (bim.py setup --test, then in the bim env: python -m pytest scripts/tests)."""
 import pathlib
 import shutil
 import sys

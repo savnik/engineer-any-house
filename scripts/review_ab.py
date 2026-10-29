@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Kontrol-armen: måler, hvad den uafhængige kvalitetskontrol tilfører fagagenten på eksamenssættet.
 
-Brug:  python3 scripts/review_ab.py koer <fag> [--id EL-001,...] [--parallel 3] [--kontrolmodel opus]
-                                      [--genbrug <resultatfil fra exam.py koer>] [--max-turns 12]
-       python3 scripts/review_ab.py rapport <resultatfil>
+Brug:  python3 scripts/review_ab.py run <fag> [--id EL-001,...] [--parallel 3] [--review-model opus]
+                                     [--level light|full] [--reuse <resultatfil fra exam.py run>] [--max-turns 12]
+       python3 scripts/review_ab.py report <resultatfil>
 
 For hver udviklingsopgave:
   1. fagagenten svarer (plugin-armen fra exam.py) og svaret rettes efter facit,
@@ -38,6 +38,8 @@ import threading
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import exam  # noqa: E402
+
+LEVELS = {"light": "let", "full": "fuld"}  # CLI choice → review level (KONTROLNIVEAU)
 
 ROOT = exam.ROOT
 REGISTRY = ROOT / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
@@ -150,11 +152,11 @@ def run_one(task: dict, args, tmp: pathlib.Path, plugin_dir: pathlib.Path, agent
         row.update(fejl=True, note="kørselsfejl i fagagentens svar")
         return row
 
-    extra = ["--tools", "Read,Glob,Grep", "--max-turns", str(args.max_turns_kontrol),
+    extra = ["--tools", "Read,Glob,Grep", "--max-turns", str(args.max_turns_review),
              "--plugin-dir", str(review_dir), "--add-dir", str(review_dir), "--agent", reviewer]
-    if args.kontrolmodel:
-        extra += ["--model", args.kontrolmodel]
-    prompt = REVIEW_PROMPT.format(fag=args.fag, id=task["id"], niveau=args.niveau,
+    if args.review_model:
+        extra += ["--model", args.review_model]
+    prompt = REVIEW_PROMPT.format(fag=args.fag, id=task["id"], niveau=args.level,
                                    opgave=exam.build_prompt(task), svar=first["svar"])
     k = exam.run_claude(prompt, work, extra, args.timeout)
     ktext = k.get("result") or ""
@@ -262,8 +264,8 @@ def cmd_run(args) -> int:
         wanted = set(args.id.split(","))
         tasks = [t for t in tasks if t["id"] in wanted]
     reused_rows: dict[str, dict] = {}
-    if args.genbrug:
-        src = json.loads(pathlib.Path(args.genbrug).read_text(encoding="utf-8"))
+    if args.reuse:
+        src = json.loads(pathlib.Path(args.reuse).read_text(encoding="utf-8"))
         for r in src["resultater"]:
             if r.get("arm") == "plugin" and r.get("svar") and not r.get("fejl") and r.get("saet") == "udvikling":
                 reused_rows[r["id"]] = r
@@ -290,8 +292,8 @@ def cmd_run(args) -> int:
     out = out_dir / f"{stamp}-kontrol-udvikling.json"
     rows.sort(key=lambda r: r["id"])
     data = {"fag": args.fag, "tid": stamp, "fagagent": agent, "kontrolagent": reviewer,
-            "kontrolmodel": args.kontrolmodel or "", "kontrolniveau": args.niveau,
-            "plugin_rev": args.plugin_rev or "arbejdstræ", "genbrug": args.genbrug or "",
+            "kontrolmodel": args.review_model or "", "kontrolniveau": args.level,
+            "plugin_rev": args.plugin_rev or "arbejdstræ", "genbrug": args.reuse or "",
             "sammendrag": summarize(rows), "resultater": rows}
     out.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\nGemt: {out.relative_to(ROOT)}\n")
@@ -302,25 +304,26 @@ def cmd_run(args) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    p = sub.add_parser("koer")
+    p = sub.add_parser("run")
     p.add_argument("fag")
     p.add_argument("--id", default="")
     p.add_argument("--parallel", type=int, default=3)
     p.add_argument("--model", default="", help="fagagentens model (standard: agentens egen)")
-    p.add_argument("--kontrolmodel", default="", help="kontrolagentens model (standard: agentens egen; opus = 'fuld')")
-    p.add_argument("--niveau", choices=["let", "fuld"], default="let")
-    p.add_argument("--bedoemmer", default="sonnet")
+    p.add_argument("--review-model", default="", help="kontrolagentens model (standard: agentens egen; opus = 'fuld')")
+    p.add_argument("--level", choices=sorted(LEVELS), default="light")
+    p.add_argument("--grader", default="sonnet")
     p.add_argument("--max-turns", type=int, default=12)
-    p.add_argument("--max-turns-kontrol", type=int, default=20)
+    p.add_argument("--max-turns-review", type=int, default=20)
     p.add_argument("--timeout", type=int, default=900)
     p.add_argument("--plugin-rev", default="")
-    p.add_argument("--genbrug", default="", help="genbrug plugin-svar fra en resultatfil fra exam.py koer")
-    p = sub.add_parser("rapport")
+    p.add_argument("--reuse", default="", help="genbrug plugin-svar fra en resultatfil fra exam.py run")
+    p = sub.add_parser("report")
     p.add_argument("fil")
     args = ap.parse_args()
-    if args.cmd == "rapport":
+    if args.cmd == "report":
         print(report(pathlib.Path(args.fil)))
         return 0
+    args.level = LEVELS[args.level]  # English CLI choice → the Danish level in the prompt and the result file
     args.web = False  # exam.arm_args reads it; the exam runs without internet
     if not shutil.which("claude"):
         print("claude CLI ikke fundet")

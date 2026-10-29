@@ -11,7 +11,7 @@ Instead each branch adds one version note in versionsnoter/<branch>.md:
     Short description of the change (becomes the release note).
 
 Usage: python3 scripts/release.py            raise versions, write CHANGELOG.md, delete the released notes
-       python3 scripts/release.py --proev    show what would happen
+       python3 scripts/release.py --dry-run  show what would happen
        python3 scripts/release.py --check    validate the notes (used by validate.py)
 main is protected, so the release also goes through a PR:
        git switch -c udgivelse/<version> origin/main && python3 scripts/release.py
@@ -84,7 +84,7 @@ def write_json(f: pathlib.Path, version: str, key_path: tuple) -> None:
 
 
 def main() -> int:
-    dry_run, check = "--proev" in sys.argv, "--check" in sys.argv
+    dry_run, check = "--dry-run" in sys.argv, "--check" in sys.argv
     notes = sorted(f for f in NOTES_DIR.glob("*.md") if f.name != "README.md") if NOTES_DIR.is_dir() else []
     combined, texts, errors = {}, [], []
     for f in notes:

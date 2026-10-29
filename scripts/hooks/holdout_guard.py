@@ -3,7 +3,7 @@
 
 The task files (eksamen/<trade>/opgaver*.json) and the result files (eksamen/<trade>/results/) hold both sets. The
 agent reads them only through scripts that filter holdout out:
-- `exam.py vis <fag> --saet udvikling [--facit]`, `exam.py koer|rapport|rebedoem|tjek` (the report hides holdout IDs)
+- `exam.py show <fag> --set development [--answer-key]`, `exam.py run|report|regrade|check` (the report hides holdout IDs)
 - `experiment.py …` (the log holds holdout only as a count and a hash)
 Denied: Read/Edit/Write of the files, Grep with content in eksamen/, and Bash commands that name the files or search
 recursively without a path outside eksamen/. Edits to the task files are delegated (see the agent's instructions).
@@ -30,8 +30,8 @@ def check_bash(cmd: str) -> str | None:
     m = SCRIPT_RE.match(c)
     if m:
         script, sub, rest = m.group(2), m.group(3), m.group(4)
-        if script == "exam" and sub == "vis" and "--saet udvikling" not in rest:
-            return "brug `exam.py vis <fag> --saet udvikling` – holdout må du ikke se"
+        if script == "exam" and sub == "show" and not re.search(r"--set[\s=]development\b", rest):
+            return "brug `exam.py show <fag> --set development` – holdout må du ikke se"
         if re.search(r"[;&`>]|\$\(", c) or re.search(r"\|(?!\s*(head|tail|grep)\b)", c):
             return "kør scriptet alene (højst med | head, | tail eller | grep), uden kædede kommandoer"
         return None
@@ -57,8 +57,8 @@ def check(tool: str, inp: dict, cwd: str = "") -> str | None:
     """None = allowed; otherwise the reason for denying."""
     if tool in ("Read", "Edit", "Write", "NotebookEdit", "MultiEdit"):
         if PROTECTED_RE.search(str(inp.get("file_path") or inp.get("notebook_path") or "")):
-            return ("opgave- og resultatfilerne rummer holdout – brug `exam.py vis <fag> --saet udvikling --facit`, "
-                    "`exam.py rapport` og `experiment.py`; rettelser i opgavefilerne uddelegeres")
+            return ("opgave- og resultatfilerne rummer holdout – brug `exam.py show <fag> --set development --answer-key`, "
+                    "`exam.py report` og `experiment.py`; rettelser i opgavefilerne uddelegeres")
     if tool == "Grep":
         path = str(inp.get("path") or "")
         if PROTECTED_RE.search(path):

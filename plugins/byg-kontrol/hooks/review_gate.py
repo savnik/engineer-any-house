@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """byg-kontrol: håndhæver det uafhængige kvalitetskontrol-loop (plugin-hook til Claude Code/Cowork).
 
-Fra hooks/hooks.json:  python3 review_gate.py pretool | beskyt | subagentstop | prompt | stop | precompact | efter_compact
+Fra hooks/hooks.json:  python3 review_gate.py pretool | protect | subagentstop | prompt | stop | precompact | after_compact
                        (hook-input på stdin)
 Manuelt:               python3 review_gate.py status
-                       python3 review_gate.py nulstil <leverance-id>
-                       python3 review_gate.py flet <sagsmappe>/forslag/<fag>-<nr>__<mål>.md [--proev] [--tving]
+                       python3 review_gate.py reset <leverance-id>
+                       python3 review_gate.py merge <sagsmappe>/forslag/<fag>-<nr>__<mål>.md [--dry-run] [--force]
                        (uden CLAUDE_PLUGIN_DATA findes pluginets datamappe under ~/.claude/plugins/data/)
 
 Regler
@@ -35,7 +35,7 @@ Regler
   afvises med besked om at markere svaret som ikke kvalitetskontrolleret.
 - Værktøjskontrol (fagregister "vaerktoejskontrol", i dag bim): et fagkald med "KONTROLNIVEAU: værktøj" godkendes
   uden kontrolagent, når hjælpeagentens sammenligning ender med "resultat": "ok" og "tjek": {"fejl": 0,
-  "sporbarhed": 0} (bim.py tjek). Ellers kaldes kontrolagenten som normalt. Godkendelsen gemmes som en dom
+  "sporbarhed": 0} (bim.py check). Ellers kaldes kontrolagenten som normalt. Godkendelsen gemmes som en dom
   med "godkendt_af": "vaerktoej".
 - Workflows (PreToolUse Workflow): i byg-sager afvises Workflow-værktøjet, medmindre brugerens seneste besked
   indeholder ordet "workflow".
@@ -131,7 +131,7 @@ def now() -> str:
 def data_dir() -> pathlib.Path:
     root = os.environ.get("CLAUDE_PLUGIN_DATA")
     if not root:
-        # Manual commands (status/nulstil) run without CLAUDE_PLUGIN_DATA: use the plugin's
+        # Manual commands (status/reset) run without CLAUDE_PLUGIN_DATA: use the plugin's
         # own data folder if it exists (newest state wins) before the default folder is created.
         found = sorted((pathlib.Path.home() / ".claude" / "plugins" / "data").glob("*/kontrol/tilstand.json"),
                         key=lambda f: f.stat().st_mtime, reverse=True)
@@ -1236,7 +1236,7 @@ def stop(inp: dict, d: pathlib.Path) -> None:
                     changed = True
                     continue
                 items.append(f"{deliv}: {message}. Du ejer målfilen: afgør konflikten (ret målfilen eller forslaget), og "
-                               f"flet med 'python3 {HERE / 'review_gate.py'} flet {path}' (--tving tilsidesætter konflikten) "
+                               f"flet med 'python3 {HERE / 'review_gate.py'} merge {path}' (--force tilsidesætter konflikten) "
                                f"eller i hånden – flyt så forslaget til forslag/flettet/, eller slet det, hvis det ikke skal bruges.")
             status, type_ = e.get("status"), e.get("type")
             if type_ == "ekstern":
@@ -1290,7 +1290,7 @@ def manual(cmd: str, args: list) -> int:
                 if g.get("G2"):
                     print(f"GATE G2 {case_id}: godkendt af bruger {g['G2'].get('tid')} ({len(g['G2'].get('design') or [])} fagleverancer)")
             return 0
-        if cmd == "nulstil" and args:
+        if cmd == "reset" and args:
             removed = s["leverancer"].pop(args[0], None)
             save(d, s)
             log(d, haendelse="nulstillet", leverance=args[0])
@@ -1306,9 +1306,9 @@ def manual_merge(f: pathlib.Path, args: list) -> int:
         print(f"Ikke et forslag: {f} (forventet <sagsmappe>/forslag/<fag>-<nr>__<mål>.md)")
         return 1
     case_dir = f.parent.parent
-    r = case_merge.merge(f, case_dir, dry_run="--proev" in args, force="--tving" in args)
+    r = case_merge.merge(f, case_dir, dry_run="--dry-run" in args, force="--force" in args)
     print(r["besked"])
-    if r["ok"] and "--proev" not in args:
+    if r["ok"] and "--dry-run" not in args:
         root = case_git.root_for(case_dir)
         if root:
             case_git.commit(root, f"flet {f.name} (manuelt)")
@@ -1317,15 +1317,15 @@ def manual_merge(f: pathlib.Path, args: list) -> int:
 
 def main() -> int:
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
-    if cmd == "flet" and len(sys.argv) > 2:
+    if cmd == "merge" and len(sys.argv) > 2:
         return manual_merge(pathlib.Path(sys.argv[2]).expanduser().resolve(), sys.argv[3:])
-    if cmd in ("status", "nulstil", "hjaelp"):
+    if cmd in ("status", "reset", "help"):
         return manual(cmd, sys.argv[2:])
     try:
         raw = sys.stdin.read()
         inp = json.loads(raw) if raw.strip() else {}
-        handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "beskyt": protect,
-                   "prompt": user_prompt, "workflow": workflow, "precompact": precompact, "efter_compact": after_compact}.get(cmd)
+        handler = {"pretool": pretool, "subagentstop": subagentstop, "stop": stop, "protect": protect,
+                   "prompt": user_prompt, "workflow": workflow, "precompact": precompact, "after_compact": after_compact}.get(cmd)
         if handler:
             handler(inp, data_dir())
     except Exception:

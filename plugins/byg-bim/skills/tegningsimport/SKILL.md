@@ -23,18 +23,18 @@ Hovedtråden (projektlederen eller Claude) orkestrerer. Fagagenter kalder ikke h
 Brug de fulde navne fra din agentliste (`byg-bim:bim-modelloer`, `byg-bim:bim-sammenligner`, `byg-kontrol:bim-kontrol`, eller `byg:…` i den samlede pakke). `BIM="${CLAUDE_PLUGIN_ROOT}/skills/bim-viden/scripts/bim.py"`.
 
 ## 0. Forberedelse (hovedtråden)
-1. Sagsmappe `byg-sager/<sag-id>/` = **ejendommens hovedsag** (BIM-hovedmodellen ligger i hovedsagen, `<sag-id>/bim/model.yaml` – ingen separat BIM-sag) med en kort `projektgrundlag.md` (formål med modellen, LOIN, kilder) – ellers opret den (skill `projektleder`). Undersøger en undersag en ændring af modellen (fx VVS), er den en branch-sag `<sag-id>--<emne>/`, og forslaget oprettes i branchen: `python3 "$BIM" forslag byg-sager/<sag-id>/bim/model.yaml <navn> --ud byg-sager/<sag-id>--<emne>/bim/forslag` (projektleder `references/sagsmappe.md`). Første gang på maskinen: `python3 "$BIM" opsaet`.
-2. Kilder: `python3 "$BIM" pdf <fil.pdf> --oversigt --ud byg-sager/<sag-id>/bim/kilder` og se kontaktarket. Udvælg tegningssiderne, og giv hver tegning et kilde-id (K1, K2 …). Notér dem i projektgrundlaget.
+1. Sagsmappe `byg-sager/<sag-id>/` = **ejendommens hovedsag** (BIM-hovedmodellen ligger i hovedsagen, `<sag-id>/bim/model.yaml` – ingen separat BIM-sag) med en kort `projektgrundlag.md` (formål med modellen, LOIN, kilder) – ellers opret den (skill `projektleder`). Undersøger en undersag en ændring af modellen (fx VVS), er den en branch-sag `<sag-id>--<emne>/`, og forslaget oprettes i branchen: `python3 "$BIM" propose byg-sager/<sag-id>/bim/model.yaml <navn> --out byg-sager/<sag-id>--<emne>/bim/forslag` (projektleder `references/sagsmappe.md`). Første gang på maskinen: `python3 "$BIM" setup`.
+2. Kilder: `python3 "$BIM" pdf <fil.pdf> --overview --out byg-sager/<sag-id>/bim/kilder` og se kontaktarket. Udvælg tegningssiderne, og giv hver tegning et kilde-id (K1, K2 …). Notér dem i projektgrundlaget.
 3. **Én leverance pr. tegning (side) eller pr. etage:** `LEVERANCE: <sag-id>/bim/<nr>`. Rækkefølge: den plan, der fastlægger husets ydre (oftest stueplanen eller kælderplanen) → de øvrige planer → snit → facader. Første leverance fastlægger origo, akser, etager, koter og typer.
 
 ## Kontrolniveau – vælg ved første fagkald
 | Leverancen | Niveau | Kontrol |
 |---|---|---|
-| Ren tegningsimport og geometri (vægge, åbninger, rum, trapper, koter fra tegning, foto eller opmåling) | `KONTROLNIVEAU: værktøj` | Sammenligneren og `bim.py tjek`. Hooken godkender, når sammenligningen er `ok`, og `tjek` har 0 fejl og 0 sporbarhed. Ingen `bim-kontrol` |
+| Ren tegningsimport og geometri (vægge, åbninger, rum, trapper, koter fra tegning, foto eller opmåling) | `KONTROLNIVEAU: værktøj` | Sammenligneren og `bim.py check`. Hooken godkender, når sammenligningen er `ok`, og `tjek` har 0 fejl og 0 sporbarhed. Ingen `bim-kontrol` |
 | Modellen indarbejder andre fags indhold (rør, el, ventilation, bærende dele fra et godkendt fagnotat, kilde K) | `KONTROLNIVEAU: let` | Som værktøj + `bim-kontrol`, som tjekker modellen mod de godkendte fagnotater (rørføring, udeladelser) |
 | Modellen er beslutningsgrundlag: arealer til byggesag eller BBR, geometri til statikeren, mængder til tilbud | `KONTROLNIVEAU: let` (`fuld` ved en sikkerhedsfunktion) | Som ovenfor |
 
-Begrundelse (ARKITEKTUR.md, "Multi-agent-arkitektur"): bim-kontrollens fund i rigtige sager var overvejende kildemærkning, som `bim.py tjek` nu kontrollerer deterministisk, og modstrid med andre fags notater. Geometrien kontrolleres allerede af sammenligneren og `tjek`.
+Begrundelse (ARKITEKTUR.md, "Multi-agent-arkitektur"): bim-kontrollens fund i rigtige sager var overvejende kildemærkning, som `bim.py check` nu kontrollerer deterministisk, og modstrid med andre fags notater. Geometrien kontrolleres allerede af sammenligneren og `check`.
 
 ## 1. Fagkald: afkodning og modelbygning (forgrund)
 ```
@@ -47,7 +47,7 @@ Visning(er): <fx stueplan 1:100>
 Model: byg-sager/<sag-id>/bim/model.yaml (<findes → arbejd i forslag/bim-<nr>.yaml | oprettes>)
 Leverance: byg-sager/<sag-id>/fagnotater/bim-<nr>.md
 ```
-Modelløren afleverer: `afkodning.yaml` med `afkod tjek` = 0 fejl, forslagsfilen `bim/forslag/bim-<nr>.yaml` (hovedmodellen er urørt) med `tjek` = 0 FEJL og modelnotatet. Sammenligning og kontrol kører på forslagets IFC.
+Modelløren afleverer: `afkodning.yaml` med `decode check` = 0 fejl, forslagsfilen `bim/forslag/bim-<nr>.yaml` (hovedmodellen er urørt) med `check` = 0 FEJL og modelnotatet. Sammenligning og kontrol kører på forslagets IFC.
 
 ## 2. Sammenligning (forgrund)
 ```
@@ -82,13 +82,13 @@ Send ikke de mindre afvigelser retur, medmindre de er trivielle at lukke. Kald d
 
 ## 5. Formel kontrol (kun `let`/`fuld`)
 Ved `KONTROLNIVEAU: værktøj` er leverancen godkendt, når hooken har registreret sammenligningen med `resultat: ok` og et rent `tjek` – gå direkte til afsnit 6. Når 3 sammenligninger er brugt uden et rent resultat, eller modellen undervejs har fået andre fags indhold, så kør den formelle kontrol nedenfor.
-1. Kør selv den deterministiske kontrol i hovedtråden: `python3 "$BIM" tjek <ifc> --tegn --ud byg-sager/<sag-id>/kvalitet/bim-<nr>-tjek`.
+1. Kør selv den deterministiske kontrol i hovedtråden: `python3 "$BIM" check <ifc> --draw --out byg-sager/<sag-id>/kvalitet/bim-<nr>-tjek`.
 2. Kald `bim-kontrol` efter skill `kvalitetskontrol`: `LEVERANCE: <id>`, modelnotatet, tjek-rapporten, sammenligningernes JSON, afkodningen og forslagsfilen (`bim/forslag/bim-<nr>.yaml`, bygget oven på `model.yaml`). `KONTROLNIVEAU: let`, medmindre modellen fastlægger en sikkerhedsfunktion.
-3. Afvisning følger kvalitetskontrollens loop. Kør kun en ny sammenligning, hvis rettelsen ændrer geometri eller afkodede mål. Rene egenskabsrettelser (kilde, IsExternal, typenavne, notat) kræver ingen ny sammenligning. Kontrollen ser dem i `tjek` og modelnotatet.
+3. Afvisning følger kvalitetskontrollens loop. Kør kun en ny sammenligning, hvis rettelsen ændrer geometri eller afkodede mål. Rene egenskabsrettelser (kilde, IsExternal, typenavne, notat) kræver ingen ny sammenligning. Kontrollen ser dem i `check` og modelnotatet.
 
 ## 6. Efter godkendelse
 - Vis brugeren `overlay.png` fra sidste sammenligning, en plan og 3D-visningen. Fortæl andelen af elementer med kilde A og opmålingslisten.
-- **Flet ind:** `python3 "$BIM" flet byg-sager/<sag-id>/bim/forslag/bim-<nr>.yaml --note "bim/<nr> godkendt"`. Fletningen stopper, hvis hovedmodellen siden er ændret i de samme elementer – så opdaterer modelløren forslaget, og kontrollen ser ændringen igen. Byg og `tjek` derefter hovedmodellen (0 FEJL).
+- **Flet ind:** `python3 "$BIM" merge byg-sager/<sag-id>/bim/forslag/bim-<nr>.yaml --note "bim/<nr> godkendt"`. Fletningen stopper, hvis hovedmodellen siden er ændret i de samme elementer – så opdaterer modelløren forslaget, og kontrollen ser ændringen igen. Byg og `check` derefter hovedmodellen (0 FEJL).
 - Projektlederen opdaterer ejendomskortet (er det genereret fra hovedmodellen: i samme forslag som leverancen, under `fakta:`): `BIM-model: <sti til model.yaml og IFC>, version/dato, LOIN, kilder K1–Kn`.
 - Næste tegning bliver næste leverance (`<nr>+1`) i samme model.
 

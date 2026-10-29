@@ -5,7 +5,7 @@ For each view in afkodning.yaml:
   model.png     – the model drawn in the same pixel frame (via the calibration): plan cut, section or elevation
   overlay.png   – the source drawing lightened, with the model in red and decoded points in green
   fliser/       – the same three side by side in tiles (for thorough high-resolution review)
-  fliser.md     – which tiles to review: empty tiles are skipped, and with --forrige
+  fliser.md     – which tiles to review: empty tiles are skipped, and with --previous
                   (the previous round's comparison folder) only tiles where the model changed or auto has findings
   auto.md/json  – automatic comparison of all decoded dimensions, rooms, openings, wall thicknesses and levels
 
@@ -438,7 +438,7 @@ def compare(ifc, decoding_path, view=None, out=None, cut_height=1000.0, previous
     out = pathlib.Path(out) if out else ifc.parent.parent / "sammenligning" / d["kilde"]["id"]
     previous = pathlib.Path(previous) if previous else None
     if previous and previous.resolve() == out.resolve():
-        print("--forrige skal være en anden mappe end --ud (forrige rundes sammenligning)")
+        print("--previous skal være en anden mappe end --out (forrige rundes sammenligning)")
         return 1
     total = {}
     for v in d["visninger"]:

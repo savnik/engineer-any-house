@@ -2,23 +2,23 @@
 """Eksamenslaget: opgaver bygget på de officielle læringsmål, som fagagenterne testes mod.
 
 Brug:
-  python3 scripts/exam.py tjek [fag ...]            format og dækning (alle læringsmål i rollen har opgaver i begge sæt)
-  python3 scripts/exam.py vis <fag> [--facit] [--saet udvikling]   sættet og dækningskortet som markdown
-  python3 scripts/exam.py koer <fag> [--arm plugin|basis|begge] [--saet udvikling|holdout|alle --udgivelse]
-                                     [--id EL-001,...] [--kun-fejlede] [--gentag 1] [--gentag-fri 3]
-                                     [--parallel 3] [--model M] [--bedoemmer sonnet] [--web]
-                                     [--med-hukommelse] [--plugin-rev REV] [--uden-basis]
-  python3 scripts/exam.py svar <fag> [--id EL-001,...] [--arm plugin|basis]   seneste svar og bedømmelse (kun udvikling)
-  python3 scripts/exam.py rapport <resultatfil> [<resultatfil> ...]
-  python3 scripts/exam.py rebedoem <resultatfil> [--kun-fri]   ret gemte svar igen efter nyt facit/kriterier
+  python3 scripts/exam.py check [fag ...]           format og dækning (alle læringsmål i rollen har opgaver i begge sæt)
+  python3 scripts/exam.py show <fag> [--answer-key] [--set development]   sættet og dækningskortet som markdown
+  python3 scripts/exam.py run <fag> [--arm plugin|base|both] [--set development|holdout|all --release]
+                                    [--id EL-001,...] [--only-failed] [--repeat 1] [--repeat-free 3]
+                                    [--parallel 3] [--model M] [--grader sonnet] [--web]
+                                    [--with-memory] [--plugin-rev REV] [--no-base]
+  python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base]   seneste svar og bedømmelse (kun udvikling)
+  python3 scripts/exam.py report <resultatfil> [<resultatfil> ...]
+  python3 scripts/exam.py regrade <resultatfil> [--only-free]   ret gemte svar igen efter nyt facit/kriterier
 
-Armene: 'basis' er modellen uden plugin, 'plugin' er fagagenten med sin videnbase (plugin-kopi uden
-afhængigheder som i eval_trade.py og som standard uden agentens lokale hukommelse – med --med-hukommelse
+Armene: 'basis' (--arm base) er modellen uden plugin, 'plugin' er fagagenten med sin videnbase (plugin-kopi uden
+afhængigheder som i eval_trade.py og som standard uden agentens lokale hukommelse – med --with-memory
 måles plugin + hukommelse). Begge kører headless i en tom mappe uden brugerens plugins og uden internet
 (medmindre --web). Standard er kun plugin-armen: basis afhænger ikke af videnbasen, så rapporten genbruger det nyeste
 basis-svar pr. opgave. Holdout-sættet bruges kun til måling – aldrig som grundlag for ny tekst i videnbasen – og
-kræver --udgivelse. --kun-fejlede kører kun de udviklingsopgaver, plugin-armen ikke bestod sidst.
-Resultater gemmes i eksamen/<fag>/results/ (ignoreres af git). 'koer' kræver login og koster tokens.
+kræver --release. --only-failed kører kun de udviklingsopgaver, plugin-armen ikke bestod sidst.
+Resultater gemmes i eksamen/<fag>/results/ (ignoreres af git). 'run' kræver login og koster tokens.
 """
 import argparse
 import concurrent.futures
@@ -39,6 +39,8 @@ TYPES = {"valg", "tal", "fri", "case"}
 PART_TYPES = {"valg", "tal", "fri"}
 CASE_PASS_SHARE = 0.6  # like the written trade exams: about 60 of 100 points to pass
 SETS = {"udvikling", "holdout"}
+# CLI choice (English) ↔ stored data value (Danish).
+CLI_VALUES = {"development": "udvikling", "all": "alle", "base": "basis", "both": "begge"}
 LEVELS = {"svend", "mester"}
 ROLES = {"i", "uden"}
 
@@ -517,7 +519,7 @@ def grade(task: dict, text: str, work: pathlib.Path, args) -> dict:
         criteria="\n".join(f"K{i}. {c}" for i, c in enumerate(task["kriterier"], 1)),
         fail_if="\n".join(f"- {c}" for c in task.get("fail_hvis", [])) or "- (ingen)",
         answer=text)
-    g = run_claude(grader, work, ["--tools", "", "--max-turns", "1", "--model", args.bedoemmer], args.timeout)
+    g = run_claude(grader, work, ["--tools", "", "--max-turns", "1", "--model", args.grader], args.timeout)
     if g.get("is_error") or LIMIT_RE.search((g.get("result") or "")[:300]) and "DOM:" not in (g.get("result") or ""):
         return {"bestaaet": False, "fejl": True, "note": "kørselsfejl i bedømmelsen: "
                 + (g.get("fejl") or (g.get("result") or "")[:120]), "pris_bedoemmelse": g.get("total_cost_usd") or 0}
@@ -547,7 +549,7 @@ def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
             + "\nIKKE BESTÅET, hvis:\n" + ("\n".join(f"- {c}" for c in d.get("fail_hvis", [])) or "- (ingen)")
             for d in free)
         g = run_claude(CASE_GRADER_PROMPT.format(question=task["spoergsmaal"], parts=parts, answer=text), work,
-                       ["--tools", "", "--max-turns", "1", "--model", args.bedoemmer], args.timeout)
+                       ["--tools", "", "--max-turns", "1", "--model", args.grader], args.timeout)
         verdict = g.get("result") or ""
         out["pris_bedoemmelse"] = g.get("total_cost_usd") or 0
         if g.get("is_error") or "DOM" not in verdict:
@@ -579,7 +581,7 @@ def cmd_regrade(args) -> int:
     _, tasks = load_trade(d["fag"])
     by_id = {t["id"]: t for t in tasks}
     jobs = [r for r in d["resultater"] if r["id"] in by_id and r["svar"]
-            and (not args.kun_fri or by_id[r["id"]]["type"] == "fri")]
+            and (not args.only_free or by_id[r["id"]]["type"] == "fri")]
     with tempfile.TemporaryDirectory(prefix="rebedoem-") as tmpname:
         work = pathlib.Path(tmpname)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
@@ -607,32 +609,32 @@ def cmd_run(args) -> int:
     if not shutil.which("claude"):
         print("claude CLI ikke fundet")
         return 1
-    if args.saet != "udvikling" and not args.udgivelse:
-        print("Holdout-sættet køres kun ved udgivelse eller en større ændring af videnbasen – tilføj --udgivelse.")
+    if args.set != "udvikling" and not args.release:
+        print("Holdout-sættet køres kun ved udgivelse eller en større ændring af videnbasen – tilføj --release.")
         return 1
     goals, tasks = load_trade(args.fag)
-    if args.saet != "alle":
-        tasks = [t for t in tasks if t["saet"] == args.saet]
+    if args.set != "alle":
+        tasks = [t for t in tasks if t["saet"] == args.set]
     if args.id:
         wanted = set(args.id.split(","))
         tasks = [t for t in tasks if t["id"] in wanted]
-    if args.kun_fejlede:
+    if args.only_failed:
         failed = latest_failed_plugin(args.fag)
         tasks = [t for t in tasks if t["id"] in failed and t["saet"] == "udvikling"]
         print(f"Kun de {len(tasks)} udviklingsopgaver, plugin-armen ikke bestod sidst")
     arms = ["basis", "plugin"] if args.arm == "begge" else [args.arm]
     agent = f"{goals['plugin']}:{goals['agent']}"
     jobs = []
-    if args.kun_koerselsfejl:
+    if args.only_run_errors:
         # Re-run exactly the runs that errored in an earlier file, without printing their IDs.
         by_id = {t["id"]: t for t in tasks}
-        prev = json.loads(pathlib.Path(args.kun_koerselsfejl).read_text(encoding="utf-8"))
+        prev = json.loads(pathlib.Path(args.only_run_errors).read_text(encoding="utf-8"))
         jobs = [(by_id[r["id"]], r["arm"]) for r in prev["resultater"]
                 if r.get("fejl") and r["id"] in by_id and r["arm"] in arms]
         arms = sorted({arm for _, arm in jobs}) or arms
-        print(f"Kun de {len(jobs)} kørsler, der fejlede i {pathlib.Path(args.kun_koerselsfejl).name}")
-    for t in tasks if not args.kun_koerselsfejl else []:
-        repeats = max(args.gentag, args.gentag_fri if t["type"] == "fri" else 0)
+        print(f"Kun de {len(jobs)} kørsler, der fejlede i {pathlib.Path(args.only_run_errors).name}")
+    for t in tasks if not args.only_run_errors else []:
+        repeats = max(args.repeat, args.repeat_free if t["type"] == "fri" else 0)
         jobs += [(t, arm) for _ in range(repeats) for arm in arms]
     print(f"{args.fag}: {len(tasks)} opgaver × {len(arms)} arm(e) = {len(jobs)} kørsler")
     by_task = {t["id"]: t for t in tasks}
@@ -640,7 +642,7 @@ def cmd_run(args) -> int:
     results = []
     with tempfile.TemporaryDirectory(prefix="eksamen-") as tmpname:
         tmp = pathlib.Path(tmpname)
-        plugin_dir = (prepare_plugin(goals["plugin"], tmp, args.med_hukommelse, args.plugin_rev)
+        plugin_dir = (prepare_plugin(goals["plugin"], tmp, args.with_memory, args.plugin_rev)
                       if "plugin" in arms else None)
         kb_bytes = knowledge_base_bytes(plugin_dir) if plugin_dir else 0
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
@@ -653,14 +655,14 @@ def cmd_run(args) -> int:
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = EXAM_DIR / args.fag / "results"
     out_dir.mkdir(exist_ok=True)
-    out = out_dir / f"{stamp}-{args.arm}-{args.saet}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
+    out = out_dir / f"{stamp}-{args.arm}-{args.set}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
     out.write_text(json.dumps({"fag": args.fag, "tid": stamp, "model": args.model or "agentens",
-                               "web": args.web, "hukommelse": args.med_hukommelse, "plugin_rev": args.plugin_rev or "arbejdstræ",
+                               "web": args.web, "hukommelse": args.with_memory, "plugin_rev": args.plugin_rev or "arbejdstræ",
                                "videnbase_bytes": kb_bytes, "resultater": results}, ensure_ascii=False, indent=2),
                    encoding="utf-8")
     print(f"\nGemt: {out.relative_to(ROOT)}\n")
     extra, sources = ([], set())
-    if arms == ["plugin"] and not args.uden_basis:
+    if arms == ["plugin"] and not args.no_base:
         extra, sources = latest_basis(args.fag, {t["id"] for t in tasks}, exclude=out)
     print(report([out], extra, sources))
     return 0
@@ -798,12 +800,12 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
         dev_errors = [r for r in errors if r["saet"] != "holdout"]
         out += ["", f"**{len(errors)} kørselsfejl er ikke talt med** (fx ramt kontogrænse)."]
         if dev_errors:
-            out[-1] += " Kør udviklingsopgaverne igen med `koer --id " + \
+            out[-1] += " Kør udviklingsopgaverne igen med `run --id " + \
                 ",".join(sorted({r['id'] for r in dev_errors})) + "`:"
         out += [""] + [f"- {r['id']} ({r['arm']}): {r['note']}" for r in dev_errors]
         if len(dev_errors) < len(errors):
             out += [f"- {len(errors) - len(dev_errors)} holdout-kørsel(er) med fejl – ID skjult. "
-                    "Kør dem igen med `koer FAG --kun-koerselsfejl FIL --saet alle --udgivelse`."]
+                    "Kør dem igen med `run FAG --only-run-errors FIL --set all --release`."]
 
     by_task: dict[str, dict[str, list[bool]]] = {}
     goals_of: dict[str, list[str]] = {}
@@ -842,47 +844,54 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest="cmd", required=True)
-    p = sub.add_parser("tjek")
+    p = sub.add_parser("check")
     p.add_argument("fag", nargs="*")
-    p = sub.add_parser("vis")
+    p = sub.add_parser("show")
     p.add_argument("fag")
-    p.add_argument("--facit", action="store_true")
-    p.add_argument("--saet", choices=sorted(SETS), default="", help="kun ét sæt (CI-agenten bruger udvikling)")
-    p = sub.add_parser("koer")
+    p.add_argument("--answer-key", action="store_true")
+    p.add_argument("--set", choices=["development", "holdout"], default="",
+                   help="kun ét sæt (CI-agenten bruger development)")
+    p = sub.add_parser("run")
     p.add_argument("fag")
-    p.add_argument("--arm", choices=["basis", "plugin", "begge"], default="plugin")
-    p.add_argument("--saet", choices=["udvikling", "holdout", "alle"], default="udvikling")
+    p.add_argument("--arm", choices=["base", "plugin", "both"], default="plugin")
+    p.add_argument("--set", choices=["development", "holdout", "all"], default="development")
     p.add_argument("--id", default="")
     p.add_argument("--parallel", type=int, default=4)
     p.add_argument("--model", default="")
-    p.add_argument("--bedoemmer", default="sonnet")
-    p.add_argument("--gentag", type=int, default=1)
+    p.add_argument("--grader", default="sonnet")
+    p.add_argument("--repeat", type=int, default=1)
     p.add_argument("--max-turns", type=int, default=12)
     p.add_argument("--timeout", type=int, default=600)
     p.add_argument("--web", action="store_true")
-    p.add_argument("--gentag-fri", type=int, default=0, help="ekstra gentagelser kun af fri-opgaverne (støj)")
-    p.add_argument("--kun-fejlede", action="store_true", help="kun udviklingsopgaver, plugin-armen ikke bestod sidst")
-    p.add_argument("--kun-koerselsfejl", metavar="FIL", help="kør kun de kørsler igen, der fejlede (fx kontogrænse) i FIL")
-    p.add_argument("--udgivelse", action="store_true", help="kræves for at køre holdout-sættet")
-    p.add_argument("--uden-basis", action="store_true", help="rapportér plugin-armen uden genbrugt basis")
+    p.add_argument("--repeat-free", type=int, default=0, help="ekstra gentagelser kun af fri-opgaverne (støj)")
+    p.add_argument("--only-failed", action="store_true", help="kun udviklingsopgaver, plugin-armen ikke bestod sidst")
+    p.add_argument("--only-run-errors", metavar="FILE",
+                   help="kør kun de kørsler igen, der fejlede (fx kontogrænse) i FILE")
+    p.add_argument("--release", action="store_true", help="kræves for at køre holdout-sættet")
+    p.add_argument("--no-base", action="store_true", help="rapportér plugin-armen uden genbrugt basis")
     p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
-    p.add_argument("--med-hukommelse", action="store_true",
+    p.add_argument("--with-memory", action="store_true",
                    help="indlæs fagagentens lokale hukommelse (~/.claude/agent-memory) i plugin-armen")
-    p = sub.add_parser("svar")
+    p = sub.add_parser("answers")
     p.add_argument("fag")
     p.add_argument("--id", default="", help="standard: udviklingsopgaver, plugin-armen ikke bestod sidst")
-    p.add_argument("--arm", choices=["basis", "plugin"], default="plugin")
-    p = sub.add_parser("rapport")
+    p.add_argument("--arm", choices=["base", "plugin"], default="plugin")
+    p = sub.add_parser("report")
     p.add_argument("filer", nargs="+")
-    p = sub.add_parser("rebedoem")
+    p = sub.add_parser("regrade")
     p.add_argument("fil")
-    p.add_argument("--kun-fri", action="store_true")
+    p.add_argument("--only-free", action="store_true")
     p.add_argument("--parallel", type=int, default=4)
-    p.add_argument("--bedoemmer", default="sonnet")
+    p.add_argument("--grader", default="sonnet")
     p.add_argument("--timeout", type=int, default=600)
     args = ap.parse_args()
+    # English CLI choices → the Danish values stored in eksamen data and result files.
+    if getattr(args, "set", None):
+        args.set = CLI_VALUES.get(args.set, args.set)
+    if getattr(args, "arm", None):
+        args.arm = CLI_VALUES.get(args.arm, args.arm)
 
-    if args.cmd == "tjek":
+    if args.cmd == "check":
         trades = args.fag or all_trades()
         failed = False
         for trade in trades:
@@ -900,14 +909,14 @@ def main() -> int:
                   f"{len(errors)} fejl · {len(warnings)} advarsler")
             failed |= bool(errors)
         return 1 if failed else 0
-    if args.cmd == "vis":
-        print(render(args.fag, args.facit, args.saet))
+    if args.cmd == "show":
+        print(render(args.fag, args.answer_key, args.set))
         return 0
-    if args.cmd == "koer":
+    if args.cmd == "run":
         return cmd_run(args)
-    if args.cmd == "svar":
+    if args.cmd == "answers":
         return cmd_answers(args)
-    if args.cmd == "rebedoem":
+    if args.cmd == "regrade":
         return cmd_regrade(args)
     print(report([pathlib.Path(f) for f in args.filer]))
     return 0

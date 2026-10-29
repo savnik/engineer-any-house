@@ -4,8 +4,8 @@
 Builds the example house with bim.py, exports it to glTF and shows it in <model-viewer>; computes the FEM example
 with fem.py and writes its plotly viewer (plotly.js from the CDN, so the page stays small).
 
-Usage:  python3 scripts/demo_site.py [--ud _site]       build the site (CI: .github/workflows/pages.yml)
-        python3 scripts/demo_site.py --billeder          also refresh the README thumbnails in docs/img (needs Playwright)
+Usage:  python3 scripts/demo_site.py [--out _site]      build the site (CI: .github/workflows/pages.yml)
+        python3 scripts/demo_site.py --images            also refresh the README thumbnails in docs/img (needs Playwright)
 """
 import argparse
 import pathlib
@@ -45,8 +45,8 @@ model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7
 </style></head><body>
 <header><h1>BIM model of the example house</h1>
 <p>The same house as the FEM model: structure, roof windows and the full plumbing and heating installation, with the south and west facades and the south roof face see-through.
-IFC4 built with <code>bim.py byg</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
-exported with <code>bim.py eksport</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
+IFC4 built with <code>bim.py build</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-viden/assets/eksempel/model.yaml">model.yaml</a>,
+exported with <code>bim.py export</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
 <model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
   camera-orbit="-35deg 75deg auto" shadow-intensity="0.6" exposure="0.85" tone-mapping="neutral" environment-image="neutral"></model-viewer>
 </body></html>
@@ -81,16 +81,16 @@ def build(out: pathlib.Path):
         shutil.rmtree(out)
     work = out / "_work"
     (out / "bim").mkdir(parents=True)
-    run(BIM, "byg", BIM_SPEC, "--ud", work / "hus.ifc")
+    run(BIM, "build", BIM_SPEC, "--out", work / "hus.ifc")
     # south (segment .1) and west (.4) facades on every storey and the south roof face see-through, so the inside shows
-    run(BIM, "eksport", work / "hus.ifc", "--ud", out / "bim/hus.glb", "--gennemsigtig", "*-YV.1", "*-YV.4", "TAG1.side1")
+    run(BIM, "export", work / "hus.ifc", "--out", out / "bim/hus.glb", "--transparent", "*-YV.1", "*-YV.4", "TAG1.side1")
     (out / "bim/index.html").write_text(BIM_PAGE.format(mv=MODEL_VIEWER, style=STYLE, repo=REPO), encoding="utf-8")
     shutil.copy(FEM_SPEC, work / "fem.yaml")
-    run(FEM, "regn", work / "fem.yaml", "--ud", work)
-    run(FEM, "vis", work / "fem.yaml", "--ud", work, "--cdn")
+    run(FEM, "calc", work / "fem.yaml", "--out", work)
+    run(FEM, "view", work / "fem.yaml", "--out", work, "--cdn")
     html = sorted(work.glob("*.html"))
     if len(html) != 1:
-        sys.exit(f"Forventede én HTML fra fem.py vis i {work}, fandt {len(html)}")
+        sys.exit(f"Forventede én HTML fra fem.py view i {work}, fandt {len(html)}")
     (out / "fem").mkdir()
     shutil.copy(html[0], out / "fem/index.html")
     (out / "vvs").mkdir()
@@ -143,12 +143,12 @@ def thumbnails(out: pathlib.Path):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--ud", default=str(ROOT / "_site"))
-    ap.add_argument("--billeder", action="store_true")
+    ap.add_argument("--out", default=str(ROOT / "_site"))
+    ap.add_argument("--images", action="store_true")
     a = ap.parse_args()
-    out = pathlib.Path(a.ud).resolve()
+    out = pathlib.Path(a.out).resolve()
     build(out)
-    if a.billeder:
+    if a.images:
         thumbnails(out)
 
 

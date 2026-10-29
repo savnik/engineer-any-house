@@ -41,8 +41,8 @@ Normværdier (nyttelast, sne, vind, partialkoefficienter) står i `normgrundlag.
 ### 3.1 Fjernelse af bærende væg / ny åbning
 1. **Funktion:** bærer væggen lodret last, er den stabiliserende, og bærer den skorsten eller trappe?
 2. **Princip:** bjælke under loftet (synlig, enklest) eller i bjælkelaget (skjult, kræver bjælkesko eller udveksling). Stål (HEB/IPE, lav byggehøjde) eller limtræ (let og nem at montere, men højere).
-3. **Overslag** med `statik.py bjaelke` – moment, forskydning, nedbøjning og reaktioner.
-4. **Vederlag:** murpille eller søjle under hvert vederlag; kontakttryk (`statik.py tryk`) og pillens størrelse. Vederlagsplade, betonbjælke eller udstøbning under punktlasten. Vederlagslængden fastlægges af statikeren (T: ofte mindst 100–150 mm for stål på murværk).
+3. **Overslag** med `statik.py beam` – moment, forskydning, nedbøjning og reaktioner.
+4. **Vederlag:** murpille eller søjle under hvert vederlag; kontakttryk (`statik.py pressure`) og pillens størrelse. Vederlagsplade, betonbjælke eller udstøbning under punktlasten. Vederlagslængden fastlægges af statikeren (T: ofte mindst 100–150 mm for stål på murværk).
 5. **Lasten ned til jorden:** står vederlaget på et fundament – eller på et terrændæk eller strøgulv? En punktlast på et ufunderet gulv kræver nyt punktfundament.
 6. **Midlertidig understøtning** og rækkefølge (afsnit 5).
 7. **Brand:** skal bjælken have brandmodstand? Afklares efter BR18 kap. 5 (fx etageboliger og adskillelse mod garage) – brandrådgiver ved tvivl.

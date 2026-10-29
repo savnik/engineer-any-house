@@ -24,7 +24,7 @@ Modellér ikke spær, lægter, armering, møbler, fliser, lister eller terræn u
 - Kildehierarki: påskrevet mål (D) > målt på stedet (M) > skaleret fra tegning (D, `usikkerhed`) > foto/skøn (A).
 - Tolerancer (T): påskrevne mål ±50 mm i sammenligningen. Opmåling med laser ±10 mm. Skalering fra 1:100-scanning ±3 px × skala (typisk 30–60 mm).
 - Gamle tegninger er råhusmål til murværk. Pudslag (10–20 mm (T)) indgår i lagopbygningen, ikke i væggens placering.
-- Bruttoareal (BBR) måles til ydervæggenes yderside. `tjek` sammenligner med `model.kontrol.areal`. Afvigelser over 5 % skal forklares (BBR-fejl, tilbygning, forkert ydermål).
+- Bruttoareal (BBR) måles til ydervæggenes yderside. `check` sammenligner med `model.kontrol.areal`. Afvigelser over 5 % skal forklares (BBR-fejl, tilbygning, forkert ydermål).
 
 ## Modelleringsregler, som giver brugbare modeller
 1. **Rigtige klasser:** IfcWall, IfcSlab, IfcRoof (aggregerer tagflader), IfcWindow/IfcDoor i IfcOpeningElement, IfcStair, IfcColumn, IfcBeam, IfcSpace, IfcChimney, VVS-klasser. Proxy er nødudgang.
@@ -32,7 +32,7 @@ Modellér ikke spær, lægter, armering, møbler, fliser, lister eller terræn u
 3. **Status på alt** (EXISTING/NEW/DEMOLISH/TEMPORARY). Det er grundlaget for renoveringsversioner.
 4. **Etagedæk** ligger mellem ydervæggene (kant: inderside af den bærende løkke). Indervægge og søjler slutter under dækket (værktøjets standard).
 5. **Rum** findes fra væggene (punkt-rum). Lukker rummet ikke, så mangler der en væg eller en afgrænsning.
-6. **Åbninger** placeres ud fra vægsegmentets start. Kontrollér altid i planen (`tegn plan --id`), at de sidder i den rigtige side og væg.
+6. **Åbninger** placeres ud fra vægsegmentets start. Kontrollér altid i planen (`draw plan --id`), at de sidder i den rigtige side og væg.
 7. **Gennemføringer:** skorsten gennem etagedæk skal have `huller` i dækkene. Rør gennem vægge er info ved LOIN 2.
 8. **Ingen persondata** i modellen (ejer, beboere, håndværkere). Arkitektnavne fra tegningen hører til kildelisten, ikke til modellen.
 

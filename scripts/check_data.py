@@ -160,7 +160,7 @@ def main() -> int:
             errors.append(f"{rel}: ligger i en sags-/datamappe – hører ikke hjemme i repoet")
         elif f.name in CASE_FILES and not {"skabelon", "evals", "tests"} & set(rel.parts):
             errors.append(f"{rel}: sagsfil – hører hjemme i en sagsmappe eller pluginets datamappe")
-        # docs/img: README images rendered from the repo's own examples (scripts/demo_site.py --billeder)
+        # docs/img: README images rendered from the repo's own examples (scripts/demo_site.py --images)
         elif (f.suffix.lower() in (".pdf", ".docx", ".xlsx", ".jpg", ".jpeg", ".heic", ".png") and "evals" not in rel.parts
               and rel.parts[:2] != ("docs", "img")):
             errors.append(f"{rel}: bilag/dokument – hører hjemme i sagsmappens bilag/")

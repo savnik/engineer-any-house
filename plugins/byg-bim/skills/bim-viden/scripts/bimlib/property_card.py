@@ -3,9 +3,9 @@
 The house's facts live in model.yaml under `ejendomskort:` (titel, indledning, afsnit with kolonner, file path) and `fakta:`
 (one row per fact with id and afsnit). The Markdown card is generated from there and is never edited by hand.
 
-  ejendomskort <model.yaml>                 → write the card (ejendomskort.fil, relative to model.yaml)
-  ejendomskort <model.yaml> --tjek          → 1 if the card on disk differs from the model
-  ejendomskort <model.yaml> --importer <md> → forslag/ejendomskort-import.yaml with the card's content (merged with flet)
+  property-card <model.yaml>                → write the card (ejendomskort.fil, relative to model.yaml)
+  property-card <model.yaml> --check        → 1 if the card on disk differs from the model
+  property-card <model.yaml> --import <md>  → forslag/ejendomskort-import.yaml with the card's content (merged with merge)
 """
 import os
 import pathlib
@@ -13,7 +13,7 @@ import re
 
 from .spec import SpecError, _read
 
-GENERATED_BANNER = "<!-- GENERERET fra {model} med bim.py ejendomskort – RET IKKE HER. Ret fakta i hovedmodellen via forslag + bim.py flet. -->"
+GENERATED_BANNER = "<!-- GENERERET fra {model} med bim.py property-card – RET IKKE HER. Ret fakta i hovedmodellen via forslag + bim.py merge. -->"
 HEADER_KEYS = {"ID": "id", "Emne": "emne", "Værdi": "vaerdi", "Dato": "dato", "Kilde": "kilde", "Spørgsmål": "spoergsmaal",
           "Hvem afklarer": "hvem", "Sag": "sag", "Tidligere værdi": "tidligere", "Erstattet (dato)": "erstattet",
           "Grund": "grund"}
@@ -157,7 +157,7 @@ def generate(model, check=False, quiet=False) -> int:
 
 
 def import_card(model, md) -> int:
-    """The card's content → forslag/ejendomskort-import.yaml (merged with bim.py flet; the card is then generated)."""
+    """The card's content → forslag/ejendomskort-import.yaml (merged with bim.py merge; the card is then generated)."""
     from .merge import _flow, create
     model, md = pathlib.Path(model).resolve(), pathlib.Path(md).resolve()
     card, facts = read_md(md.read_text(encoding="utf-8"))

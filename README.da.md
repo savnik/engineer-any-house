@@ -13,7 +13,7 @@ Eksempelhuset fra repoet, bygget og regnet af værktøjerne i CI. Klik på et bi
 | BIM-model (IFC4) | FEM-model (vægge og dæk som skaller) |
 |---|---|
 | [![BIM-model af eksempelhuset](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM-model med von Mises-spændinger](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
-| Bygget med `bim.py byg`, eksporteret til glTF med `bim.py eksport` | Regnet med `fem.py regn`, vist med `fem.py vis`: vælg lastkombination og resultat |
+| Bygget med `bim.py build`, eksporteret til glTF med `bim.py export` | Regnet med `fem.py calc`, vist med `fem.py view`: vælg lastkombination og resultat |
 
 VVS-agenten tegner samme hus' installation som et principdiagram ([SVG-kilde](plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg), metode i [principdiagram.md](plugins/byg-vvs/skills/vvs-viden/references/principdiagram.md)). Klik for at åbne det i fuld størrelse.
 
@@ -30,7 +30,7 @@ VVS-agenten tegner samme hus' installation som et principdiagram ([SVG-kilde](pl
 | `byg-statik` | Statiker (`statiker`): rådgivende om bærende konstruktioner – hvad er bærende, vægfjernelse, bjælker og vederlag, bjælkelag, tag, fundering, revner og sætninger, midlertidig understøtning og review af statisk dokumentation. Alle konkrete beregninger i en FEM-model med `fem.py` (PyNite: PNG-tegninger og interaktiv HTML, eget Python-miljø), lastopgørelse og håndkontrol med `statik.py` (Python-stdlib). Overslag mærkes altid som overslag; den statiske dokumentation til byggesagen udarbejdes af den ansvarlige statiker |
 | `byg-arkitekt` | Arkitekt (`arkitekt`): rådgivende om planløsning og disposition, tilbygning, kvist, tagetage og facade samt myndighedsscreening – byggetilladelse eller undtagelse, etageareal og bebyggelsesprocent, højde og afstand til skel, lokalplan, servitutter og bevaring. Beskriver planen, så `bim-modelloer` kan tegne den som BIM-forslag; ansøgningsprojektet udarbejdes af den ansvarlige arkitekt |
 | `byg-anlaeg` | Anlægsgartner (`anlaegsgartner`): belægning, indkørsel og terrasser (opbygning, fald væk fra huset, fri sokkel), regnvand og LAR (faskine, nedsivningstest, tilladelse), terrænfald og omfangsdræn, terrænregulering og støttemure, hegn og hække ved skel, træer, beplantning og pleje. Kloakarbejde henvises til autoriseret kloakmester |
-| `byg-bim` | BIM-modellør (`bim-modelloer`) og uafhængig sammenligner (`bim-sammenligner`), værktøjet `bim.py` (modelspec i YAML → IFC4 med IfcOpenShell, kontrol mod buildingSMART-regler/IDS/BBR, planer, snit, facader og 3D som PNG, afkodning af PDF-tegninger og sammenligning af tegning og model) og skill `tegningsimport`. Værktøjet opretter selv sit Python-miljø i `~/.local/share/byg-bim/venv` (`bim.py opsaet`, kræver netværk første gang) |
+| `byg-bim` | BIM-modellør (`bim-modelloer`) og uafhængig sammenligner (`bim-sammenligner`), værktøjet `bim.py` (modelspec i YAML → IFC4 med IfcOpenShell, kontrol mod buildingSMART-regler/IDS/BBR, planer, snit, facader og 3D som PNG, afkodning af PDF-tegninger og sammenligning af tegning og model) og skill `tegningsimport`. Værktøjet opretter selv sit Python-miljø i `~/.local/share/byg-bim/venv` (`bim.py setup`, kræver netværk første gang) |
 
 Fag-plugins og `byg` afhænger af `byg-kontrol`, så kontrollen altid følger med.
 
@@ -81,7 +81,7 @@ Hooks i `byg-kontrol` håndhæver: leverance-ID, rækkefølge (fag før kontrol)
 
 I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar som "IKKE UAFHÆNGIGT KVALITETSKONTROLLERET".
 
-**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <engineer-any-house>/scripts/usage.py --siden <dato>` fra din arbejdsmappe.
+**Hold sessionerne korte.** Hvert svar læser hele samtalen igen, så en lang session gør selv korte spørgsmål dyre. Brug én session pr. opgave, og fortsæt en sag i en ny session med `/byg:status <sag-id>`. Sagsmappen husker resten. Hooken minder dig om det, når samtalen passerer ca. 200k tokens. Mål forbruget ved at køre `python3 <engineer-any-house>/scripts/usage.py --since <dato>` fra din arbejdsmappe.
 
 ## Viden og forankring
 1. **Kanon** i pluginenes `references/` (normgrundlag med status V/T, faglig praksis, tjeklister, erfaringsblade) og kontrolviden i `byg-kontrol`.
@@ -114,12 +114,12 @@ scripts/package.py               bygger dist/cowork/*.plugin, samlet byg.plugin 
 scripts/release.py             udgivelse (gren udgivelse/<version> → PR): hæver versioner ud fra versionsnoter/ og skriver CHANGELOG.md
 .github/workflows/ci.yml     CI på hver PR: validate.py --claude, ruff, bim-tests og fem-self-test (krævet før merge til main)
 versionsnoter/               én note pr. gren: hvilke plugins der ændres (patch/minor/major) og hvorfor
-scripts/usage.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --siden/--til
+scripts/usage.py           måler token- og tidsforbrug fra de lokale transskripter (hovedtråd, fag, kontrol, retur, svarlængde); --since/--until
 scripts/effort_ab.py         A/B-test af agenternes effort med pluginets evals (koster tokens)
 scripts/eval_trade.py          kører et fag-plugins evals uden byg-kontrol-afhængigheden (koster tokens)
 scripts/review_ab.py         kontrol-armen: måler kontrollens præcision og nettogevinst på eksamenssættet (koster tokens)
 eksamen/<fag>/               eksamenslaget: officielle læringsmål og opgavesæt med facit (udvikling + holdout)
-scripts/exam.py              tjekker dækningen af læringsmålene og kører eksamen med og uden plugin (koer koster tokens)
+scripts/exam.py              tjekker dækningen af læringsmålene og kører eksamen med og uden plugin (run koster tokens)
 scripts/experiment.py           forsøgslog og benchmark for forbedringer (eksamen/forsoeg.json, eksamen/benchmark.json)
 .claude/agents/ci-forbedring.md  CI-agenten: strukturerede forbedringsforsøg målt mod eksamenslaget
 scripts/hooks/holdout_guard.py    CI-agentens vagt: holdout-opgaver og -svar kan ikke læses direkte
@@ -132,7 +132,7 @@ tests/test_experiment.py        tests af forsøgsloggen, beslutningsreglen og ho
 tests/test_calc_guard.py     tests af regnevagten (statiker og statik-kontrol må kun køre statik.py og fem.py)
 tests/live-testsag.md        end-to-end testsag med tjekpunkter til en rigtig Claude Code-session
 ```
-Efter ændringer: `python3 scripts/sync_protocol.py && python3 scripts/validate.py --claude`. Ændret en afhængighed i `requirements*.in`: `python3 scripts/lock_environment.py`, kør `opsaet` og testene (BIM: `bim.py opsaet --test` og `python -m pytest scripts/tests` i bim-miljøet).
+Efter ændringer: `python3 scripts/sync_protocol.py && python3 scripts/validate.py --claude`. Ændret en afhængighed i `requirements*.in`: `python3 scripts/lock_environment.py`, kør `setup` og testene (BIM: `bim.py setup --test` og `python -m pytest scripts/tests` i bim-miljøet).
 
 **main er beskyttet:** alt går gennem en PR, og CI (`validate`, `lint`, `bim-tests`, `fem-self-test`) skal være grøn, og grenen ajour med main, før der kan merges. Direkte push til main afvises, også for administratorer. Kun personer med skriveadgang (i dag kun ejeren) kan merge.
 
@@ -144,7 +144,7 @@ Efter ændringer: `python3 scripts/sync_protocol.py && python3 scripts/validate.
 
 Evals (kræver login og koster tokens): `python3 scripts/eval_trade.py byg-vvs`. Kør ikke `claude plugin eval ./plugins/byg-vvs` direkte: fag-plugins afhænger af `byg-kontrol`, som ikke findes i eval-sandkassen, og så indlæses pluginet slet ikke (evalen tester kun den bare model). Effort-sammenligning: `python3 scripts/effort_ab.py byg-vvs --effort medium`. Loop-evalen `plugins/byg/evals/kontrol-loop-vvs` kræver, at `byg-team` er installeret.
 
-Eksamen (kræver login og koster tokens): `python3 scripts/exam.py koer el` (plugin-armen; basis genbruges) eller `--kun-fejlede`. Den måler fagagenten mod basismodellen på opgaver bygget over de officielle læringsmål. Se `eksamen/README.md`, især reglen om holdout-sættet.
+Eksamen (kræver login og koster tokens): `python3 scripts/exam.py run el` (plugin-armen; basis genbruges) eller `--only-failed`. Den måler fagagenten mod basismodellen på opgaver bygget over de officielle læringsmål. Se `eksamen/README.md`, især reglen om holdout-sættet.
 
 Forbedringer (continuous improvement): `claude --agent ci-forbedring` i repoets rod. Agenten vælger ét forsøg ud fra `python3 scripts/experiment.py status`, måler før og efter, afgør forsøget efter beslutningsreglen og fører forsøgsloggen. Den afleverer en draft-PR. Se `eksamen/README.md`, afsnittet "Forbedringsforsøg".
 

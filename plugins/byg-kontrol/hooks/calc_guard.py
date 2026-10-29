@@ -4,7 +4,7 @@
 The trade register names the tool per trade (`"regnevaerktoej": "statik.py"` or a list). For the trade's agent and
 review agent only this is allowed:  python3 <…/skills/<trade>-viden/scripts/<tool>> <command> [arguments]
 If a tool writes files, `"kontrol_skrivefri"` limits the review agent to the commands that do not
-(e.g. `{"fem.py": {"regn": "--ingen-filer", "test": ""}}`: regn only with --ingen-filer).
+(e.g. `{"fem.py": {"calc": "--no-files", "test": ""}}`: calc only with --no-files).
 Everything else (several commands, pipes, redirection, command substitution, other programs) is denied.
 The review agent thus stays without write access, and every number comes from the tool.
 Other agents are unaffected. Fail-safe: an unexpected error never blocks.
@@ -70,7 +70,7 @@ def main() -> int:
         reason = check(str((inp.get("tool_input") or {}).get("command") or ""), *hit)
         if reason:
             deny(f"{agent} må kun bruge Bash til regneværktøjet: {reason}. Al regning – også summer og "
-                 f"enhedsomregning – sker med værktøjet (fx kommandoen 'regn').")
+                 f"enhedsomregning – sker med værktøjet (fx kommandoen 'calc').")
     except Exception:
         return 0
     return 0

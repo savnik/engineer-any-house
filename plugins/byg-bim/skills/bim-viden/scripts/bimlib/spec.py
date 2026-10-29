@@ -83,7 +83,7 @@ def _merge(base: dict, overlay: dict) -> dict:
 
     A field set to null in the proposal is removed from the element. Top sections that are mappings (typer, vvs,
     model …) are merged recursively: write only the keys that change. `slet:` removes elements entirely (model
-    correction); `nedrives:` keeps them with status nedrives (renovation). `bim.py flet` uses the same rules."""
+    correction); `nedrives:` keeps them with status nedrives (renovation). `bim.py merge` uses the same rules."""
     out = copy.deepcopy(base)
     for k, v in overlay.items():
         if k in PROPOSAL_FIELDS:

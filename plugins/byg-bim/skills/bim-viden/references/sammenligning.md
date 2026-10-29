@@ -2,7 +2,7 @@
 
 Formål: at finde **enhver** forskel mellem originaltegningen og den samme visning tegnet fra modellen, og at afgøre, om fejlen ligger i modellen, i afkodningen eller i tegningen selv.
 
-## Grundlaget (`bim.py sammenlign`)
+## Grundlaget (`bim.py compare`)
 - Modellen tegnes i **originalens pixelramme** via afkodningens kalibrering. `original.png`, `model.png` og `overlay.png` har samme størrelse og flugter.
 - Plan: snit i +1 m (eller visningens `snithoejde`). Snit og facade: z-buffer af modellen. Døre vises med blad og slagbue.
 - `auto.md` sammenligner automatisk:
@@ -46,6 +46,6 @@ Overlay: originalen lysnet, modellen **rød**. Rødt, der ikke dækker en streg 
 
 ## Runde ≥ 2
 1. Tag stilling til hver tidligere afvigelse: `lukket` eller `aaben` (genbrug id'et), med evidens.
-2. Kør `sammenlign` med `--forrige <forrige rundes mappe>`. `fliser.md` markerer så de fliser, hvor modeltegningen er ændret (`model ændret`), og dem, der er pixel for pixel uændrede (`uændret`). Se efter **regressioner** i de ændrede fliser; de uændrede er dækket af forrige runde, medmindre en åben afvigelse ligger i dem. Fliser med auto-fund gennemgås altid. (`bim.py diff` er ikke tilladt for sammenligneren.)
+2. Kør `compare` med `--previous <forrige rundes mappe>`. `fliser.md` markerer så de fliser, hvor modeltegningen er ændret (`model ændret`), og dem, der er pixel for pixel uændrede (`uændret`). Se efter **regressioner** i de ændrede fliser; de uændrede er dækket af forrige runde, medmindre en åben afvigelse ligger i dem. Fliser med auto-fund gennemgås altid. (`bim.py diff` er ikke tilladt for sammenligneren.)
 3. Nye væsentlige fund uden for de ændrede områder er `overset: true`.
 4. `resultat: ok`, når ingen væsentlige er åbne. Bestridte afvigelser vurderes på originalens evidens.

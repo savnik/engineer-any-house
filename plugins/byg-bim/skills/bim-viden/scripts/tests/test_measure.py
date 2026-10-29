@@ -1,4 +1,4 @@
-"""bim.py maal: dimensions of walls, rooms, distances and storeys from the example model (mm)."""
+"""bim.py measure: dimensions of walls, rooms, distances and storeys from the example model (mm)."""
 import pathlib
 import re
 import sys

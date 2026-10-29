@@ -1,6 +1,6 @@
 """Shared Python environment for the plugin tools (bim.py, fem.py): its own venv with locked versions.
 
-The tool script runs with the system python3, sets up the environment with `setup` (subcommand `opsaet`) and otherwise
+The tool script runs with the system python3, sets up the environment with the `setup` subcommand and otherwise
 switches into the venv with os.execv. Locked versions: requirements*.txt is generated from requirements*.in by
 scripts/lock_environment.py. Uses uv if it is installed (faster), otherwise venv + pip – the result is the same.
 Standard library only and Python 3.9-compatible: this file runs with the system python3, before the environment exists.
@@ -63,6 +63,6 @@ class Environment:
         if self.active():
             return None
         if not self.python.exists():
-            print(f"Miljøet mangler. Kør først:  python3 {pathlib.Path(script).resolve()} opsaet", file=sys.stderr)
+            print(f"Miljøet mangler. Kør først:  python3 {pathlib.Path(script).resolve()} setup", file=sys.stderr)
             return 2
         os.execv(str(self.python), [str(self.python), str(pathlib.Path(script).resolve())] + args)

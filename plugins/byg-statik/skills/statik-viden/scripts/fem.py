@@ -4,20 +4,20 @@ skalelementer) ud fra en modelspec (YAML).
 
 Kør altid med:  python3 fem.py <kommando> ...   (scriptet skifter selv til sit eget Python-miljø)
 
-  opsaet                                    Opretter/opdaterer miljøet (~/.local/share/byg-statik/venv) fra den låste
+  setup                                     Opretter/opdaterer miljøet (~/.local/share/byg-statik/venv) fra den låste
                                             requirements-fem.txt
-  skabelon [flader]                         Komplet eksempel på fem.yaml (flader: hus med vægge, dæk og bjælke)
-  regn  <fem.yaml> [--ud <mappe>] [--ingen-filer] [--saet <sti>=<værdi> …]
+  template [shells]                         Komplet eksempel på fem.yaml (shells: hus med vægge, dæk og bjælke)
+  calc  <fem.yaml> [--out <mappe>] [--no-files] [--set <sti>=<værdi> …]
                                             Analyse: reaktioner, snitkræfter, nedbøjninger og ligevægt pr. kombination
-                                            → <ud>/<navn>.fem.json (+ resumé på skærmen). Standard-ud: <specmappe>/fem/ (eller specmappen selv, hvis den hedder fem)
-                                            --saet ændrer ét input uden at røre filen (kontrollens egne input),
-                                            fx --saet lasttilfaelde.Q.laster.0.linjelast=4.0
-  resultat <fem.yaml> [--element <navn>] [--kombi <navn>] [--ud <mappe>]
+                                            → <out>/<navn>.fem.json (+ resumé på skærmen). Standard-out: <specmappe>/fem/ (eller specmappen selv, hvis den hedder fem)
+                                            --set ændrer ét input uden at røre filen (kontrollens egne input),
+                                            fx --set lasttilfaelde.Q.laster.0.linjelast=4.0
+  result <fem.yaml> [--element <navn>] [--combo <navn>] [--out <mappe>]
                                             Opslag i det gemte resultat (<navn>.fem.json) uden ny beregning. Afviser
-                                            resultatet, hvis fem.yaml er ændret siden (spec-sha) eller regnet med --saet
-  tegn  <fem.yaml> [model|deformation|M|V|N|spaending|n_u|n_v|pladmoment|flytning|alle] [--kombi <navn>] [--ud <mappe>]
+                                            resultatet, hvis fem.yaml er ændret siden (spec-sha) eller regnet med --set
+  draw  <fem.yaml> [model|deformation|M|V|N|stress|n_u|n_v|plate-moment|displacement|all] [--combo <navn>] [--out <mappe>]
                                             PNG til notatet og til din egen kontrol af modellen (model viser lasterne)
-  vis   <fem.yaml> [--ud <mappe>] [--cdn]   Interaktiv HTML (åbnes i browseren): drej/zoom, laster som pile, vælg
+  view  <fem.yaml> [--out <mappe>] [--cdn]  Interaktiv HTML (åbnes i browseren): drej/zoom, laster som pile, vælg
                                             kombination og størrelse (M, V, N, deformation; på flader spænding,
                                             membrankræfter, pladmoment, flytning), skjul flader, værdier ved musen.
                                             --cdn: plotly hentes fra nettet – lille fil til en hjemmeside
@@ -40,10 +40,10 @@ ENV = Environment("byg-statik", "BYG_STATIK_VENV", HERE / "requirements-fem.txt"
 
 def main() -> int:
     args = sys.argv[1:]
-    if not args or args[0] in ("-h", "--help", "hjaelp"):
+    if not args or args[0] in ("-h", "--help", "help"):
         print(__doc__)
         return 0
-    if args[0] == "opsaet":
+    if args[0] == "setup":
         return ENV.setup()
     if (r := ENV.switch(__file__, args)) is not None:
         return r

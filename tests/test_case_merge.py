@@ -105,7 +105,7 @@ def test_merge_unit(tmp: pathlib.Path) -> None:
     check("flet: konflikt skriver intet", not r["ok"] and r["konflikter"] == ["G-01"]
          and (case_dir / "graenseflader.md").read_text(encoding="utf-8") == before and f2.exists(), r)
     r = case_merge.merge(f2, case_dir, "x/el/02", force=True)
-    check("flet: --tving tilsidesætter konflikten", r["ok"] and "1x10 A" in (case_dir / "graenseflader.md").read_text(encoding="utf-8"), r)
+    check("flet: --force tilsidesætter konflikten", r["ok"] and "1x10 A" in (case_dir / "graenseflader.md").read_text(encoding="utf-8"), r)
 
     # The same change in both places is not a conflict
     f3 = case_dir / "forslag" / "murer-01__graenseflader.md"
@@ -161,7 +161,7 @@ def test_merge_unit(tmp: pathlib.Path) -> None:
     f6.write_text("## VVS og varme\n| ID | Emne | Værdi | Dato | Kilde |\n|---|---|---|---|---|\n| E-VVS-02 | x | y | z | B |\n",
                   encoding="utf-8")
     r = case_merge.merge(f6, case_dir)
-    check("flet: genereret ejendomskort afvises", not r["ok"] and "bim.py flet" in r["besked"], r)
+    check("flet: genereret ejendomskort afvises", not r["ok"] and "bim.py merge" in r["besked"], r)
 
 
 def test_git_lock(tmp: pathlib.Path) -> None:
@@ -197,7 +197,7 @@ def test_hook(tmp: pathlib.Path) -> None:
     VVS = {**S, "agent_type": "byg-vvs:vvs-mester", "agent_id": "a1"}
 
     def write(data, path):
-        return call("beskyt", {**data, "tool_name": "Write", "tool_input": {"file_path": str(path)}}, env)
+        return call("protect", {**data, "tool_name": "Write", "tool_input": {"file_path": str(path)}}, env)
 
     check("skriveret: fagagent må skrive sit eget notat", not denied(write(VVS, case_dir / "fagnotater" / "vvs.md")))
     check("skriveret: fagagent må skrive sit bilag", not denied(write(VVS, case_dir / "fagnotater" / "vvs-bilag.md")))
@@ -291,8 +291,8 @@ def test_hook(tmp: pathlib.Path) -> None:
                           "last_assistant_message": "```json\n" + json.dumps(chunk) + "\n```"}, env)
     r = call("stop", S, env)
     check("konflikt: Stop blokerer med vejledning", bool(r) and r.get("decision") == "block" and "G-01" in r.get("reason", ""), r)
-    m = subprocess.run([sys.executable, str(GATE), "flet", str(f2), "--tving"], capture_output=True, text=True, env=env)
-    check("manuel flet --tving", m.returncode == 0 and "1x10 A" in (case_dir / "graenseflader.md").read_text(encoding="utf-8"), m.stdout)
+    m = subprocess.run([sys.executable, str(GATE), "merge", str(f2), "--force"], capture_output=True, text=True, env=env)
+    check("manuel merge --force", m.returncode == 0 and "1x10 A" in (case_dir / "graenseflader.md").read_text(encoding="utf-8"), m.stdout)
     check("konflikt løst: Stop er tilfreds", call("stop", S, env) is None)
 
     # The base is saved when the trade call starts: a change landing before the trade agent writes the proposal gives a conflict

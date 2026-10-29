@@ -2,7 +2,7 @@
 """PreToolUse (Bash): bim-sammenligner and bim-opslag may only run read-only bim.py commands.
 
 Allowed: [BIM=<path>; ] python3 <…/bim.py | "$BIM"> <command> …, where the command is in the agent's list in ALLOWED
-(the comparer: also 'afkod tjek' and 'tjek --ud <…/bim/sammenligning/…>').
+(the comparer: also 'decode check' and 'check --out <…/bim/sammenligning/…>').
 Everything else (several commands, redirection, rm/mv/cp, editing) is denied. Other agents are not affected.
 Fail-safe: an unexpected error does not block.
 """
@@ -12,8 +12,8 @@ import shlex
 import sys
 
 ALLOWED = {
-    "bim-sammenligner": {"sammenlign", "gitter", "linjer", "tegn", "vis", "find", "info", "skala", "maal", "afkod", "tjek"},
-    "bim-opslag": {"info", "find", "vis", "maal"},
+    "bim-sammenligner": {"compare", "grid", "lines", "draw", "show", "find", "info", "scale", "measure", "decode", "check"},
+    "bim-opslag": {"info", "find", "show", "measure"},
 }
 REPLY = {
     "bim-sammenligner": "Du retter aldrig selv – beskriv afvigelsen i dit svar.",
@@ -42,14 +42,14 @@ def check(cmd: str, agent: str = "bim-sammenligner") -> str | None:
         return "kun python3 <…/bim.py> <kommando>"
     if parts[2] not in ALLOWED[agent]:
         return f"kommandoen '{parts[2]}' er ikke tilladt – tilladt: {', '.join(sorted(ALLOWED[agent]))}"
-    if parts[2] == "afkod" and (len(parts) < 4 or parts[3] != "tjek"):
-        return "kun 'afkod tjek'"
-    if parts[2] == "tjek":
-        out = parts[parts.index("--ud") + 1] if "--ud" in parts[:-1] else ""
+    if parts[2] == "decode" and (len(parts) < 4 or parts[3] != "check"):
+        return "kun 'decode check'"
+    if parts[2] == "check":
+        out = parts[parts.index("--out") + 1] if "--out" in parts[:-1] else ""
         if "/bim/sammenligning/" not in out.replace("\\", "/") + "/":
-            return "'tjek' kun med --ud under <sagsmappe>/bim/sammenligning/"
-        if "--tegn" in parts:
-            return "'tjek' uden --tegn (brug 'tegn' til tegninger)"
+            return "'check' kun med --out under <sagsmappe>/bim/sammenligning/"
+        if "--draw" in parts:
+            return "'check' uden --draw (brug 'draw' til tegninger)"
     return None
 
 

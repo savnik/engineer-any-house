@@ -6,7 +6,7 @@ Format: `### EB-BIM-<nr>: <titel>` med Situation/Problem/Løsning, Grundlag, Gyl
 
 ### EB-BIM-01: Skriv ikke selv IfcOpenShell-kode til egne modeller
 - **Problem:** Sprogmodeller skriver forældet IfcOpenShell-kode: `api.run(...)`, `product=` i stedet for `products=[...]`, modulet `void` (nu `feature`) og manglende import af undermoduler (`import ifcopenshell.api.root` osv.). I et benchmark (BIM-Edit 2026) løste fri kodegenerering kun 3,4 % af redigeringsopgaverne fuldt.
-- **Løsning:** Egne modeller laves kun via `model.yaml` + `bim.py byg`. Fremmede filer redigeres efter `rediger.md`.
+- **Løsning:** Egne modeller laves kun via `model.yaml` + `bim.py build`. Fremmede filer redigeres efter `rediger.md`.
 - **Grundlag:** test af IfcOpenShell 0.9.0; arxiv.org/abs/2606.20146. **Status:** V 2026-10-10.
 
 ### EB-BIM-02: Faldgruber i IfcOpenShell 0.9.0 (løst i bim.py)
@@ -29,7 +29,7 @@ Format: `### EB-BIM-<nr>: <titel>` med Situation/Problem/Løsning, Grundlag, Gyl
 
 ### EB-BIM-05: Læs tal, mål ikke – og zoom først
 - **Problem:** Sprogmodeller læser tekst sikkert, men aflæser afstande i billeder upræcist. Arealskøn fra billeder kan afvige ca. 40 %. Et A3-ark nedskaleres, så målteksten bliver ulæselig.
-- **Løsning:** Kontaktark → én side → `gitter --beskaer --zoom 2` pr. målkæde. Påskrevne tal er grundlaget. Kalibrér X og Y hver for sig med ≥ 3 punkter. `afkod tjek` fanger fejllæste tal (mål mod tegning, kædesum).
+- **Løsning:** Kontaktark → én side → `grid --crop --zoom 2` pr. målkæde. Påskrevne tal er grundlaget. Kalibrér X og Y hver for sig med ≥ 3 punkter. `decode check` fanger fejllæste tal (mål mod tegning, kædesum).
 - **Grundlag:** AECV-Bench (arxiv 2601.04819); test i bim.py. **Status:** V 2026-10-10.
 
 ### EB-BIM-06: Målpunkter ved bygningsdelen

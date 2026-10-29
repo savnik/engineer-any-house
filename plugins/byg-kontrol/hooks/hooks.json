@@ -23,7 +23,7 @@
       {
         "matcher": "Write|Edit|MultiEdit|NotebookEdit",
         "hooks": [
-          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py\" beskyt", "timeout": 15}
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py\" protect", "timeout": 15}
         ]
       }
     ],
@@ -59,7 +59,7 @@
       {
         "matcher": "compact",
         "hooks": [
-          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py\" efter_compact", "timeout": 15}
+          {"type": "command", "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py\" after_compact", "timeout": 15}
         ]
       }
     ]

@@ -35,13 +35,13 @@ def _flag(args, name):
 
 def _set_args(args) -> list:
     out = []
-    while "--saet" in args:
-        out.append(_opt(args, "--saet"))
+    while "--set" in args:
+        out.append(_opt(args, "--set"))
     return out
 
 
 def _out_dir(spec: pathlib.Path, out_arg) -> pathlib.Path:
-    """--ud, otherwise <spec folder>/fem/ – but if the spec is already in a folder named fem, that folder."""
+    """--out, otherwise <spec folder>/fem/ – but if the spec is already in a folder named fem, that folder."""
     if out_arg:
         return pathlib.Path(out_arg).expanduser()
     return spec.parent if spec.parent.name == "fem" else spec.parent / "fem"
@@ -56,7 +56,7 @@ def _summary(res: dict) -> str:
     out = [f"FEM {res['navn']} · spec-sha {res['spec_sha256_12']} · PyNite {res['pynite']} · {res['analyse']}"
           + (" · plan" if res["plan"] else " · 3D")]
     if res["aendringer"]:
-        out.append("ÆNDREDE INPUT (--saet): " + " · ".join(res["aendringer"]))
+        out.append("ÆNDREDE INPUT (--set): " + " · ".join(res["aendringer"]))
     for kn, k in res["kombinationer"].items():
         balanced = all(v["ok"] for v in k["ligevaegt"].values())
         out.append(f"\n{kn} ({k['type']}) · ligevægt {'OK' if balanced else 'FEJL'}")
@@ -86,8 +86,8 @@ def _summary(res: dict) -> str:
 
 
 def calc(args, argv) -> int:
-    no_files = _flag(args, "--ingen-filer")
-    out_arg = _opt(args, "--ud")
+    no_files = _flag(args, "--no-files")
+    out_arg = _opt(args, "--out")
     changes = _set_args(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()
     s = model.read_spec(spec, changes)
@@ -113,24 +113,24 @@ def _json_for(spec: pathlib.Path, s: dict, out_arg) -> pathlib.Path:
 def result(args, argv) -> int:
     """Looks up the saved fem.json without recalculating – and refuses it if fem.yaml has changed since."""
     import json
-    out_arg = _opt(args, "--ud")
-    combo = _opt(args, "--kombi")
+    out_arg = _opt(args, "--out")
+    combo = _opt(args, "--combo")
     element = _opt(args, "--element")
     spec = pathlib.Path(args[0]).expanduser().resolve()
     s = model.read_spec(spec)
     path = _json_for(spec, s, out_arg)
     if not path.exists():
-        print(f"Intet gemt resultat ({path}). Modellen er ikke regnet – det er statikerens opgave (fem.py regn).",
+        print(f"Intet gemt resultat ({path}). Modellen er ikke regnet – det er statikerens opgave (fem.py calc).",
               file=sys.stderr)
         return 1
     res = json.loads(path.read_text(encoding="utf-8"))
     if res.get("spec_sha256_12") != s["_sha"]:
         print(f"FORÆLDET: {path.name} er regnet på spec-sha {res.get('spec_sha256_12')}, men {spec.name} har nu "
-              f"{s['_sha']}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py regn).", file=sys.stderr)
+              f"{s['_sha']}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py calc).", file=sys.stderr)
         return 1
     if res.get("aendringer"):
-        print(f"{path.name} er regnet med ændrede input (--saet: {' · '.join(res['aendringer'])}) og svarer ikke til "
-              f"{spec.name}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py regn).", file=sys.stderr)
+        print(f"{path.name} er regnet med ændrede input (--set: {' · '.join(res['aendringer'])}) og svarer ikke til "
+              f"{spec.name}. Tallene vises ikke – modellen skal regnes igen af statikeren (fem.py calc).", file=sys.stderr)
         return 1
     if combo:
         if combo not in res["kombinationer"]:
@@ -155,11 +155,11 @@ def result(args, argv) -> int:
 
 def draw(args, argv) -> int:
     from . import draw as t
-    out_arg = _opt(args, "--ud")
-    combo = _opt(args, "--kombi")
+    out_arg = _opt(args, "--out")
+    combo = _opt(args, "--combo")
     changes = _set_args(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()
-    view_arg = args[1] if len(args) > 1 else "alle"
+    view_arg = args[1] if len(args) > 1 else "all"
     s = model.read_spec(spec, changes)
     m = model.analyze(s)
     curves = model.all_curves(s, m)
@@ -169,14 +169,14 @@ def draw(args, argv) -> int:
     if combo and combo not in s["kombinationer"]:
         raise SpecError(f"ukendt kombination '{combo}' (kendte: {', '.join(s['kombinationer'])})")
     tasks = []
-    names = {"model": "model", "deformation": "d", "M": "M", "V": "V", "N": "N", "spaending": "S", "n_u": "nu",
-             "n_v": "nv", "pladmoment": "m", "flytning": "u"}
-    if view_arg == "alle":
+    names = {"model": "model", "deformation": "d", "M": "M", "V": "V", "N": "N", "stress": "S", "n_u": "nu",
+             "n_v": "nv", "plate-moment": "m", "displacement": "u"}
+    if view_arg == "all":
         views = ["model"] + (["d", "M", "V", "N"] if s["elementer"] else []) + (["S", "nv", "m", "u"] if s["flader"] else [])
     else:
         views = [names.get(view_arg)]
     if None in views:
-        raise SpecError(f"ukendt visning '{view_arg}' – brug {', '.join(names)} eller alle")
+        raise SpecError(f"ukendt visning '{view_arg}' – brug {', '.join(names)} eller all")
     if any(v in t.SHELL_Q for v in views) and not s["flader"]:
         raise SpecError(f"visningen '{view_arg}' kræver flader i modellen")
     if any(v in ("d", "M", "V", "N") for v in views) and not s["elementer"]:
@@ -199,7 +199,7 @@ def draw(args, argv) -> int:
 
 def view(args, argv) -> int:
     from . import viewer as v
-    out_arg = _opt(args, "--ud")
+    out_arg = _opt(args, "--out")
     changes = _set_args(args)
     spec = pathlib.Path(args[0]).expanduser().resolve()
     s = model.read_spec(spec, changes)
@@ -370,16 +370,16 @@ def main(args) -> int:
     argv = list(args)
     cmd, rest = args[0], args[1:]
     try:
-        if cmd == "skabelon":
-            print((EXAMPLE_SHELLS if rest[:1] == ["flader"] else EXAMPLE).read_text(encoding="utf-8"))
+        if cmd == "template":
+            print((EXAMPLE_SHELLS if rest[:1] == ["shells"] else EXAMPLE).read_text(encoding="utf-8"))
             return 0
         if cmd == "test":
             return test(rest, argv)
-        if cmd in ("regn", "tegn", "vis", "resultat"):
+        if cmd in ("calc", "draw", "view", "result"):
             if not rest:
                 print(f"Brug: fem.py {cmd} <fem.yaml> …", file=sys.stderr)
                 return 2
-            return {"regn": calc, "tegn": draw, "vis": view, "resultat": result}[cmd](rest, argv)
+            return {"calc": calc, "draw": draw, "view": view, "result": result}[cmd](rest, argv)
         print(f"Ukendt kommando '{cmd}'. Se: python3 fem.py --help", file=sys.stderr)
         return 2
     except SpecError as e:

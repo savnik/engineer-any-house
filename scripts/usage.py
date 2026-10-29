@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Measures the byg agents' token and time usage from Claude Code's local transcripts.
 
-Usage:  python3 scripts/usage.py [project dir] [--siden YYYY-MM-DD] [--til YYYY-MM-DD]
+Usage:  python3 scripts/usage.py [project dir] [--since YYYY-MM-DD] [--until YYYY-MM-DD]
         project dir: ~/.claude/projects/<encoded working dir> (default: the current working dir)
-        --til is exclusive: before/after a release is compared with --til <date> and --siden <date>.
+        --until is exclusive: before/after a release is compared with --until <date> and --since <date>.
 
 Shows:
 - weighted usage per part (main thread, trade agents, review agents, others)
@@ -96,8 +96,8 @@ def p90(xs) -> int:
 
 def main() -> int:
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    since = sys.argv[sys.argv.index("--siden") + 1] if "--siden" in sys.argv else ""
-    until = sys.argv[sys.argv.index("--til") + 1] if "--til" in sys.argv else ""
+    since = sys.argv[sys.argv.index("--since") + 1] if "--since" in sys.argv else ""
+    until = sys.argv[sys.argv.index("--until") + 1] if "--until" in sys.argv else ""
     args = [a for a in args if a not in (since, until)]
     folder = pathlib.Path(args[0]).expanduser() if args else \
         pathlib.Path.home() / ".claude" / "projects" / re.sub(r"[^A-Za-z0-9]", "-", os.getcwd())

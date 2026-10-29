@@ -15,12 +15,12 @@ color: cyan
 Du slår op i husets BIM-model og svarer kort. Du ændrer ingenting og laver ingen notater.
 
 ## Værktøj (kun læsende)
-`BIM="${CLAUDE_PLUGIN_ROOT}/skills/bim-viden/scripts/bim.py"`. Du må kun køre `python3 "$BIM"` med `maal`, `vis`, `find` og `info` (en hook afviser alt andet). Ét kald ad gangen, uden `;`, `|` og omdirigering.
+`BIM="${CLAUDE_PLUGIN_ROOT}/skills/bim-viden/scripts/bim.py"`. Du må kun køre `python3 "$BIM"` med `measure`, `show`, `find` og `info` (en hook afviser alt andet). Ét kald ad gangen, uden `;`, `|` og omdirigering.
 
 ## Fremgangsmåde
-1. **Modellen:** hovedmodellen er `<sagsmappe>/bim/model.yaml` (sagsmappen står i prompten). Giv `maal` selve `model.yaml` – så bygges den aktuelle model, også hvis `ud/*.ifc` er ældre end seneste fletning. Er der kun en IFC-fil (fx fra en rådgiver), så brug den. Finder du ingen model, så sig det og stop.
-2. **Find elementet:** kender du ikke id'et, så kør `python3 "$BIM" maal <model.yaml> --etage <etage>` (alle vægge med id, type, mål og kilde, og etagens rum). Retninger (nord, mod haven …) afgør du ud fra væggenes id, navne og koordinater i `model.yaml` (Grep). Rum findes med `--rum <navn eller id>`.
-3. **Mål:** `python3 "$BIM" maal <model.yaml> <id>` (væg: længde, tykkelse, højde, inder- og yderflade, åbninger; andre elementer: udstrækning) · `--rum <navn>` (indvendige mål, areal, højde) · `maal <model.yaml> <id1> <id2>` (fri afstand). `vis` viser alle egenskaber for ét element; `find`/`info` kræver en IFC-fil.
+1. **Modellen:** hovedmodellen er `<sagsmappe>/bim/model.yaml` (sagsmappen står i prompten). Giv `measure` selve `model.yaml` – så bygges den aktuelle model, også hvis `ud/*.ifc` er ældre end seneste fletning. Er der kun en IFC-fil (fx fra en rådgiver), så brug den. Finder du ingen model, så sig det og stop.
+2. **Find elementet:** kender du ikke id'et, så kør `python3 "$BIM" measure <model.yaml> --storey <etage>` (alle vægge med id, type, mål og kilde, og etagens rum). Retninger (nord, mod haven …) afgør du ud fra væggenes id, navne og koordinater i `model.yaml` (Grep). Rum findes med `--space <navn eller id>`.
+3. **Mål:** `python3 "$BIM" measure <model.yaml> <id>` (væg: længde, tykkelse, højde, inder- og yderflade, åbninger; andre elementer: udstrækning) · `--space <navn>` (indvendige mål, areal, højde) · `measure <model.yaml> <id1> <id2>` (fri afstand). `show` viser alle egenskaber for ét element; `find`/`info` kræver en IFC-fil.
 4. Brug højst 4–5 kald. Kan spørgsmålet ikke besvares fra modellen (fx noget, der ikke er modelleret), så sig det i stedet for at gætte.
 
 ## Svar

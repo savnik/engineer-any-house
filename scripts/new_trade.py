@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Creates a new trade in Engineer Any House: trade plugin, matching review agent and review file – and registers the trade.
 
-Usage:   python3 scripts/new_trade.py <fag-id> "<Fagnavn>" <agentnavn> [--farve green]
-Example: python3 scripts/new_trade.py kloak "Kloakmester" kloakmester --farve orange
+Usage:   python3 scripts/new_trade.py <fag-id> "<Fagnavn>" <agentnavn> [--color green]
+Example: python3 scripts/new_trade.py kloak "Kloakmester" kloakmester --color orange
 
 Registers in: .claude-plugin/marketplace.json, byg-team (dependencies), byg-kontrol/hooks/fagregister.json,
 the project manager's trade table and the quality review's agent pairs. Then runs sync_protocol.py.
@@ -61,12 +61,12 @@ def main() -> int:
     ap.add_argument("fag_id")
     ap.add_argument("fagnavn")
     ap.add_argument("agent")
-    ap.add_argument("--farve", default="green")
+    ap.add_argument("--color", default="green")
     a = ap.parse_args()
 
     if not NAME_RE.match(a.fag_id) or not NAME_RE.match(a.agent):
         sys.exit("fag-id og agentnavn: små bogstaver, tal og bindestreg (2–31 tegn), fx 'kloak' og 'kloakmester'.")
-    if a.farve not in COLORS:
+    if a.color not in COLORS:
         sys.exit(f"Farve skal være en af: {', '.join(sorted(COLORS))}")
     plugin = f"byg-{a.fag_id}"
     reg_path = ROOT / "plugins" / "byg-kontrol" / "hooks" / "fagregister.json"
@@ -80,7 +80,7 @@ def main() -> int:
         sys.exit(f"plugins/{plugin} findes allerede.")
 
     v = {"SLUG": a.fag_id, "AGENT": a.agent, "FAGNAVN": a.fagnavn, "PLUGIN": plugin,
-         "FARVE": a.farve, "DATO": datetime.date.today().isoformat()}
+         "FARVE": a.color, "DATO": datetime.date.today().isoformat()}
     copy_template(TEMPLATES / "fag-plugin", ROOT / "plugins" / plugin, v)
     copy_template(TEMPLATES / "kontrol" / "agents", ROOT / "plugins" / "byg-kontrol" / "agents", v)
     trade_file = ROOT / "plugins" / "byg-kontrol" / "skills" / "kontrol-viden" / "references" / "fag" / f"{a.fag_id}.md"

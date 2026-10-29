@@ -1,4 +1,4 @@
-"""Tile selection in bim.py sammenlign: empty and unchanged tiles are skipped (run in the bim env)."""
+"""Tile selection in bim.py compare: empty and unchanged tiles are skipped (run in the bim env)."""
 import pathlib
 import sys
 

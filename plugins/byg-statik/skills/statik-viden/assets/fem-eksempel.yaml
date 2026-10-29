@@ -25,7 +25,7 @@ lasttilfaelde:
   G:                        # egenlast
     egenvaegt: true         # elementernes egen vægt (A · rho)
     laster:
-      - {element: B1, linjelast: 6.4, retning: ned}          # bjælkelag 3,2 kN/m2 x 2,0 m opland (statik.py last)
+      - {element: B1, linjelast: 6.4, retning: ned}          # bjælkelag 3,2 kN/m2 x 2,0 m opland (statik.py load)
       - {element: B1, punktlast: 8.5, x: 1.6, retning: ned}  # tagstolpe, x m fra elementets start
   Q:                        # nyttelast, kategori A
     laster:

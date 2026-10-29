@@ -357,7 +357,7 @@ def check_ids(f, path, r):
         import ifctester.ids
         import ifctester.reporter
     except ImportError:
-        r.add("ADVARSEL", "ids", "ifctester mangler – kør bim.py opsaet")
+        r.add("ADVARSEL", "ids", "ifctester mangler – kør bim.py setup")
         return
     spec = ifctester.ids.open(str(path))
     spec.validate(f)
@@ -405,7 +405,7 @@ def check(ifc, ids=None, out=None, draw=False, note=None):
     files = []
     if draw:
         from .draw import draw as draw_fn
-        files = draw_fn(ifc, "alle", out=out / "tegninger", dims=True)
+        files = draw_fn(ifc, "all", out=out / "tegninger", dims=True)
         md.append("## Tegninger")
         md += [f"- {p}" for p in files]
     report_path.write_text("\n".join(md) + "\n", encoding="utf-8")

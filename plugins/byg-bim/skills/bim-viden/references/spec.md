@@ -1,6 +1,6 @@
 # Modelspec (model.yaml) – format
 
-Én YAML-fil beskriver hele modellen. `bim.py byg` validerer alt først og viser **alle** fejl med sti til feltet (fx `aabninger.S-V3.vaeg 'S-YV.5' findes ikke – mente du S-YV.1 … S-YV.4?`). Skabelon: `assets/eksempel/model.yaml` (murermesterhus med kælder, stue og tagetage).
+Én YAML-fil beskriver hele modellen. `bim.py build` validerer alt først og viser **alle** fejl med sti til feltet (fx `aabninger.S-V3.vaeg 'S-YV.5' findes ikke – mente du S-YV.1 … S-YV.4?`). Skabelon: `assets/eksempel/model.yaml` (murermesterhus med kælder, stue og tagetage).
 
 ## Konventioner
 - **Længder i mm, vinkler i grader.** Lokale akser: x langs (gade)facaden, y vinkelret. Origo i et ydervægshjørne.
@@ -87,7 +87,7 @@ etager:
 ```
 `form` er sadeltag|valmtag|pulttag (`hoej_side: x+|x-|y+|y-`)|fladt. `omrids` er rektanglet ved facadernes yderside. `tagfod` er højden af tagfladens underside ved facadelinjen, relativt til etagegulvet. Tagfladerne bliver IfcSlab (ROOF) samlet i en IfcRoof og er skåret lodret ved kip, grat, tagfod og gavl. Kviste og sammensatte tage laves med `generisk` (se mønstre).
 
-`spaer` (valgfri) danner spærene som IfcMember (RAFTER) i hver skrå tagflade, samlet i IfcRoof sammen med tagfladerne. Spærene ligger i tagfladens nederste lag med højst `afstand` mellem centrene (standard 900). `b` er bredden (standard 50). `h` er som standard tykkelsen af typens lag med navnet spær, ellers 150. `materiale` er som standard træ. Om ovenlys og skorstene (`generisk` med klasse IfcChimney) sættes der spær på begge sider og veksler (Tag `TAG1.side1.V01`) over og under. `hanebaand` er overkanten af hanebåndene over etagegulvet. Det gælder kun sadeltag, og der sættes et hanebånd (COLLAR) ved hvert spærpar, der når den højde inden for omridset og uden om skorstenen. `tjek` melder ikke spær mod tagflader i samme tag som kollision.
+`spaer` (valgfri) danner spærene som IfcMember (RAFTER) i hver skrå tagflade, samlet i IfcRoof sammen med tagfladerne. Spærene ligger i tagfladens nederste lag med højst `afstand` mellem centrene (standard 900). `b` er bredden (standard 50). `h` er som standard tykkelsen af typens lag med navnet spær, ellers 150. `materiale` er som standard træ. Om ovenlys og skorstene (`generisk` med klasse IfcChimney) sættes der spær på begge sider og veksler (Tag `TAG1.side1.V01`) over og under. `hanebaand` er overkanten af hanebåndene over etagegulvet. Det gælder kun sadeltag, og der sættes et hanebånd (COLLAR) ved hvert spærpar, der når den højde inden for omridset og uden om skorstenen. `check` melder ikke spær mod tagflader i samme tag som kollision.
 
 ## ovenlys
 ```yaml
@@ -144,7 +144,7 @@ roer:
 Et profil i et lokalt plan (`origo`, `x_akse`, `z_akse` = ekstruderingsretning) ekstruderes `dybde`. Standard er lodret ekstrudering fra z = `bund`. Alternativt `mesh: {punkter: [[x,y,z]…], flader: [[0,1,2,3]…]}`. Brug altid den rigtige IFC-klasse. Proxy kun, når ingen klasse passer, og så med `navn`/ObjectType.
 
 ## grupper (synlighed pr. fag – vis/skjul i viewer)
-`byg` lægger altid hvert element i præcis én fag-IfcGroup (ObjectType "Disciplin"); etager og rumlig struktur er uændret. Standard: BYGNING, TAG, RUM, INVENTAR, VVS (under: VVS-BV, VVS-VARME, VVS-GAS), KLOAK, VENTILATION, EL, OEVRIGE – efter systemets art, installationens art og ellers IFC-klassen. Et element med `system` følger systemets gruppe. `grupper:` i spec'en tilføjer/omdøber grupper og flytter elementer med glob på id (første match vinder):
+`build` lægger altid hvert element i præcis én fag-IfcGroup (ObjectType "Disciplin"); etager og rumlig struktur er uændret. Standard: BYGNING, TAG, RUM, INVENTAR, VVS (under: VVS-BV, VVS-VARME, VVS-GAS), KLOAK, VENTILATION, EL, OEVRIGE – efter systemets art, installationens art og ellers IFC-klassen. Et element med `system` følger systemets gruppe. `grupper:` i spec'en tilføjer/omdøber grupper og flytter elementer med glob på id (første match vinder):
 ```yaml
 grupper:
   - {id: TAG, navn: Tag og tagkonstruktion, omfatter: [TAG*, 1-SP-*]}
@@ -155,13 +155,13 @@ Felter: `id`, `navn`, `under` (overgruppe, standard eller egen), `omfatter` (glo
 ## Hovedmodel og forslag (én source of truth)
 `bim/model.yaml` er **hovedmodellen** – det eneste sted, husets data står. Den rettes aldrig direkte. Hver ændring (en leverance, en ny radiator, en renoveringsvariant) laves i en **forslagsfil** oven på den og flettes først ind, når den er godkendt:
 ```
-bim.py forslag bim/model.yaml bim-14          → bim/forslag/bim-14.yaml (basis + basis_sha256)
-bim.py byg bim/forslag/bim-14.yaml            → byg, tjek, tegn og sammenlign forslaget
-bim.py flet bim/forslag/bim-14.yaml --proev   → hvad ændres i hovedmodellen
-bim.py flet bim/forslag/bim-14.yaml --note "bim/14 godkendt"
-bim.py forslag bim/model.yaml vvs-2 --ud ../<hovedsag>--vvs/bim/forslag   → forslag i en branch-sag (basis relativ)
+bim.py propose bim/model.yaml bim-14          → bim/forslag/bim-14.yaml (basis + basis_sha256)
+bim.py build bim/forslag/bim-14.yaml            → byg, tjek, tegn og sammenlign forslaget
+bim.py merge bim/forslag/bim-14.yaml --dry-run   → hvad ændres i hovedmodellen
+bim.py merge bim/forslag/bim-14.yaml --note "bim/14 godkendt"
+bim.py propose bim/model.yaml vvs-2 --out ../<hovedsag>--vvs/bim/forslag   → forslag i en branch-sag (basis relativ)
 ```
-Forslaget indeholder kun det, der ændres – samme regler som projektversionen nedenfor, plus `slet: [id, …]` (fjern et element helt, fx en modelfejl) og `felt: null` (fjern et felt). Topsektioner, der er mappinger (`typer`, `vvs`, `model` …), flettes rekursivt: `typer: {KYV: {beskrivelse: …}}` ændrer kun beskrivelsen, og `vvs: {produkter: {maaler: {ref: …}}}` kun den ene nøgle. Lister og elementfelter (fx `egenskaber` på en væg) erstattes som helhed. `flet` skriver kun de berørte elementer og nøgler om, også inde i undermappinger i blokform (kommentarer og alle andre linjer står urørt; har forslaget kommentarer lige over en nøgle, erstatter de hovedmodellens), kontrollerer, at resultatet giver præcis den model, forslaget gav, og at den validerer, gemmer versionen før og efter i `bim/historik/`, flytter forslaget til `bim/historik/forslag/` og logger i `bim/historik/flettelog.md`. Er hovedmodellen ændret, siden forslaget blev oprettet, stopper `flet`, hvis de samme elementer er ændret begge steder (konflikt) – opdatér forslaget, og lad kontrollen se det igen. Lav aldrig kopier eller snapshots af hovedmodellen ved siden af den.
+Forslaget indeholder kun det, der ændres – samme regler som projektversionen nedenfor, plus `slet: [id, …]` (fjern et element helt, fx en modelfejl) og `felt: null` (fjern et felt). Topsektioner, der er mappinger (`typer`, `vvs`, `model` …), flettes rekursivt: `typer: {KYV: {beskrivelse: …}}` ændrer kun beskrivelsen, og `vvs: {produkter: {maaler: {ref: …}}}` kun den ene nøgle. Lister og elementfelter (fx `egenskaber` på en væg) erstattes som helhed. `merge` skriver kun de berørte elementer og nøgler om, også inde i undermappinger i blokform (kommentarer og alle andre linjer står urørt; har forslaget kommentarer lige over en nøgle, erstatter de hovedmodellens), kontrollerer, at resultatet giver præcis den model, forslaget gav, og at den validerer, gemmer versionen før og efter i `bim/historik/`, flytter forslaget til `bim/historik/forslag/` og logger i `bim/historik/flettelog.md`. Er hovedmodellen ændret, siden forslaget blev oprettet, stopper `merge`, hvis de samme elementer er ændret begge steder (konflikt) – opdatér forslaget, og lad kontrollen se det igen. Lav aldrig kopier eller snapshots af hovedmodellen ved siden af den.
 
 ## Ejendomskort fra hovedmodellen (husets fakta)
 Husets fakta (ejendomskortets E-id'er, åbne spørgsmål og erstattede oplysninger) kan ligge i hovedmodellen, så de også står ét sted. Ejendomskortet `byg-sager/ejendomme/<id>.md` er så **afledt** og rettes aldrig i hånden.
@@ -178,8 +178,8 @@ fakta:
 ```
 - Én række pr. linje, ét unikt `id`. Står samme id flere gange i kortet (typisk under "Erstattede oplysninger"), får de ekstra rækker `<id>@2`, `<id>@3` …. Kortet viser kun delen før `@`.
 - `fakta` flettes på id som de andre lister (ret felter, tilføj, `slet:`). `ejendomskort.afsnit` erstattes samlet.
-- `flet` skriver kortet om, når `ejendomskort.fil` er sat. `bim.py ejendomskort model.yaml --tjek` giver 1, hvis kortet er rettet i hånden.
-- Første gang: `bim.py ejendomskort model.yaml --importer <kort.md>` → `forslag/ejendomskort-import.yaml`. Den stopper, hvis kortet ikke kan gengives 1:1. Flet derefter forslaget.
+- `merge` skriver kortet om, når `ejendomskort.fil` er sat. `bim.py property-card model.yaml --check` giver 1, hvis kortet er rettet i hånden.
+- Første gang: `bim.py property-card model.yaml --import <kort.md>` → `forslag/ejendomskort-import.yaml`. Den stopper, hvis kortet ikke kan gengives 1:1. Flet derefter forslaget.
 - Elementfeltet `fakta: [E-…]` henviser fra et bygningselement til rækkerne.
 
 ## Renovering (projektversion oven på mastermodellen)

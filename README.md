@@ -28,7 +28,7 @@ One example house from the repository, built and computed by the tools in CI. Th
 | BIM model (IFC4) | FEM model (walls and slabs as shells) |
 |---|---|
 | [![BIM model of the example house](docs/img/bim.png)](https://savnik.github.io/engineer-any-house/bim/) | [![FEM model with von Mises stresses](docs/img/fem.png)](https://savnik.github.io/engineer-any-house/fem/) |
-| Built with `bim.py byg`, exported to glTF with `bim.py eksport` | Computed with `fem.py regn`, shown with `fem.py vis`: pick a load combination and a result |
+| Built with `bim.py build`, exported to glTF with `bim.py export` | Computed with `fem.py calc`, shown with `fem.py view`: pick a load combination and a result |
 
 The VVS agent draws the same house's plumbing and heating as a schematic ([SVG source](plugins/byg-vvs/skills/vvs-viden/assets/principdiagram-eksempelhus.svg), method in [principdiagram.md](plugins/byg-vvs/skills/vvs-viden/references/principdiagram.md)). Click to open it full size.
 

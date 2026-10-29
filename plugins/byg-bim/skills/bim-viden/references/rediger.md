@@ -4,10 +4,10 @@ Til filer fra arkitekter, rådgivere og producenter. Egne modeller redigeres **k
 
 ## Arbejdsgang
 1. Kopiér originalen til `<sagsmappe>/bim/ind/<navn>.ifc`, og lad den være urørt. Arbejd på `<sagsmappe>/bim/ud/<navn>-rettet.ifc`.
-2. `bim.py info <fil>` og `bim.py tjek <fil>` (baseline). Notér skema, enheder, georeference og fejl.
-3. Find elementer: `bim.py find <fil> "IfcWall, /Pset_WallCommon/.IsExternal=TRUE"`, `bim.py vis <fil> <GlobalId|#id>`.
+2. `bim.py info <fil>` og `bim.py check <fil>` (baseline). Notér skema, enheder, georeference og fejl.
+3. Find elementer: `bim.py find <fil> "IfcWall, /Pset_WallCommon/.IsExternal=TRUE"`, `bim.py show <fil> <GlobalId|#id>`.
 4. Ret med `ifcedit` (ét API-kald pr. kommando) eller et kort script (nedenfor).
-5. `bim.py diff <original> <rettet>` skal kun vise de tilsigtede ændringer. `bim.py tjek <rettet>` må ikke have nye fejl.
+5. `bim.py diff <original> <rettet>` skal kun vise de tilsigtede ændringer. `bim.py check <rettet>` må ikke have nye fejl.
 
 ## ifcquery og ifcedit (ligger i værktøjets miljø)
 ```
@@ -53,4 +53,4 @@ Enheder: API-geometrifunktioner (`add_wall_representation` m.fl.) tager **meter*
 ~/.local/share/byg-bim/venv/bin/python -m ifcpatch -i ind.ifc -o ud.ifc -r ExtractElements -a "IfcWall"
 ~/.local/share/byg-bim/venv/bin/python -m ifcpatch -i ind.ifc -o ud.ifc -r ResetAbsoluteCoordinates
 ```
-Recepter: docs.ifcopenshell.org/autoapi/ifcpatch/recipes/index.html. Kontrollér altid resultatet med `tjek` og `diff`.
+Recepter: docs.ifcopenshell.org/autoapi/ifcpatch/recipes/index.html. Kontrollér altid resultatet med `check` og `diff`.
