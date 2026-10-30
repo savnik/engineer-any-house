@@ -53,13 +53,28 @@ def test_rafters_in_roof(house):
     roof = f.by_type("IfcRoof")[0]
     parts = [d for r in roof.IsDecomposedBy for d in r.RelatedObjects]
     rafters = [d for d in parts if d.is_a("IfcMember")]
-    assert {m.PredefinedType for m in rafters} == {"RAFTER", "COLLAR"}
+    assert {m.PredefinedType for m in rafters} == {"RAFTER", "COLLAR", "BRACE"}
     tags = {m.Tag for m in rafters}
     assert {"TAG1.side1.S01", "TAG1.side2.S01", "TAG1.H01"} <= tags
     # trimmers: two per hole – two roof windows per face, plus the chimney on side1
     assert sum(".V" in t for t in tags if t.startswith("TAG1.side1")) == 6
     assert sum(".V" in t for t in tags if t.startswith("TAG1.side2")) == 4
     assert all(m.ContainedInStructure == () for m in rafters)  # aggregated in the roof, not contained in the storey
+
+
+def test_wind_braces_under_rafters(house):
+    f, _, _ = house
+    braces = [m for m in f.by_type("IfcMember") if m.PredefinedType == "BRACE"]
+    assert sorted(m.Tag for m in braces) == ["TAG1.side1.W01", "TAG1.side1.W02", "TAG1.side2.W01", "TAG1.side2.W02"]
+    for m in braces:  # unbroken from wall plate to ridge at 45°: slope length 4250 / cos 45° times √2
+        qto = next(r.RelatingPropertyDefinition for r in m.IsDefinedBy
+                   if r.RelatingPropertyDefinition.is_a("IfcElementQuantity"))
+        assert qto.Quantities[0].LengthValue == pytest.approx(8500, abs=150)
+
+
+def test_wind_braces_validated(tmp_path):
+    with pytest.raises(SpecError, match="spaer.vindbaand"):
+        _spec(tmp_path, [("vindbaand: {b: 100, t: 25}", "vindbaand: {b: 100, h: 25}")])
 
 
 def test_rafters_validated(tmp_path):

@@ -70,7 +70,7 @@ daek:
 tage:
   - {id: TAG1, etage: "1", navn: Sadeltag, form: sadeltag, omrids: [0, 0, 10000, 8500], rygning: x, haeldning: 45,
      tagfod: 400, udhaeng: 400, udhaeng_gavl: 150, type: TAG,
-     spaer: {afstand: 900, b: 50, hanebaand: 2300}}  # spær i typens spærlag, veksler om ovenlys og skorsten
+     spaer: {afstand: 900, b: 50, hanebaand: 2300, vindbaand: {b: 100, t: 25}}}  # spær i typens spærlag, veksler om ovenlys og skorsten, vindbånd under spærene
 
 ovenlys:  # punkt = vinduets midte i plan; bredde langs tagfoden, højde op ad tagfladen
   - {id: T-OV1, tag: TAG1, type: OV1, punkt: [2500, 2600]}
