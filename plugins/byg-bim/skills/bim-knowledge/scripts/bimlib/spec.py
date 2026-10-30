@@ -434,9 +434,9 @@ def _check_element(s, el, path, d, errors):
         if el.get("spaer") is not None:
             sp = el["spaer"]
             if not isinstance(sp, dict):
-                errors.append(f"{path}.spaer skal være en mapping (afstand, b, h, materiale, hanebaand)")
+                errors.append(f"{path}.spaer skal være en mapping (afstand, b, h, materiale, hanebaand, vindbaand)")
             else:
-                unknown = set(sp) - {"afstand", "b", "h", "materiale", "hanebaand"}
+                unknown = set(sp) - {"afstand", "b", "h", "materiale", "hanebaand", "vindbaand"}
                 if unknown:
                     errors.append(f"{path}.spaer: ukendte felter {sorted(unknown)}")
                 for k, std in (("afstand", 900), ("b", 50)):
@@ -446,6 +446,15 @@ def _check_element(s, el, path, d, errors):
                         sp[k] = _num(sp[k], f"{path}.spaer.{k}", errors, positive=True)
                 if "hanebaand" in sp and el.get("form") != "sadeltag":
                     errors.append(f"{path}.spaer.hanebaand kræver form: sadeltag")
+                wb = sp.pop("vindbaand", False)
+                if wb is True:
+                    wb = {}
+                if wb is not False:
+                    if not isinstance(wb, dict) or set(wb) - {"b", "t"}:
+                        errors.append(f"{path}.spaer.vindbaand skal være true eller en mapping (b, t)")
+                    else:
+                        sp["vindbaand"] = {k: _num(wb.get(k, std), f"{path}.spaer.vindbaand.{k}", errors, positive=True)
+                                           for k, std in (("b", 100), ("t", 25))}
                 sp.setdefault("materiale", "træ")
     elif s == "trapper":
         el["start"] = _point(el.get("start"), 2, f"{path}.start", errors)
