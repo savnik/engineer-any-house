@@ -67,6 +67,14 @@ INSTALLATIONS = {
     "broend": ("IfcDistributionChamberElement", "INSPECTIONCHAMBER"),
     "tavle": ("IfcElectricDistributionBoard", "DISTRIBUTIONBOARD"), "stikkontakt": ("IfcOutlet", "POWEROUTLET"),
     "lampe": ("IfcLightFixture", "POINTSOURCE"), "afbryder": ("IfcSwitchingDevice", "TOGGLESWITCH"),
+    "dimmer": ("IfcSwitchingDevice", "DIMMERSWITCH"), "hovedafbryder": ("IfcSwitchingDevice", "SWITCHDISCONNECTOR"),
+    "kabelskab": ("IfcElectricDistributionBoard", "USERDEFINED"), "elmaaler": ("IfcFlowMeter", "ENERGYMETER"),
+    "sikring": ("IfcProtectiveDevice", "FUSEDISCONNECTOR"), "automatsikring": ("IfcProtectiveDevice", "CIRCUITBREAKER"),
+    "fejlstroemsafbryder": ("IfcProtectiveDevice", "RESIDUALCURRENTCIRCUITBREAKER"),
+    "overspaendingsbeskyttelse": ("IfcProtectiveDevice", "VARISTOR"), "elbillader": ("IfcOutlet", "USERDEFINED"),
+    "komfur": ("IfcElectricAppliance", "ELECTRICCOOKER"), "opvaskemaskine": ("IfcElectricAppliance", "DISHWASHER"),
+    "vaskemaskine": ("IfcElectricAppliance", "WASHINGMACHINE"), "toerretumbler": ("IfcElectricAppliance", "TUMBLEDRYER"),
+    "koeleskab": ("IfcElectricAppliance", "FRIDGE_FREEZER"),
     "ventilationsaggregat": ("IfcUnitaryEquipment", "AIRHANDLER"), "ventilator": ("IfcFan", "PROPELLORAXIAL"),
     "luftventil": ("IfcAirTerminal", "DIFFUSER"), "emhaette": ("IfcAirTerminal", "USERDEFINED"),
     "solcellepanel": ("IfcSolarDevice", "SOLARPANEL"), "skorsten": ("IfcChimney", "NOTDEFINED"),
@@ -79,14 +87,17 @@ STANDARD_GROUPS = {
     "EL": ("El", None), "OEVRIGE": ("Øvrige installationer", None),
 }
 SYSTEM_GROUP = {"varme": "VVS-VARME", "brugsvand_koldt": "VVS-BV", "brugsvand_varmt": "VVS-BV", "gas": "VVS-GAS",
-                "afloeb": "KLOAK", "regnvand": "KLOAK", "ventilation": "VENTILATION", "el": "EL", "andet": "OEVRIGE"}
+                "afloeb": "KLOAK", "regnvand": "KLOAK", "ventilation": "VENTILATION", "el": "EL", "belysning": "EL",
+                "andet": "OEVRIGE"}
 KIND_GROUP = {  # installations without a system
     **dict.fromkeys(("kedel", "pillefyr", "fjernvarmeunit", "varmeveksler", "buffertank", "ekspansionsbeholder",
                      "radiator", "konvektor", "energimaaler"), "VVS-VARME"),
     **dict.fromkeys(("beholder", "vandmaaler", "wc", "haandvask", "koekkenvask", "bruser", "badekar"), "VVS-BV"),
     **dict.fromkeys(("fordeler", "pumpe", "ventil", "blandeventil", "sikkerhedsventil", "kontraventil"), "VVS"),
     **dict.fromkeys(("gulvafloeb", "broend", "draenpumpe"), "KLOAK"),
-    **dict.fromkeys(("tavle", "stikkontakt", "lampe", "afbryder", "solcellepanel"), "EL"),
+    **dict.fromkeys(("tavle", "stikkontakt", "lampe", "afbryder", "solcellepanel", "dimmer", "hovedafbryder", "kabelskab",
+                     "elmaaler", "sikring", "automatsikring", "fejlstroemsafbryder", "overspaendingsbeskyttelse",
+                     "elbillader", "komfur", "opvaskemaskine", "vaskemaskine", "toerretumbler", "koeleskab"), "EL"),
     **dict.fromkeys(("ventilationsaggregat", "ventilator", "luftventil", "emhaette"), "VENTILATION"),
     "skorsten": "BYGNING",
 }
@@ -95,6 +106,8 @@ CLASS_GROUP = (  # (IFC class, group) for elements without art/system; first mat
     ("IfcWasteTerminal", "KLOAK"), ("IfcAirTerminal", "VENTILATION"), ("IfcFlowMovingDevice", "OEVRIGE"),
     ("IfcDuctSegment", "VENTILATION"), ("IfcDuctFitting", "VENTILATION"), ("IfcLightFixture", "EL"),
     ("IfcOutlet", "EL"), ("IfcSwitchingDevice", "EL"), ("IfcElectricDistributionBoard", "EL"),
+    ("IfcProtectiveDevice", "EL"), ("IfcElectricAppliance", "EL"), ("IfcCableSegment", "EL"),
+    ("IfcCableCarrierSegment", "EL"),
     ("IfcDistributionElement", "VVS"), ("IfcBuildingElementProxy", "BYGNING"), ("IfcElement", "BYGNING"),
 )
 MATERIAL_COLOURS = [  # (keywords, category, rgb, transparency)
@@ -1126,9 +1139,13 @@ class Builder:
 
     # ------------------------------------------------------------------ plumbing/electrical
     def _systems(self):
+        """IfcDistributionSystem per system; a system with `under` becomes an IfcDistributionCircuit aggregated
+        under its parent system (an electrical group under its panel's installation). `el` (group data in
+        el.py's panel format) is written to Byg_El, `el.nr` also to Pset_DistributionSystemCommon.Reference."""
         self.systems = {}
         for s in self.s["systemer"]:
-            ent = api.system.add_system(self.f, ifc_class="IfcDistributionSystem")
+            ent = api.system.add_system(self.f, ifc_class="IfcDistributionCircuit" if s.get("under") else
+                                        "IfcDistributionSystem")
             ent.Name = s.get("navn") or s["id"]
             ent.GlobalId = self.guid(s["id"])
             ent.PredefinedType = SYSTEM_KINDS[s["art"]]
@@ -1137,6 +1154,34 @@ class Builder:
             self.systems[s["id"]] = ent
             if hasattr(ent, "Description") and s.get("beskrivelse"):
                 ent.Description = s["beskrivelse"]
+            e = s.get("el") or {}
+            if e.get("nr") is not None:
+                self._pset(ent, "Pset_DistributionSystemCommon", {"Reference": str(e["nr"])}, path=f"systemer.{s['id']}")
+            self._el_pset(ent, e)
+            self._user_data(ent, s, f"systemer.{s['id']}")
+        for s in self.s["systemer"]:
+            if s.get("under"):
+                rel = api.aggregate.assign_object(self.f, relating_object=self.systems[s["under"]],
+                                                  products=[self.systems[s["id"]]])
+                rel.GlobalId = self.guid(f"{s['id']}:under")
+
+    def _el_pset(self, ent, e):
+        """Electrical data (el.py's panel format) as the custom set Byg_El; lists are joined with '+', a nested
+        mapping (tavle.stikledning) becomes 'stikledning.tvaersnit' etc."""
+        props = {}
+        flat = {}
+        for k, v in e.items():
+            if isinstance(v, dict):
+                flat.update({f"{k}.{k2}": v2 for k2, v2 in v.items()})
+            else:
+                flat[k] = v
+        for k, v in sorted(flat.items()):
+            if isinstance(v, (list, tuple)):
+                v = "+".join(map(str, v))
+            if isinstance(v, (bool, int, float, str)):
+                props[k] = v
+        if props:
+            self._pset(ent, "Byg_El", props)
 
     def _installations(self):
         schema = ifcopenshell.ifcopenshell_wrapper.schema_by_name(self.m["schema"] if self.m["schema"] != "IFC4X3" else "IFC4X3_ADD2")
@@ -1160,6 +1205,7 @@ class Builder:
             M = self._T((p[0], p[1], p[2] + self.storey_level[el["etage"]]), x=(math.cos(r), math.sin(r), 0))
             props = {}
             self.insert(ent, el, M, None, props, "installationer")
+            self._el_pset(ent, el.get("el") or {})
             g = el["geometri"]
             if "kasse" in g:
                 b, d, h = map(float, g["kasse"])
@@ -1180,12 +1226,22 @@ class Builder:
                     api.system.assign_system(self.f, products=[ent], system=self.systems[str(el["system"])])
                 else:
                     self.errors.append(f"installationer.{el['id']}: {ifc_class} kan ikke indgå i et system")
+        # parts (an RCD in a panel): aggregated under the host instead of contained in the storey
+        for el in self.s["installationer"]:
+            if el.get("del_af") and el["id"] in self.elements and el["del_af"] in self.elements:
+                part, host = (self.f.by_guid(self.elements[k]["guid"]) for k in (el["id"], el["del_af"]))
+                api.spatial.unassign_container(self.f, products=[part])
+                rel = api.aggregate.assign_object(self.f, relating_object=host, products=[part])
+                rel.GlobalId = self.guid(f"{el['id']}:del_af")
 
     def _pipes(self):
         for r in self.s["roer"]:
             pts = [np.array(p, float) for p in r["punkter"]]
             level = self.storey_level[r["etage"]]
-            ifc_class = "IfcDuctSegment" if r["art"] == "kanal" else "IfcPipeSegment"
+            ifc_class, predefined, qto, port_type = {
+                "kanal": ("IfcDuctSegment", "RIGIDSEGMENT", "Qto_DuctSegmentBaseQuantities", "DUCT"),
+                "kabel": ("IfcCableSegment", "CABLESEGMENT", "Qto_CableSegmentBaseQuantities", "CABLE"),
+            }.get(r["art"], ("IfcPipeSegment", "RIGIDSEGMENT", "Qto_PipeSegmentBaseQuantities", "PIPE"))
             previous = None
             for i in range(len(pts) - 1):
                 a, b_ = pts[i], pts[i + 1]
@@ -1196,7 +1252,7 @@ class Builder:
                 xh = np.cross((0, 0, 1), z)
                 x = unit(xh) if np.linalg.norm(xh) > 1e-6 else np.array([1.0, 0, 0])
                 el = {**r, "id": r["id"]}
-                ent = self.new_entity(ifc_class, el, suffix=f".{i + 1}", predefined="RIGIDSEGMENT")
+                ent = self.new_entity(ifc_class, el, suffix=f".{i + 1}", predefined=predefined)
                 M = self._T(a + np.array([0, 0, level]), x=x, z=z)
                 self.insert(ent, el, M, None, {}, "roer", suffix=f".{i + 1}")
                 d = r["diameter"]
@@ -1206,13 +1262,12 @@ class Builder:
                 rep = self._rep(ent, solid)
                 self._paint(rep, f"system:{r.get('system', 'roer')}", *self._system_colour(r.get("system")))
                 self._assign_material(ent, r.get("materiale"))
-                self._qto(ent, "Qto_PipeSegmentBaseQuantities" if ifc_class == "IfcPipeSegment" else
-                          "Qto_DuctSegmentBaseQuantities", {"Length": L})
+                self._qto(ent, qto, {"Length": L})
                 p1 = api.system.add_port(self.f, element=ent)
                 p2 = api.system.add_port(self.f, element=ent)
                 for prt, pos, flow_dir in ((p1, (0, 0, 0), "SINK"), (p2, (0, 0, L), "SOURCE")):
                     prt.FlowDirection = flow_dir
-                    prt.PredefinedType = "DUCT" if ifc_class == "IfcDuctSegment" else "PIPE"
+                    prt.PredefinedType = port_type
                     self._place(prt, M @ self._T(pos))
                 if previous is not None:
                     api.system.connect_port(self.f, port1=previous, port2=p1)
@@ -1227,7 +1282,8 @@ class Builder:
         kind = system.get("art")
         return {"varme": ((0.85, 0.15, 0.15), 0), "brugsvand_koldt": ((0.15, 0.45, 0.85), 0),
                 "brugsvand_varmt": ((0.90, 0.45, 0.10), 0), "afloeb": ((0.45, 0.35, 0.25), 0),
-                "ventilation": ((0.40, 0.75, 0.40), 0), "gas": ((0.95, 0.85, 0.10), 0)}.get(kind, ((0.6, 0.6, 0.6), 0))
+                "ventilation": ((0.40, 0.75, 0.40), 0), "gas": ((0.95, 0.85, 0.10), 0),
+                "el": ((0.80, 0.20, 0.65), 0), "belysning": ((0.50, 0.30, 0.90), 0)}.get(kind, ((0.6, 0.6, 0.6), 0))
 
     # ------------------------------------------------------------------ generic
     def _generic(self):

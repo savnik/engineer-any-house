@@ -295,9 +295,9 @@ def check_geometry(f, r, shapes_out):
                         found[k] = (a, fa, fb, z)
     for a, fa, fb, z in sorted(found.values(), key=lambda x: -x[0]):
         pair = {fa.ifc_class, fb.ifc_class}
-        pipes = pair & {"IfcPipeSegment", "IfcDuctSegment", "IfcFlowSegment", "IfcCableCarrierSegment"}
+        pipes = pair & {"IfcPipeSegment", "IfcDuctSegment", "IfcFlowSegment", "IfcCableCarrierSegment", "IfcCableSegment"}
         if pipes and pair & HOSTS:
-            r.add("INFO", "gennemføring", f"{fa.tag} / {fb.tag}: rør eller kanal gennem {(pair & HOSTS).pop()[3:]} ved z={z:.0f}")
+            r.add("INFO", "gennemføring", f"{fa.tag} / {fb.tag}: rør, kanal eller kabel gennem {(pair & HOSTS).pop()[3:]} ved z={z:.0f}")
         elif "IfcChimney" in pair and pair & {"IfcSlab", "IfcRoof"}:
             level = "INFO" if _is_roof(fa) or _is_roof(fb) else "ADVARSEL"
             r.add(level, "gennemføring", f"{fa.tag} / {fb.tag}: skorsten gennem dæk/tag ved z={z:.0f} uden hul i dækket"
@@ -314,8 +314,10 @@ def _is_roof(fm):
 
 def _ignore(fa, fb):
     ka, kb = fa.ifc_class, fb.ifc_class
-    if {ka, kb} <= {"IfcPipeSegment", "IfcDuctSegment"}:
+    if {ka, kb} <= {"IfcPipeSegment", "IfcDuctSegment", "IfcCableSegment"}:
         return str(fa.tag).rsplit(".", 1)[0] == str(fb.tag).rsplit(".", 1)[0]
+    if ue.get_aggregate(fa.ent) == fb.ent or ue.get_aggregate(fb.ent) == fa.ent:
+        return True  # a part (an RCD in a panel) lies inside its host
     if {ka, kb} <= {"IfcSlab", "IfcMember"}:
         agg = ue.get_aggregate(fa.ent)
         if agg is not None and agg.is_a("IfcRoof") and agg == ue.get_aggregate(fb.ent):

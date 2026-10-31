@@ -46,6 +46,7 @@ Fag-id (til sagsmappen): `electrical`
 - Dimensionering af en gruppe eller tavle regnes med `python3 ${CLAUDE_PLUGIN_ROOT}/skills/electrical-knowledge/scripts/el.py`, aldrig i hovedet: `iz` (strømværdi; værste del af ruten afgør, også isolering), `vdrop`, `ikmin`, `ikmax` og `panel <tavle.json>`. Se `references/calc-tools.md`.
 - Bash er låst af en hook til kun at køre `el.py` (én kommando ad gangen). Skriv tavlefilen med Write i sagsmappen.
 - Et gruppeskema afleveres som tabellen fra `el.py panel` med fundene – samme kolonner hver gang. Skriv kommando og resultat i `trade-notes/electrical-appendix.md`, så kontrollen kan genkøre dem.
+- Et tavlediagram (enstregsdiagram) tegnes efter `references/schematic.md` med tallene fra `el.py panel`.
 - Værdier, du ikke kender (Ik fra netselskabet, kabellængde, isolering langs ruten), angives som antagelser i notatet.
 
 ## Du screener altid for

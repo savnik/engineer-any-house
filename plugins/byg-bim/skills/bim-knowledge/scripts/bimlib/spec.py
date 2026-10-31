@@ -27,9 +27,9 @@ FIELDS = {
     "soejler": {"punkt", "profil", "hoejde", "bund", "rotation", "materiale"},
     "bjaelker": {"fra", "til", "profil", "materiale", "kant", "rotation"},
     "rum": {"punkt", "omrids", "hoejde", "bund", "til_tag", "anvendelse", "afgraensning"},
-    "systemer": {"art", "farve"},
+    "systemer": {"art", "farve", "under", "el"},
     "installationer": {"art", "klasse", "predefined", "punkt", "geometri", "rotation", "system", "producent",
-                       "model", "materiale"},
+                       "model", "materiale", "del_af", "el"},
     "roer": {"system", "punkter", "diameter", "godstykkelse", "materiale", "art"},
     "generisk": {"klasse", "predefined", "profil", "origo", "x_akse", "z_akse", "dybde", "mesh", "til_tag",
                  "materiale", "hoejde", "bund"},
@@ -46,7 +46,7 @@ PROFILE_FORMS = {"rekt": ("b", "h"), "rhs": ("b", "h", "t"), "i": ("h", "b", "tw
                 "roer": ("d", "t"), "l": ("h", "b", "t")}
 SYSTEM_KINDS = {"varme": "HEATING", "brugsvand_koldt": "DOMESTICCOLDWATER", "brugsvand_varmt": "DOMESTICHOTWATER",
                "afloeb": "DRAINAGE", "regnvand": "RAINWATER", "ventilation": "VENTILATION", "el": "ELECTRICAL",
-               "gas": "GAS", "andet": "USERDEFINED"}
+               "belysning": "LIGHTING", "gas": "GAS", "andet": "USERDEFINED"}
 
 
 class SpecError(Exception):
@@ -287,12 +287,61 @@ def normalize(d: dict) -> dict:
         for el in d[s]:
             if el.get("system") is not None and str(el["system"]) not in sys_ids:
                 errors.append(f"{s}.{el['id']}.system '{el['system']}' findes ikke")
+    _check_parents(d, errors)
     _check_groups(d, errors)
     from .property_card import check_facts
     errors += check_facts(d)
     if errors:
         raise SpecError(errors)
     return d
+
+
+EL_CURVES = {"B", "C", "D", "gG"}
+EL_PHASES = {"L1", "L2", "L3", "L1L2L3"}
+
+
+def _check_parents(d, errors):
+    """systemer.under (circuit under a distribution system) and installationer.del_af (part of a host installation)."""
+    inst_ids = {x["id"] for x in d["installationer"]}
+    for s, key, ids in (("systemer", "under", {x["id"] for x in d["systemer"]}), ("installationer", "del_af", inst_ids)):
+        parent = {}
+        for el in d[s]:
+            if el.get(key) is None:
+                continue
+            el[key] = str(el[key])
+            if el[key] not in ids or el[key] == el["id"]:
+                errors.append(f"{s}.{el['id']}.{key} '{el[key]}' findes ikke under {s}")
+            else:
+                parent[el["id"]] = el[key]
+        for start in parent:
+            seen, x = {start}, parent[start]
+            while x in parent:
+                if x in seen:
+                    errors.append(f"{s}.{start}.{key}: kæden af {key} går i ring")
+                    break
+                seen.add(x)
+                x = parent[x]
+    for el in d["systemer"]:
+        e = el.get("el")
+        if e is None:
+            continue
+        path = f"systemer.{el['id']}.el"
+        if not isinstance(e, dict):
+            errors.append(f"{path}: skal være en mapping (gruppedata som el.py's tavleformat)")
+            continue
+        for k in ("sikring", "tvaersnit", "laengde", "last"):
+            if k in e:
+                _num(e[k], f"{path}.{k}", errors, positive=(k != "last"))
+        if "kurve" in e and e["kurve"] not in EL_CURVES:
+            errors.append(f"{path}.kurve skal være en af {sorted(EL_CURVES)}")
+        if "fase" in e and e["fase"] not in EL_PHASES:
+            errors.append(f"{path}.fase skal være en af {sorted(EL_PHASES)}")
+        for k in ("rcd", "tavle"):
+            if k in e and str(e[k]) not in inst_ids:
+                errors.append(f"{path}.{k} '{e[k]}' findes ikke under installationer")
+    for el in d["installationer"]:
+        if el.get("el") is not None and not isinstance(el["el"], dict):
+            errors.append(f"installationer.{el['id']}.el: skal være en mapping")
 
 
 def _check_groups(d, errors):
@@ -502,8 +551,8 @@ def _check_element(s, el, path, d, errors):
         el["punkter"] = _points(el.get("punkter"), 3, f"{path}.punkter", errors)
         el["diameter"] = _num(el.get("diameter"), f"{path}.diameter", errors, positive=True)
         el.setdefault("art", "roer")
-        if el["art"] not in ("roer", "kanal"):
-            errors.append(f"{path}.art skal være roer|kanal")
+        if el["art"] not in ("roer", "kanal", "kabel"):
+            errors.append(f"{path}.art skal være roer|kanal|kabel")
     elif s == "generisk":
         if "mesh" in el:
             ms = el["mesh"]

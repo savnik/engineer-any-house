@@ -23,7 +23,7 @@ Most houses come with little more than a few old drawings, a public building rec
 
 ## See it in 3D
 
-One example house from the repository, built and computed by the tools in CI. The BIM model has roof windows and the full plumbing and heating installation (central heating, radiators, hot water tank, hot and cold water, drains), with two facades and one roof face see-through. The FEM model is the same house's walls and slabs. Click a picture to open the interactive viewer.
+One example house from the repository, built and computed by the tools in CI. The BIM model has roof windows and the full plumbing and heating installation (central heating, radiators, hot water tank, hot and cold water, drains) and the electrical installation (panel, ten circuits with cables, lights, switches and sockets), with two facades and one roof face see-through. The FEM model is the same house's walls and slabs. Click a picture to open the interactive viewer.
 
 | BIM model (IFC4) | FEM model (walls and slabs as shells) |
 |---|---|
@@ -33,6 +33,10 @@ One example house from the repository, built and computed by the tools in CI. Th
 The VVS agent draws the same house's plumbing and heating as a schematic ([SVG source](plugins/byg-plumbing/skills/plumbing-knowledge/assets/schematic-example-house.svg), method in [schematic.md](plugins/byg-plumbing/skills/plumbing-knowledge/references/schematic.md)). Click to open it full size.
 
 [![Plumbing and heating schematic of the example house](docs/img/plumbing.png)](https://savnik.github.io/engineer-any-house/plumbing/schematic.svg)
+
+The electrician's single-line panel diagram is generated from the BIM model: `bim.py panel` exports the panel and its circuits (lengths measured along the cables), `el.py panel` checks them, and `diagram.py` draws it ([SVG](plugins/byg-electrical/skills/electrical-knowledge/assets/schematic-example-house.svg), method in [schematic.md](plugins/byg-electrical/skills/electrical-knowledge/references/schematic.md)).
+
+[![Electrical panel diagram of the example house](docs/img/electrical.png)](https://savnik.github.io/engineer-any-house/electrical/schematic.svg)
 
 ## Plugins
 

@@ -140,6 +140,11 @@ def _property_card(a):
     return import_card(a.model, a.import_) if a.import_ else generate(a.model, check=a.check)
 
 
+def _panel(a):
+    from .panel import panel
+    return panel(a.spec, a.tavle, a.out)
+
+
 def main(argv):
     p = argparse.ArgumentParser(prog="bim.py")
     sp = p.add_subparsers(dest="cmd", required=True)
@@ -184,5 +189,7 @@ def main(argv):
     x.add_argument("--force", action="store_true"); x.add_argument("--note"); x.set_defaults(fn=_merge)
     x = sp.add_parser("property-card"); x.add_argument("model"); x.add_argument("--check", action="store_true")
     x.add_argument("--import", dest="import_"); x.set_defaults(fn=_property_card)
+    x = sp.add_parser("panel"); x.add_argument("spec"); x.add_argument("--tavle"); x.add_argument("--out")
+    x.set_defaults(fn=_panel)
     a = p.parse_args(argv)
     return a.fn(a)

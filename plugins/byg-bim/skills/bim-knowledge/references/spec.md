@@ -121,7 +121,7 @@ Punktet skal ligge inde i et lukket rum (døråbninger lukkes ved væglinjen). `
 ## systemer, installationer, roer
 ```yaml
 systemer:
-  - {id: CV-F, navn: Centralvarme fremløb, art: varme}   # varme|brugsvand_koldt|brugsvand_varmt|afloeb|regnvand|ventilation|el|gas|andet
+  - {id: CV-F, navn: Centralvarme fremløb, art: varme}   # varme|brugsvand_koldt|brugsvand_varmt|afloeb|regnvand|ventilation|el|belysning|gas|andet
   - {id: CV-R, navn: Centralvarme retur, art: varme, farve: [130, 40, 160]}   # farve [r, g, b] 0–255 overstyrer artens farve
 installationer:
   - {id: KEDEL, etage: K, art: pillefyr, punkt: [1500, 1200, 0], geometri: {kasse: [600, 700, 1300]}, system: CV-F,
@@ -130,9 +130,23 @@ installationer:
 roer:
   - {id: R-CV1, etage: K, system: CV-F, punkter: [[1500,850,1400],[1500,400,1400],[1500,400,2300]], diameter: 22, materiale: kobber}
 ```
-`punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment) og får systemets farve. Eksempelhuset i `assets/example/model.yaml` har en komplet VVS-installation (centralvarme med fremløb og retur, radiatorer, varmtvandsbeholder, koldt og varmt brugsvand og spildevand til brønd), der kan bruges som skabelon. Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
+`punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment) og får systemets farve. Eksempelhuset i `assets/example/model.yaml` har en komplet VVS-installation (centralvarme med fremløb og retur, radiatorer, varmtvandsbeholder, koldt og varmt brugsvand og spildevand til brønd) og el-installation (kabelskab, tavle med RCD'er og SPD, ti grupper med kabler, lamper, afbrydere, stikkontakter og apparater), der kan bruges som skabelon. Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
 
-**art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle IfcElectricDistributionBoard · stikkontakt IfcOutlet · lampe IfcLightFixture · afbryder IfcSwitchingDevice · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
+**El.** Tavlen er en installation med `art: tavle` og eget system (fx `EL`); hver gruppe er et system med `under: EL` (IfcDistributionCircuit aggregeret under tavlens IfcDistributionSystem) og gruppedata i `el` i samme format som el.py's tavlefil (`nr`, `sikring`, `kurve`, `icn`, `fase` L1|L2|L3|L1L2L3, `kabel`, `ledere`, `tvaersnit`, `isolering`, `metode`, `last`, `rcd`, `anvendelse`). Tavlens udstyr (måler, hovedafbryder, SPD, RCD'er, automatsikringer) er installationer med `del_af: TAVLE` – de aggregeres under tavlen i stedet for etagen. `el` på systemer og installationer skrives til egenskabssættet Byg_El (gruppenummeret også til Pset_DistributionSystemCommon.Reference). Kabler er `roer` med `art: kabel` (IfcCableSegment med længde i Qto_CableSegmentBaseQuantities), punkterne er kabelføringen fra tavlen. Lamper, afbrydere, stikkontakter og apparater får gruppens `system`; IP-klasse som `egenskaber: {Pset_ElectricalDeviceCommon: {IP_Code: IP44}}`.
+```yaml
+systemer:
+  - {id: EL, navn: El-installation, art: el}
+  - {id: GR4, navn: Gruppe 4 – komfur, art: el, under: EL,
+     el: {nr: 4, sikring: 16, kurve: B, fase: L1L2L3, kabel: NOIKLX, ledere: 5, tvaersnit: 2.5, isolering: xlpe, metode: [C], rcd: RCD2}}
+installationer:
+  - {id: TAVLE, etage: K, art: tavle, system: EL, punkt: [800, 320, 1200], el: {system: TT, forsikring: 35}}
+  - {id: RCD2, etage: K, art: fejlstroemsafbryder, del_af: TAVLE, punkt: [850, 320, 1500], el: {type: A, ma: 30, in: 40, poler: 4}}
+roer:
+  - {id: K-GR4, etage: S, system: GR4, art: kabel, punkter: [[800,320,1500],[800,320,2900],[6800,7800,2900]], diameter: 12}
+```
+`bim.py panel model.yaml [--tavle TAVLE] --out panel.json` skriver tavlen i el.py's format: grupperne (systemer under tavlens system) med længde målt langs kablerne (længste rute fra tavlen, rundet op til hele meter, medmindre `el.laengde` er givet), RCD'erne, tavlens udstyr, kabelskab og stikledning og hvad hver gruppe forsyner. Kør derefter `el.py panel panel.json` (kontrol) og `diagram.py panel.json` (tavlediagram) fra byg-electrical.
+
+**art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle/kabelskab IfcElectricDistributionBoard · stikkontakt/elbillader IfcOutlet · lampe IfcLightFixture · afbryder/dimmer/hovedafbryder IfcSwitchingDevice · sikring/automatsikring/fejlstroemsafbryder/overspaendingsbeskyttelse IfcProtectiveDevice · elmaaler IfcFlowMeter ENERGYMETER · komfur/opvaskemaskine/vaskemaskine/toerretumbler/koeleskab IfcElectricAppliance · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
 
 ## generisk (nødudgang med rigtig klasse)
 ```yaml
