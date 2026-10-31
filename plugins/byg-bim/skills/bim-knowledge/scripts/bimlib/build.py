@@ -885,7 +885,8 @@ class Builder:
 
     def _rafters(self):
         """Rafters (IfcMember RAFTER) in the bottom layer of each roof face, at most `afstand` apart, with trimmers
-        around roof windows and chimneys, and optionally collar ties (hanebånd) across a gable roof."""
+        around roof windows and chimneys, and optionally collar ties (hanebånd) across a gable roof and wind braces
+        (vindbånd) under the rafters."""
         chimneys = []
         for g in self.s["generisk"]:
             if g.get("klasse") == "IfcChimney" and "profil" in g and abs(unit(np.array(g["z_akse"], float))[2]) > 0.999:
@@ -959,10 +960,59 @@ class Builder:
                     # the rafter hangs 10 mm below the face's underside so it doesn't share a plane with the slab
                     solid = self._clip(self._extrude(rect, h, z0=-10.0), planes)
                     self._member(ent, el, solid, mat, length, parts)
+                if sp.get("vindbaand"):
+                    self._wind_braces(t, el, sp["vindbaand"], mat, fl, Mw, frame, face, holes, parts)
             if sp.get("hanebaand") and t["form"] == "sadeltag" and len(rafters) == 2:
                 self._collar_ties(t, el, sp, b, h, mat, level, rafters, chimneys, parts)
             if parts:
                 api.aggregate.assign_object(self.f, relating_object=self._roof_ent[t["id"]], products=parts)
+
+    def _wind_braces(self, t, el, wb, mat, fl, Mw, frame, face, holes, parts):
+        """Wind braces: two boards per roof face nailed to the rafters' underside, each running at 45° in the face
+        between the wall plate and the ridge from a gable towards the middle, inside the outline. Each brace takes the
+        first route clear of roof openings: from the eaves corner, from the ridge corner, then shifted one rafter
+        spacing at a time along the face; if none is clear it is interrupted at the openings."""
+        o, xa, ya, za = frame
+        bw, tw = wb["b"], wb["t"]
+        x0, y0, x1, y1 = t["omrids"]
+        pts = []
+        for x, y in ((x0, y0), (x1, y0), (x1, y1), (x0, y1)):
+            z = o[2] + (-za[0] * (x - o[0]) - za[1] * (y - o[1])) / za[2]  # the outline projected into the face
+            q = np.array([x, y, z]) - o
+            pts.append((q @ xa, q @ ya))
+        region = face.intersection(Polygon(pts))
+        if region.is_empty:
+            return
+        u_min, v_min, u_max, v_max = region.bounds
+        blocked = unary_union([box(u0 - bw, v0 - bw, u1 + bw, v1 + bw) for u0, v0, u1, v1 in holes]) if holes else None
+        reach = 2 * (u_max - u_min + v_max - v_min)
+        step = t["spaer"]["afstand"]
+
+        def strip(u0, du, v0, dv):
+            d = np.array([du, dv]) / math.sqrt(2)
+            p0 = np.array([u0 + du * bw / math.sqrt(2), v0])  # the board's outer edge starts at the corner
+            return LineString([tuple(p0 - d * bw), tuple(p0 + d * reach)]).buffer(bw / 2, cap_style=2).intersection(region), d
+
+        nr = 0
+        for u_end, du in ((u_min, 1.0), (u_max, -1.0)):
+            routes = [(u_end + du * k * step, v0, dv) for k in range(int((u_max - u_min) / 2 // step) + 1)
+                      for v0, dv in ((v_min, 1.0), (v_max, -1.0))]
+            piece, d = next((r for r in (strip(u0, du, v0, dv) for u0, v0, dv in routes)
+                             if blocked is None or not r[0].intersects(blocked)), (None, None))
+            if piece is None:
+                piece, d = strip(u_end, du, v_min, 1.0)
+                piece = piece.difference(blocked)
+            for g in getattr(piece, "geoms", [piece]):
+                if not isinstance(g, Polygon) or g.is_empty or g.area < 4 * bw * bw:
+                    continue
+                proj = [np.array(c) @ d for c in g.exterior.coords]
+                nr += 1
+                ent = self.new_entity("IfcMember", el, suffix=f".{fl.name}.W{nr:02d}", name=f"Vindbånd {fl.name} {nr}",
+                                      predefined="BRACE")
+                self._place(ent, Mw)
+                # under the rafters, which hang from 10 mm below the face's underside
+                solid = self._extrude(list(g.exterior.coords)[:-1], tw, z0=-10.0 - tw)
+                self._member(ent, el, solid, mat, max(proj) - min(proj), parts)
 
     def _collar_ties(self, t, el, sp, b, h, mat, level, rafters, chimneys, parts):
         """Collar ties between rafter pairs: top at `hanebaand` above the floor, inside the walls, clear of chimneys."""
