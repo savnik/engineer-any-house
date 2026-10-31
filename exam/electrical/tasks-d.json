@@ -1,0 +1,298 @@
+{
+  "opgaver": [
+    {
+      "id": "EL-301",
+      "maal": ["EL-KM-01", "EL-TEMA-01"],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "svend",
+      "spoergsmaal": "I et parcelhus fra 1968 føres tre nye PVC-isolerede Cu-kabler (2 belastede ledere hver) samlet i ét bundt over et uisoleret, uopvarmet loftrum, hvor lufttemperaturen om sommeren når 40 °C. Kablerne er fastgjort på spærene (installationsmåde C). Det ene kabel er 1,5 mm² og skal forsyne en lys- og stikkontaktgruppe. Strømværdien for 1,5 mm² ved installationsmåde C og 30 °C er 19,5 A (tabel i DS/HD 60364-5-52). Regn med korrektionsfaktoren 0,87 for omgivelsestemperaturen 40 °C og 0,70 for tre kredse samlet i bundt. Gruppen beskyttes af en automatsikring (minikredsbryder, I2 = 1,45 · In).",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn kablets korrigerede strømværdi Iz på loftet. Angiv svaret i A.",
+          "facit": {"vaerdi": 11.88, "enhed": "A", "tolerance_pct": 2},
+          "begrundelse": "Iz = 19,5 · 0,87 · 0,70 = 11,88 A."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Hvad er den største mærkestrøm, automatsikringen for 1,5 mm²-gruppen må have, så Ib ≤ In ≤ Iz og I2 ≤ 1,45 · Iz er opfyldt?",
+          "valgmuligheder": {
+            "A": "6 A",
+            "B": "10 A",
+            "C": "13 A",
+            "D": "16 A"
+          },
+          "facit": "B",
+          "begrundelse": "In ≤ Iz = 11,88 A giver største standardværdi 10 A. For en automatsikring er I2 = 1,45 · In, så I2 ≤ 1,45 · Iz er opfyldt, når In ≤ Iz. 13 A er større end Iz og dermed ikke tilladt."
+        }
+      ],
+      "kilde": "DS/HD 60364-5-52 anneks B (strømværdier og korrektionsfaktorer, værdierne givet i opgaven) og DS/HD 60364-4-43 pkt. 433.1 (Ib ≤ In ≤ Iz, I2 ≤ 1,45 · Iz); dimensionering efter installationsmåde, BEK nr. 1082/2016 § 20, https://www.retsinformation.dk/eli/lta/2016/1082. Beregnet med Python og kontrolleret med el.py iz.",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-302",
+      "maal": ["EL-KM-01", "EL-TEMA-01"],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Et hus fra 1955 efterisoleres på loftet med 300 mm mineraluld oven på den gamle isolering. En lys- og stikkontaktgruppe i PVC-isoleret Cu-kabel 1,5 mm² (2 belastede ledere) ligger på loftsbjælkerne og bliver over en strækning på ca. 6 m helt omgivet af isolering. Gruppen er beskyttet af en C13-automatsikring (I2 = 1,45 · In). Strømværdien ved installationsmåde C (fastgjort på overflade) og 30 °C er 19,5 A for 1,5 mm² og 27 A for 2,5 mm². For et kabel, der er helt omgivet af varmeisolering over mere end 0,5 m, regnes strømværdien til 0,50 gange værdien for installationsmåde C. Der er ingen andre korrektioner.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn kablets strømværdi Iz efter efterisoleringen. Angiv svaret i A.",
+          "facit": {"vaerdi": 9.75, "enhed": "A", "tolerance_pct": 2},
+          "begrundelse": "Den værste del af ruten afgør: Iz = 19,5 · 0,50 = 9,75 A."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Kunden vil beholde en 13 A-gruppe. Hvilken løsning opfylder kravene til overbelastningsbeskyttelse?",
+          "valgmuligheder": {
+            "A": "Behold 1,5 mm² og C13, fordi I2 = 1,45 · 13 A stadig er under 2 · Iz.",
+            "B": "Behold 1,5 mm² i isoleringen og skift til en C10-automatsikring.",
+            "C": "Før kablet uden for isoleringen eller udskift det til 2,5 mm².",
+            "D": "Behold 1,5 mm² og C13, men sæt en RCD 30 mA foran gruppen."
+          },
+          "facit": "C",
+          "begrundelse": "In = 13 A > Iz = 9,75 A, så 1,5 mm² i isoleringen kan ikke beskyttes med 13 A. Også 10 A er over 9,75 A. Uden for isoleringen er Iz = 19,5 A, og 2,5 mm² helt omgivet af isolering giver Iz = 27 · 0,50 = 13,5 A ≥ 13 A. En RCD beskytter ikke mod overbelastning."
+        }
+      ],
+      "kilde": "DS/HD 60364-4-43 pkt. 433.1 (Ib ≤ In ≤ Iz, I2 ≤ 1,45 · Iz) og DS/HD 60364-5-52 (strømværdi efter installationsmåde, værste del af ruten afgør); faktoren 0,50 for kabel helt omgivet af isolering over mere end 0,5 m er givet i opgaven (svarer til BS 7671 pkt. 523.9/tabel 52.2). BEK nr. 1082/2016 § 20, https://www.retsinformation.dk/eli/lta/2016/1082. Beregnet med Python og kontrolleret med el.py iz --insulated-mm.",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-303",
+      "maal": ["EL-TEMA-04", "EL-AUT-01"],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En fast tilsluttet elradiator i et anneks forsynes fra husets gruppetavle med en gruppe i Cu-kabel 2,5 mm². Kablets længde er 60 m (enkelt vej). Gruppen beskyttes af en B16-automatsikring (karakteristik B). Kortslutningsimpedansen fase–nul er målt i gruppetavlen til 0,45 Ω. Regn med U0 = 230 V, resistiviteten ρ = 0,0225 Ω·mm²/m ved driftstemperatur, og se bort fra kablets reaktans. Den mindste kortslutningsstrøm i kredsens ende er Ik = U0 / (Z_tavle + 2 · L · ρ / A).",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn den mindste fase–nul-kortslutningsstrøm Ik ved radiatoren. Angiv svaret i A.",
+          "facit": {"vaerdi": 150.3, "enhed": "A", "tolerance_pct": 3},
+          "begrundelse": "Lederne: 2 · 60 · 0,0225 / 2,5 = 1,08 Ω. Ik = 230 / (0,45 + 1,08) = 230 / 1,53 = 150,3 A."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Hvad kan du konkludere om kortslutningsbeskyttelsen i kredsens ende?",
+          "valgmuligheder": {
+            "A": "Den er i orden: Ik er over 5 · In = 80 A, så B16 udkobler øjeblikkeligt.",
+            "B": "Den er ikke i orden: Ik skal mindst være 200 A for alle 16 A-automatsikringer, uanset karakteristik.",
+            "C": "Den er i orden, fordi gruppens RCD 30 mA også udkobler ved en kortslutning mellem fase og nul.",
+            "D": "Det kan ikke afgøres uden kablets strømværdi Iz og den aktuelle belastning."
+          },
+          "facit": "A",
+          "begrundelse": "En automatsikring med karakteristik B udkobler øjeblikkeligt (inden for 0,1 s), når strømmen er mindst 5 · In = 80 A. Ik = 150 A > 80 A. En RCD reagerer ikke på en kortslutning fase–nul, og Iz og belastning har betydning for overbelastning, ikke for denne kontrol."
+        }
+      ],
+      "kilde": "DS/EN 60898-1 (momentan udløsning, karakteristik B: 3–5 · In), DS/HD 60364-4-43 pkt. 434 (kortslutningsbeskyttelse) og BEK nr. 1082/2016 § 25, https://www.retsinformation.dk/eli/lta/2016/1082. Beregnet med Python; el.py ikmin giver samme størrelsesorden ved stikledningssikring 35 A.",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-304",
+      "maal": ["EL-TEMA-04", "EL-AUT-01"],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "En fast tilsluttet elvandvarmer i et udhus forsynes med en gruppe i Cu-kabel 1,5 mm², beskyttet af en C16-automatsikring (karakteristik C). Afstanden fra gruppetavlen til vandvarmeren er 48 m (enkelt vej). Kortslutningsimpedansen fase–nul er målt i gruppetavlen til 0,45 Ω. Regn med U0 = 230 V, resistiviteten ρ = 0,0225 Ω·mm²/m ved driftstemperatur, og se bort fra kablets reaktans. Automatsikringen skal udkoble øjeblikkeligt ved den mindste kortslutningsstrøm i kredsens ende.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn den største kabellængde (enkelt vej) i 1,5 mm², hvor C16 stadig udkobler øjeblikkeligt ved kortslutning fase–nul i kredsens ende. Angiv svaret i m.",
+          "facit": {"vaerdi": 32.92, "enhed": "m", "tolerance_pct": 3},
+          "begrundelse": "Karakteristik C udkobler øjeblikkeligt ved 10 · In = 160 A. Største sløjfeimpedans: 230 / 160 = 1,4375 Ω. Til kablet: 1,4375 − 0,45 = 0,9875 Ω. L = 0,9875 · 1,5 / (2 · 0,0225) = 32,92 m."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Hvilken ændring sikrer øjeblikkelig udkobling ved kortslutning i kredsens ende ved 48 m?",
+          "valgmuligheder": {
+            "A": "Skift til en C13-automatsikring og behold 1,5 mm².",
+            "B": "Skift kablet til 2,5 mm² og behold C16.",
+            "C": "Skift kablet til 2,5 mm² og sikringen til C20.",
+            "D": "Behold C16 og 1,5 mm², men skift gruppens RCD til 10 mA."
+          },
+          "facit": "B",
+          "begrundelse": "Største længde L = (230 / Ia − 0,45) · A / (2 · 0,0225): C13 og 1,5 mm²: Ia = 130 A, L = 44,0 m < 48 m. C16 og 2,5 mm²: L = 54,9 m ≥ 48 m. C20 og 2,5 mm²: Ia = 200 A, L = 38,9 m < 48 m. En RCD reagerer ikke på kortslutning fase–nul."
+        }
+      ],
+      "kilde": "DS/EN 60898-1 (momentan udløsning, karakteristik C: 5–10 · In), DS/HD 60364-4-43 pkt. 434 (kortslutningsbeskyttelse) og BEK nr. 1082/2016 § 25, https://www.retsinformation.dk/eli/lta/2016/1082. Beregnet med Python.",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-305",
+      "maal": ["EL-KM-01", "EL-AK-11"],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "svend",
+      "spoergsmaal": "En ladeboks til elbil (11 kW, 3-faset, 400 V mellem faser) i en carport skal forsynes fra husets gruppetavle med et 5-leder Cu-kabel. Kabellængden er 70 m (enkelt vej). Belastningen er 16 A pr. fase, symmetrisk, cos φ = 1. Bygherren kræver, at spændingsfaldet ved fuld ladestrøm højst er 2 % af 400 V. Regn med ρ = 0,0225 Ω·mm²/m, se bort fra reaktans, og brug ΔU = √3 · I · L · ρ / A.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn spændingsfaldet med 4 mm² i procent af 400 V. Angiv svaret i %.",
+          "facit": {"vaerdi": 2.73, "enhed": "%", "tolerance_pct": 3},
+          "begrundelse": "ΔU = √3 · 16 · 70 · 0,0225 / 4 = 10,91 V, dvs. 2,73 % af 400 V."
+        },
+        {
+          "del": "b",
+          "type": "valg",
+          "spoergsmaal": "Hvilket er det mindste tværsnit, der opfylder bygherrens krav om højst 2 %?",
+          "valgmuligheder": {
+            "A": "4 mm²",
+            "B": "6 mm²",
+            "C": "10 mm²",
+            "D": "16 mm²"
+          },
+          "facit": "B",
+          "begrundelse": "Spændingsfaldet er omvendt proportionalt med tværsnittet: 6 mm² giver 7,27 V = 1,82 % ≤ 2 %. 4 mm² giver 2,73 % og er for lille. 10 og 16 mm² opfylder også kravet, men er ikke de mindste."
+        }
+      ],
+      "kilde": "DS/HD 60364-5-52 pkt. 525 (spændingsfald; grænsen er her bygherrens krav, givet i opgaven) og BEK nr. 1082/2016 § 20, https://www.retsinformation.dk/eli/lta/2016/1082. Beregnet med Python og kontrolleret med el.py vdrop (6 mm²: 1,8 %).",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-306",
+      "maal": ["EL-KM-01", "EL-AK-11"],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "svend",
+      "spoergsmaal": "Et fritliggende udhus med værksted skal forsynes 1-faset (230 V) fra husets gruppetavle med et nedgravet Cu-kabel 4 mm². Den største samtidige last i udhuset er 3,2 kW ved cos φ = 1. Ejeren kræver, at spændingsfaldet ved denne last højst er 3 % af 230 V. Regn med ρ = 0,0225 Ω·mm²/m ved driftstemperatur, og se bort fra reaktans.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn belastningsstrømmen. Angiv svaret i A.",
+          "facit": {"vaerdi": 13.91, "enhed": "A", "tolerance_pct": 2},
+          "begrundelse": "I = 3200 / 230 = 13,91 A."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn den største kabellængde (enkelt vej), der overholder ejerens krav. Angiv svaret i m.",
+          "facit": {"vaerdi": 44.08, "enhed": "m", "tolerance_pct": 3},
+          "begrundelse": "Tilladt ΔU = 0,03 · 230 = 6,9 V. 1-faset går strømmen frem og tilbage: ΔU = 2 · L · I · ρ / A. L = 6,9 · 4 / (2 · 13,91 · 0,0225) = 44,08 m."
+        }
+      ],
+      "kilde": "DS/HD 60364-5-52 pkt. 525 (spændingsfald; grænsen er her ejerens krav, givet i opgaven) og BEK nr. 1082/2016 § 20, https://www.retsinformation.dk/eli/lta/2016/1082. Beregnet med Python.",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-307",
+      "maal": ["EL-AK-01", "EL-TEMA-03"],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et badeværelse har bruseniche uden kar og uden brusekabine. Mellem bruseområdet og håndvasken står en fast glasvæg, som kun kan fjernes med værktøj. Kunden vil have en 230 V-stikkontakt i 1,1 m højde ved håndvasken. I lige linje er der 0,7 m fra det faste vandudløb (bruserens vægbeslag) til stikkontakten. Målt med en snor uden om glasvæggens ende er afstanden 1,5 m. Installationen har RCD 30 mA. Må stikkontakten sidde der efter DS/HD 60364-7-701:2024?",
+      "valgmuligheder": {
+        "A": "Nej. Område 1 måles i lige linje (1,2 m) fra vandudløbet.",
+        "B": "Ja. Område 1 måles uden om den faste glasvæg (1,5 m > 1,2 m), og bruser uden kar har intet område 2.",
+        "C": "Nej. 230 V-stikkontakter må slet ikke sidde i et badeværelse med bruser uden kar.",
+        "D": "Ja, men kun hvis stikkontakten har kapslingsklasse IPX4, fordi den sidder i område 2 bag glasvæggen."
+      },
+      "facit": "B",
+      "begrundelse": "For bruser uden kar går område 1 1,2 m ud fra det faste vandudløb, målt uden om faste skillevægge (snorreglen), op til 2,25 m. Der er intet område 2 for brusebade. 230 V-stikkontakter må ikke sidde i område 0, 1 og 2; her er stikkontakten uden for område 1.",
+      "kilde": "DS/HD 60364-7-701:2024; Sikkerhedsstyrelsen, \"Elektrisk materiel i badeværelser (DS/HD 60364-7-701:2024)\", https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/elektrisk-materiel-badevaerelser-dshd-60364-7-7012024 (intet område 2 for brusebade; 230 V-stikkontakter ikke i område 0–2) og SIK-håndbog for huseftersyn, bilag 4 (afstande på badeværelser).",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-308",
+      "maal": ["EL-AK-01", "EL-TEMA-03"],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Et badeværelse har et fritstående badekar uden bruser. Kunden vil have en 230 V-stikkontakt til en hårtørrer i 1,0 m højde på væggen, 0,5 m vandret fra karkanten. Der er ingen skillevæg mellem karret og stikkontakten. Installationen har RCD 30 mA. Må stikkontakten sidde der efter DS/HD 60364-7-701:2024?",
+      "valgmuligheder": {
+        "A": "Ja. Områderne gælder kun lodret over selve karret.",
+        "B": "Nej. Den sidder i område 2, der går 0,6 m ud fra karkanten; flyt den længere væk.",
+        "C": "Ja, når stikkontakten har kapslingsklasse IPX4 og sidder bag RCD 30 mA.",
+        "D": "Nej. En 230 V-stikkontakt skal altid sidde mindst 1,2 m fra karkanten."
+      },
+      "facit": "B",
+      "begrundelse": "Ved badekar går område 2 0,6 m vandret ud fra karkanten op til 2,25 m over gulvet. 230 V-stikkontakter må ikke sidde i område 0, 1 og 2 (i område 2 kun stikkontakter med SELV eller PELV). 0,5 m < 0,6 m, så stikkontakten skal mindst 0,6 m fra karkanten. 1,2 m-afstanden gælder område 1 ved bruser uden kar.",
+      "kilde": "DS/HD 60364-7-701:2024; Sikkerhedsstyrelsen, \"Elektrisk materiel i badeværelser (DS/HD 60364-7-701:2024)\", https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/boliger/elektrisk-materiel-badevaerelser-dshd-60364-7-7012024 og SIK-håndbog for huseftersyn, bilag 4 (afstande på badeværelser).",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-309",
+      "maal": ["EL-AUT-03", "EL-TEMA-03"],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Du projekterer installationen i et nyt parcelhus på landet, som udføres i 2026. Bygherren spørger, om overspændingsbeskyttelse (SPD) er et krav. Der er ikke lavet nogen risikovurdering for overspændinger. Hvad er det korrekte svar efter installationsbekendtgørelsen?",
+      "valgmuligheder": {
+        "A": "Nej. SPD er kun et krav, når huset har solcelleanlæg eller lynafleder.",
+        "B": "Ja. Alle nye installationer skal altid have SPD type 1+2, uanset placering og risikovurdering.",
+        "C": "Behovet skal vurderes (§ 13). Uden en risikovurdering, der viser andet, monteres normalt en type 2 SPD i tavlen.",
+        "D": "Nej. Overspændingsbeskyttelse er et forsikringsspørgsmål og ikke omfattet af installationsbekendtgørelsen."
+      },
+      "facit": "C",
+      "begrundelse": "§ 13: overspændinger må ikke medføre fare for personer, husdyr eller ejendom. For nye installationer skal behovet for SPD vurderes, fx med risikovurderingen i DS/HD 60364-4-443 pkt. 443.5. Uden en sådan vurdering monteres typisk en type 2 SPD i tavlen. Kravet er et vurderingskrav, ikke et absolut krav om en bestemt SPD-type.",
+      "kilde": "BEK nr. 1082/2016 § 13, https://www.retsinformation.dk/eli/lta/2016/1082; DS/HD 60364-4-443 pkt. 443.5; Sikkerhedsstyrelsen, Håndbog for huseftersyn pkt. 10a (overspændingsbeskyttelse).",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-310",
+      "maal": ["EL-AUT-03", "EL-TEMA-03"],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et parcelhus har en elinstallation fra 1985 uden overspændingsbeskyttelse. I 2026 udvides installationen med to nye grupper til et nyt køkken i den eksisterende gruppetavle. Kunden spørger, om udvidelsen udløser et krav om overspændingsbeskyttelse (SPD). Hvad er det korrekte svar?",
+      "valgmuligheder": {
+        "A": "Ja. Alt installationsarbejde udført efter 1. juli 2019 kræver SPD i tavlen.",
+        "B": "Ja, men kun for de to nye grupper, som skal have hver sin SPD.",
+        "C": "Nej. SPD er kun et krav i etageboliger i tæt bymiljø.",
+        "D": "Nej. Installationer fra før 1. juli 2019 og udvidelser af dem er ikke omfattet; SPD kan anbefales."
+      },
+      "facit": "D",
+      "begrundelse": "Kravet om at vurdere overspændingsbeskyttelse efter § 13 gælder installationer fra 1. juli 2019. Installationer udført før denne dato og udvidelser af dem er ikke omfattet. SPD kan stadig anbefales. Tæt bymiljø er en undtagelse fra kravet, ikke et sted, hvor kravet gælder særligt.",
+      "kilde": "BEK nr. 1082/2016 § 13, https://www.retsinformation.dk/eli/lta/2016/1082; Sikkerhedsstyrelsen, nyhed 2019 om overspændingsbeskyttelse og Håndbog for huseftersyn pkt. 10a (undtagelser: installationer før 1/7-2019 og udvidelser af dem).",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-311",
+      "maal": ["EL-KM-22", "EL-TEMA-05"],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Lyset i en trappeopgang styres med to korrespondanceafbrydere (trappeafbrydere), én i hver ende. Efter en renovering virker det forkert: lyset tænder kun i én af de fire stillingskombinationer af de to afbrydere. I de tre andre kombinationer er det slukket. Lampen og pæren er i orden. Hvad er den mest sandsynlige fejl?",
+      "valgmuligheder": {
+        "A": "De to korrespondanceledninger er byttet om i den ene afbryder.",
+        "B": "Nullederen til lampen er afbrudt i loftdåsen.",
+        "C": "I den ene afbryder er fællesklemmen byttet om med en af korrespondanceledningerne.",
+        "D": "Den ene afbryder leder i begge stillinger på grund af en intern fejl."
+      },
+      "facit": "C",
+      "begrundelse": "Byttes fællesklemmen med en korrespondanceledning i én afbryder, kan strømmen kun nå lampen ad én vej: lyset tænder kun i én af fire kombinationer. Byttede korrespondanceledninger vender kun, hvilke stillinger der er tændt, og lyset virker normalt fra begge afbrydere. Afbrudt nul giver aldrig lys. En afbryder, der leder i begge stillinger, giver lys i flere kombinationer.",
+      "kilde": "Kredsløbslogik for korrespondancekobling (sandhedstabel); funktionsafprøvning efter Sikkerhedsstyrelsen, \"Afprøvning af den elektriske installation\" afsnit I, https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/afproevning-elektriske-installation.",
+      "status": "V 2026-10-31"
+    },
+    {
+      "id": "EL-312",
+      "maal": ["EL-KM-22", "EL-TEMA-05"],
+      "saet": "holdout",
+      "type": "valg",
+      "niveau": "svend",
+      "spoergsmaal": "Ved afprøvning af en ny lampeudtagsgruppe virker lampen normalt, når afbryderen betjenes. Med afbryderen slukket måler du 230 V mellem den ene klemme i lampeudtaget og beskyttelseslederen (PE). Hvad er fejlen, og hvilken prøve skulle have fundet den?",
+      "valgmuligheder": {
+        "A": "Beskyttelseslederen er afbrudt; det findes ved måling af beskyttelseslederens kontinuitet.",
+        "B": "Der er isolationsfejl mellem fase og PE; det findes ved isolationsmåling.",
+        "C": "Afbryderen bryder nullederen i stedet for faselederen; det findes ved polaritetsprøven.",
+        "D": "Ingen fejl. En enpolet afbryder må sidde i nullederen, når gruppen har RCD 30 mA."
+      },
+      "facit": "C",
+      "begrundelse": "Når afbryderen sidder i nullederen, virker lampen normalt, men lampeudtaget står under spænding, også når der er slukket. Det giver fare ved fx pæreskift. Polaritetsprøven kontrollerer, at enpolede afbrydere er forbundet i faselederen. Afbrudt PE eller isolationsfejl forklarer ikke 230 V på en klemme med slukket afbryder (en isolationsfejl ville udløse RCD'en).",
+      "kilde": "Sikkerhedsstyrelsen, \"Afprøvning af den elektriske installation\" afsnit E (polaritetsprøve: enpolede afbrydere forbundet i faselederen), https://www.sik.dk/erhverv/elinstallationer-og-elanlaeg/vejledninger/elinstallationer/verifikation-elektriske-installationer/afproevning-elektriske-installation; DS/HD 60364-6 (afprøvning).",
+      "status": "V 2026-10-31"
+    }
+  ]
+}
