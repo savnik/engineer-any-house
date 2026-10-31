@@ -32,7 +32,7 @@ Er `${CLAUDE_PLUGIN_ROOT}` ikke udfoldet, så find scriptet med Glob `**/bim-kno
 | `check <fil.ifc> [--draw]` | Skema/EXPRESS, buildingSMART-regler, geometri, kollisioner, Status/materialer, kildefordeling, arealer mod BBR, IDS. Skriver `<navn>.check.md` | 1–3 s |
 | `compare <fil.ifc> <decoding.yaml> [--view V1] [--out <mappe>]` | Modellen tegnet i tegningens pixelramme: original · model · overlay (hele visningen og fliser) + automatisk sammenligning af alle afkodede mål, rum, åbninger og vægtykkelser med modellen | 3–10 s |
 | `draw <fil.ifc> plan|section|elevation|3d|all [--storey] [--line] [--side] [--id] [--dims]` | Plan (snit +1 m), lodret snit, facader, 3D | 2–8 s |
-| `export <fil.ifc> [--out <fil.glb>] [--transparent <glob>…] [--alpha 0.25]` | 3D til webvisning (model-viewer, three.js): glTF i modellens farver, uden rum og huller; `--transparent` gør elementer (id/Tag-glob, fx `"*-YV.1"`) gennemsigtige | 1–3 s |
+| `export <fil.ifc> [--out <fil.glb>] [--transparent <glob>…] [--alpha 0.15]` | 3D til webvisning (model-viewer, three.js): glTF i modellens farver, uden rum og huller; `--transparent` gør elementer (id/Tag-glob, fx `"*-YV.1"`) gennemsigtige | 1–3 s |
 | `measure <fil.ifc|model.yaml> <id> [<id2>]` · `--space <navn>` · `--storey <navn>` | Mål i mm i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger), rum (indvendige mål, areal), fri afstand mellem to elementer, alle vægge på en etage – altid med kilden. En `model.yaml` bygges først, så målet er fra den aktuelle model | < 1 s |
 | `info` · `show <id>` · `find "<selector>"` · `diff <gammel> <ny>` | Inspektion og ændringer | < 5 s |
 

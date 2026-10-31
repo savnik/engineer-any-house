@@ -161,7 +161,7 @@ def main(argv):
     x.set_defaults(fn=_compare)
     x = sp.add_parser("export"); x.add_argument("ifc"); x.add_argument("--out")
     x.add_argument("--transparent", nargs="+", metavar="ID", help="elementer (id/Tag, glob som 'S-YV.1' eller '*-YV.4') der gøres gennemsigtige")
-    x.add_argument("--alpha", type=float, default=0.25, help="dækkevne for --transparent (0–1, standard 0.25)")
+    x.add_argument("--alpha", type=float, default=0.15, help="dækkevne for --transparent (0–1, standard 0.15)")
     x.set_defaults(fn=_export)
     x = sp.add_parser("info"); x.add_argument("ifc"); x.set_defaults(fn=_info)
     x = sp.add_parser("show"); x.add_argument("ifc"); x.add_argument("id"); x.set_defaults(fn=_show)
