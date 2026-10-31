@@ -5,24 +5,17 @@
 ## 1. Planlægning af boliginstallationer
 - **Behovsanalyse:** rum for rum – stikkontakter (også ved seng, skrivebord, tv, køkkenbord), belysning (grundlys, arbejdslys, stemningslys), faste apparater, fremtid (elbil, varmepumpe, solceller, batteri).
 - **Gruppeplan:** fordel belysning og stikkontakter logisk; separate grupper til store faste forbrugere (komfur, ovn, vaskemaskine, tørretumbler, varmepumpe, ladestander, el-gulvvarme i større omfang).
-- **Beskyttelse:** RCD ≤ 30 mA, aldrig type AC i boliger, sikring efter stikkontaktens mærkestrøm (normgrundlag, BEK 1082-tabellen); overvej flere RCD'er for at begrænse udfaldets omfang; fordel på mindst to RCD'er, og vurdér overspændingsbeskyttelse (betinget krav, normgrundlag "SPD"); lysbuedetektering (T).
-- **Dimensionering:** regn hver gruppe og tavlen med `el.py` (Iz med korrektion, ΔU, Ik,min/Ik,max) – se `calc-tools.md`; forudsætninger i normgrundlag "Dimensionering".
+- **Beskyttelse:** RCD ≤ 30 mA, aldrig type AC i boliger, sikring efter stikkontaktens mærkestrøm (normgrundlag, BEK 1082-tabellen); fordel på mindst to RCD'er; overspændingsbeskyttelse vurderes (betinget krav, normgrundlag "SPD") og evt. lysbuedetektering (T).
 - **Kapacitet:** samlet effekt, samtidighed og hovedsikring/stikledning – særligt ved elbil og varmepumpe. Effekt- eller laststyring kan undgå opgradering.
 - **Flere nye forbrugere og produktion samtidig (lader, varmepumpe, solceller, batteri):** planlæg dem som ét system – fælles kapacitetsvurdering, tavleplan og tilmelding, og styring, der flytter opladning og varmepumpedrift til timer med egenproduktion (øger egenforbruget og mindsker spidslasten). Vælg lader og inverter, der kan tale sammen.
 - **Føringsveje:** installationszone inden for dampspærren i lette konstruktioner; lufttætte dåser hvor dampspærren gennembrydes; riller i murværk kun hvor statikken tillader (bærende vægge: begrænsninger – T, afklar med murer/statiker).
 
 ## 2. Særlige rum og anlæg
-- **Badeværelse (DS/HD 60364-7-701:2024):** mål områderne på planen (normgrundlag "Badeværelse – områder"): bruser uden kar 1,2 m fra vandudløbet målt uden om faste vægge og intet område 2; kar 0,6 m område 2. El-gulvvarme i vådrum: egnet varmemåtte, jordet skærm, termostat med gulvføler; koordinér med membran og fald.
+- **Badeværelse (DS/HD 60364-7-701:2024):** områder, IP-krav og placering af stikkontakter efter normgrundlag "Badeværelse – områder". El-gulvvarme i vådrum: egnet varmemåtte, jordet skærm, termostat med gulvføler; koordinér med membran og fald.
 - **Udendørs:** IP-klasse efter placering, RCD, mekanisk beskyttelse og nedgravningsdybde for jordkabler (T).
 - **Elbilladning (DS/HD 60364-7-722):** egen gruppe pr. ladepunkt, egen RCD, normalt type B 30 mA – type A/F kun med RDC-DD i laderen efter fabrikanten (V sik.dk), lastbalancering, tilmelding til netselskab (T).
 - **Solceller (DS/HD 60364-7-712):** autorisation, generatortilslutning, mærkning og tilmelding – se normgrundlag "Solceller"; DC-side med korrekt kabel, stik og afbrydere; brand- og tagsnitflade til tømrer/tagdækker; tilmelding til netselskab (T). Plugin-solceller med stikprop frarådes af Sikkerhedsstyrelsen.
 - **Varmepumper og aggregater:** forsyning og beskyttelse efter producentens krav (frekvensomformere: 1-faset type F, 3-faset type B, medmindre fabrikanten angiver andet – T), serviceafbryder, styresignaler.
-
-### Tavleskabeloner (ERFARING – T)
-Udgangspunkt for gruppeskemaet; regn altid den konkrete tavle med `el.py panel`.
-- **(a) Lille bolig/lejlighed (1-faset eller 3 × 25 A):** 2 × RCD type A 30 mA, lys og stik fordelt på begge, egne grupper til køkken/vask; ≥ 20 % reserve.
-- **(b) Parcelhus (3 × 35 A):** 2–3 × RCD type A 30 mA; komfur 3-faset; vaskemaskine, tørretumbler, opvask på hver sin gruppe og fordelt på faserne; varmepumpe og elbillader hver på egen RCD (type B eller efter fabrikanten); SPD type 2 vurderet.
-- **(c) Med undertavle (garage, anneks, tilbygning):** hovedledning (kappekabel) fra tilgangssiden eller bag selektiv type S; undertavlens egne 30 mA-RCD'er; aldrig to 30 mA i serie; Ik,min regnes gennem hovedledningen.
 
 ## 3. Ældre installationer
 - Typiske fund (T): ingen eller få RCD'er; stikkontakter uden jord; stofisolerede eller sprøde ledninger; varmeskadede samlinger; ældre skruesikringer; tilføjelser udført af ukyndige.

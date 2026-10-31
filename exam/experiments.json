@@ -2848,6 +2848,109 @@
       "begrundelse": "Reglen og støjtjekket giver forkast, og det følges. Ændringen rulles dog ikke tilbage på grenen, fordi en parallel agent har committet el-diagram og BIM-el (8ec6928), der importerer el.py og bruger pegerne. Den samlede PR 40 er draft, og brugeren afgør, om den merges som den er, eller om videnteksten først slankes i et opfølgende forsøg.",
       "rev_efter": "6ba7fe5",
       "pr": "https://github.com/savnik/engineer-any-house/pull/40"
+    },
+    {
+      "id": "F-030",
+      "dato": "2026-10-31",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Slankning af F-029: dimensionerings- og tavletekst flyttes fra standards.md, practice.md og checklists.md til calc-tools.md, som kun læses ved beregning. Pegeren i electrician.md bliver én linje, og electrical-review samt rubrikken mister værktøjsfokus uden for beregning. V-reglerne om badeværelsesområder, RCD-typer, TT og SPD bliver kompakt i standards.md. F-029 viste, at værktøjsteksten trækker fokus (EL-141 bestod 0 af 3 mod 2 af 3). Forventning: EL-141 tilbage til baseline og hele sættet mindst som baseline 97f6b35 (145 af 175) inden for støj. Pris pr. bestået højst baseline +10 %. Sammenlignes med den oprindelige baseline 97f6b35, ikke med 6ba7fe5.",
+      "aendring": "Tekst flyttes til calc-tools.md, pegere bliver kortere, standards.md-afsnittene komprimeres, el.py uændret",
+      "opgaver": [
+        "EL-141"
+      ],
+      "status": "aaben",
+      "beslutning": null,
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "97f6b35",
+            "dato": "2026-10-31",
+            "filer": [
+              "20261031-210138-plugin-alle-97f6b35.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.373,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 26.7,
+                  "tokens_ud_pr_opgave": 2056
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0862,
+                  "sek_pr_opgave": 24.5,
+                  "tokens_ud_pr_opgave": 1934
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.744,
+                  "pris_pr_bestaaet": 0.093,
+                  "sek_pr_opgave": 25.3,
+                  "tokens_ud_pr_opgave": 2024
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.132,
+                  "pris_pr_bestaaet": 0.0762,
+                  "sek_pr_opgave": 23.3,
+                  "tokens_ud_pr_opgave": 1703,
+                  "fejlede": [
+                    "EL-001"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 28,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.976,
+                  "pris_pr_bestaaet": 0.0706,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1725,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.27,
+                  "pris_pr_bestaaet": 0.0794,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1770,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "64e2e4a"
     }
   ]
 }
