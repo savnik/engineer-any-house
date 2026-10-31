@@ -2657,6 +2657,21 @@
       "slut": "2026-10-19",
       "vurdering": "manuel",
       "begrundelse": "Nulmåling, ingen ændring – sætter benchmarket."
+    },
+    {
+      "id": "F-029",
+      "dato": "2026-10-31",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Eltegn-pakken: et deterministisk regneværktøj el.py (strømværdi Iz med Ci for kabel i isolering, spændingsfald, Ik,min/Ik,max mod In og brydeevne, tavletjek og fast gruppeskema) plus V-mærkede regler om badeværelseszoner som geometri, RCD-typer i serie, undertavlens RCD-topologi, SPD og tavleskabeloner, med indgange i SKILL.md, electrician og electrical-review. Eksamen kører uden Bash, så værktøjet kan ikke køres dér; effekten på eksamen kommer kun fra de nye regler og tabeller. Forventning: udviklingssættet uændret inden for støj (mættet), holdout 0 til +2 på dimensionering og RCD, ingen gruppe ned 2 eller flere, pris pr. bestået højst +10 % (ca. 5 KB ny tekst, der kun læses ved dimensionering). Værktøjets værdi i rigtige sager måles ikke af eksamen.",
+      "aendring": "Nyt scripts/el.py med tests; standards.md, practice.md og checklists.md udvidet med V-mærkede regler; SKILL.md, electrician.md (Bash låst til el.py) og electrical-review peger på værktøjet; trade-registry får regnevaerktoej el.py",
+      "opgaver": [],
+      "status": "aaben",
+      "beslutning": null,
+      "maalinger": {},
+      "rev_foer": "97f6b35"
     }
   ]
 }

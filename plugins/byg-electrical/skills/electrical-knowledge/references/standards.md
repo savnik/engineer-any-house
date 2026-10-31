@@ -1,6 +1,6 @@
 # El – normgrundlag
 
-Sidst gennemgået: 2026-10-18. BR18 gælder i den version, der er aktuel fra 1/1-2026 (ældre versioner ligger under "Historisk" på bygningsreglementet.dk). §-numre kan være læst i en ældre version – tjek den aktuelle, før du citerer. **V** = verificeret (kilde), **T** = skal verificeres.
+Sidst gennemgået: 2026-10-31. BR18 gælder i den version, der er aktuel fra 1/1-2026 (ældre versioner ligger under "Historisk" på bygningsreglementet.dk). §-numre kan være læst i en ældre version – tjek den aktuelle, før du citerer. **V** = verificeret (kilde), **T** = skal verificeres.
 
 ## Kilder
 | Kilde | Emne og brug | Status |
@@ -9,11 +9,11 @@ Sidst gennemgået: 2026-10-18. BR18 gælder i den version, der er aktuel fra 1/1
 | Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016 (ændret ved BEK 639/2017) | Gør DS/HD 60364 gældende; krav til udførelse og dokumentation. Centrale §§ i tabellen nedenfor | V 2026-10-18 (retsinformation.dk/eli/lta/2016/1082) |
 | DS/HD 60364-serien | Lavspændingsinstallationer | V (sik.dk) |
 | DS/HD 60364-4-41 | Beskyttelse mod elektrisk stød, supplerende beskyttelse med RCD | T (afsnit) |
-| DS/HD 60364-5-52 / -5-54 | Kabelinstallationer / jording og beskyttelsesledere | T |
+| DS/HD 60364-5-52 / -5-54 | Kabelinstallationer (strømværdier anneks B, se "Dimensionering") / jording og beskyttelsesledere | Tabelværdier V sekundær 2026-10-31; tekst T |
 | DS/HD 60364-6 | Verifikation: eftersyn, afprøvning, rapportering | V (sik.dk-vejledninger om eftersyn, afprøvning og rapportering) |
-| DS/HD 60364-7-701 | Rum med badekar eller brusebad | T (del-nr. og detaljer) |
+| DS/HD 60364-7-701:2024 (= IEC 60364-7-701:2019) | Rum med badekar eller brusebad, se "Badeværelse – områder" | V 2026-10-31 (sik.dk-vejledning og huseftersynshåndbog) |
 | DS/HD 60364-7-712 | Solcelleanlæg | T |
-| DS/HD 60364-7-722 | Forsyning af elbiler | T |
+| DS/HD 60364-7-722 | Forsyning af elbiler; RCD-valg V via sik.dk, se "RCD" | T (pkt.-tekst) |
 | Sikkerhedsstyrelsen – danske tolkninger | Udligningsforbindelser, potentialudligning i badeværelser, dokumentation ved afvigelse fra standarder | V (emner findes på sik.dk) |
 | Sikkerhedsstyrelsen – solceller | Autorisation og tilslutning, se "Solceller" nedenfor; plugin-solceller med stikprop kan udgøre en risiko | V 2026-10-18 (sik.dk) |
 | Autorisationsloven | Elinstallationsarbejde kræver autoriseret virksomhed – undtagen det, privatpersoner udtrykkeligt må | V |
@@ -81,8 +81,37 @@ Kilde: Fællesregulativet 2026, V 2026-10-18.
 - **Tilmelding før arbejdet påbegyndes** (Del A pkt. 2): altid ved nye tilslutninger, ændring af bestående installationer, produktionsanlæg (fx solceller), elektriske energilageranlæg (batteri), varmepumper og ladestandere, afmelding og plombebrud. Udvides det tilmeldte, kræves ny tilmelding.
 - **Kortslutningsniveau** (Del B pkt. 13–14), når netselskabet ikke oplyser andet: største kortslutningsstrøm 16 kA (3-faset, cos φ 0,3) foran stikledningen; **mindste fase-nul-kortslutningsstrøm Ik min = 5 × stikledningssikringens mærkestrøm** i kabelnet (også i luftledningsnet, medmindre andet oplyses). I maskenet (Radius Frederiksberg/City, Elektrus) og ved direkte tilslutning i transformerstation skal værdierne altid indhentes.
 
-## Rumkrav i badeværelse (dansk praksis)
-- Stikkontakt uden for område 0, 1 og 2; i praksis mindst 120 cm fra åben bruser. (V sekundær: Bolius, 2026-09; områder V sik.dk 2026-10-18)
+## Badeværelse – områder (DS/HD 60364-7-701:2024)
+Kilder: sik.dk "Elektrisk materiel i badeværelser (DS/HD 60364-7-701:2024)" (rev. 7/11-2025) og SIK-håndbog for huseftersyn version 19, bilag 4 (tegning "afstande på badeværelser efter juli 2019"), V 2026-10-31. Områderne er geometri – mål dem på planen:
+- **Område 0:** inde i karret; i bruser uden kar 0,1 m over gulvet. Kun SELV ≤ 12 V AC/30 V DC, IPX7 [KRAV].
+- **Område 1, bruser uden kar (også kun forhæng):** 1,2 m fra det faste vandudløb, målt med snor **uden om faste skillevægge** (fast = kan ikke fjernes uden værktøj), op til 2,25 m. **Der er intet område 2 for brusebade** [KRAV].
+- **Badekar / bruser med kabine:** område 1 over karret op til 2,25 m; **område 2 = 0,6 m** ud fra karkanten/kabinen op til 2,25 m [KRAV].
+- **IP:** IPX4 i område 1 og 2; hvor der spules: IP55 i område 1–2 og IP67 i område 0 (2024-udgaven) [KRAV]. Område 3 findes ikke længere.
+- **Materiel:** ingen 230 V-stikkontakter i område 0–2 (SELV tilladt i område 1–2); afbrydere tidligst i område 2 [KRAV]. Hvilket fast materiel der må sidde i område 1 (vandvarmer, ventilation, armatur m.fl. efter leverandøren) – T.
+- Stikkontakt i badeværelse placeres uden for område 0–2 – i praksis mindst 1,2 m fra åben bruser (V sekundær: Bolius).
+
+## RCD – typer, kæde og undertavler
+- **Mindst to RCD'er:** installationstavler skal som udgangspunkt fordeles på mindst to RCD'er (type A, 30 mA), så én fejl ikke afbryder hele installationen; projektér lækstrøm ≤ 0,3 × IΔn pr. RCD [ANVISNING sik.dk "Valg og installation af RCD" (4/4-2025), DS/HD 60364-5-53 pkt. 531.3.6 – V 2026-10-31].
+- **Elbil:** egen RCD pr. ladepunkt; type B 30 mA er normalvalget; type A/F kun, når laderen selv detekterer glat DC ≥ 6 mA (RDC-DD, IEC 62955) og fabrikanten angiver det [ANVISNING sik.dk "Opladning af elbiler" – V 2026-10-31; 722-pkt.-tekst T].
+- **Type B i kæde:** glat DC-fejlstrøm over 6 mA kan blinde en type A/F foran. Type B sættes derfor ikke efter type A/F – forsyn B'en fra tilgangssiden eller brug en type B, som begrænser DC til 6 mA ("B+"/fabrikantens datablad) [ERFARING fabrikant – V sekundær (Doepke, Schneider); 531.3-tekst T].
+- **Frekvensomformere (varmepumpe):** 1-faset → type F, 3-faset → type B, medmindre fabrikanten angiver andet [ERFARING – T].
+- **Undertavle:** før forsyningen med kappekabel fra tilgangssiden, eller beskyt den med en selektiv type S (fx 300 mA) foran; to 30 mA i serie er ikke selektive; endelige kredse må ikke kun sidde bag type S; undertavle deler ikke RCD med husets grupper; forsikringen foran en RCD må ikke overstige fabrikantens maks. back-up [ERFARING – T; ældre SIK-praksis: grupper i undertavle "beskyttet af HPFI foran tavlen", sik.dk-detaljer kun i video].
+- Type AC er forbudt i boliger (§ 53); endelige kredse skal have RCD ≤ 30 mA (§ 35 stk. 1–2) – tabellen ovenfor.
+
+## Jordingssystem – TT eller TN
+- Forsyning fra det offentlige net er **TT** som udgangspunkt. TN må kun bruges med egen transformerstation, stikledning direkte fra transformerstationen udført med kabel, hvor TN allerede bruges, eller med netejerens særlige tilladelse; ingen TN-C efter første tavle [KRAV BEK 1082 §§ 27–28 – V 2026-10-31].
+- I TT sker udkobling ved jordfejl ved RCD'en; overstrømsbeskyttelsen skal stadig klare kortslutning L–N (Ik,min, se nedenfor). Udkoblingstider TN 0,4 s / TT 0,2 s ved 230 V, endelige kredse (tabel 41.1) [V sekundær (IET, Schneider EIG); omfanget efter 2017-tillægget – stikkontaktkredse ≤ 63 A og fast materiel ≤ 32 A – T].
+
+## Overspændingsbeskyttelse (SPD)
+- Fra 1/7-2019 skal behovet vurderes: "Overspændinger må ikke medføre fare" (§ 13). Typisk type 2 SPD i tavlen. Ikke krav i installationer fra før 1/7-2019 og udvidelser af dem, i tæt bymiljø, når risikovurderingen (DS/HD 60364-4-443 pkt. 443.5) viser, at der ikke er behov, eller når installationens og apparaternes værdi højst er 5 × SPD'ens pris [KRAV § 13; ANVISNING sik.dk-nyhed 2019 og huseftersynshåndbog pkt. 10a – V 2026-10-31]. Skriv "vurderet", ikke "krævet".
+
+## Dimensionering – kabler og kortslutning
+Regnes med `scripts/el.py` (se `calc-tools.md`); her står forudsætningerne.
+- **Strømværdi Iz:** DS/HD 60364-5-52 anneks B (kobber, 30 °C) tabel B.52.2–B.52.5 (metode A1–C) og B.52.10/B.52.12 (metode E) [NORM – værdierne V sekundær 2026-10-31 mod Prysmian 2024/Top Cable]. Ruten dimensioneres efter den værste del. NOIKLX 90 er PEX/XLPE 90 °C (NKT-data, V sekundær); ældre NOIKLX (før maj 2015), PVIKLX og ukendt kabel regnes med PVC 70 °C-tabellerne (T).
+- **Kabel helt omgivet af isolering** (fx efter efterisolering af loft): faktor på metode C – 50 mm 0,88 · 100 mm 0,78 · 200 mm 0,63 · 400 mm 0,51 · ≥ 0,5 m 0,50 [V sekundær: BS 7671 tabel 52.2, gælder til 10 mm²; om tabellen findes i DS/HD: T].
+- **Overbelastning:** Ib ≤ In ≤ Iz og I2 ≤ 1,45 × Iz (433.1); automatsikring I2 = 1,45 In, gG 1,6 In (In ≥ 16 A) [V sekundær].
+- **Spændingsfald:** DS/HD 60364-5-52 pkt. 525 anbefaler højst 4 % fra installationens begyndelse – en anbefaling, ikke et dansk krav; Fællesregulativet har intet krav (V 2026-10-31). Anneks G (offentligt net): 3 % lys / 5 % andet [V sekundær, svag].
+- **Kortslutning:** Ik max 16 kA (3-faset, cos φ 0,3) og Ik min L–N = 5 × stikledningssikringen gælder **umiddelbart foran stikledningen** – læg stikledningens impedans til for værdien ved tavlen [KRAV Fællesregulativet 2026 Del B pkt. 13–14 – V 2026-10-31]. Ik,min i gruppens ende ≥ Ia (B 5 In, C 10 In, D 20 In efter EN 60898-1 – V sekundær; mange D-automater 10–14 In); ellers dokumentér udkoblingstiden mod kablets grænse (k²S²/I²). Automatsikringers brydeevne 6 eller 10 kA (EN 60898-1); mindre end Ik,max kræver back-up efter fabrikantens tabel [NORM 434.5.1 – T].
 
 ## Opslagsrækkefølge
 1. sik.dk – regler, gør-det-selv, vejledninger, autorisationsregisteret
