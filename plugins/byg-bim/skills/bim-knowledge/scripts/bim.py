@@ -10,7 +10,7 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
                                            Skema, buildingSMART-regler, geometri, semantik, mængder, IDS
   draw  <fil.ifc> plan|section|elevation|3d|all [--storey K] [--line x1,y1,x2,y2] [--side syd] [--from sv]
         [--underlay <png> --cal "px,py=x,y;px,py=x,y"] [--id] [--dims] [--cut-height 1000] [--out <mappe>]
-  export <fil.ifc> [--out <fil.glb>] [--transparent <id-glob> …] [--alpha 0.25]
+  export <fil.ifc> [--out <fil.glb>] [--transparent <id-glob> …] [--alpha 0.15]
                                            3D til webvisning: glTF (.glb) i modellens farver, uden rum og huller;
                                            --transparent gør fx facadevægge gennemsigtige, så konstruktionen ses
   decode template                          Komplet skabelon til decoding.yaml

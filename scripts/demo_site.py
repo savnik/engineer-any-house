@@ -48,7 +48,7 @@ model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7
 IFC4 built with <code>bim.py build</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-knowledge/assets/example/model.yaml">model.yaml</a>,
 exported with <code>bim.py export</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
 <model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
-  camera-orbit="-35deg 75deg auto" shadow-intensity="0.6" exposure="0.85" tone-mapping="neutral" environment-image="neutral"></model-viewer>
+  camera-orbit="-35deg 70deg 80%" min-camera-orbit="auto auto 10%" shadow-intensity="1" shadow-softness="0.6" exposure="1" tone-mapping="neutral" environment-image="legacy"></model-viewer>
 </body></html>
 """
 

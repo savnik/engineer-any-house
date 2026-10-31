@@ -111,3 +111,15 @@ def test_export_transparent_elevations(house, tmp_path):
     used = {p["material"] for m in doc["meshes"] for p in m["primitives"]}
     assert used - blend  # the shared originals stay in use for everything else
     assert export_glb(ifc, tmp_path / "x.glb", transparent=("FINDES-IKKE",)) == 1
+
+
+def test_export_linear_colours_and_style_names(house, tmp_path):
+    _, _, ifc = house
+    out = tmp_path / "hus.glb"
+    assert export_glb(ifc, out) == 0
+    mats = {m["name"]: m for m in _glb_json(out)["materials"]}
+    # brick is (0.70, 0.36, 0.26) in sRGB in the IFC; glTF wants linear values, otherwise it renders washed out
+    brick = next(m for n, m in mats.items() if "tegl" in n.lower())
+    assert brick["pbrMetallicRoughness"]["baseColorFactor"][:3] == pytest.approx([0.4479, 0.1065, 0.0551], abs=1e-3)
+    systems = [m for n, m in mats.items() if n.startswith("system:")]
+    assert systems and all(m.get("emissiveFactor") for m in systems)
