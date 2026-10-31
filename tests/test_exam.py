@@ -256,6 +256,47 @@ def test_plugin_arm_can_read_its_plugin():
         expect("plugin fra git-revision", (dst / "agents" / "electrician.md").is_file())
 
 
+def test_calc_tool_arm():
+    class Args:
+        web = False
+        max_turns = 12
+        model = ""
+        calc_tool = True
+    tools = exam.arm_args("plugin", Args, pathlib.Path("/tmp/x"), "a")
+    tools = tools[tools.index("--tools") + 1]
+    expect("regneværktøjsarmen får Bash og Write", "Bash" in tools and "Write" in tools)
+    base = exam.arm_args("basis", Args, None, "")
+    expect("basis-armen får aldrig Bash", "Bash" not in base[base.index("--tools") + 1])
+    expect("el har regneværktøj i registret", exam.calc_tools("electrical") == ["el.py"])
+    expect("fag uden regneværktøj", exam.calc_tools("painting") == [])
+    with tempfile.TemporaryDirectory() as tmp:
+        dst = exam.prepare_plugin("byg-electrical", pathlib.Path(tmp))
+        exam.install_calc_guard(dst, "electrical", ["el.py"])
+        hooks = json.loads((dst / "hooks" / "hooks.json").read_text(encoding="utf-8"))
+        cmd = hooks["hooks"]["PreToolUse"][-1]["hooks"][0]["command"]
+        expect("vagten installeret i plugin-kopien", "exam_calc_guard.py" in cmd and cmd.endswith("electrical el.py"))
+        el = dst / "skills" / "electrical-knowledge" / "scripts" / "el.py"
+        work = pathlib.Path(tmp) / "opgave"
+        work.mkdir()
+
+        def decide(tool, tool_input):
+            inp = {"tool_name": tool, "tool_input": tool_input, "cwd": str(work)}
+            out = subprocess.run([sys.executable, str(exam.EXAM_CALC_GUARD), "electrical", "el.py"],
+                                 input=json.dumps(inp), capture_output=True, text=True).stdout
+            return json.loads(out)["hookSpecificOutput"]["permissionDecision"]
+        expect("vagt: el.py tilladt", decide("Bash", {"command": f"python3 {el} iz --size 2.5"}) == "allow")
+        expect("vagt: anden kommando afvist", decide("Bash", {"command": "ls /"}) == "deny")
+        expect("vagt: kæde afvist", decide("Bash", {"command": f"python3 {el} test && ls"}) == "deny")
+        expect("vagt: tavlefil i opgavemappen", decide("Write", {"file_path": str(work / "tavle.json")}) == "allow")
+        expect("vagt: Write uden for opgavemappen afvist", decide("Write", {"file_path": "/tmp/x.json"}) == "deny")
+        expect("vagt: kun .json", decide("Write", {"file_path": str(work / "svar.md")}) == "deny")
+        expect("vagt: andre værktøjer afvist", decide("Edit", {"file_path": str(work / "tavle.json")}) == "deny")
+        bad = subprocess.run([sys.executable, str(exam.EXAM_CALC_GUARD), "electrical", "el.py"],
+                             input="ikke json", capture_output=True, text=True).stdout
+        expect("vagt: fejl afviser", '"deny"' in bad)
+    expect("originalen har ingen hooks", not (ROOT / "plugins" / "byg-electrical" / "hooks").exists())
+
+
 def test_real_sets():
     for trade in exam.all_trades():
         errors, _ = exam.validate(trade)
@@ -273,6 +314,7 @@ if __name__ == "__main__":
     test_validation()
     test_plugin_copy_without_memory()
     test_plugin_arm_can_read_its_plugin()
+    test_calc_tool_arm()
     test_real_sets()
     print(f"\n{len(FAILURES)} fejl")
     sys.exit(1 if FAILURES else 0)

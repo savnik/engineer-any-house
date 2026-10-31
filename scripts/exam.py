@@ -7,7 +7,7 @@ Brug:
   python3 scripts/exam.py run <fag> [--arm plugin|base|both] [--set development|holdout|all --release]
                                     [--id EL-001,...] [--only-failed] [--repeat 1] [--repeat-free 3]
                                     [--parallel 3] [--model M] [--grader sonnet] [--web]
-                                    [--with-memory] [--plugin-rev REV] [--no-base]
+                                    [--with-memory] [--plugin-rev REV] [--no-base] [--calc-tool]
   python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base]   seneste svar og bedømmelse (kun udvikling)
   python3 scripts/exam.py report <resultatfil> [<resultatfil> ...]
   python3 scripts/exam.py regrade <resultatfil> [--only-free]   ret gemte svar igen efter nyt facit/kriterier
@@ -18,6 +18,8 @@ måles plugin + hukommelse). Begge kører headless i en tom mappe uden brugerens
 (medmindre --web). Standard er kun plugin-armen: basis afhænger ikke af videnbasen, så rapporten genbruger det nyeste
 basis-svar pr. opgave. Holdout-sættet bruges kun til måling – aldrig som grundlag for ny tekst i videnbasen – og
 kræver --release. --only-failed kører kun de udviklingsopgaver, plugin-armen ikke bestod sidst.
+--calc-tool giver plugin-armen Bash, låst af scripts/hooks/exam_calc_guard.py til fagets regneværktøj
+(trade-registry 'regnevaerktoej'), og Write til en .json-inputfil i opgavemappen. Uden flaget har ingen arm Bash.
 Resultater gemmes i exam/<fag>/results/ (ignoreres af git). 'run' kræver login og koster tokens.
 """
 import argparse
@@ -443,6 +445,31 @@ def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, re
     return dst
 
 
+REGISTRY = ROOT / "plugins" / "byg-review" / "hooks" / "trade-registry.json"
+EXAM_CALC_GUARD = ROOT / "scripts" / "hooks" / "exam_calc_guard.py"
+
+
+def calc_tools(trade: str) -> list[str]:
+    """The trade's calculation tools from the trade registry ('regnevaerktoej'), or [] if it has none."""
+    entry = json.loads(REGISTRY.read_text(encoding="utf-8")).get("fag", {}).get(trade, {})
+    tool = entry.get("regnevaerktoej") or []
+    return [tool] if isinstance(tool, str) else list(tool)
+
+
+def install_calc_guard(plugin_dir: pathlib.Path, trade: str, tools: list[str]) -> None:
+    """Adds a PreToolUse hook to the plugin copy that allows Bash only for the trade's calculation tool.
+
+    The plugin copy has no byg-review dependency, so byg-review's calc_guard is not loaded; this hook takes its place
+    and fails closed. It is added to the copy only, never to the plugin in the repo."""
+    hooks_file = plugin_dir / "hooks" / "hooks.json"
+    hooks = json.loads(hooks_file.read_text(encoding="utf-8")) if hooks_file.exists() else {"hooks": {}}
+    command = " ".join(["python3", f'"{EXAM_CALC_GUARD}"', trade, *tools])
+    hooks.setdefault("hooks", {}).setdefault("PreToolUse", []).append(
+        {"matcher": "Bash|Write", "hooks": [{"type": "command", "command": command, "timeout": 10}]})
+    hooks_file.parent.mkdir(exist_ok=True)
+    hooks_file.write_text(json.dumps(hooks, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def shuffled_options(task: dict, seed: str = "") -> tuple[dict, str]:
     """Options in a stable, id-seeded order relabelled A, B, C ... and the relabelled key.
 
@@ -471,6 +498,8 @@ def build_prompt(task: dict) -> str:
 
 def arm_args(arm: str, args, plugin_dir: pathlib.Path | None, agent: str) -> list[str]:
     tools = "Read,Glob,Grep,Skill" + (",WebSearch,WebFetch" if args.web else "")
+    if arm == "plugin" and getattr(args, "calc_tool", False):
+        tools += ",Bash,Write"
     extra = ["--tools", tools, "--max-turns", str(args.max_turns)]
     if args.model:
         extra += ["--model", args.model]
@@ -612,6 +641,10 @@ def cmd_run(args) -> int:
     if args.set != "udvikling" and not args.release:
         print("Holdout-sættet køres kun ved udgivelse eller en større ændring af videnbasen – tilføj --release.")
         return 1
+    tools_for_run = calc_tools(args.fag) if args.calc_tool else []
+    if args.calc_tool and not tools_for_run:
+        print(f"--calc-tool: faget {args.fag} har intet regneværktøj i trade-registry.json")
+        return 1
     goals, tasks = load_trade(args.fag)
     if args.set != "alle":
         tasks = [t for t in tasks if t["saet"] == args.set]
@@ -645,6 +678,8 @@ def cmd_run(args) -> int:
         plugin_dir = (prepare_plugin(goals["plugin"], tmp, args.with_memory, args.plugin_rev)
                       if "plugin" in arms else None)
         kb_bytes = knowledge_base_bytes(plugin_dir) if plugin_dir else 0
+        if plugin_dir and args.calc_tool:
+            install_calc_guard(plugin_dir, args.fag, tools_for_run)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
             futures = [pool.submit(answer_task, t, arm, args, tmp, plugin_dir, agent) for t, arm in jobs]
             for fut in concurrent.futures.as_completed(futures):
@@ -655,9 +690,11 @@ def cmd_run(args) -> int:
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = EXAM_DIR / args.fag / "results"
     out_dir.mkdir(exist_ok=True)
-    out = out_dir / f"{stamp}-{args.arm}-{args.set}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
+    calc = "-regn" if args.calc_tool else ""
+    out = out_dir / f"{stamp}-{args.arm}-{args.set}{calc}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
     out.write_text(json.dumps({"fag": args.fag, "tid": stamp, "model": args.model or "agentens",
-                               "web": args.web, "hukommelse": args.with_memory, "plugin_rev": args.plugin_rev or "arbejdstræ",
+                               "web": args.web, "hukommelse": args.with_memory,
+                               "regnevaerktoej": tools_for_run, "plugin_rev": args.plugin_rev or "arbejdstræ",
                                "videnbase_bytes": kb_bytes, "resultater": results}, ensure_ascii=False, indent=2),
                    encoding="utf-8")
     print(f"\nGemt: {out.relative_to(ROOT)}\n")
@@ -872,6 +909,8 @@ def main() -> int:
     p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
     p.add_argument("--with-memory", action="store_true",
                    help="indlæs fagagentens lokale hukommelse (~/.claude/agent-memory) i plugin-armen")
+    p.add_argument("--calc-tool", action="store_true",
+                   help="plugin-armen får Bash låst til fagets regneværktøj (måleopsætning for regneværktøjer)")
     p = sub.add_parser("answers")
     p.add_argument("fag")
     p.add_argument("--id", default="", help="standard: udviklingsopgaver, plugin-armen ikke bestod sidst")
