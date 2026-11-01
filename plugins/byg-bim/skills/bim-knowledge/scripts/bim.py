@@ -34,6 +34,9 @@ Kør altid med:  python3 bim.py <kommando> ...   (scriptet skifter selv til sit 
                                            Mål i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger),
                                            rum (indvendige mål, areal, højde), afstand mellem to elementer,
                                            alle vægge på en etage. Altid med kilden (Byg_Kilde). En .yaml bygges først
+  elplan <fil.ifc|model.yaml> [--out <fil.md>]
+                                           El-plan pr. rum: punktliste, stikkontakter mod § 57 (BEK 1082/2016),
+                                           afbrydertype pr. lysgruppe (1-polet/korrespondance/kryds/krone)
   find  <fil.ifc> "<selector>"             Fx "IfcWall, /Status=EXISTING/" (ifcopenshell-selector)
   diff  <gammel.ifc> <ny.ifc>              Ændringer mellem to versioner
   pdf   <fil.pdf> --overview               Kontaktark over alle sider (find tegningerne først)

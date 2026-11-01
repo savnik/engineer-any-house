@@ -75,6 +75,7 @@ INSTALLATIONS = {
     "komfur": ("IfcElectricAppliance", "ELECTRICCOOKER"), "opvaskemaskine": ("IfcElectricAppliance", "DISHWASHER"),
     "vaskemaskine": ("IfcElectricAppliance", "WASHINGMACHINE"), "toerretumbler": ("IfcElectricAppliance", "TUMBLEDRYER"),
     "koeleskab": ("IfcElectricAppliance", "FRIDGE_FREEZER"),
+    "kraftstik": ("IfcOutlet", "POWEROUTLET"), "data": ("IfcOutlet", "DATAOUTLET"), "pir": ("IfcSensor", "MOVEMENTSENSOR"),
     "ventilationsaggregat": ("IfcUnitaryEquipment", "AIRHANDLER"), "ventilator": ("IfcFan", "PROPELLORAXIAL"),
     "luftventil": ("IfcAirTerminal", "DIFFUSER"), "emhaette": ("IfcAirTerminal", "USERDEFINED"),
     "solcellepanel": ("IfcSolarDevice", "SOLARPANEL"), "skorsten": ("IfcChimney", "NOTDEFINED"),
@@ -97,7 +98,7 @@ KIND_GROUP = {  # installations without a system
     **dict.fromkeys(("gulvafloeb", "broend", "draenpumpe"), "KLOAK"),
     **dict.fromkeys(("tavle", "stikkontakt", "lampe", "afbryder", "solcellepanel", "dimmer", "hovedafbryder", "kabelskab",
                      "elmaaler", "sikring", "automatsikring", "fejlstroemsafbryder", "overspaendingsbeskyttelse",
-                     "elbillader", "komfur", "opvaskemaskine", "vaskemaskine", "toerretumbler", "koeleskab"), "EL"),
+                     "elbillader", "kraftstik", "data", "pir", "komfur", "opvaskemaskine", "vaskemaskine", "toerretumbler", "koeleskab"), "EL"),
     **dict.fromkeys(("ventilationsaggregat", "ventilator", "luftventil", "emhaette"), "VENTILATION"),
     "skorsten": "BYGNING",
 }
@@ -1271,6 +1272,10 @@ class Builder:
                 self._pset(ent, "Pset_ManufacturerTypeInformation",
                            {k: v for k, v in (("Manufacturer", el.get("producent")), ("ModelLabel", el.get("model")))
                             if v})
+            if KIND_GROUP.get(el.get("art")) == "EL" or any(k in el for k in ("lysgruppe", "kreds", "dimmer")):
+                self._pset(ent, "Byg_El", {k: v for k, v in (
+                    ("Art", el.get("art")), ("Lysgruppe", ",".join(el.get("lysgruppe") or [])),
+                    ("Kreds", el.get("kreds")), ("Dimmer", el.get("dimmer"))) if v not in (None, "")})
             if el.get("system"):
                 if ent.is_a("IfcDistributionElement"):
                     api.system.assign_system(self.f, products=[ent], system=self.systems[str(el["system"])])

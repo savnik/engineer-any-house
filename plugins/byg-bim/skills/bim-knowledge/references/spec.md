@@ -146,7 +146,17 @@ roer:
 ```
 `bim.py panel model.yaml [--tavle TAVLE] --out panel.json` skriver tavlen i el.py's format: grupperne (systemer under tavlens system) med længde målt langs kablerne (længste rute fra tavlen, rundet op til hele meter, medmindre `el.laengde` er givet), RCD'erne, tavlens udstyr, kabelskab og stikledning og hvad hver gruppe forsyner. Kør derefter `el.py panel panel.json` (kontrol) og `diagram.py panel.json` (tavlediagram) fra byg-electrical.
 
-**art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle/kabelskab IfcElectricDistributionBoard · stikkontakt/elbillader IfcOutlet · lampe IfcLightFixture · afbryder/dimmer/hovedafbryder IfcSwitchingDevice · sikring/automatsikring/fejlstroemsafbryder/overspaendingsbeskyttelse IfcProtectiveDevice · elmaaler IfcFlowMeter ENERGYMETER · komfur/opvaskemaskine/vaskemaskine/toerretumbler/koeleskab IfcElectricAppliance · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
+**art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle/kabelskab IfcElectricDistributionBoard · stikkontakt IfcOutlet POWEROUTLET · kraftstik IfcOutlet POWEROUTLET · data IfcOutlet DATAOUTLET · elbillader IfcOutlet · lampe IfcLightFixture · afbryder/dimmer/hovedafbryder IfcSwitchingDevice · pir IfcSensor MOVEMENTSENSOR · sikring/automatsikring/fejlstroemsafbryder/overspaendingsbeskyttelse IfcProtectiveDevice · elmaaler IfcFlowMeter ENERGYMETER · komfur/opvaskemaskine/vaskemaskine/toerretumbler/koeleskab IfcElectricAppliance · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
+
+**El-punkter (el-plan):** stikkontakt, kraftstik, data, lampe, afbryder, pir og tavle får egenskabssættet `Byg_El`. Felterne er:
+- `lysgruppe` er den lysgruppe, som en lampe, PIR eller afbryder hører til. En afbryder med to grupper (`[S01-A, S01-B]`) er en kroneafbryder; andre punkter må kun have én gruppe.
+- `kreds` er gruppen/kredsen i tavlen.
+- `dimmer: true` markerer et dæmpbart punkt.
+
+`geometri` kan udelades for el-punkter (standard: lille boks; lampe: cylinder). `punkt` z er højden over gulv. `bim.py elplan` tæller stikkontakter pr. rum mod § 57 og udleder afbrydertypen pr. lysgruppe ud fra antallet af betjeningssteder:
+- 1 sted giver 1-polet.
+- 2 steder giver korrespondance.
+- 3 eller flere giver korrespondance + krydsafbrydere.
 
 ## generisk (nødudgang med rigtig klasse)
 ```yaml

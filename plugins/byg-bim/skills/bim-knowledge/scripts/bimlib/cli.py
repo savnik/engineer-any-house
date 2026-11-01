@@ -100,6 +100,11 @@ def _measure(a):
     return measure(pathlib.Path(a.ifc), a.a, a.b, room=a.space, storey_name=a.storey)
 
 
+def _elplan(a):
+    from .elplan import elplan
+    return elplan(pathlib.Path(a.ifc), a.out)
+
+
 def _diff(a):
     from .inspection import diff
     return diff(pathlib.Path(a.old), pathlib.Path(a.new))
@@ -173,6 +178,7 @@ def main(argv):
     x = sp.add_parser("find"); x.add_argument("ifc"); x.add_argument("selector"); x.set_defaults(fn=_find)
     x = sp.add_parser("measure"); x.add_argument("ifc"); x.add_argument("a", nargs="?"); x.add_argument("b", nargs="?")
     x.add_argument("--space"); x.add_argument("--storey"); x.set_defaults(fn=_measure)
+    x = sp.add_parser("elplan"); x.add_argument("ifc"); x.add_argument("--out"); x.set_defaults(fn=_elplan)
     x = sp.add_parser("diff"); x.add_argument("old"); x.add_argument("new"); x.set_defaults(fn=_diff)
     x = sp.add_parser("pdf"); x.add_argument("pdf"); x.add_argument("--pages"); x.add_argument("--dpi", type=int, default=200)
     x.add_argument("--overview", action="store_true")

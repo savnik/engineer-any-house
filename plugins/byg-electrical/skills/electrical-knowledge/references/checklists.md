@@ -11,6 +11,14 @@
 - [ ] Tilmelding til netselskab før arbejdet påbegyndes (solceller, batteri, varmepumpe, lader, ændring)
 - [ ] Grænseflader aftalt med tømrer, murer, vvs, ventilation
 
+## El-plan rum for rum
+- [ ] Areal pr. rum → stikkontakter efter § 57 (1 pr. påbegyndt 4 m², højst krav om 10; køkkenregion ≥ 3 på ≥ 2 grupper; bad/wc ≥ 1)
+- [ ] Faste apparater med eget udtag: emhætte, opvask, køl/frys, ovn, kogeplade (400 V), vaskemaskine, tørretumbler, varmepumpe, ladestander
+- [ ] Lysgrupper pr. rum; betjeningssteder ved hver indgang → afbrydertype (1-polet, korrespondance, kryds, krone); dæmpning og PIR
+- [ ] Data/tv, USB og stik ved seng, skrivebord og tv
+- [ ] Badeværelse: intet materiel i område 0–2 ud over det tilladte; stikkontakt uden for områderne
+- [ ] Fremtid: elbil, solceller, batteri – plads i tavle og tomrør
+
 ## Hold point – før lukning
 - [ ] Kabelføring og dåser fotodokumenteret med mål
 - [ ] Gennemføringer i dampspærre og brandadskillelser tætnet

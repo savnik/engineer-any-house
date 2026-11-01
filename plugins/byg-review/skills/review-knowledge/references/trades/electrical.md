@@ -1,6 +1,6 @@
 # Kontrol – el
 
-**rubric_version:** `kontrol-el@1.3` (2026-10-31) – 1.1: skel mellem eksisterende installation og nyt arbejde, punkter for sikring/tavle/dåser/beskyttelsesleder, kontrolprocedure. 1.2: praktisk erfaring fra 29 GingerTech-videoer (beskrivelser og automatiske transskriptioner), afklaring af 13 A/10 A og brandpasta, nyt punkt om eftersynets kvalitet. 1.3: punkt 16 om dimensionering og gruppeskema genkørt med `el.py`; RCD-typer og badeværelseszoner verificeret.
+**rubric_version:** `kontrol-el@1.3` (2026-11-01) – 1.1: skel mellem eksisterende installation og nyt arbejde, punkter for sikring/tavle/dåser/beskyttelsesleder, kontrolprocedure. 1.2: praktisk erfaring fra 29 GingerTech-videoer (beskrivelser og automatiske transskriptioner), afklaring af 13 A/10 A og brandpasta, nyt punkt om eftersynets kvalitet. 1.3: punkt 16 om dimensionering og gruppeskema genkørt med `el.py`; RCD-typer og badeværelseszoner verificeret; misforståelser fra el-planlægningsværktøjer (elplanen.dk) og kontrol af el-plan.
 
 ## 0. Afklar kontroltypen først
 - **Eksisterende installation** (tilstandsvurdering, fx elinstallationsrapport): bedømmes efter de krav, der gjaldt, da installationen blev udført eller omlagt – en fejl kræver, at både nugældende og tidligere regler er overtrådt. Metode: visuel gennemgang, stikprøvevis adskillelse (mindst én installationsdel pr. rum og alle typer) og relevante målinger [ANVISNING SIK-håndbog til elinstallationsrapporter, version 20 af 4.6.2026 – V].
@@ -43,6 +43,13 @@
 - Spots og dåser, der perforerer dampspærren.
 - Stikkontakter med jord i installation uden beskyttelse; plugin-solceller.
 - Gør-det-selv-forarbejde, som en installatør forventes at "godkende".
+
+### Misforståelser i el-planlægningsværktøjer (elplanen.dk-guide, gennemgået 2026-11-01)
+- **"Zone 3" i badeværelset:** Begrebet er forældet. Gældende regler bruger område 0, 1 og 2 (V, se normgrundlag). Bruger en leverance zone 3 som grundlag for placering eller IP-krav, er det et **væsentligt** fund. Hvornår zone 3 udgik, er T.
+- **"Stikkontakter skal altid være i zone 2 eller 3":** forkert. Stikkontakter skal placeres uden for område 0, 1 og 2. I praksis betyder det mindst 120 cm fra en åben bruser (V). Fundet er **kritisk**, hvis leverancen anviser placering i område 2.
+- **"Kraftstik sikret med 16 A"** som generel regel: sikringen følger kabeltværsnit, forlægning og materiel (kontrolpunkt 4). Fundet er **væsentligt**, hvis tallet bruges uden dimensionering.
+- **Montagehøjder og afstande fra planlægningsværktøjer** (stik 30 cm, afbryder 110 cm osv.) er praksis og ikke krav. Fremstilles de som lovkrav, gælder kontrolpunkt 14.
+- **El-plan uden kontrol af § 57:** Kontrollér antallet af stikkontakter pr. rum ud fra arealet (1 pr. påbegyndt 4 m², højst krav om 10; køkkenregion ≥ 3 på ≥ 2 grupper; bad/wc ≥ 1). Kontrollér også, at afbrydertypen passer til lysgrupper og betjeningssteder (korrespondance ved 2 steder, krydsafbryder ved 3 eller flere).
 
 ### Praktisk erfaring fra eleftersyn [ERFARING] – GingerTech (@GingerTech-FTW)
 Kilde: YouTube-kanal, der viser eleftersyn til elinstallationsrapporter efter SIK-håndbogen, fabrikantanvisninger og SIK-Meddelelser 1973–2011 (videobeskrivelser gennemgået 2026-09-26; kanalens identitet og autorisation er ikke verificeret). Brug fundene som tjekpunkter og eksempler – ikke som krav. Et krav skal have primærkilde.
