@@ -977,6 +977,9 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
             lambda s: mean(counted(s), "regnekald") if counted(s) else "–")) + " |")
         out.append("| Kørsler med regnekald | " + " | ".join(per_arm(lambda s: (
             f"{sum(1 for r in counted(s) if r.get('regnekald'))}/{len(counted(s))}" if counted(s) else "–"))) + " |")
+        if any("afviste_kald" in r for r in rows):
+            out.append("| Afviste kald pr. opgave | " + " | ".join(per_arm(lambda s: (
+                f"{sum(r.get('afviste_kald', 0) for r in s) / len(s):.2f}"))) + " |")
     if kb_sizes:
         out += ["", "Videnbasens størrelse (references + agentprompt): "
                 + ", ".join(f"{rev}: {size / 1024:.1f} KB" for rev, size in kb_sizes.items())]

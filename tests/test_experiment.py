@@ -73,7 +73,8 @@ def test_summarize():
         old.write_text(json.dumps({"fag": "electrical", "plugin_rev": "aaa", "resultater":
                                    [row(t, "plugin", False) for t in dev + held]}))
         new.write_text(json.dumps({"fag": "electrical", "plugin_rev": "bbb", "resultater":
-                                   [row(dev[0], "plugin", True), row(dev[0], "plugin", True),
+                                   [{**row(dev[0], "plugin", True), "afviste_kald": 1},
+                                    {**row(dev[0], "plugin", True), "afviste_kald": 0},
                                     row(dev[1], "plugin", True, "kørselsfejl: grænse")]}))
         s = experiment.summarize([old, new])["electrical"]
         g = s["grupper"]
@@ -85,6 +86,8 @@ def test_summarize():
         expect("rev fra plugin-filerne", s["rev"] == "aaa,bbb", s["rev"])
         expect("gentagelser gør ikke opgaven dyrere", abs(g[dev_group]["plugin"]["pris_usd"] - 0.3) < 1e-9,
                g[dev_group]["plugin"]["pris_usd"])
+        expect("afviste kald kun fra rækker, der tæller dem",
+               g[dev_group]["plugin"].get("afviste_kald_pr_opgave") == 0.5, g[dev_group]["plugin"])
 
 
 def test_validate():

@@ -138,7 +138,7 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
         groups: dict[str, dict] = {}
         for (tid, arm), rows in sorted(latest.items()):
             g = groups.setdefault(f"{rows[0]['saet']}/{where.get(tid, 'ukendt')}", {}).setdefault(
-                arm, {"ids": [], "failed": [], "cost": 0.0, "secs": [], "toks": [], "calls": [], "calc": []})
+                arm, {"ids": [], "failed": [], "cost": 0.0, "secs": [], "toks": [], "calls": [], "calc": [], "rejected": []})
             g["ids"].append(tid)
             if sum(r["bestaaet"] for r in rows) * 2 <= len(rows):
                 g["failed"].append(tid)
@@ -148,6 +148,7 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
             g["toks"] += [r["tokens_ud"] for r in rows if r.get("tokens_ud") is not None]
             g["calls"] += [sum(r["vaerktoejskald"].values()) for r in rows if "vaerktoejskald" in r]
             g["calc"] += [r.get("regnekald", 0) for r in rows if "vaerktoejskald" in r]
+            g["rejected"] += [r["afviste_kald"] for r in rows if "afviste_kald" in r]
         summary = {}
         for name, arms in sorted(groups.items()):
             summary[name] = {}
@@ -160,6 +161,8 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
                 if g["calls"]:  # only runs since tool calls were counted
                     s["vaerktoejskald_pr_opgave"] = round(sum(g["calls"]) / len(g["calls"]), 2)
                     s["regnekald_pr_opgave"] = round(sum(g["calc"]) / len(g["calc"]), 2)
+                if g["rejected"]:  # only runs since rejected calls were counted
+                    s["afviste_kald_pr_opgave"] = round(sum(g["rejected"]) / len(g["rejected"]), 2)
                 if name.startswith("udvikling/"):
                     s["fejlede"] = sorted(g["failed"])  # holdout task ids are never stored
                 summary[name][arm] = s
@@ -336,7 +339,9 @@ def cmd_show(args) -> int:
                         f"{p['tokens_ud_pr_opgave']} tokens_ud/opgave" if p.get("tokens_ud_pr_opgave") else "",
                         f"{p['vaerktoejskald_pr_opgave']} værktøjskald/opgave" if "vaerktoejskald_pr_opgave" in p
                         else "",
-                        f"{p['regnekald_pr_opgave']} regnekald/opgave" if "regnekald_pr_opgave" in p else "") if x)
+                        f"{p['regnekald_pr_opgave']} regnekald/opgave" if "regnekald_pr_opgave" in p else "",
+                        f"{p['afviste_kald_pr_opgave']} afviste/opgave" if "afviste_kald_pr_opgave" in p
+                        else "") if x)
                     print("    " + g + ": " + " · ".join(f"{arm} {a['bestaaet']}/{a['n']}" for arm, a in arms.items())
                           + (f" ({extra})" if extra else ""))
     if e.get("maalinger"):
