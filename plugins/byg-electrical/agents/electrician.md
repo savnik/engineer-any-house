@@ -41,6 +41,12 @@ Fag-id (til sagsmappen): `electrical`
 6. **Klimaskærm og brand:** installationer i installationszonen inden for dampspærren eller med lufttætte dåser og manchetter; brandtætning ved gennemføringer i brandadskillelser; spots og drivere egnede til isolering.
 7. **Eksisterende installationer** skal opfylde reglerne fra det tidspunkt, de blev etableret; ombygning og udvidelse følger gældende regler for de dele, der ændres. Ved ombygning (køkken, tavle, nye stikkontakter): læs normgrundlag "Ændring og udvidelse".
 8. **Verifikation og dokumentation:** eftersyn, afprøvning og rapportering efter DS/HD 60364-6 og Sikkerhedsstyrelsens vejledning – udleveres til ejeren.
+9. **El-plan** (nyt hus, renovering af en bolig eller et rum): gå rum for rum efter tjeklisten "El-plan rum for rum" og practice.md ("El-plan").
+   - Kontrollér stikkontakterne mod § 57. Køkkenet skal have ≥ 3 på ≥ 2 grupper.
+   - Udled afbrydertypen af lysgrupperne.
+   - Montagehøjder er praksis, ikke krav.
+
+   Findes der en BIM-model med el-punkter, så brug punktlisten fra `bim.py elplan` som grundlag.
 
 ## Du screener altid for
 - Manglende eller forkert type fejlstrømsafbryder; ældre installationer uden RCD.

@@ -29,7 +29,7 @@ FIELDS = {
     "rum": {"punkt", "omrids", "hoejde", "bund", "til_tag", "anvendelse", "afgraensning"},
     "systemer": {"art", "farve"},
     "installationer": {"art", "klasse", "predefined", "punkt", "geometri", "rotation", "system", "producent",
-                       "model", "materiale"},
+                       "model", "materiale", "lysgruppe", "kreds", "dimmer"},
     "roer": {"system", "punkter", "diameter", "godstykkelse", "materiale", "art"},
     "generisk": {"klasse", "predefined", "profil", "origo", "x_akse", "z_akse", "dybde", "mesh", "til_tag",
                  "materiale", "hoejde", "bund"},
@@ -295,6 +295,29 @@ def normalize(d: dict) -> dict:
     return d
 
 
+# el points are drawn as small boxes unless the spec gives geometri (b, d, h / diameter, h in mm)
+EL_DEFAULT_GEOMETRY = {
+    **{k: {"kasse": [80, 30, 80]} for k in ("stikkontakt", "kraftstik", "data", "afbryder", "pir")},
+    "lampe": {"cylinder": [200, 80]},
+}
+
+
+def _electrical_fields(el, path, errors):
+    """lysgruppe (lamp/PIR: one id; switch: one or more), kreds (circuit id) and dimmer – read by bim.py elplan."""
+    if "lysgruppe" in el:
+        g = el["lysgruppe"]
+        g = g if isinstance(g, list) else [g]
+        if not g or not all(isinstance(x, (str, int)) and str(x) for x in g):
+            errors.append(f"{path}.lysgruppe skal være et id eller en liste af id'er")
+        elif len(g) > 1 and el.get("art") != "afbryder":
+            errors.append(f"{path}.lysgruppe: kun en afbryder kan betjene flere lysgrupper")
+        el["lysgruppe"] = [str(x) for x in g]
+    if "kreds" in el:
+        el["kreds"] = str(el["kreds"])
+    if "dimmer" in el and not isinstance(el["dimmer"], bool):
+        errors.append(f"{path}.dimmer skal være true eller false")
+
+
 def _check_groups(d, errors):
     """grupper: [{id, navn, under, omfatter: [id patterns]}] – display groups (IfcGroup) besides the standard groups."""
     from .build import STANDARD_GROUPS
@@ -502,11 +525,12 @@ def _check_element(s, el, path, d, errors):
         if not el.get("art") and not el.get("klasse"):
             errors.append(f"{path}: angiv art (se spec.md) eller klasse (IFC-klasse)")
         el["punkt"] = _point(el.get("punkt"), 3, f"{path}.punkt", errors)
-        g = el.get("geometri")
+        g = el.setdefault("geometri", EL_DEFAULT_GEOMETRY.get(el.get("art")))
         if not (isinstance(g, dict) and (("kasse" in g and len(g["kasse"]) == 3) or
                                          ("cylinder" in g and len(g["cylinder"]) == 2))):
             errors.append(f"{path}.geometri skal være {{kasse: [b, d, h]}} eller {{cylinder: [diameter, h]}}")
         el["rotation"] = _num(el.get("rotation", 0), f"{path}.rotation", errors)
+        _electrical_fields(el, path, errors)
     elif s == "roer":
         el["punkter"] = _points(el.get("punkter"), 3, f"{path}.punkter", errors)
         el["diameter"] = _num(el.get("diameter"), f"{path}.diameter", errors, positive=True)

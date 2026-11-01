@@ -132,7 +132,17 @@ roer:
 ```
 `punkt` er bundens midtpunkt (z relativt til etagegulvet), og `rotation` drejer om lodret akse. Rør bliver IfcPipeSegment pr. segment med forbundne porte (`art: kanal` giver IfcDuctSegment) og får systemets farve. Eksempelhuset i `assets/example/model.yaml` har en komplet VVS-installation (centralvarme med fremløb og retur, radiatorer, varmtvandsbeholder, koldt og varmt brugsvand og spildevand til brønd), der kan bruges som skabelon. Modellér kun installationer fra godkendte fagnotater eller fotos/typeskilte.
 
-**art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle IfcElectricDistributionBoard · stikkontakt IfcOutlet · lampe IfcLightFixture · afbryder IfcSwitchingDevice · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
+**art → IFC:** kedel/pillefyr IfcBoiler · fjernvarmeunit/varmeveksler IfcHeatExchanger · varmepumpe IfcUnitaryEquipment · beholder/buffertank IfcTank STORAGE · ekspansionsbeholder IfcTank EXPANSION · radiator/konvektor IfcSpaceHeater · fordeler IfcPipeFitting · pumpe/draenpumpe IfcPump · ventil/blandeventil/sikkerhedsventil/kontraventil IfcValve · vandmaaler/energimaaler IfcFlowMeter · wc/haandvask/koekkenvask/bruser/badekar IfcSanitaryTerminal · gulvafloeb IfcWasteTerminal · broend IfcDistributionChamberElement · tavle IfcElectricDistributionBoard · stikkontakt IfcOutlet POWEROUTLET · kraftstik IfcOutlet POWEROUTLET · data IfcOutlet DATAOUTLET · lampe IfcLightFixture · afbryder IfcSwitchingDevice · pir IfcSensor MOVEMENTSENSOR · ventilationsaggregat IfcUnitaryEquipment · ventilator IfcFan · luftventil/emhaette IfcAirTerminal · solcellepanel IfcSolarDevice · skorsten IfcChimney. Ellers: `klasse: IfcXxx` og `predefined`.
+
+**El-punkter (el-plan):** stikkontakt, kraftstik, data, lampe, afbryder, pir og tavle får egenskabssættet `Byg_El`. Felterne er:
+- `lysgruppe` er den lysgruppe, som en lampe, PIR eller afbryder hører til. En afbryder med to grupper (`[S01-A, S01-B]`) er en kroneafbryder; andre punkter må kun have én gruppe.
+- `kreds` er gruppen/kredsen i tavlen.
+- `dimmer: true` markerer et dæmpbart punkt.
+
+`geometri` kan udelades for el-punkter (standard: lille boks; lampe: cylinder). `punkt` z er højden over gulv. `bim.py elplan` tæller stikkontakter pr. rum mod § 57 og udleder afbrydertypen pr. lysgruppe ud fra antallet af betjeningssteder:
+- 1 sted giver 1-polet.
+- 2 steder giver korrespondance.
+- 3 eller flere giver korrespondance + krydsafbrydere.
 
 ## generisk (nødudgang med rigtig klasse)
 ```yaml
