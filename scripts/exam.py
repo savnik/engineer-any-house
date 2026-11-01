@@ -460,10 +460,29 @@ def run_claude(prompt: str, cwd: pathlib.Path, extra: list[str], timeout: int, s
         return {"is_error": True, "result": "", "fejl": (r.stderr or r.stdout)[-500:]}
 
 
+REJECTED_TEXT = 400  # characters kept of a denied or failed call's command and error text
+
+
+def tool_target(name: str, inp: dict) -> str:
+    """What a tool call acted on: the Bash command, the file path or the search pattern."""
+    for key in ("command", "file_path", "pattern", "url", "query"):
+        if inp.get(key):
+            return str(inp[key])
+    return ""
+
+
+def result_text(block: dict) -> str:
+    """The text of a tool_result block (a string or a list of text parts)."""
+    content = block.get("content")
+    if isinstance(content, list):
+        return " ".join(str(c.get("text") or "") for c in content if isinstance(c, dict))
+    return str(content or "")
+
+
 def parse_stream(stdout: str, stderr: str = "") -> dict:
     """The final result event of a stream-json run, plus the tool calls per tool, the Bash commands and the
-    number of tool calls that were denied or failed."""
-    result, calls, commands, failed = None, {}, [], 0
+    tool calls that were denied or failed (tool, command or path, error text)."""
+    result, calls, commands, rejected, uses = None, {}, [], [], {}
     for raw in stdout.splitlines():
         try:
             ev = json.loads(raw)
@@ -475,16 +494,21 @@ def parse_stream(stdout: str, stderr: str = "") -> dict:
         for block in content if isinstance(content, list) else []:
             if block.get("type") == "tool_use":
                 name = block.get("name") or "?"
+                inp = block.get("input") or {}
                 calls[name] = calls.get(name, 0) + 1
+                uses[block.get("id")] = (name, tool_target(name, inp))
                 if name == "Bash":
-                    commands.append(str((block.get("input") or {}).get("command") or ""))
+                    commands.append(str(inp.get("command") or ""))
             elif block.get("type") == "tool_result" and block.get("is_error"):
-                failed += 1
+                name, target = uses.get(block.get("tool_use_id"), ("?", ""))
+                rejected.append({"vaerktoej": name, "kald": target[:REJECTED_TEXT],
+                                 "fejl": result_text(block).strip()[:REJECTED_TEXT]})
         if ev.get("type") == "result":
             result = ev
     if result is None:
         return {"is_error": True, "result": "", "fejl": (stderr or stdout)[-500:]}
-    return {**result, "vaerktoejskald": calls, "bash_kommandoer": commands, "afviste_kald": failed}
+    return {**result, "vaerktoejskald": calls, "bash_kommandoer": commands, "afviste_kald": len(rejected),
+            "afviste": rejected}
 
 
 def count_calc_calls(commands: list[str], tools: list[str]) -> int:
@@ -615,7 +639,8 @@ def answer_task(task: dict, arm: str, args, tmp: pathlib.Path, plugin_dir: pathl
              "tokens_ud": usage.get("output_tokens") or 0,
              "vaerktoejskald": calls,
              "regnekald": count_calc_calls(res.get("bash_kommandoer") or [], calc_tools(getattr(args, "fag", ""))),
-             "afviste_kald": res.get("afviste_kald", 0)}
+             "afviste_kald": res.get("afviste_kald", 0),
+             "afviste": res.get("afviste") or []}
     if res.get("is_error") or not text or (len(text) < 300 and LIMIT_RE.search(text)):
         reason = res.get("fejl") or (text.strip()[:120] if text else res.get("subtype") or "tomt svar")
         entry.update(bestaaet=False, fejl=True, note=f"kørselsfejl: {reason}")
@@ -856,6 +881,10 @@ def cmd_answers(args) -> int:
         print(f"## {r['id']} · {r['arm']} · {'bestået' if r['bestaaet'] else 'ikke bestået'} · {r.get('note', '')}\n")
         if "vaerktoejskald" in r:
             print(f"Værktøjskald: {format_calls(r)}\n")
+        for a in r.get("afviste") or []:
+            print(f"- afvist eller fejlet {a.get('vaerktoej')}: `{a.get('kald')}` → {a.get('fejl')}")
+        if r.get("afviste"):
+            print()
         print(r.get("svar", "").strip(), "\n")
         if r.get("bedoemmelse"):
             print("**Bedømmelse:**\n" + r["bedoemmelse"].strip() + "\n")

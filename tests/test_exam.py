@@ -189,8 +189,9 @@ def test_tool_calls():
         ev("user", {"type": "tool_result", "content": "ok"}),
         ev("assistant", {"type": "tool_use", "name": "Bash",
                          "input": {"command": "python3 /p/skills/electrical-knowledge/scripts/el.py iz --size 2.5"}}),
-        ev("assistant", {"type": "tool_use", "name": "Bash", "input": {"command": "ls /"}}),
-        ev("user", {"type": "tool_result", "content": "afvist", "is_error": True}),
+        ev("assistant", {"type": "tool_use", "id": "t9", "name": "Bash", "input": {"command": "ls /"}}),
+        ev("user", {"type": "tool_result", "tool_use_id": "t9", "is_error": True,
+                    "content": [{"type": "text", "text": "Bash kun til regneværktøjet"}]}),
         "ikke json",
         json.dumps({"type": "result", "result": "ANSWER: A", "total_cost_usd": 0.01, "num_turns": 4}),
     ]
@@ -198,6 +199,9 @@ def test_tool_calls():
     expect("strøm: resultatet findes", res["result"] == "ANSWER: A" and res["num_turns"] == 4, str(res))
     expect("strøm: kald pr. værktøj", res["vaerktoejskald"] == {"Read": 1, "Bash": 2}, str(res["vaerktoejskald"]))
     expect("strøm: afviste kald", res["afviste_kald"] == 1)
+    expect("strøm: det afviste kald gemmes med fejltekst",
+           res["afviste"] == [{"vaerktoej": "Bash", "kald": "ls /", "fejl": "Bash kun til regneværktøjet"}],
+           str(res["afviste"]))
     expect("regnekald tælles", exam.count_calc_calls(res["bash_kommandoer"], ["el.py"]) == 1)
     expect("andet værktøj er ikke regnekald", exam.count_calc_calls(["python3 hotel.py x"], ["el.py"]) == 0)
     expect("strøm uden resultat er fejl", exam.parse_stream(lines[1])["is_error"])
