@@ -50,6 +50,23 @@ def test_grading():
     expect("tal eksakt", exam.grade_number(exact, "ANSWER: 30 mA")[0])
     ratio = {"type": "tal", "facit": {"vaerdi": 0.87, "enhed": "-", "tolerance_pct": 2}}
     expect("dansk tal med tre decimaler bestået", exam.grade_number(ratio, "ANSWER: 0,867")[0])
+    # Ambiguous separators (F-024): either reading may match the key, never anything else.
+    ohm = {"type": "tal", "facit": {"vaerdi": 1.026, "enhed": "Ω", "tolerance_pct": 2}}
+    watt = {"type": "tal", "facit": {"vaerdi": 3680, "enhed": "W", "tolerance_pct": 2}}
+    expect("engelsk decimalpunktum bestået", exam.grade_number(ohm, "ANSWER: 1.026 Ω")[0])
+    expect("dansk decimalkomma bestået", exam.grade_number(ohm, "ANSWER: 1,026 Ω")[0])
+    expect("dansk tusindtalspunktum bestået", exam.grade_number(watt, "ANSWER: 3.680 W")[0])
+    expect("engelsk tusindtalskomma bestået", exam.grade_number(watt, "ANSWER: 3,680 W")[0])
+    expect("forkert tal dumper stadig", not exam.grade_number(ohm, "ANSWER: 1.126 Ω")[0])
+    expect("førende 0 er aldrig tusindtal", not exam.grade_number({"type": "tal", "facit": {"vaerdi": 867}},
+                                                                 "ANSWER: 0,867")[0])
+    expect("flere grupper er aldrig decimaltal",
+           not exam.grade_number({"type": "tal", "facit": {"vaerdi": 1234.567}}, "ANSWER: 1,234,567")[0])
+    for raw, want in [("1.026", [1026, 1.026]), ("1,026", [1.026, 1026]), ("12,500", [12500, 12.5]),
+                      ("0,867", [0.867]), ("1,5", [1.5]), ("1.234,5", [1234.5]), ("1,234,567", [1234567]),
+                      ("1234", [1234]), ("", [])]:
+        got = exam.number_readings(raw)
+        expect(f"læsninger af '{raw}'", got == want, f"fik {got}")
     expect("dom bestået", exam.grade_verdict("K1: ja\nVERDICT: BESTÅET")[0])
     expect("dom ikke bestået", not exam.grade_verdict("K1: nej\nVERDICT: IKKE BESTÅET")[0])
     expect("ingen dom", not exam.grade_verdict("K1: ja")[0])

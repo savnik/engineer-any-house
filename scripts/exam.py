@@ -339,22 +339,31 @@ def extract_answer(text: str, part: str = "") -> str | None:
     return matches[-1].strip("*`_ ") if matches else None
 
 
-# A thousands separator needs a leading group of 1–3 digits that does not start with 0: "0,867" and
-# "0.867" are always decimals.
+# How a number in an answer is read (F-024):
+# - A thousands separator needs a leading group of 1–3 digits that does not start with 0, so "0,867" and
+#   "0.867" are always decimals. Two or more groups ("1,234,567", "1.234.567") are always thousands.
+# - One leading digit, one comma and three digits ("1,026") is read as a Danish decimal, since the exam is
+#   answered in Danish. "12,500" keeps the English thousands reading, and "1.026" the Danish one.
+# - One group of three digits after 1–3 leading digits ("1.026", "1,026", "12,500") cannot be told apart from
+#   the text alone: the agent may write a Danish or an English separator. grade_number accepts the answer when
+#   either reading matches the key. The readings differ by a factor of 1000, so a wrong answer only slips
+#   through if it has the key's digits and is off by exactly 1000, which the grader cannot see anyway, since
+#   units are not compared.
 THOUSANDS_COMMA_RE = re.compile(r"-?[1-9]\d{0,2}(,\d{3})+")
 THOUSANDS_DOT_RE = re.compile(r"-?[1-9]\d{0,2}(\.\d{3})+")
-# One digit, one comma and three digits is read as a Danish decimal ("1,026" = 1.026), since the exam is
-# answered in Danish, where the thousands separator is a dot. Two or three leading digits with one comma
-# group ("12,500") stay ambiguous and keep the English thousands reading, as before.
 DANISH_DECIMAL_RE = re.compile(r"-?\d,\d{3}")
+AMBIGUOUS_RE = re.compile(r"-?[1-9]\d{0,2}[.,]\d{3}")
 
 
-def parse_number(s: str) -> float | None:
-    """Reads the first number in s; accepts Danish (1.234,5) and English (1,234.5 / 1234.5) notation."""
+def number_token(s: str) -> str | None:
+    """The first number in s without spaces, minus signs normalised and trailing separators removed."""
     m = re.search(r"[-−]?\d[\d.,  ]*", s or "")
     if not m:
         return None
-    raw = m.group(0).replace("−", "-").replace(" ", "").replace(" ", "").rstrip(".,")
+    return m.group(0).replace("−", "-").replace(" ", "").replace(" ", "").rstrip(".,")
+
+
+def read_number(raw: str) -> float | None:
     if "," in raw and "." in raw:
         raw = raw.replace(".", "").replace(",", ".") if raw.rfind(",") > raw.rfind(".") else raw.replace(",", "")
     elif "," in raw:
@@ -366,6 +375,24 @@ def parse_number(s: str) -> float | None:
         return float(raw)
     except ValueError:
         return None
+
+
+def parse_number(s: str) -> float | None:
+    """Reads the first number in s; accepts Danish (1.234,5) and English (1,234.5 / 1234.5) notation."""
+    raw = number_token(s)
+    return read_number(raw) if raw else None
+
+
+def number_readings(s: str) -> list[float]:
+    """The preferred reading first, then the other one when the separator is ambiguous ("1.026", "12,500")."""
+    raw = number_token(s)
+    value = read_number(raw) if raw else None
+    if value is None:
+        return []
+    if not AMBIGUOUS_RE.fullmatch(raw):
+        return [value]
+    decimal, thousands = float(raw.replace(",", ".")), float(raw.replace(",", "").replace(".", ""))
+    return [value, thousands if value == decimal else decimal]
 
 
 def grade_choice(task: dict, text: str, part: str = "") -> tuple[bool, str]:
@@ -381,14 +408,16 @@ def grade_number(task: dict, text: str, part: str = "") -> tuple[bool, str]:
     ans = extract_answer(text, part)
     if ans is None:
         return False, "ingen ANSWER-linje"
-    value = parse_number(ans)
-    if value is None:
+    values = number_readings(ans)
+    if not values:
         return False, f"intet tal i '{ans}'"
     f = task["facit"]
     target = float(f["vaerdi"])
     tol = abs(target) * float(f.get("tolerance_pct", 0)) / 100
-    ok = abs(value - target) <= max(tol, 1e-9)
-    return ok, f"svarede {value:g}, facit {target:g} {f.get('enhed', '')} ±{f.get('tolerance_pct', 0)} %"
+    hits = [v for v in values if abs(v - target) <= max(tol, 1e-9)]
+    value = (hits or values)[0]
+    read = f" (læst som {' eller '.join(f'{v:g}' for v in values)})" if len(values) > 1 else ""
+    return bool(hits), f"svarede {value:g}{read}, facit {target:g} {f.get('enhed', '')} ±{f.get('tolerance_pct', 0)} %"
 
 
 def grade_verdict(text: str) -> tuple[bool, str]:
