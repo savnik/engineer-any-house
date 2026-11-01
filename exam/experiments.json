@@ -3272,9 +3272,189 @@
         "EL-305",
         "EL-307"
       ],
-      "status": "forslag",
+      "status": "aaben",
       "beslutning": null,
-      "maalinger": {}
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-072002-plugin-udvikling-regn.json"
+            ],
+            "grupper": {
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.928,
+                  "pris_pr_bestaaet": 0.1546,
+                  "sek_pr_opgave": 30.8,
+                  "tokens_ud_pr_opgave": 2632,
+                  "vaerktoejskald_pr_opgave": 3.83,
+                  "regnekald_pr_opgave": 1.67,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "a591cab"
+    },
+    {
+      "id": "F-036",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Regressionsværn for grenen med regneværktøjet: regression-sættet, de gamle holdout-opgaver i tasks-a til tasks-c, køres én gang på grenen med og uden --calc-tool og sammenlignes med basislinjen 97f6b35 fra F-030 på 13 af 16, 13 af 15 og 8 af 9. Forventning: ingen gruppe falder 2 eller flere opgaver i nogen af armene, og pris pr. bestået højst 10 procent over basislinjen uden værktøj.",
+      "aendring": "Ingen ændring, kun måling af grenen mod basislinjen",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "97f6b35",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261031-210138-plugin-alle-97f6b35.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.373,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 26.7,
+                  "tokens_ud_pr_opgave": 2056
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0862,
+                  "sek_pr_opgave": 24.5,
+                  "tokens_ud_pr_opgave": 1934
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.744,
+                  "pris_pr_bestaaet": 0.093,
+                  "sek_pr_opgave": 25.3,
+                  "tokens_ud_pr_opgave": 2024
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.132,
+                  "pris_pr_bestaaet": 0.0762,
+                  "sek_pr_opgave": 23.3,
+                  "tokens_ud_pr_opgave": 1703,
+                  "fejlede": [
+                    "EL-001"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 28,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.976,
+                  "pris_pr_bestaaet": 0.0706,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1725,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.27,
+                  "pris_pr_bestaaet": 0.0794,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1770,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-115526-plugin-regression.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.533,
+                  "pris_pr_bestaaet": 0.1278,
+                  "sek_pr_opgave": 21.6,
+                  "tokens_ud_pr_opgave": 1658,
+                  "vaerktoejskald_pr_opgave": 1.56,
+                  "regnekald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.049,
+                  "pris_pr_bestaaet": 0.0874,
+                  "sek_pr_opgave": 20.1,
+                  "tokens_ud_pr_opgave": 1552,
+                  "vaerktoejskald_pr_opgave": 1.07,
+                  "regnekald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.723,
+                  "pris_pr_bestaaet": 0.0904,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1816,
+                  "vaerktoejskald_pr_opgave": 0.89,
+                  "regnekald_pr_opgave": 0.0
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "a591cab",
+      "laering": "Regressionsværn for grenen a591cab mod basislinjen 97f6b35 fra F-030, én kørsel pr. arm på de 40 regression-opgaver. Uden regneværktøj: 12 af 16, 12 af 15, 8 af 9, i alt 32 af 40 mod 34 af 40, 0.103 dollar pr. bestået mod 0.095, plus 8 procent, og 21.2 s mod 25.6 s pr. opgave. Hver gruppe faldt 1, inden for støjgrænsen på 2, og faldet blev ikke genkørt af budgethensyn. Med --calc-tool: 10 af 16, 13 af 15, 7 af 9, i alt 30 af 40, 0.125 dollar pr. bestået. Ingen af de 40 kørsler kaldte el.py, så forskellen fra armen uden værktøj er tilladelserne og Bash-værktøjets beskrivelse i prompten, cirka 7.600 input-tokens mere pr. opgave. De 10 ikke beståede kørsler blev genkørt 2 gange hver med den nye exam.py run --only-not-passed FIL, som ikke viser ID'er. 10 af 20 bestod, og ved flertal over 3 kørsler giver det 12 af 16, 14 af 15, 8 af 9, i alt 34 af 40. Genkørslen er skæv, fordi kun de fejlede opgaver fik ekstra kørsler, og basislinjen var også kun én kørsel. Fritekstopgaverne er støjkilden: 6 af 16 genkørsler af fri bestod mod 4 af 4 valg. Læring: et regressionsværn med én kørsel kan ikke skelne et fald på 1 til 2 pr. gruppe fra støj. Kør fri-opgaverne med --repeat-free 3 fra start, og genkør ikke kun de fejlede. Regression-sættet koster cirka 3.3 dollar uden værktøj og 3.8 dollar med pr. kørsel, og genkørsel af 10 fejlede fritekstopgaver 2 gange koster cirka 3.1 dollar. Samlet pris 10.2 dollar.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmaaling af en gren, der ikke er merget. Benchmarket opdateres ikke herfra, da det ville sænke regressionsgruppernes basislinje. Uden værktøj faldt hver gruppe højst 1 opgave, inden for støj. Med værktøj faldt tasks-a 3 i én kørsel, men et genkør af de ikke beståede kørsler 2 gange bragte den til 12 af 16, inden for støj."
     }
   ]
 }

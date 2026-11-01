@@ -5,7 +5,7 @@ Brug:
   python3 scripts/exam.py check [fag ...]           format og dækning (alle læringsmål i rollen har opgaver i begge sæt)
   python3 scripts/exam.py show <fag> [--answer-key] [--set development]   sættet og dækningskortet som markdown
   python3 scripts/exam.py run <fag> [--arm plugin|base|both] [--set development|holdout|regression|all --release]
-                                    [--id EL-001,...] [--only-failed] [--repeat 1] [--repeat-free 3]
+                                    [--id EL-001,...] [--only-failed] [--only-not-passed FIL] [--repeat 1] [--repeat-free 3]
                                     [--parallel 3] [--model M] [--grader sonnet] [--web]
                                     [--with-memory] [--plugin-rev REV] [--no-base] [--calc-tool]
   python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base] [--file FIL]
@@ -777,15 +777,20 @@ def cmd_run(args) -> int:
     arms = ["basis", "plugin"] if args.arm == "begge" else [args.arm]
     agent = f"{goals['plugin']}:{goals['agent']}"
     jobs = []
-    if args.only_run_errors:
-        # Re-run exactly the runs that errored in an earlier file, without printing their IDs.
+    rerun = args.only_run_errors or args.only_not_passed
+    if rerun:
+        # Re-run the runs that errored (or, with --only-not-passed, were not passed) in an earlier file, without
+        # printing their IDs - so hidden-set failures can be rechecked for noise without being seen.
         by_id = {t["id"]: t for t in tasks}
-        prev = json.loads(pathlib.Path(args.only_run_errors).read_text(encoding="utf-8"))
-        jobs = [(by_id[r["id"]], r["arm"]) for r in prev["resultater"]
-                if r.get("fejl") and r["id"] in by_id and r["arm"] in arms]
+        prev = json.loads(pathlib.Path(rerun).read_text(encoding="utf-8"))
+        picked = [(by_id[r["id"]], r["arm"]) for r in prev["resultater"]
+                  if (r.get("fejl") if args.only_run_errors else not r.get("bestaaet"))
+                  and r["id"] in by_id and r["arm"] in arms]
+        jobs = [job for job in picked for _ in range(args.repeat)]
         arms = sorted({arm for _, arm in jobs}) or arms
-        print(f"Kun de {len(jobs)} kørsler, der fejlede i {pathlib.Path(args.only_run_errors).name}")
-    for t in tasks if not args.only_run_errors else []:
+        what = "fejlede" if args.only_run_errors else "ikke bestod"
+        print(f"Kun de {len(picked)} kørsler, der {what} i {pathlib.Path(rerun).name} (× {args.repeat})")
+    for t in tasks if not rerun else []:
         repeats = max(args.repeat, args.repeat_free if t["type"] == "fri" else 0)
         jobs += [(t, arm) for _ in range(repeats) for arm in arms]
     print(f"{args.fag}: {len(tasks)} opgaver × {len(arms)} arm(e) = {len(jobs)} kørsler")
@@ -1051,6 +1056,9 @@ def main() -> int:
     p.add_argument("--only-failed", action="store_true", help="kun udviklingsopgaver, plugin-armen ikke bestod sidst")
     p.add_argument("--only-run-errors", metavar="FILE",
                    help="kør kun de kørsler igen, der fejlede (fx kontogrænse) i FILE")
+    p.add_argument("--only-not-passed", metavar="FILE",
+                   help="kør kun de kørsler igen, der ikke bestod i FILE (også skjulte, uden at vise ID'er); "
+                        "med --repeat N gentages hver N gange")
     p.add_argument("--release", action="store_true", help="kræves for at køre holdout- og regressionssættet")
     p.add_argument("--no-base", action="store_true", help="rapportér plugin-armen uden genbrugt basis")
     p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
