@@ -3127,9 +3127,10 @@
       "hypotese": "F-031 viste, at tasks-d (EL-301 og frem) er mættede, fordi opgaverne giver formel og værdier. Nye udviklingsopgaver, der kræver tabelopslag (Iz efter referenceinstallationsmetode med Ci for kabel i isolering, Ik,min ud fra kabeldata, spændingsfald over flere strækninger, gruppeskema med flere samvirkende tjek), skrevet af en anden agent, kan skille armene med og uden --calc-tool ad. Samtidig registreres antal værktøjskald pr. kørsel i resultatfilen. Forventning: armen uden værktøj består under 80 procent, så værktøjets effekt kan måles.",
       "aendring": "",
       "opgaver": [],
-      "status": "forslag",
+      "status": "aaben",
       "beslutning": null,
-      "maalinger": {}
+      "maalinger": {},
+      "rev_foer": "446edd4"
     },
     {
       "id": "F-033",

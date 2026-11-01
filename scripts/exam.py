@@ -516,7 +516,7 @@ def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, re
     dst = tmp / plugin
     if rev:
         # The plugin as it was at a git revision, so knowledge-base versions can be compared on equal terms.
-        export = tmp / f"rev-{rev}"
+        export = tmp / f"rev-{rev.replace('/', '-')}"  # branch names like origin/main hold a slash
         export.mkdir()
         archive = subprocess.run(["git", "-C", str(ROOT), "archive", rev, f"plugins/{plugin}"],
                                  capture_output=True, check=True).stdout
@@ -785,7 +785,7 @@ def cmd_run(args) -> int:
     out_dir = EXAM_DIR / args.fag / "results"
     out_dir.mkdir(exist_ok=True)
     calc = "-regn" if args.calc_tool else ""
-    out = out_dir / f"{stamp}-{args.arm}-{args.set}{calc}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
+    out = out_dir / f"{stamp}-{args.arm}-{args.set}{calc}{'-' + args.plugin_rev.replace('/', '-') if args.plugin_rev else ''}.json"
     out.write_text(json.dumps({"fag": args.fag, "tid": stamp, "model": args.model or "agentens",
                                "web": args.web, "hukommelse": args.with_memory,
                                "regnevaerktoej": tools_for_run, "plugin_rev": args.plugin_rev or "arbejdstræ",
