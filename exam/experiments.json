@@ -2861,8 +2861,8 @@
       "opgaver": [
         "EL-141"
       ],
-      "status": "aaben",
-      "beslutning": null,
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
       "maalinger": {
         "electrical": {
           "foer": {
@@ -2947,10 +2947,101 @@
                 }
               }
             }
+          },
+          "efter": {
+            "rev": "94bf284",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261031-221830-plugin-alle-94bf284.json",
+              "20261101-052725-plugin-alle-94bf284.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.4,
+                  "pris_pr_bestaaet": 0.1077,
+                  "sek_pr_opgave": 25.5,
+                  "tokens_ud_pr_opgave": 2009
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.103,
+                  "pris_pr_bestaaet": 0.0849,
+                  "sek_pr_opgave": 23.5,
+                  "tokens_ud_pr_opgave": 1852
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.786,
+                  "pris_pr_bestaaet": 0.0983,
+                  "sek_pr_opgave": 25.5,
+                  "tokens_ud_pr_opgave": 2079
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 29,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.172,
+                  "pris_pr_bestaaet": 0.0749,
+                  "sek_pr_opgave": 22.0,
+                  "tokens_ud_pr_opgave": 1778,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 2.02,
+                  "pris_pr_bestaaet": 0.0777,
+                  "sek_pr_opgave": 21.2,
+                  "tokens_ud_pr_opgave": 1693,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-139"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.493,
+                  "pris_pr_bestaaet": 0.0933,
+                  "sek_pr_opgave": 22.1,
+                  "tokens_ud_pr_opgave": 1806,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
           }
         }
       },
-      "rev_foer": "64e2e4a"
+      "rev_foer": "64e2e4a",
+      "laering": "Slankning efter F-029 virker. Regneværktøjets peger er nu én linje, og dimensioneringstekst, tavleskabeloner og undertavle ligger i calc-tools.md, der kun læses ved dimensionering. Det gav samme holdout som basislinjen 97f6b35 (34 af 40 pr. opgave), udvikling 71 mod 72 og 22.9 s mod 23.9 s pr. opgave. Ture pr. opgave faldt fra 6.7 i F-029 til cirka 2.7. Pris pr. bestået steg 5 procent (0.124 mod 0.118 dollar pr. kørsel) og ligger inden for tolerancen. EL-141, som F-029 ødelagde, bestod 2 af 3 som før. Faldet i udvikling/tasks-b var to fritekstopgaver, der ikke hang sammen med ændringen, og de bestod ved et efterfølgende tjek. Med 3 gentagelser kan en gruppe på 28 opgaver tilsyneladende flytte sig 2 af ren støj. Videnbasens målte størrelse er 78.6 KB, fordi schematic.md og calc-tools.md tælles med, selv om de ikke læses i eksamen. Ikke målt: selve regneværktøjet, da eksamensarmen ikke har Bash. Det kræver beregningsopgaver og exam.py run --calc-tool, hvilket er F-031. Den fulde kørsel ramte kontogrænsen og blev færdiggjort med --only-run-errors.",
+      "slut": "2026-11-01",
+      "vurdering": "forkast",
+      "begrundelse": "Reglen foreslår forkast, fordi udvikling/tasks-b faldt 28 til 26. De to fejlede opgaver handler om autorisation og RCD-grænsen, som ændringen ikke rørte. I F-029 var det to andre opgaver i samme gruppe, der fejlede. Et målrettet tjek gav bagefter 3 af 3 og 2 af 3, altså bestået ved flertal. Det er ikke grundlag for behold. En tilbagerulning til rev_foer 64e2e4a ville genindføre F-029-teksten, som målte dårligere: holdout/tasks-a 12 mod 13. Ændringen bliver derfor på grenen, og budgettet på 20 dollar er brugt, så der er ingen ny fuld måling.",
+      "rev_efter": "94bf284",
+      "pr": "#40"
     }
   ]
 }
