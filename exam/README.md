@@ -60,6 +60,7 @@ python3 scripts/exam.py run electrical --set holdout --release --plugin-rev <fø
 python3 scripts/exam.py run electrical --arm base             # kun når modellen er skiftet
 python3 scripts/exam.py report exam/electrical/results/<fil>.json
 python3 scripts/exam.py regrade exam/electrical/results/<fil>.json --only-free   # ret gemte svar igen efter ændret rettemaske
+python3 scripts/exam.py regrade exam/electrical/results/<fil>.json --only-deterministic --tag efter   # kun valg og tal, uden censor
 ```
 
 ### Effektiv brug
@@ -157,7 +158,8 @@ Målt 17.–18. okt. 2026 på el, vvs og ventilation (svende- og AK-niveau). Tal
 - **Effort i frontmatter virker ikke i eksamen.** `claude -p --agent` ignorerer `effort:` i agentfilen, så plugin-armen kører med modellens standard (Opus 5.5: medium). I rigtige sager kører fagagenten som subagent med frontmatter-effort. Et effort-forsøg er derfor tomt, indtil `exam.py` sender `--effort` videre (F-016, forslag F-017).
 - **Hastighed i sager måles ikke af eksamen.** Eksamen er enkeltspørgsmål uden web, uden Write og med ca. 2 ture. Forsinkelse i sager (lange Write-blokke, web-opslag, kontrol-loop) skal måles med `usage.py` omkring en udgivelse (F-015). Én prompt kan svinge fra 1,6k til 68k output-tokens, så lange kald er en hale, der kun ses over mange kørsler.
 - **Censor-LLM'en.** Den krævede paragrafcitater, til det blev forbudt i censorprompten. Sammensatte kriterier får fagligt gode svar til at dumpe. Hold ét krav pr. kriterium. Brug `regrade`, når rettemasken ændres.
-- **Talparseren.** `parse_number` læser et dansk decimaltal med præcis tre decimaler (`0,867`) som tusindtal (867). Et korrekt svar kan derfor dumpe. Se `exam.py answers`, før et fald på en talopgave tolkes som en regression (F-023, forslag F-024).
+- **Talparseren (F-024).** Et komma efter et 0 eller et enkelt ciffer er altid decimalkomma (`0,867`, `1,026`). Tusindtal kræver et forreste ciffer, der ikke er 0. Er tallet tvetydigt, altså 1–3 cifre, én separator og præcis tre cifre (`1.026`, `3,680`), godtages begge læsninger mod facit. Før F-024 kunne et korrekt dansk decimaltal med tre decimaler dumpe, så holdout-tal i benchmarket fra før F-024 kan være for lave på talopgaver.
+- **Værktøjsforsøg genbedømmes deterministisk.** Ændres kun valg- eller talbedømmelsen, så kør `exam.py regrade <filer> --only-deterministic` på de gemte svar. Kør det én gang med det gamle værktøj (før) og én gang med det nye (efter). Censoren kaldes ikke, og frie delvurderinger i case-opgaver genbruges, så prisen er 0 $. Resultatfiler fra før den engelske omdøbning (fag `statik`, `SVAR:`) migreres med `--trade structural`.
 - **Holdout-vagten gælder også underagenter.** CI-agenten kan i dag ikke få en underagent til at rette opgavefilerne, fordi vagten blokerer den også. Rettemaske- og opgaveforsøg kræver derfor en anden vej (F-021, forslag F-022).
 - **Ufuldstændige målinger.** En måling, hvor opgaver mangler (kørselsfejl, afbrudt kørsel, `--only-failed`), siger kun noget om de opgaver, der blev kørt. Skriv i læringen, hvad der ikke blev målt. Et anslået tal (pris, tokens, tid) skal stå som "anslået" og må ikke afgøre et forsøg. Prisen tæller hele opgaven, også gentagne kald og censorens rettelse.
 - **Loftet.** Opgaverne er skrevet af samme modelfamilie, som tager eksamen. Især mesteropgaver bliver derfor nemme for modellen. Konkrete tal og paragraffer er sværere at gætte og giver bedre adskillelse. Vil du have et reelt mål på mesterniveau, skal opgaverne skrives eller gennemgås af en fagperson.

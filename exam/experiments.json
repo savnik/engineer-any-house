@@ -2185,7 +2185,7 @@
     },
     {
       "id": "F-024",
-      "dato": "2026-10-18",
+      "dato": "2026-11-01",
       "fag": [
         "alle"
       ],
@@ -2193,9 +2193,405 @@
       "hypotese": "exam.py parse_number tolker et dansk decimaltal med præcis tre decimaler (fx 0,867) som engelsk tusindtal (867), så korrekte talsvar dumper (STAT-132 i F-023). Rettelse: et komma efter et indledende 0 eller et enkelt ciffer er decimaltegn, og et tal med tusindtalskomma kræver et førende ciffer forskelligt fra 0. Tilføj en test. Kør rebedoem på seneste resultater. Forventning: STAT-132 og eventuelle holdout-tal består ved rebedoem, ingen andre ændringer.",
       "aendring": "",
       "opgaver": [],
-      "status": "forslag",
-      "beslutning": null,
-      "maalinger": {}
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "structural": {
+          "foer": {
+            "rev": "5213943",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261018-195918-basis-udvikling-rebedoemt-rebedoemt-foer.json",
+              "20261018-220541-plugin-alle-5213943-rebedoemt-rebedoemt-foer.json",
+              "20261019-003911-basis-udvikling-rebedoemt-foer.json",
+              "20261019-004310-basis-holdout-rebedoemt-foer.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "basis": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.294,
+                  "pris_pr_bestaaet": 0.098,
+                  "sek_pr_opgave": 27.7,
+                  "tokens_ud_pr_opgave": 1788
+                },
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.327,
+                  "pris_pr_bestaaet": 0.1091,
+                  "sek_pr_opgave": 30.6,
+                  "tokens_ud_pr_opgave": 2140
+                }
+              },
+              "holdout/tasks-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 9,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.971,
+                  "pris_pr_bestaaet": 0.1079,
+                  "sek_pr_opgave": 21.0,
+                  "tokens_ud_pr_opgave": 1548
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 8,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.946,
+                  "pris_pr_bestaaet": 0.1182,
+                  "sek_pr_opgave": 23.5,
+                  "tokens_ud_pr_opgave": 1824
+                }
+              },
+              "udvikling/tasks-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 28,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.872,
+                  "pris_pr_bestaaet": 0.1026,
+                  "sek_pr_opgave": 19.7,
+                  "tokens_ud_pr_opgave": 1314,
+                  "fejlede": [
+                    "STAT-012",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 31,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.597,
+                  "pris_pr_bestaaet": 0.0838,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1519,
+                  "fejlede": [
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "basis": {
+                  "n": 31,
+                  "bestaaet": 29,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.92,
+                  "pris_pr_bestaaet": 0.0662,
+                  "sek_pr_opgave": 15.3,
+                  "tokens_ud_pr_opgave": 1022,
+                  "fejlede": [
+                    "STAT-123",
+                    "STAT-132"
+                  ]
+                },
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 30,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.906,
+                  "pris_pr_bestaaet": 0.0635,
+                  "sek_pr_opgave": 18.9,
+                  "tokens_ud_pr_opgave": 1289,
+                  "fejlede": [
+                    "STAT-132"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "5213943",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261018-195918-basis-udvikling-rebedoemt-rebedoemt-efter.json",
+              "20261018-220541-plugin-alle-5213943-rebedoemt-rebedoemt-efter.json",
+              "20261019-003911-basis-udvikling-rebedoemt-efter.json",
+              "20261019-004310-basis-holdout-rebedoemt-efter.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "basis": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.294,
+                  "pris_pr_bestaaet": 0.098,
+                  "sek_pr_opgave": 27.7,
+                  "tokens_ud_pr_opgave": 1788
+                },
+                "plugin": {
+                  "n": 3,
+                  "bestaaet": 3,
+                  "opgaver_hash": "9b5f1814b754",
+                  "pris_usd": 0.327,
+                  "pris_pr_bestaaet": 0.1091,
+                  "sek_pr_opgave": 30.6,
+                  "tokens_ud_pr_opgave": 2140
+                }
+              },
+              "holdout/tasks-b": {
+                "basis": {
+                  "n": 13,
+                  "bestaaet": 9,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.971,
+                  "pris_pr_bestaaet": 0.1079,
+                  "sek_pr_opgave": 21.0,
+                  "tokens_ud_pr_opgave": 1548
+                },
+                "plugin": {
+                  "n": 13,
+                  "bestaaet": 10,
+                  "opgaver_hash": "8578c18039df",
+                  "pris_usd": 0.946,
+                  "pris_pr_bestaaet": 0.0946,
+                  "sek_pr_opgave": 23.5,
+                  "tokens_ud_pr_opgave": 1824
+                }
+              },
+              "udvikling/tasks-a": {
+                "basis": {
+                  "n": 32,
+                  "bestaaet": 28,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.872,
+                  "pris_pr_bestaaet": 0.1026,
+                  "sek_pr_opgave": 19.7,
+                  "tokens_ud_pr_opgave": 1314,
+                  "fejlede": [
+                    "STAT-012",
+                    "STAT-015",
+                    "STAT-016",
+                    "STAT-033"
+                  ]
+                },
+                "plugin": {
+                  "n": 32,
+                  "bestaaet": 31,
+                  "opgaver_hash": "95b7bb7aff23",
+                  "pris_usd": 2.597,
+                  "pris_pr_bestaaet": 0.0838,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1519,
+                  "fejlede": [
+                    "STAT-016"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "basis": {
+                  "n": 31,
+                  "bestaaet": 30,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.92,
+                  "pris_pr_bestaaet": 0.064,
+                  "sek_pr_opgave": 15.3,
+                  "tokens_ud_pr_opgave": 1022,
+                  "fejlede": [
+                    "STAT-123"
+                  ]
+                },
+                "plugin": {
+                  "n": 31,
+                  "bestaaet": 31,
+                  "opgaver_hash": "05274c729412",
+                  "pris_usd": 1.906,
+                  "pris_pr_bestaaet": 0.0615,
+                  "sek_pr_opgave": 18.9,
+                  "tokens_ud_pr_opgave": 1289,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        },
+        "electrical": {
+          "foer": {
+            "rev": "df738bf",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-074554-plugin-alle-df738bf-rebedoemt-foer.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.371,
+                  "pris_pr_bestaaet": 0.1055,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1621
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.052,
+                  "pris_pr_bestaaet": 0.0809,
+                  "sek_pr_opgave": 18.7,
+                  "tokens_ud_pr_opgave": 1478
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.724,
+                  "pris_pr_bestaaet": 0.0905,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1844
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.997,
+                  "pris_pr_bestaaet": 0.0713,
+                  "sek_pr_opgave": 16.5,
+                  "tokens_ud_pr_opgave": 1298,
+                  "fejlede": [
+                    "EL-045"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.761,
+                  "pris_pr_bestaaet": 0.0677,
+                  "sek_pr_opgave": 15.6,
+                  "tokens_ud_pr_opgave": 1207,
+                  "fejlede": [
+                    "EL-136",
+                    "EL-141"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.285,
+                  "pris_pr_bestaaet": 0.0803,
+                  "sek_pr_opgave": 19.6,
+                  "tokens_ud_pr_opgave": 1578,
+                  "fejlede": [
+                    "EL-211",
+                    "EL-221"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "df738bf",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-074554-plugin-alle-df738bf-rebedoemt-efter.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.371,
+                  "pris_pr_bestaaet": 0.1055,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1621
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.052,
+                  "pris_pr_bestaaet": 0.0809,
+                  "sek_pr_opgave": 18.7,
+                  "tokens_ud_pr_opgave": 1478
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.724,
+                  "pris_pr_bestaaet": 0.0905,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1844
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.997,
+                  "pris_pr_bestaaet": 0.0713,
+                  "sek_pr_opgave": 16.5,
+                  "tokens_ud_pr_opgave": 1298,
+                  "fejlede": [
+                    "EL-045"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.761,
+                  "pris_pr_bestaaet": 0.0677,
+                  "sek_pr_opgave": 15.6,
+                  "tokens_ud_pr_opgave": 1207,
+                  "fejlede": [
+                    "EL-136",
+                    "EL-141"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 17,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.285,
+                  "pris_pr_bestaaet": 0.0756,
+                  "sek_pr_opgave": 19.6,
+                  "tokens_ud_pr_opgave": 1578,
+                  "fejlede": [
+                    "EL-221"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "446edd4",
+      "laering": "Talregel: et komma efter 0 eller et enkelt ciffer er altid decimalkomma, og tusindtal kræver et forreste ciffer 1-9. Tvetydige tal (1-3 cifre, én separator, præcis tre cifre, fx 1.026 eller 3,680) godtages i begge læsninger, fordi agenter skriver både 1.026 Ω og 3.680 W. Reglen alene (32c322a) flyttede STAT-132 og 2 statik-holdoutopgaver, tvetydighedsreglen flyttede kun EL-211. Holdout-tal i benchmarket fra før F-024 undervurderede statik (holdout tasks-b fra 8/13 til 10/13). Ikke målt: kun gemte svar er genbedømt, ingen nye kørsler og intet holdoutbudget brugt. El har ingen basisarm i de genbedømte filer. El-før er plugin df738bf fra PR #42, som endnu ikke er på main. Statik-filerne fra F-028 er migreret fra fag statik med --trade structural. Værktøjsforsøg genbedømmes deterministisk med regrade --only-deterministic til 0 $.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Værktøjsforsøg afgøres manuelt. Før-genbedømmelsen med det gamle værktøj (9b268a9) gengav de oprindelige resultater præcist, 0 opgaver ændret. Efter (9e1c854) ændres kun opgaver, hvor talparseren var årsagen: STAT-132 (plugin og basis), EL-211 og 2 holdout-opgaver i statik. Ingen regressioner i nogen gruppe.",
+      "rev_efter": "9e1c854",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/43"
     },
     {
       "id": "F-025",

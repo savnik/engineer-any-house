@@ -27,7 +27,14 @@ def test_parsing():
     expect("sidste svar-linje vinder", exam.extract_answer("ANSWER: A\n...\nANSWER: C") == "C")
     expect("ingen svar-linje", exam.extract_answer("Jeg mener B") is None)
     for raw, want in [("30 mA", 30), ("2,5 mm²", 2.5), ("1.500 W", 1500), ("1,234.5", 1234.5),
-                      ("1.234,5 kWh", 1234.5), ("0.4 s", 0.4), ("−3,2 %", -3.2), ("12 345 l", 12345)]:
+                      ("1.234,5 kWh", 1234.5), ("0.4 s", 0.4), ("−3,2 %", -3.2), ("12 345 l", 12345),
+                      # Danish decimals with exactly three decimals (F-024): a leading 0 or a single digit
+                      # before the comma is a decimal comma, never an English thousands separator.
+                      ("0,867", 0.867), ("η = 0,867 (-)", 0.867), ("−0,125 m", -0.125), ("1,026", 1.026),
+                      ("9,999 kN", 9.999), ("0.867", 0.867), ("0,000", 0.0),
+                      # Thousands separators need a leading digit other than 0.
+                      ("1,234,567 kr", 1234567), ("12,500", 12500), ("123,456", 123456), ("1.026 kg", 1026),
+                      ("12.500 W", 12500), ("1.234.567", 1234567), ("1.026,5", 1026.5), ("1,026.5", 1026.5)]:
         got = exam.parse_number(raw)
         expect(f"tal '{raw}'", got == want, f"fik {got}")
 
@@ -41,6 +48,25 @@ def test_grading():
     expect("tal uden for tolerance", not exam.grade_number(number, "ANSWER: 10,6 A")[0])
     exact = {"type": "tal", "facit": {"vaerdi": 30, "enhed": "mA"}}
     expect("tal eksakt", exam.grade_number(exact, "ANSWER: 30 mA")[0])
+    ratio = {"type": "tal", "facit": {"vaerdi": 0.87, "enhed": "-", "tolerance_pct": 2}}
+    expect("dansk tal med tre decimaler bestået", exam.grade_number(ratio, "ANSWER: 0,867")[0])
+    # Ambiguous separators (F-024): either reading may match the key, never anything else.
+    ohm = {"type": "tal", "facit": {"vaerdi": 1.026, "enhed": "Ω", "tolerance_pct": 2}}
+    watt = {"type": "tal", "facit": {"vaerdi": 3680, "enhed": "W", "tolerance_pct": 2}}
+    expect("engelsk decimalpunktum bestået", exam.grade_number(ohm, "ANSWER: 1.026 Ω")[0])
+    expect("dansk decimalkomma bestået", exam.grade_number(ohm, "ANSWER: 1,026 Ω")[0])
+    expect("dansk tusindtalspunktum bestået", exam.grade_number(watt, "ANSWER: 3.680 W")[0])
+    expect("engelsk tusindtalskomma bestået", exam.grade_number(watt, "ANSWER: 3,680 W")[0])
+    expect("forkert tal dumper stadig", not exam.grade_number(ohm, "ANSWER: 1.126 Ω")[0])
+    expect("førende 0 er aldrig tusindtal", not exam.grade_number({"type": "tal", "facit": {"vaerdi": 867}},
+                                                                 "ANSWER: 0,867")[0])
+    expect("flere grupper er aldrig decimaltal",
+           not exam.grade_number({"type": "tal", "facit": {"vaerdi": 1234.567}}, "ANSWER: 1,234,567")[0])
+    for raw, want in [("1.026", [1026, 1.026]), ("1,026", [1.026, 1026]), ("12,500", [12500, 12.5]),
+                      ("0,867", [0.867]), ("1,5", [1.5]), ("1.234,5", [1234.5]), ("1,234,567", [1234567]),
+                      ("1234", [1234]), ("", [])]:
+        got = exam.number_readings(raw)
+        expect(f"læsninger af '{raw}'", got == want, f"fik {got}")
     expect("dom bestået", exam.grade_verdict("K1: ja\nVERDICT: BESTÅET")[0])
     expect("dom ikke bestået", not exam.grade_verdict("K1: nej\nVERDICT: IKKE BESTÅET")[0])
     expect("ingen dom", not exam.grade_verdict("K1: ja")[0])
@@ -188,6 +214,36 @@ def test_case():
         exam.EXAM_DIR = original
 
 
+def test_regrade_deterministic():
+    """--only-deterministic grades choice/number parts again and reuses stored free-part verdicts (F-024)."""
+    t = case_task(dele=[{"del": "a", "type": "tal", "spoergsmaal": "Udnyttelse?",
+                         "facit": {"vaerdi": 0.87, "enhed": "-", "tolerance_pct": 2}},
+                        {"del": "b", "type": "fri", "spoergsmaal": "Hvorfor?", "kriterier": ["Begrunder"]}])
+    stored = {"svar": "ANSWER a: 0,867\nANSWER b: fordi", "bestaaet": False, "dele": {"a": False, "b": True}}
+    expect("case med gemte fri-dele kan genbedømmes", exam.deterministic_regradable(t, stored))
+    expect("case uden gemte fri-dele springes over", not exam.deterministic_regradable(t, {"svar": "x"}))
+    expect("fri-opgave springes over", not exam.deterministic_regradable({"type": "fri"}, stored))
+    expect("tal-opgave genbedømmes", exam.deterministic_regradable({"type": "tal"}, {}))
+    original = exam.run_claude
+
+    def no_examiner(*_a, **_k):
+        raise AssertionError("censoren må ikke kaldes")
+
+    try:
+        exam.run_claude = no_examiner
+        args = type("Args", (), {"only_deterministic": True, "grader": "sonnet", "timeout": 1})()
+        g = exam.regrade_one(t, stored, pathlib.Path("."), args)
+    finally:
+        exam.run_claude = original
+    expect("tal-del rettes igen, fri-del genbruges", g["dele"] == {"a": True, "b": True}, str(g))
+    expect("genbedømt case bestået uden censorpris", g["bestaaet"] and g["pris_bedoemmelse"] == 0, str(g))
+    legacy = {"fag": "statik", "resultater": [{"svar": "Regning\n**SVAR a:** 3 kN\nSVAR: 7", "id": "C-1"}]}
+    exam.migrate_legacy(legacy, "structural")
+    expect("gammel fil flyttes til nyt fagnavn", legacy["fag"] == "structural")
+    expect("SVAR-linjer bliver til ANSWER", exam.extract_answer(legacy["resultater"][0]["svar"]) == "7"
+           and exam.extract_answer(legacy["resultater"][0]["svar"], "a") == "3 kN", legacy)
+
+
 def test_shuffle():
     t = {"id": "X-1", "type": "valg", "facit": "B", "valgmuligheder": {"A": "a", "B": "b", "C": "c", "D": "d"}}
     options, key = exam.shuffled_options(t)
@@ -269,6 +325,7 @@ if __name__ == "__main__":
     test_efficiency_helpers()
     test_holdout_gaps_are_not_listed()
     test_case()
+    test_regrade_deterministic()
     test_shuffle()
     test_validation()
     test_plugin_copy_without_memory()

@@ -3,145 +3,91 @@
     "electrical": {
       "grupper": {
         "holdout/tasks-a": {
-          "basis": {
-            "n": 16,
-            "bestaaet": 10,
-            "opgaver_hash": "f3b9d24298f0",
-            "pris_usd": 1.302,
-            "pris_pr_bestaaet": 0.1302,
-            "sek_pr_opgave": null
-          },
           "plugin": {
             "n": 16,
             "bestaaet": 13,
             "opgaver_hash": "f3b9d24298f0",
-            "pris_usd": 1.28,
-            "pris_pr_bestaaet": 0.0984,
-            "sek_pr_opgave": 29.4
+            "pris_usd": 1.371,
+            "pris_pr_bestaaet": 0.1055,
+            "sek_pr_opgave": 20.6,
+            "tokens_ud_pr_opgave": 1621
           }
         },
         "holdout/tasks-b": {
-          "basis": {
-            "n": 15,
-            "bestaaet": 12,
-            "opgaver_hash": "9c321d65956a",
-            "pris_usd": 1.121,
-            "pris_pr_bestaaet": 0.0934,
-            "sek_pr_opgave": null
-          },
           "plugin": {
             "n": 15,
             "bestaaet": 13,
             "opgaver_hash": "9c321d65956a",
-            "pris_usd": 1.105,
-            "pris_pr_bestaaet": 0.085,
-            "sek_pr_opgave": 25.9
+            "pris_usd": 1.052,
+            "pris_pr_bestaaet": 0.0809,
+            "sek_pr_opgave": 18.7,
+            "tokens_ud_pr_opgave": 1478
           }
         },
         "udvikling/tasks-a": {
-          "basis": {
-            "n": 29,
-            "bestaaet": 24,
-            "opgaver_hash": "39d12faf5d70",
-            "pris_usd": 2.117,
-            "pris_pr_bestaaet": 0.0882,
-            "sek_pr_opgave": null,
-            "fejlede": [
-              "EL-001",
-              "EL-008",
-              "EL-015",
-              "EL-028",
-              "EL-042"
-            ]
-          },
           "plugin": {
             "n": 29,
             "bestaaet": 28,
             "opgaver_hash": "39d12faf5d70",
-            "pris_usd": 1.967,
-            "pris_pr_bestaaet": 0.0702,
-            "sek_pr_opgave": 23.7,
+            "pris_usd": 1.997,
+            "pris_pr_bestaaet": 0.0713,
+            "sek_pr_opgave": 16.5,
+            "tokens_ud_pr_opgave": 1298,
             "fejlede": [
               "EL-045"
             ]
           }
         },
         "udvikling/tasks-b": {
-          "basis": {
+          "plugin": {
             "n": 28,
             "bestaaet": 26,
             "opgaver_hash": "070e914b2dbe",
-            "pris_usd": 2.053,
-            "pris_pr_bestaaet": 0.079,
-            "sek_pr_opgave": null,
+            "pris_usd": 1.761,
+            "pris_pr_bestaaet": 0.0677,
+            "sek_pr_opgave": 15.6,
+            "tokens_ud_pr_opgave": 1207,
             "fejlede": [
-              "EL-132",
-              "EL-136"
+              "EL-136",
+              "EL-141"
             ]
-          },
-          "plugin": {
-            "n": 28,
-            "bestaaet": 28,
-            "opgaver_hash": "070e914b2dbe",
-            "pris_usd": 1.762,
-            "pris_pr_bestaaet": 0.0629,
-            "sek_pr_opgave": 23.3,
-            "fejlede": []
           }
         },
         "holdout/tasks-c": {
-          "basis": {
-            "n": 9,
-            "bestaaet": 8,
-            "opgaver_hash": "0725803aea09",
-            "pris_usd": 0.765,
-            "pris_pr_bestaaet": 0.0956,
-            "sek_pr_opgave": 22.2
-          },
           "plugin": {
             "n": 9,
             "bestaaet": 8,
             "opgaver_hash": "0725803aea09",
-            "pris_usd": 0.727,
-            "pris_pr_bestaaet": 0.0909,
-            "sek_pr_opgave": 28.2
+            "pris_usd": 0.724,
+            "pris_pr_bestaaet": 0.0905,
+            "sek_pr_opgave": 22.5,
+            "tokens_ud_pr_opgave": 1844
           }
         },
         "udvikling/tasks-c": {
-          "basis": {
+          "plugin": {
             "n": 18,
             "bestaaet": 17,
             "opgaver_hash": "00dca4c30068",
-            "pris_usd": 1.471,
-            "pris_pr_bestaaet": 0.0865,
+            "pris_usd": 1.285,
+            "pris_pr_bestaaet": 0.0756,
             "sek_pr_opgave": 19.6,
+            "tokens_ud_pr_opgave": 1578,
             "fejlede": [
-              "EL-226"
-            ]
-          },
-          "plugin": {
-            "n": 18,
-            "bestaaet": 16,
-            "opgaver_hash": "00dca4c30068",
-            "pris_usd": 1.425,
-            "pris_pr_bestaaet": 0.089,
-            "sek_pr_opgave": 25.2,
-            "fejlede": [
-              "EL-221",
-              "EL-226"
+              "EL-221"
             ]
           }
         }
       },
-      "opdateret": "2026-10-18",
-      "forsoeg": "F-007",
+      "opdateret": "2026-11-01",
+      "forsoeg": "F-024",
       "kilder": {
-        "holdout/tasks-a": "F-007 @ 4ab0e22",
-        "holdout/tasks-b": "F-007 @ 4ab0e22",
-        "udvikling/tasks-a": "F-007 @ 4ab0e22",
-        "udvikling/tasks-b": "F-007 @ 4ab0e22",
-        "holdout/tasks-c": "F-007 @ 4ab0e22",
-        "udvikling/tasks-c": "F-007 @ 4ab0e22"
+        "holdout/tasks-a": "F-024 @ df738bf",
+        "holdout/tasks-b": "F-024 @ df738bf",
+        "udvikling/tasks-a": "F-024 @ df738bf",
+        "udvikling/tasks-b": "F-024 @ df738bf",
+        "holdout/tasks-c": "F-024 @ df738bf",
+        "udvikling/tasks-c": "F-024 @ df738bf"
       }
     },
     "plumbing": {
@@ -318,7 +264,8 @@
             "opgaver_hash": "9b5f1814b754",
             "pris_usd": 0.294,
             "pris_pr_bestaaet": 0.098,
-            "sek_pr_opgave": 27.7
+            "sek_pr_opgave": 27.7,
+            "tokens_ud_pr_opgave": 1788
           },
           "plugin": {
             "n": 3,
@@ -326,7 +273,8 @@
             "opgaver_hash": "9b5f1814b754",
             "pris_usd": 0.327,
             "pris_pr_bestaaet": 0.1091,
-            "sek_pr_opgave": 30.6
+            "sek_pr_opgave": 30.6,
+            "tokens_ud_pr_opgave": 2140
           }
         },
         "holdout/tasks-b": {
@@ -336,15 +284,17 @@
             "opgaver_hash": "8578c18039df",
             "pris_usd": 0.971,
             "pris_pr_bestaaet": 0.1079,
-            "sek_pr_opgave": 21.0
+            "sek_pr_opgave": 21.0,
+            "tokens_ud_pr_opgave": 1548
           },
           "plugin": {
             "n": 13,
-            "bestaaet": 8,
+            "bestaaet": 10,
             "opgaver_hash": "8578c18039df",
             "pris_usd": 0.946,
-            "pris_pr_bestaaet": 0.1182,
-            "sek_pr_opgave": 23.5
+            "pris_pr_bestaaet": 0.0946,
+            "sek_pr_opgave": 23.5,
+            "tokens_ud_pr_opgave": 1824
           }
         },
         "udvikling/tasks-a": {
@@ -355,6 +305,7 @@
             "pris_usd": 2.872,
             "pris_pr_bestaaet": 0.1026,
             "sek_pr_opgave": 19.7,
+            "tokens_ud_pr_opgave": 1314,
             "fejlede": [
               "STAT-012",
               "STAT-015",
@@ -369,6 +320,7 @@
             "pris_usd": 2.597,
             "pris_pr_bestaaet": 0.0838,
             "sek_pr_opgave": 22.3,
+            "tokens_ud_pr_opgave": 1519,
             "fejlede": [
               "STAT-016"
             ]
@@ -377,37 +329,36 @@
         "udvikling/tasks-b": {
           "basis": {
             "n": 31,
-            "bestaaet": 29,
+            "bestaaet": 30,
             "opgaver_hash": "05274c729412",
             "pris_usd": 1.92,
-            "pris_pr_bestaaet": 0.0662,
+            "pris_pr_bestaaet": 0.064,
             "sek_pr_opgave": 15.3,
+            "tokens_ud_pr_opgave": 1022,
             "fejlede": [
-              "STAT-123",
-              "STAT-132"
+              "STAT-123"
             ]
           },
           "plugin": {
             "n": 31,
-            "bestaaet": 30,
+            "bestaaet": 31,
             "opgaver_hash": "05274c729412",
             "pris_usd": 1.906,
-            "pris_pr_bestaaet": 0.0635,
+            "pris_pr_bestaaet": 0.0615,
             "sek_pr_opgave": 18.9,
-            "fejlede": [
-              "STAT-132"
-            ]
+            "tokens_ud_pr_opgave": 1289,
+            "fejlede": []
           }
         }
       },
       "kilder": {
-        "holdout/tasks-a": "F-028 @ 5213943",
-        "holdout/tasks-b": "F-028 @ 5213943",
-        "udvikling/tasks-a": "F-028 @ 5213943",
-        "udvikling/tasks-b": "F-028 @ 5213943"
+        "holdout/tasks-a": "F-024 @ 5213943",
+        "holdout/tasks-b": "F-024 @ 5213943",
+        "udvikling/tasks-a": "F-024 @ 5213943",
+        "udvikling/tasks-b": "F-024 @ 5213943"
       },
-      "opdateret": "2026-10-19",
-      "forsoeg": "F-028"
+      "opdateret": "2026-11-01",
+      "forsoeg": "F-024"
     }
   }
 }
