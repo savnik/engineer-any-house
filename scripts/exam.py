@@ -10,7 +10,7 @@ Brug:
                                     [--with-memory] [--plugin-rev REV] [--no-base]
   python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base]   seneste svar og bedømmelse (kun udvikling)
   python3 scripts/exam.py report <resultatfil> [<resultatfil> ...]
-  python3 scripts/exam.py regrade <resultatfil> [--only-free]   ret gemte svar igen efter nyt facit/kriterier
+  python3 scripts/exam.py regrade <resultatfil> [--only-free | --only-deterministic] [--trade FAG] [--tag T]
 
 Armene: 'basis' (--arm base) er modellen uden plugin, 'plugin' er fagagenten med sin videnbase (plugin-kopi uden
 afhængigheder som i eval_trade.py og som standard uden agentens lokale hukommelse – med --with-memory
@@ -528,8 +528,10 @@ def grade(task: dict, text: str, work: pathlib.Path, args) -> dict:
             "pris_bedoemmelse": g.get("total_cost_usd") or 0}
 
 
-def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
-    """Each part is graded on its own; the case passes when the share of passed parts reaches bestaa_andel."""
+def grade_case(task: dict, text: str, work: pathlib.Path, args, free_verdicts: dict | None = None) -> dict:
+    """Each part is graded on its own; the case passes when the share of passed parts reaches bestaa_andel.
+
+    free_verdicts reuses stored verdicts for the free parts instead of asking the examiner again."""
     results: dict[str, bool] = {}
     notes = []
     for d in task["dele"]:
@@ -542,7 +544,11 @@ def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
             notes.append(f"{d['del']}: {note}")
     free = [d for d in task["dele"] if d["type"] == "fri"]
     out = {"pris_bedoemmelse": 0}
-    if free:
+    if free and free_verdicts is not None:
+        for d in free:
+            results[d["del"]] = bool(free_verdicts[d["del"]])
+            notes.append(f"{d['del']}: {'BESTÅET' if results[d['del']] else 'IKKE BESTÅET'} (genbrugt)")
+    elif free:
         parts = "\n\n".join(
             f"DEL {d['del']}: {d['spoergsmaal']}\nKRITERIER:\n"
             + "\n".join(f"{d['del']}K{i}. {c}" for i, c in enumerate(d["kriterier"], 1))
@@ -574,18 +580,53 @@ def progress_line(r: dict, task: dict, prefix: str = "") -> str:
     return f"  {prefix}{status} {r['arm']:6} {r['id']:8} {r['note']}"
 
 
+def deterministic_regradable(task: dict, r: dict) -> bool:
+    """Choice and number answers, and cases whose free parts already have a stored verdict."""
+    if task["type"] in ("valg", "tal"):
+        return True
+    if task["type"] != "case":
+        return False
+    stored = r.get("dele") or {}
+    return all(p["del"] in stored for p in task["dele"] if p["type"] == "fri")
+
+
+def regrade_one(task: dict, r: dict, work: pathlib.Path, args) -> dict:
+    if args.only_deterministic and task["type"] == "case":
+        return grade_case(task, r["svar"], work, args, free_verdicts=r.get("dele") or {})
+    return grade(task, r["svar"], work, args)
+
+
+LEGACY_ANSWER_RE = re.compile(r"^(\W*)SVAR\b", re.IGNORECASE | re.MULTILINE)
+
+
+def migrate_legacy(d: dict, trade: str) -> None:
+    """A result file from before the English rename: Danish trade name ('statik') and SVAR answer lines."""
+    d["fag"] = trade
+    for r in d["resultater"]:
+        if r.get("svar"):
+            r["svar"] = LEGACY_ANSWER_RE.sub(r"\1ANSWER", r["svar"])
+
+
 def cmd_regrade(args) -> int:
     """Grades stored answers again against the current tasks (new key, criteria or grader) without new answers."""
     src = pathlib.Path(args.fil)
     d = json.loads(src.read_text(encoding="utf-8"))
+    if args.trade:
+        migrate_legacy(d, args.trade)
     _, tasks = load_trade(d["fag"])
     by_id = {t["id"]: t for t in tasks}
+    unknown = sum(1 for r in d["resultater"] if r["id"] not in by_id)
+    if unknown:
+        print(f"ADVARSEL: {unknown} svar har ingen opgave i {d['fag']} og rettes ikke igen")
     jobs = [r for r in d["resultater"] if r["id"] in by_id and r["svar"]
-            and (not args.only_free or by_id[r["id"]]["type"] == "fri")]
+            and (not args.only_free or by_id[r["id"]]["type"] == "fri")
+            and (not args.only_deterministic or deterministic_regradable(by_id[r["id"]], r))]
+    if args.only_deterministic:
+        print(f"Kun deterministisk bedømmelse: {len(jobs)} svar (valg, tal og case med genbrugte fri-dele)")
     with tempfile.TemporaryDirectory(prefix="rebedoem-") as tmpname:
         work = pathlib.Path(tmpname)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
-            futures = {pool.submit(grade, by_id[r["id"]], r["svar"], work, args): r for r in jobs}
+            futures = {pool.submit(regrade_one, by_id[r["id"]], r, work, args): r for r in jobs}
             for fut in concurrent.futures.as_completed(futures):
                 r, g = futures[fut], fut.result()
                 changed = "ÆNDRET " if g["bestaaet"] != r["bestaaet"] else ""
@@ -594,7 +635,9 @@ def cmd_regrade(args) -> int:
                 r.update(g)
                 print(progress_line(r, by_id[r["id"]], changed))
     d["rebedoemt"] = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    out = src.with_name(src.stem + "-rebedoemt.json")
+    folder = EXAM_DIR / d["fag"] / "results" if args.trade else src.parent
+    folder.mkdir(parents=True, exist_ok=True)
+    out = folder / f"{src.stem}-rebedoemt{'-' + args.tag if args.tag else ''}.json"
     out.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\nGemt: {out}\n")
     print(report([out]))
@@ -881,6 +924,11 @@ def main() -> int:
     p = sub.add_parser("regrade")
     p.add_argument("fil")
     p.add_argument("--only-free", action="store_true")
+    p.add_argument("--only-deterministic", action="store_true",
+                   help="kun valg- og talsvar (og case-dele) uden censor; fri-dele i cases genbruger den gemte dom")
+    p.add_argument("--trade", default="", help="flyt en fil fra før de engelske navne (fx 'statik', SVAR-linjer) "
+                   "til dette fag og ANSWER-linjer, og gem kopien i fagets resultatmappe")
+    p.add_argument("--tag", default="", help="tilføjes filnavnet på kopien, fx foer/efter")
     p.add_argument("--parallel", type=int, default=4)
     p.add_argument("--grader", default="sonnet")
     p.add_argument("--timeout", type=int, default=600)

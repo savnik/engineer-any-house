@@ -188,6 +188,36 @@ def test_case():
         exam.EXAM_DIR = original
 
 
+def test_regrade_deterministic():
+    """--only-deterministic grades choice/number parts again and reuses stored free-part verdicts (F-024)."""
+    t = case_task(dele=[{"del": "a", "type": "tal", "spoergsmaal": "Udnyttelse?",
+                         "facit": {"vaerdi": 0.87, "enhed": "-", "tolerance_pct": 2}},
+                        {"del": "b", "type": "fri", "spoergsmaal": "Hvorfor?", "kriterier": ["Begrunder"]}])
+    stored = {"svar": "ANSWER a: 0,87\nANSWER b: fordi", "bestaaet": False, "dele": {"a": False, "b": True}}
+    expect("case med gemte fri-dele kan genbedømmes", exam.deterministic_regradable(t, stored))
+    expect("case uden gemte fri-dele springes over", not exam.deterministic_regradable(t, {"svar": "x"}))
+    expect("fri-opgave springes over", not exam.deterministic_regradable({"type": "fri"}, stored))
+    expect("tal-opgave genbedømmes", exam.deterministic_regradable({"type": "tal"}, {}))
+    original = exam.run_claude
+
+    def no_examiner(*_a, **_k):
+        raise AssertionError("censoren må ikke kaldes")
+
+    try:
+        exam.run_claude = no_examiner
+        args = type("Args", (), {"only_deterministic": True, "grader": "sonnet", "timeout": 1})()
+        g = exam.regrade_one(t, stored, pathlib.Path("."), args)
+    finally:
+        exam.run_claude = original
+    expect("tal-del rettes igen, fri-del genbruges", g["dele"] == {"a": True, "b": True}, str(g))
+    expect("genbedømt case bestået uden censorpris", g["bestaaet"] and g["pris_bedoemmelse"] == 0, str(g))
+    legacy = {"fag": "statik", "resultater": [{"svar": "Regning\n**SVAR a:** 3 kN\nSVAR: 7", "id": "C-1"}]}
+    exam.migrate_legacy(legacy, "structural")
+    expect("gammel fil flyttes til nyt fagnavn", legacy["fag"] == "structural")
+    expect("SVAR-linjer bliver til ANSWER", exam.extract_answer(legacy["resultater"][0]["svar"]) == "7"
+           and exam.extract_answer(legacy["resultater"][0]["svar"], "a") == "3 kN", legacy)
+
+
 def test_shuffle():
     t = {"id": "X-1", "type": "valg", "facit": "B", "valgmuligheder": {"A": "a", "B": "b", "C": "c", "D": "d"}}
     options, key = exam.shuffled_options(t)
@@ -269,6 +299,7 @@ if __name__ == "__main__":
     test_efficiency_helpers()
     test_holdout_gaps_are_not_listed()
     test_case()
+    test_regrade_deterministic()
     test_shuffle()
     test_validation()
     test_plugin_copy_without_memory()
