@@ -1,0 +1,215 @@
+{
+  "opgaver": [
+    {
+      "id": "STAT-201",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2b"
+      ],
+      "saet": "udvikling",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Rækkehus i to etager med kælder. Bjælken bærer etageadskillelser og tag og regnes i CC2 (KFI = 1,0). En bærende væg i stueetagen fjernes, og en ny HE120B (S235, normal kontrolklasse) lægges over en lysning på 1,54 m. Regningsmæssig spændvidde for moment er 1,67 m, og bjælkens længde er 1,80 m. Bjælken hviler på 130 mm vederlag i eksisterende bredstensvægge. Karakteristiske linjelaster på bjælken (egenlast medregnet): permanent 16,62 kN/m, nyttelast (bolig, kategori A1) 5,37 kN/m, sne 3,54 kN/m og vind 1,12 kN/m. Bjælken har Wpl,y = 165·10³ mm³. Brug lastkombination 2 (6.10b).",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn den største regningsmæssige linjelast på bjælken. Angiv svaret i kN/m.",
+          "facit": {
+            "vaerdi": 26.77,
+            "enhed": "kN/m",
+            "tolerance_pct": 0.5
+          },
+          "begrundelse": "Bjælken er en del af den primære bærende konstruktion og regnes i CC2, KFI = 1,0. Nyttelast som dominerende: 1,0·16,62 + 1,5·5,37 + 1,5·0,3·1,12 + 1,5·0,3·3,54 = 26,77 kN/m. Med sne som dominerende fås 16,62 + 1,5·3,54 + 1,5·0,5·5,37 + 0,45·1,12 = 26,46 kN/m, og med vind som dominerende 22,33 kN/m (ψ0,sne = 0 ved dominerende vind), så nyttelasten er dimensionerende."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn det største regningsmæssige bøjningsmoment i bjælken. Angiv svaret i kNm.",
+          "facit": {
+            "vaerdi": 9.33,
+            "enhed": "kNm",
+            "tolerance_pct": 0.5
+          },
+          "begrundelse": "M = q·l²/8 = 26,77·1,67²/8 = 9,33 kNm."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Kipningsreduktionsfaktoren er beregnet til χLT = 0,98. Beregn bjælkens regningsmæssige bæreevne over for kipning, Mb,Rd, efter DS/EN 1993-1-1 med dansk nationalt anneks. Angiv svaret i kNm.",
+          "facit": {
+            "vaerdi": 31.67,
+            "enhed": "kNm",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "Efter DK NA er γM1 = 1,2·γ0·γ3 = 1,2 (γ0 = 1,0 i lastkombination 2, γ3 = 1,0 ved normal kontrolklasse). Mb,Rd = 0,98·165·10³·235/1,2 = 31,67 kNm. Udnyttelse 9,33/31,67 = 0,29."
+        },
+        {
+          "del": "d",
+          "type": "tal",
+          "spoergsmaal": "Bjælken hviler på en vederlagsflade på 130 × 120 mm. Beregn det gennemsnitlige regningsmæssige kontakttryk på murværket under én ende. Brug bjælkens fulde længde til reaktionen. Angiv svaret i MPa.",
+          "facit": {
+            "vaerdi": 1.54,
+            "enhed": "MPa",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "R = ½·26,77·1,80 = 24,09 kN. σ = 24,09·10³/(130·120) = 1,54 MPa. Reaktionen ud fra fuld længde er konservativ."
+        },
+        {
+          "del": "e",
+          "type": "fri",
+          "spoergsmaal": "Hvad skal ud over bjælken og kontakttrykket eftervises i de eksisterende vægge, før indgrebet kan godkendes?",
+          "kriterier": [
+            "Murværket under vederlaget skal eftervises for koncentreret last, ikke kun med det gennemsnitlige kontakttryk.",
+            "De tilstødende vægstykker/piller skal eftervises for den øgede, koncentrerede last fra bjælken."
+          ],
+          "begrundelse": "Indgrebet flytter lasten fra en jævnt understøttet væg til to koncentrerede vederlag og de tilstødende piller."
+        }
+      ],
+      "begrundelse": "Bjælke over ny åbning i bærende væg i rækkehus: lastkombination, moment, kipning efter DK NA og vederlag. Opgaven bygger på en offentligt tilgængelig, anonymiseret statisk beregning fra en rigtig sag; tal er genberegnet efter gældende DK NA.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA og Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; DS/EN 1993-1-1 DK NA:2019, 6.1(1), https://www.bygningsreglementet.dk/media/cbckb4eq/ds-en-1993-1-1-dk-na-2019_2024-07-01-a.pdf; Teknisk mekanik (simpelt understøttet bjælke); beregnet med Python.",
+      "status": "V 2026-11-01"
+    },
+    {
+      "id": "STAT-202",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2c",
+        "STAT-CERT-2b",
+        "STAT-BK-05"
+      ],
+      "saet": "holdout",
+      "type": "case",
+      "niveau": "mester",
+      "spoergsmaal": "Ældre fuldmuret etageejendom med fem etager, kælder og loft, i konsekvensklasse CC3. I stueetagen laves en ny dør (lysning 1,54 m) i en bærende 1-stens hovedskillevæg (228 mm) af eksisterende tegl i kalkmørtel. Over åbningen lægges en HE160B, der i hver ende hviler på en vederlagsplade på 165 × 228 mm (fuld vægtykkelse). Regningsmæssig spændvidde for moment er 1,705 m, og bjælkens længde er 1,87 m. Bjælken bærer fire etagedæk og tre etager af 1-stensvæggen over åbningen. Lastoplandet for dækkene er 4,42 m. Karakteristiske laster: bjælkelag med lerindskud 1,60 kN/m², lette skillevægge 0,50 kN/m² (på hvert dæk), 1-stensvæg 4,15 kN/m² med etagehøjde 2,83 m. Alle fire dæk har nyttelast for bolig (kategori A1, 1,5 kN/m²). Brug lastkombination 2 (6.10b); nyttelasten er den eneste variable last.",
+      "dele": [
+        {
+          "del": "a",
+          "type": "tal",
+          "spoergsmaal": "Beregn den regningsmæssige linjelast på bjælken. Medregn den reduktion for etageantal, som det nationale anneks tillader. Angiv svaret i kN/m.",
+          "facit": {
+            "vaerdi": 106.95,
+            "enhed": "kN/m",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "CC3 giver KFI = 1,1. G = 4·1,60·4,42 + 3·4,15·2,83 + 4·0,50·4,42 = 72,36 kN/m. Q = 4·1,5·4,42 = 26,52 kN/m. αn = (1 + 3·0,5)/4 = 0,625. pEd = 1,1·72,36 + 1,5·0,625·1,1·26,52 = 106,95 kN/m."
+        },
+        {
+          "del": "b",
+          "type": "tal",
+          "spoergsmaal": "Beregn det største regningsmæssige bøjningsmoment i bjælken. Angiv svaret i kNm.",
+          "facit": {
+            "vaerdi": 38.86,
+            "enhed": "kNm",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "M = 106,95·1,705²/8 = 38,86 kNm."
+        },
+        {
+          "del": "c",
+          "type": "tal",
+          "spoergsmaal": "Beregn det gennemsnitlige regningsmæssige kontakttryk på murværket under én vederlagsplade. Brug bjælkens fulde længde til reaktionen. Angiv svaret i MPa.",
+          "facit": {
+            "vaerdi": 2.66,
+            "enhed": "MPa",
+            "tolerance_pct": 2
+          },
+          "begrundelse": "R = ½·106,95·1,87 = 100,0 kN. σ = 100,0·10³/(165·228) = 2,66 MPa. Reaktionen ud fra fuld længde er konservativ."
+        },
+        {
+          "del": "d",
+          "type": "tal",
+          "spoergsmaal": "Pillen ved siden af døren er 480 mm lang og regnes som en søjle af det eksisterende murværk: fk = 2,4 MPa, mørtelstyrke fm = 1,0 MPa, byggesten kategori II. Regn med hs = 2,10 m, og brug Ritters formel ks = 1/(1 + 12/(kE·π²)·(hs/t)²) og bæreevnen Rsd = ks·kt·A·fd med kt = 0,9 (givet). Beregn Rsd efter gældende dansk nationalt anneks til DS/EN 1996-1-1. Angiv svaret i kN.",
+          "facit": {
+            "vaerdi": 82.4,
+            "enhed": "kN",
+            "tolerance_pct": 3
+          },
+          "begrundelse": "Kalkmørtel uden cement giver kE = 150·fm = 150. Lempet kontrolklasse benyttes ikke, og γ0 = 1,0 i lastkombination 2, så γc = 1,70 og fd = 2,4/1,70 = 1,41 MPa. 12/(150·π²)·(2100/228)² = 0,688, ks = 0,593. Rsd = 0,593·0,9·480·228·1,41 = 82,4 kN."
+        },
+        {
+          "del": "e",
+          "type": "fri",
+          "spoergsmaal": "Pillen får en samlet regningsmæssig last på ca. 134 kN fra bjælken og væggen over. Hvad er din vurdering, og hvad bør der ske?",
+          "kriterier": [
+            "Konkluderer, at den eksisterende pille ikke har tilstrækkelig bæreevne.",
+            "Foreslår en konkret løsning, fx en stålsøjle, en bredere pille eller ommuring af pillen i stærkere murværk med cementholdig mørtel.",
+            "Påpeger, at fundamentet under pillen også skal eftervises for den koncentrerede last."
+          ],
+          "fail_hvis": [
+            "Godkender pillen som den er."
+          ],
+          "begrundelse": "134/82,4 = 1,62. Den eksisterende pille i kalkmørtel kan ikke bære lasten."
+        }
+      ],
+      "begrundelse": "Ny dør i bærende væg i etageejendom: konsekvensklasse ud fra højde, reduktion for etageantal, kontakttryk og slankhed af eksisterende pille efter gældende DK NA. Opgaven bygger på en offentligt tilgængelig, anonymiseret statisk beregning fra en rigtig sag; tal er genberegnet efter gældende DK NA; originalen eftervist pillen med parametre for nyt murværk.",
+      "kilde": "DS/EN 1990 DK NA:2024, Tabel A1.2(B+C) DK NA og Tabel A1.1 DK NA, https://www.bygningsreglementet.dk/media/c15hi1i4/ds-en-1990-dk-na-2024-rev-2023-12-19-final-version-a.pdf; DS/EN 1991-1-1 DK NA:2024, 6.3.1.2(11), https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf; DS/EN 1996-1-1 DK NA:2019, https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf, 3.7.2(2) (kE) og Tabel 2.4.3a og 2.4.3c DK NA (γc, lempet kontrolklasse benyttes ikke); Teknisk mekanik (simpelt understøttet bjælke); beregnet med Python.",
+      "status": "V 2026-11-01"
+    },
+    {
+      "id": "STAT-203",
+      "maal": [
+        "STAT-CERT-4a",
+        "STAT-CERT-2b"
+      ],
+      "saet": "holdout",
+      "type": "fri",
+      "niveau": "mester",
+      "spoergsmaal": "Du skal kontrollere en statisk dokumentation for en ny dør i en bærende 1-stensvæg af ældre tegl i kalkmørtel i en etageejendom i CC3. Uddrag: (1) Eksisterende murværk: fk = 2,4 MPa, kategori II, lempet kontrolklasse, γc = 1,70·1,10 = 1,87, fd = 1,28 MPa. (2) Nyttelasten fra fire boligetager over åbningen er reduceret med αn = 0,5. (3) Pillen ved døren bevares som eksisterende murværk i kalkmørtel og eftervises med kE = 300 og fd = 2,09 MPa for nyt murværk i KC 50/50/700: Rsd = 151 kN > 130 kN, OK. (4) Under vederlaget udskiftes tre skifter med nyt murværk; trykket i det eksisterende murværk umiddelbart under de nye skifter (1,53 MPa) sammenholdes med fd = 2,09 MPa for det nye murværk, OK. (5) Midlertidig jokke HE100B: MEd = 21,5 kNm, Mb,Rd = 20,4 kNm, OK. Hvilke fejl finder du?",
+      "facit": null,
+      "kriterier": [
+        "Lempet kontrolklasse må ikke længere benyttes efter gældende DK NA.",
+        "αn er forkert: for fire etager i samme kategori med ψ0 = 0,5 er αn = (1 + 3·0,5)/4 = 0,625, ikke 0,5.",
+        "Pillen er eksisterende murværk i kalkmørtel og skal regnes med dettes parametre (fx kE og fd for kalkmørtelmurværket), ikke med værdier for nyt murværk.",
+        "Trykket i det eksisterende murværk under de nye skifter skal sammenholdes med det eksisterende murværks styrke, ikke det nye.",
+        "Jokken er ikke OK: Mb,Rd = 20,4 kNm er mindre end MEd = 21,5 kNm (udnyttelse ca. 1,05)."
+      ],
+      "fail_hvis": [
+        "Godkender dokumentationen uden bemærkninger."
+      ],
+      "begrundelse": "Kontrol af statisk dokumentation skal fange fejl i partialkoefficienter, regnefejl, forkerte materialeparametre og konklusioner, der ikke passer til tallene.",
+      "kilde": "DS/EN 1996-1-1 DK NA:2019, https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf, Tabel 2.4.3a, 2.4.3c og 3.7.2(2) DK NA; DS/EN 1991-1-1 DK NA:2024, 6.3.1.2(11), https://www.bygningsreglementet.dk/media/3cdnqepr/ds-en-199111-dk-na-2024-rev-20231219-final-version20240701-a.pdf; DS/EN 1993-1-1 DK NA:2019, 6.1(1), https://www.bygningsreglementet.dk/media/cbckb4eq/ds-en-1993-1-1-dk-na-2019_2024-07-01-a.pdf; Opgaven bygger på en offentligt tilgængelig, anonymiseret statisk beregning fra en rigtig sag; tal er genberegnet efter gældende DK NA.",
+      "status": "V 2026-11-01"
+    },
+    {
+      "id": "STAT-204",
+      "maal": [
+        "STAT-CERT-2c",
+        "STAT-BK-02"
+      ],
+      "saet": "udvikling",
+      "type": "valg",
+      "niveau": "mester",
+      "spoergsmaal": "Et nyt vægstykke opmures i mørtel KC 50/50/700 uden prøvningsdata for mørtlen. Mørtlen er en receptmørtel, der opfylder kravene i det danske nationale anneks. Hvilken mørtelstyrke fm (MC) må du regne med ved beregning af murværkets trykstyrke?",
+      "valgmuligheder": {
+        "A": "0,8 MPa",
+        "B": "2,0 MPa",
+        "C": "0,9 MPa",
+        "D": "1,5 MPa"
+      },
+      "facit": "C",
+      "begrundelse": "Tabel 3.1 DK NA knytter KC 50/50/700 til MC 0,9 MPa (ML 1,8 MPa). 0,8 MPa er KC 60/40/850, og 2,0 MPa er KC 35/65/650. 1,5 MPa er ikke værdien i Tabel 3.1 uden forsøg; den er brugt i en rigtig beregning og er for høj.",
+      "kilde": "DS/EN 1996-1-1 DK NA:2019, https://www.bygningsreglementet.dk/media/hs1kxg0e/ds-en-1996-1-1-dk-na-2019_2024-07-01-a.pdf, Tabel 3.1 DK NA.",
+      "status": "V 2026-11-01"
+    },
+    {
+      "id": "STAT-205",
+      "maal": [
+        "STAT-CERT-3c",
+        "STAT-CERT-2c"
+      ],
+      "saet": "udvikling",
+      "type": "tal",
+      "niveau": "mester",
+      "spoergsmaal": "Under en ny stålbjælke i et rækkehus (CC2) står to søjler af koldformet kvadratrør 50×50×3 i S275, hver 2,6 m høj og charnierlejret i begge ender. Tværsnittet (EN 10219) har A = 541 mm² og i = 19,0 mm. Beregn den regningsmæssige bæreevne over for udknækning, Nb,Rd, efter DS/EN 1993-1-1 med dansk nationalt anneks. Brug E = 210 GPa og normal kontrolklasse. Angiv svaret i kN.",
+      "facit": {
+        "vaerdi": 36.0,
+        "enhed": "kN",
+        "tolerance_pct": 3
+      },
+      "begrundelse": "λ̄ = (2600/19,0)/(π·√(210000/275)) = 1,58. Koldformede hulprofiler følger søjlekurve c (α = 0,49), ikke kurve a for varmfærdige profiler. Φ = 2,08, χ = 0,291. γM1 = 1,2. Nb,Rd = 0,291·541·275/1,2 = 36,0 kN. Med kurve a fås 42,3 kN, som er for meget.",
+      "kilde": "DS/EN 1993-1-1 DK NA:2019, 6.1(1), https://www.bygningsreglementet.dk/media/cbckb4eq/ds-en-1993-1-1-dk-na-2019_2024-07-01-a.pdf; søjlekurver: DS/EN 1993-1-1, 6.3.1.2 og Tabel 6.2 (grundstandard, ikke efterprøvet); Opgaven bygger på en offentligt tilgængelig, anonymiseret statisk beregning fra en rigtig sag; tal er genberegnet efter gældende DK NA; beregnet med Python.",
+      "status": "T"
+    }
+  ]
+}
