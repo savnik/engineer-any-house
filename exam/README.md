@@ -17,6 +17,13 @@ Laget ligger uden for `plugins/`, så det aldrig pakkes med pluginet, og agenten
 - **Facit skal være efterprøvet** mod en primærkilde (retsinformation.dk, bygningsreglementet.dk, sik.dk osv.). `status` er `V <dato>` når facit er efterprøvet, ellers `T`. T-opgaver giver en advarsel og skal verificeres eller omformuleres.
 - **Egne formuleringer.** Opgaverne er skrevet til dette repo. Der er ikke kopieret fra lærebøger eller officielle prøvesæt (de er fortrolige). Repoet offentliggøres.
 - **Ét skriver pr. fil.** Opgaverne kan ligge i flere `tasks*.json`, som valideres samlet.
+- **Holdout-skifte.** Når holdout-budgettet er brugt, kan brugeren gøre holdout-opgaverne i nye filer til fagets
+  holdout med `"holdout_filer": ["tasks-d.json"]` i `learning-goals.json`. Opgavefilerne ændres ikke: de gamle
+  holdout-opgaver står stadig som `"saet": "holdout"`, men `exam.py` og `experiment.py` lægger dem i sættet
+  `regression`. Regression er skjult som holdout (ingen ID'er, svar eller facit), men er kun et regressionsværn:
+  det tæller ikke mod holdout-budgettet og opfylder ikke beslutningsreglens krav om holdout. Kør det med
+  `--set regression --release`. Dækningskravet (hvert mål i begge sæt) gælder stadig de gemte sæt. El skiftede
+  2026-11-01 til holdout-delen af `tasks-d.json` (F-033).
 
 ## Filer
 ```
@@ -57,6 +64,7 @@ python3 scripts/exam.py run electrical                        # udviklingssætte
 python3 scripts/exam.py run electrical --only-failed          # kun de opgaver, plugin-armen ikke bestod sidst
 python3 scripts/exam.py run electrical --repeat-free 3        # fri-opgaverne tre gange (majoritet), mod støj
 python3 scripts/exam.py run electrical --set holdout --release --plugin-rev <før>   # før/efter en ændring
+python3 scripts/exam.py run electrical --set regression --release              # tidligere holdout, kun regressionsværn
 python3 scripts/exam.py run electrical --arm base             # kun når modellen er skiftet
 python3 scripts/exam.py report exam/electrical/results/<fil>.json
 python3 scripts/exam.py regrade exam/electrical/results/<fil>.json --only-free   # ret gemte svar igen efter ændret rettemaske
@@ -66,6 +74,10 @@ python3 scripts/exam.py regrade exam/electrical/results/<fil>.json --only-free  
 - **Basis genbruges.** Basis-armen afhænger ikke af videnbasen. `run` kører derfor kun plugin-armen, og rapporten bruger det nyeste basis-svar pr. opgave. Basis køres kun igen, når modellen skiftes.
 - **Luk et hul med `--only-failed`.** Kør kun de opgaver, der fejlede. Det koster få cent i stedet for ca. 6 $ for hele sættet.
 - **Holdout kun ved udgivelse.** Holdout kræver `--release`. Kør det før og efter en ændring af videnbasen med `--plugin-rev`, så sammenligningen sker på lige vilkår. Rapporten viser aldrig ID'erne på holdout-fejl.
+- **Værktøjskald.** `run` læser Claude-kørslens hændelsesstrøm (`stream-json`) og gemmer pr. kørsel `vaerktoejskald`
+  (antal pr. værktøj), `regnekald` (Bash-kald til fagets regneværktøj, fx `el.py`) og `afviste_kald` (kald, der blev
+  afvist eller fejlede). Rapporten viser værktøjskald, regnekald og kørsler med regnekald pr. arm, og
+  `exam.py answers <fag> --file <resultatfil>` viser dem pr. opgave for én arm. Ældre resultatfiler har ikke felterne.
 - **Kontekst.** Rapporten viser videnbasens størrelse, input-tokens, tid og ture pr. opgave samt pris pr. bestået opgave. Ny viden skal forbedre bestået-andelen mere, end den øger prisen pr. bestået opgave. Er det ikke tilfældet, skal teksten skæres ned.
 - **Rigtige sager.** Eksamen måler ikke returer i kontrol-loopet. Sammenlign derfor returandelen før og efter en udgivelse med `python3 scripts/usage.py --until <udgivelsesdato>` og `--since <udgivelsesdato>`.
 
@@ -123,7 +135,11 @@ plugin-armen før og efter på de samme opgaver. Er det ikke de samme opgaver, i
 Rettemaske, opgaver, værktøj og nulmåling afgøres med en skriftlig begrundelse. Afviger beslutningen fra reglen,
 kræves `--begrundelse`. Grænserne (`NOISE_TASKS = 2`, `PRICE_TOLERANCE = 10 %`) bygger på én kørsels støj, og
 forslag F-007 skal fastlægge dem empirisk. Holdout har et budget på 8 målinger pr. fag (`HOLDOUT_BUDGET`). Hver
-beslutning på holdout lækker lidt, så når budgettet er brugt, skal der skrives nye holdout-opgaver.
+beslutning på holdout lækker lidt, så når budgettet er brugt, skal der skrives nye holdout-opgaver. Efter et
+holdout-skifte tæller budgettet kun målinger af de aktive `holdout_filer` (grupper som `holdout/tasks-d`), og
+`experiment.py retire-holdout --trade <fag>` omdøber benchmarkets gamle `holdout/<fil>`-grupper til
+`regression/<fil>`. Gamle målinger i loggen beholder navnet `holdout/<fil>`, men tæller ikke længere som holdout.
+`summarize` gemmer også `vaerktoejskald_pr_opgave` og `regnekald_pr_opgave`, når resultatfilerne har felterne.
 
 **Holdout-vagten** (`scripts/hooks/holdout_guard.py`, en hook i CI-agentens frontmatter) afviser direkte læsning af
 `tasks*.json` og `results/`, Grep med indhold i `exam/` og rekursiv søgning uden sti. Agenten ser kun
@@ -160,7 +176,8 @@ Målt 17.–18. okt. 2026 på el, vvs og ventilation (svende- og AK-niveau). Tal
 - **Talparseren.** `parse_number` læser et dansk decimaltal med præcis tre decimaler (`0,867`) som tusindtal (867). Et korrekt svar kan derfor dumpe. Se `exam.py answers`, før et fald på en talopgave tolkes som en regression (F-023, forslag F-024).
 - **Holdout-vagten gælder også underagenter.** CI-agenten kan i dag ikke få en underagent til at rette opgavefilerne, fordi vagten blokerer den også. Rettemaske- og opgaveforsøg kræver derfor en anden vej (F-021, forslag F-022).
 - **Ufuldstændige målinger.** En måling, hvor opgaver mangler (kørselsfejl, afbrudt kørsel, `--only-failed`), siger kun noget om de opgaver, der blev kørt. Skriv i læringen, hvad der ikke blev målt. Et anslået tal (pris, tokens, tid) skal stå som "anslået" og må ikke afgøre et forsøg. Prisen tæller hele opgaven, også gentagne kald og censorens rettelse.
-- **Regneværktøjer måles ikke.** Eksamensarmen har ingen Bash, så et script som `el.py` eller `statik.py` kører aldrig i eksamen. Eksamen måler kun pegerne og videnteksten om værktøjet, og de kan koste. I F-029 skrev agenten "dimensioneres med el.py" i en opgave om tavleudskiftning og glemte tilmeldingsspørgsmålet (EL-141 bestod 0 af 3 efter mod 2 af 3 før). Hold værktøjsteksten i en fil, der kun læses ved beregning. Værdien af selve værktøjet kræver opgaver, der faktisk kræver beregningen. Med `exam.py run --calc-tool` får plugin-armen Bash, låst af `scripts/hooks/exam_calc_guard.py` til fagets regneværktøj fra `trade-registry.json`, og Write til en .json-inputfil i opgavemappen. Resultatfilen får `-regn` i navnet. Standardmålingen er uændret uden Bash, så benchmarket kan stadig sammenlignes.
+- **Regneværktøjer måles ikke.** Eksamensarmen har ingen Bash, så et script som `el.py` eller `statik.py` kører aldrig i eksamen. Eksamen måler kun pegerne og videnteksten om værktøjet, og de kan koste. I F-029 skrev agenten "dimensioneres med el.py" i en opgave om tavleudskiftning og glemte tilmeldingsspørgsmålet (EL-141 bestod 0 af 3 efter mod 2 af 3 før). Hold værktøjsteksten i en fil, der kun læses ved beregning. Værdien af selve værktøjet kræver opgaver, der faktisk kræver beregningen. Med `exam.py run --calc-tool` får plugin-armen Bash, låst af `scripts/hooks/exam_calc_guard.py` til fagets regneværktøj fra `trade-registry.json`, og Write til en .json-inputfil i opgavemappen. Resultatfilen får `-regn` i navnet. Standardmålingen er uændret uden Bash, så benchmarket kan stadig sammenlignes. Se `regnekald` i rapporten, før en effekt tilskrives værktøjet: i F-031 bestod alle arme på opgaver, der blev regnet i hånden i én tur, og i et tjek efter F-033 kaldte armen med `--calc-tool` ikke `el.py` én gang.
+- **ID-intervaller i loggen lækker.** Skriv ikke "EL-301 til EL-312" i en hypotese eller læring, når holdout-opgaver ligger i intervallet. Endepunktet kan være en holdout-opgave, og `experiment.py check` afviser loggen. Skriv opgavefilen (`tasks-d`) eller kun udviklingsopgavernes ID'er.
 - **Loftet.** Opgaverne er skrevet af samme modelfamilie, som tager eksamen. Især mesteropgaver bliver derfor nemme for modellen. Konkrete tal og paragraffer er sværere at gætte og giver bedre adskillelse. Vil du have et reelt mål på mesterniveau, skal opgaverne skrives eller gennemgås af en fagperson.
 
 ### Faldgruber ved opgaveskrivning

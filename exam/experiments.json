@@ -3050,7 +3050,7 @@
         "electrical"
       ],
       "kategori": "vaerktoej",
-      "hypotese": "Regneværktøjet el.py hjælper på opgaver, der kræver dimensionering (Iz med korrektionsfaktorer, spændingsfald, Ik,min mod udløsning, tavletjek). Før: main (446edd4) uden --calc-tool. Efter: grenen med F-029/F-030-viden og --calc-tool, så Bash er låst til el.py. Kontrolarm: grenen uden --calc-tool, som skiller værktøjets effekt fra videnbasens. Kun udviklingsdelen af EL-301 til EL-312 (6 opgaver) med op til 3 gentagelser. Holdout køres ikke, da holdout-budgettet er overskredet og afventer brugeren. Forventning: efter mindst +2 beståede kørsler mod før på case-opgaverne EL-301, EL-303 og EL-305, valgopgaverne uændrede, og pris pr. bestået højst +10 % eller lavere, da færre ture går til håndregning.",
+      "hypotese": "Regneværktøjet el.py hjælper på opgaver, der kræver dimensionering (Iz med korrektionsfaktorer, spændingsfald, Ik,min mod udløsning, tavletjek). Før: main (446edd4) uden --calc-tool. Efter: grenen med F-029/F-030-viden og --calc-tool, så Bash er låst til el.py. Kontrolarm: grenen uden --calc-tool, som skiller værktøjets effekt fra videnbasens. Kun udviklingsdelen af tasks-d (EL-301 og frem) (6 opgaver) med op til 3 gentagelser. Holdout køres ikke, da holdout-budgettet er overskredet og afventer brugeren. Forventning: efter mindst +2 beståede kørsler mod før på case-opgaverne EL-301, EL-303 og EL-305, valgopgaverne uændrede, og pris pr. bestået højst +10 % eller lavere, da færre ture går til håndregning.",
       "aendring": "Ingen ændring i pluginet. Måleopsætningen exam.py run --calc-tool (dbcc60c) sammenligner arme.",
       "opgaver": [
         "EL-301",
@@ -3110,7 +3110,7 @@
         }
       },
       "rev_foer": "29417bd",
-      "laering": "De 6 udviklingsopgaver i EL-301 til EL-312 er mættede. main uden værktøj (446edd4), grenen uden værktøj og grenen med --calc-tool bestod alle 18 af 18 kørsler (repeat 3). Pris pr. bestået var 0.070, 0.062 og 0.054 USD, tid pr. opgave 16.0, 14.7 og 15.0 s og ture pr. opgave 1.4, 1.4 og 1.3. Forskellene i pris er inden for støj. Opgaverne giver formel og værdier i opgaveteksten (fx ρ, Z ved tavlen og længden), så de kan regnes i hånden i én tur, og værktøjsarmen brugte næppe el.py. Det er anslået ud fra 1.3 ture pr. opgave, da exam.py answers ikke kan vise værktøjskald pr. arm. Det, der kan konkluderes: F-029/F-030-teksten skader ikke beregningsopgaver mod main, og --calc-tool-armen kører uden fejl. Ikke målt: holdout-delen af tasks-d (holdout-budgettet er overskredet og afventer brugeren) og værktøjets værdi. Næste forbedrer: for at måle el.py skal opgaverne kræve tabelopslag, som opgaven ikke giver (Iz med referenceinstallationsmetode og Ci for kabel i isolering, Ik,min fra kabeldata, spændingsfald over flere strækninger) eller et gruppeskema med flere samvirkende tjek, så håndregning tager mange trin eller fejler. Mål også værktøjskald pr. kørsel i resultatfilen, så brugen kan ses.",
+      "laering": "De 6 udviklingsopgaver i tasks-d (EL-301 og frem) er mættede. main uden værktøj (446edd4), grenen uden værktøj og grenen med --calc-tool bestod alle 18 af 18 kørsler (repeat 3). Pris pr. bestået var 0.070, 0.062 og 0.054 USD, tid pr. opgave 16.0, 14.7 og 15.0 s og ture pr. opgave 1.4, 1.4 og 1.3. Forskellene i pris er inden for støj. Opgaverne giver formel og værdier i opgaveteksten (fx ρ, Z ved tavlen og længden), så de kan regnes i hånden i én tur, og værktøjsarmen brugte næppe el.py. Det er anslået ud fra 1.3 ture pr. opgave, da exam.py answers ikke kan vise værktøjskald pr. arm. Det, der kan konkluderes: F-029/F-030-teksten skader ikke beregningsopgaver mod main, og --calc-tool-armen kører uden fejl. Ikke målt: holdout-delen af tasks-d (holdout-budgettet er overskredet og afventer brugeren) og værktøjets værdi. Næste forbedrer: for at måle el.py skal opgaverne kræve tabelopslag, som opgaven ikke giver (Iz med referenceinstallationsmetode og Ci for kabel i isolering, Ik,min fra kabeldata, spændingsfald over flere strækninger) eller et gruppeskema med flere samvirkende tjek, så håndregning tager mange trin eller fejler. Mål også værktøjskald pr. kørsel i resultatfilen, så brugen kan ses.",
       "slut": "2026-11-01",
       "vurdering": "manuel",
       "begrundelse": "Alle tre arme bestod 18 af 18 kørsler. Opgaverne skiller ikke armene ad, så hverken værktøjets eller videnbasens effekt kan afgøres. Kategorien vaerktoej afgøres manuelt.",
@@ -3124,12 +3124,33 @@
         "electrical"
       ],
       "kategori": "opgaver",
-      "hypotese": "F-031 viste, at EL-301 til EL-312 er mættede, fordi opgaverne giver formel og værdier. Nye udviklingsopgaver, der kræver tabelopslag (Iz efter referenceinstallationsmetode med Ci for kabel i isolering, Ik,min ud fra kabeldata, spændingsfald over flere strækninger, gruppeskema med flere samvirkende tjek), skrevet af en anden agent, kan skille armene med og uden --calc-tool ad. Samtidig registreres antal værktøjskald pr. kørsel i resultatfilen. Forventning: armen uden værktøj består under 80 procent, så værktøjets effekt kan måles.",
+      "hypotese": "F-031 viste, at tasks-d (EL-301 og frem) er mættede, fordi opgaverne giver formel og værdier. Nye udviklingsopgaver, der kræver tabelopslag (Iz efter referenceinstallationsmetode med Ci for kabel i isolering, Ik,min ud fra kabeldata, spændingsfald over flere strækninger, gruppeskema med flere samvirkende tjek), skrevet af en anden agent, kan skille armene med og uden --calc-tool ad. Samtidig registreres antal værktøjskald pr. kørsel i resultatfilen. Forventning: armen uden værktøj består under 80 procent, så værktøjets effekt kan måles.",
       "aendring": "",
       "opgaver": [],
       "status": "forslag",
       "beslutning": null,
       "maalinger": {}
+    },
+    {
+      "id": "F-033",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Holdout-skifte for el (brugerens beslutning 2026-11-01). Det gamle holdout i tasks-a til tasks-c var målt 9 gange mod et budget på 8 og er ikke længere et uafhængigt mål. Holdout-delen af tasks-d bliver nyt, urørt holdout, og de gamle holdout-opgaver bliver sættet regression (skjult, kun regressionsværn). Samtidig tælles værktøjskald og regnekald pr. kørsel i resultatfilerne, så brugen af el.py kan ses pr. arm.",
+      "aendring": "learning-goals.json holdout_filer, exam.py sættet regression og værktøjskald fra stream-json, experiment.py tæller kun aktive holdout-filer mod budgettet og retire-holdout i benchmarket, README.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "rev_foer": "ccfd8fb",
+      "laering": "El har nu 6 holdout-opgaver (holdout-delen af tasks-d) og 40 regressionsopgaver (det tidligere holdout i tasks-a til tasks-c). Opgavefilerne er urørte, og skiftet ligger kun i holdout_filer i learning-goals.json. Holdout-tælleren for el står på 0, og benchmarkets gamle holdout-grupper hedder nu regression/tasks-a til -c med F-007-tallene som regressionsbasis. Der er endnu ingen benchmark for holdout/tasks-d, så den første måling (F-032) bliver udgangspunktet. Det nye holdout er lille: med 6 opgaver flytter én opgave 17 procentpoint, og ikke alle læringsmål har en holdout-opgave. Støjgrænsen på 2 opgaver er derfor grov, og regression bør køres med som værn. Værktøjskald tælles nu pr. kørsel fra stream-json (vaerktoejskald, regnekald, afviste_kald). Det er efterprøvet på en rigtig kørsel med Read og Bash. I et tjek på 2 udviklingsopgaver fra tasks-d med --calc-tool brugte armen 0 værktøjskald og 1 tur pr. opgave, hvilket bekræfter læringen fra F-031: de nuværende opgaver kræver ikke el.py. Prisen i tjekket var 0.16 USD pr. opgave mod 0.05 i F-031, med samme antal input-tokens. Det skyldes anslået en kold cache og ikke stream-json, men følg op i F-032. Ikke målt: holdout og regression efter skiftet. Under arbejdet blev et holdout-ID fundet i loggen via intervallet i F-031 og F-032, og det er rettet.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Brugerens beslutning om nyt holdout for el. Kategorien vaerktoej afgøres manuelt, og skiftet ændrer ikke pluginet, så der er intet før og efter at måle.",
+      "rev_efter": "ccfd8fb",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/40"
     }
   ]
 }

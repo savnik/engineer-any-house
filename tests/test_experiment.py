@@ -38,22 +38,22 @@ def test_assess():
     def run(before, after, category="videnbase"):
         return experiment.assess(category, {"electrical": {"foer": measurement(before), "efter": measurement(after)}})[0]
 
-    base = {"udvikling/tasks-a": group(30, 24), "holdout/tasks-a": group(15, 12)}
+    base = {"udvikling/tasks-a": group(30, 24), "holdout/tasks-d": group(15, 12)}
     expect("bedre ud over støj → behold",
-           run(base, {"udvikling/tasks-a": group(30, 28), "holdout/tasks-a": group(15, 12)}) == "behold")
+           run(base, {"udvikling/tasks-a": group(30, 28), "holdout/tasks-d": group(15, 12)}) == "behold")
     expect("inden for støj → uafklaret",
-           run(base, {"udvikling/tasks-a": group(30, 25), "holdout/tasks-a": group(15, 12)}) == "uafklaret")
+           run(base, {"udvikling/tasks-a": group(30, 25), "holdout/tasks-d": group(15, 12)}) == "uafklaret")
     expect("holdout falder 2 → forkast",
-           run(base, {"udvikling/tasks-a": group(30, 29), "holdout/tasks-a": group(15, 10)}) == "forkast")
+           run(base, {"udvikling/tasks-a": group(30, 29), "holdout/tasks-d": group(15, 10)}) == "forkast")
     expect("uden holdout → uafklaret",
            run({"udvikling/tasks-a": group(30, 24)}, {"udvikling/tasks-a": group(30, 29)}) == "uafklaret")
     expect("ikke samme opgaver → uafklaret",
-           run(base, {"udvikling/tasks-a": group(29, 28), "holdout/tasks-a": group(15, 12)}) == "uafklaret")
+           run(base, {"udvikling/tasks-a": group(29, 28), "holdout/tasks-d": group(15, 12)}) == "uafklaret")
     expect("samme kvalitet, meget billigere → behold",
-           run(base, {"udvikling/tasks-a": group(30, 24, cost=1.5), "holdout/tasks-a": group(15, 12, cost=0.7)})
+           run(base, {"udvikling/tasks-a": group(30, 24, cost=1.5), "holdout/tasks-d": group(15, 12, cost=0.7)})
            == "behold")
     expect("ingen gevinst, dyrere → forkast",
-           run(base, {"udvikling/tasks-a": group(30, 24, cost=3.0), "holdout/tasks-a": group(15, 12, cost=1.5)})
+           run(base, {"udvikling/tasks-a": group(30, 24, cost=3.0), "holdout/tasks-d": group(15, 12, cost=1.5)})
            == "forkast")
     expect("rettemaske afgøres manuelt", run(base, base, "rettemaske") == "manuel")
 
@@ -135,6 +135,41 @@ def test_guard():
     expect("git status tilladt", not deny("Bash", {"command": "git status"}))
 
 
+def test_holdout_switch():
+    """After a switch only the active holdout files count as holdout: for the budget, the rule and the benchmark."""
+    original = experiment.exam.EXAM_DIR
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            experiment.exam.EXAM_DIR = pathlib.Path(tmp)
+            d = experiment.exam.EXAM_DIR / "electrical"
+            d.mkdir()
+            goals = {"fag": "electrical", "maal": [], "holdout_filer": ["tasks-d.json"]}
+            (d / "learning-goals.json").write_text(json.dumps(goals), encoding="utf-8")
+            expect("aktiv holdout-fil tæller", experiment.is_holdout_group("electrical", "holdout/tasks-d"))
+            expect("gammel holdout-fil tæller ikke", not experiment.is_holdout_group("electrical", "holdout/tasks-a"))
+            expect("regression tæller ikke", not experiment.is_holdout_group("electrical", "regression/tasks-a"))
+            old = measurement({"udvikling/tasks-a": group(30, 24), "holdout/tasks-a": group(15, 12)})
+            log = {"forsoeg": [{"maalinger": {"electrical": {"foer": old, "efter": old}}}]}
+            expect("budgettet tæller ikke gamle holdout-målinger", experiment.holdout_uses(log, "electrical") == 0)
+            log["forsoeg"][0]["maalinger"]["electrical"]["efter"] = measurement({"holdout/tasks-d": group(6, 5)})
+            expect("budgettet tæller nye holdout-målinger", experiment.holdout_uses(log, "electrical") == 1)
+            verdict, notes = experiment.assess("videnbase", {"electrical": {
+                "foer": old, "efter": measurement({"udvikling/tasks-a": group(30, 28), "holdout/tasks-a": group(15, 12)})}})
+            expect("gammel holdout opfylder ikke holdout-kravet", verdict == "uafklaret" and "holdout" in notes[-1], notes)
+            bench = {"fag": {"electrical": {"grupper": {"holdout/tasks-a": group(15, 12), "holdout/tasks-d": group(6, 5),
+                                                        "udvikling/tasks-a": group(30, 24)},
+                                            "kilder": {"holdout/tasks-a": "F-007 @ x"}}}}
+            moved = experiment.retire_holdout(bench, "electrical")
+            b = bench["fag"]["electrical"]
+            expect("benchmark: gammel holdout bliver regression", moved == ["holdout/tasks-a → regression/tasks-a"]
+                   and "regression/tasks-a" in b["grupper"] and "holdout/tasks-d" in b["grupper"]
+                   and b["kilder"] == {"regression/tasks-a": "F-007 @ x"}, str(b))
+    finally:
+        experiment.exam.EXAM_DIR = original
+        experiment._ACTIVE_HOLDOUT.clear()
+        experiment.exam._SETS_CACHE.clear()
+
+
 def test_answers_hide_holdout():
     held = sorted(t for t in experiment.holdout_ids() if t.startswith("EL-"))[0]
     r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "answers", "electrical", "--id", held],
@@ -143,7 +178,7 @@ def test_answers_hide_holdout():
 
 
 def main() -> int:
-    for t in (test_assess, test_summarize, test_validate, test_guard, test_answers_hide_holdout):
+    for t in (test_assess, test_summarize, test_validate, test_guard, test_holdout_switch, test_answers_hide_holdout):
         t()
     print(f"\n{len(FAILURES)} fejl")
     return 1 if FAILURES else 0

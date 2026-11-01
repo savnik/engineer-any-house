@@ -9,14 +9,17 @@ Everything else is denied. Unlike calc_guard, this hook fails closed: in the exa
 Usage (written into the plugin copy's hooks/hooks.json by exam.py):
   python3 exam_calc_guard.py <trade> <tool> [<tool> ...]
 """
+import importlib.util
 import json
 import pathlib
 import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "plugins" / "byg-review" / "hooks"))
-
-from calc_guard import check  # noqa: E402
+# byg-review's calc_guard (standard library only), loaded by path so the hook needs no sys.path changes.
+_spec = importlib.util.spec_from_file_location("calc_guard", ROOT / "plugins" / "byg-review" / "hooks" / "calc_guard.py")
+_calc_guard = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_calc_guard)
+check = _calc_guard.check
 
 
 def decision(allow: bool, reason: str) -> str:
