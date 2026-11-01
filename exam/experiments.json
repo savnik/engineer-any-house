@@ -3265,7 +3265,7 @@
       ],
       "kategori": "prompt",
       "hypotese": "I F-032 havde kørslerne med --calc-tool ca. 1 afvist eller fejlet Bash-kald pr. opgave og 2,6 gange så mange input-tokens som uden værktøj. Hvis resultatrækken gemmer de afviste kommandoer for udviklingsopgaver, og agentprompten eller calc-tools.md viser den præcise kaldform for el.py, falder ture og pris pr. bestået med mindst 10 procent ved uændret kvalitet.",
-      "aendring": "Én linje i electrician.md under Regneværktøj med den eneste tilladte Bash-kaldform for el.py og at filer læses med Read og Grep; opstartstrin 1 siger læs med Read og Grep. Diagnose med de nye afviste-felter i resultatrækken: 6 af 7 afviste kald var en sammensat cd-cat-ls-grep-kommando til at læse videnbasen, 1 var python3 -I foran stien. calc_guard er uændret og fejler fortsat lukket. Status: udvikling målt efter på 39a6ffd; holdout-bekræftelsen afventer brugerens godkendelse, da det ville være fjerde holdout-kørsel i el i dag.",
+      "aendring": "Én linje i electrician.md under Regneværktøj med den eneste tilladte Bash-kaldform for el.py og at filer læses med Read og Grep; opstartstrin 1 siger læs med Read og Grep. Diagnose med de nye afviste-felter i resultatrækken: 5 af 6 afviste kald var en sammensat cd-cat-ls-grep-kommando til at læse videnbasen, 1 var python3 -I foran stien. calc_guard er uændret og fejler fortsat lukket. Status: udvikling målt efter på 39a6ffd; holdout-bekræftelsen afventer brugerens godkendelse, da det ville være fjerde holdout-kørsel i el i dag.",
       "opgaver": [
         "EL-301",
         "EL-303",
