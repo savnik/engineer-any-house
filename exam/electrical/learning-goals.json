@@ -2,6 +2,8 @@
   "fag": "electrical",
   "plugin": "byg-electrical",
   "agent": "electrician",
+  "holdout_filer": ["tasks-d.json"],
+  "holdout_note": "Holdout-skifte 2026-11-01 (brugerens beslutning): kun holdout-opgaverne i tasks-d.json er holdout. De tidligere holdout-opgaver i tasks-a til tasks-c er sættet 'regression' – stadig skjulte, men kun et regressionsværn, fordi de var målt over budgettet.",
   "note": "Kompetencemål (ordret fra uddannelsesordningen), EVU's 11 el-teoretiske temaer og autorisationsprøvens indholdskrav. Rolle 'uden' = ligger uden for agentens rolle eller kan ikke prøves som faglig viden; begrundelsen står ved målet. Mesterniveau udvidet med de nationale fagelementer i installatøruddannelsen (AK), ordret: Indhold og læringsmål (viden, færdigheder, kompetencer).",
   "kilder": [
     {

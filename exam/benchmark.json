@@ -2,42 +2,6 @@
   "fag": {
     "electrical": {
       "grupper": {
-        "holdout/tasks-a": {
-          "basis": {
-            "n": 16,
-            "bestaaet": 10,
-            "opgaver_hash": "f3b9d24298f0",
-            "pris_usd": 1.302,
-            "pris_pr_bestaaet": 0.1302,
-            "sek_pr_opgave": null
-          },
-          "plugin": {
-            "n": 16,
-            "bestaaet": 13,
-            "opgaver_hash": "f3b9d24298f0",
-            "pris_usd": 1.28,
-            "pris_pr_bestaaet": 0.0984,
-            "sek_pr_opgave": 29.4
-          }
-        },
-        "holdout/tasks-b": {
-          "basis": {
-            "n": 15,
-            "bestaaet": 12,
-            "opgaver_hash": "9c321d65956a",
-            "pris_usd": 1.121,
-            "pris_pr_bestaaet": 0.0934,
-            "sek_pr_opgave": null
-          },
-          "plugin": {
-            "n": 15,
-            "bestaaet": 13,
-            "opgaver_hash": "9c321d65956a",
-            "pris_usd": 1.105,
-            "pris_pr_bestaaet": 0.085,
-            "sek_pr_opgave": 25.9
-          }
-        },
         "udvikling/tasks-a": {
           "basis": {
             "n": 29,
@@ -89,24 +53,6 @@
             "fejlede": []
           }
         },
-        "holdout/tasks-c": {
-          "basis": {
-            "n": 9,
-            "bestaaet": 8,
-            "opgaver_hash": "0725803aea09",
-            "pris_usd": 0.765,
-            "pris_pr_bestaaet": 0.0956,
-            "sek_pr_opgave": 22.2
-          },
-          "plugin": {
-            "n": 9,
-            "bestaaet": 8,
-            "opgaver_hash": "0725803aea09",
-            "pris_usd": 0.727,
-            "pris_pr_bestaaet": 0.0909,
-            "sek_pr_opgave": 28.2
-          }
-        },
         "udvikling/tasks-c": {
           "basis": {
             "n": 18,
@@ -131,17 +77,90 @@
               "EL-226"
             ]
           }
+        },
+        "regression/tasks-a": {
+          "plugin": {
+            "n": 16,
+            "bestaaet": 12,
+            "opgaver_hash": "f3b9d24298f0",
+            "pris_usd": 1.607,
+            "pris_pr_bestaaet": 0.1339,
+            "sek_pr_opgave": 26.4,
+            "tokens_ud_pr_opgave": 2012,
+            "vaerktoejskald_pr_opgave": 2.08,
+            "regnekald_pr_opgave": 0.03,
+            "afviste_kald_pr_opgave": 0.0
+          }
+        },
+        "regression/tasks-b": {
+          "plugin": {
+            "n": 15,
+            "bestaaet": 13,
+            "opgaver_hash": "9c321d65956a",
+            "pris_usd": 1.162,
+            "pris_pr_bestaaet": 0.0894,
+            "sek_pr_opgave": 25.2,
+            "tokens_ud_pr_opgave": 1933,
+            "vaerktoejskald_pr_opgave": 1.2,
+            "regnekald_pr_opgave": 0.0,
+            "afviste_kald_pr_opgave": 0.0
+          }
+        },
+        "regression/tasks-c": {
+          "plugin": {
+            "n": 9,
+            "bestaaet": 8,
+            "opgaver_hash": "0725803aea09",
+            "pris_usd": 0.71,
+            "pris_pr_bestaaet": 0.0887,
+            "sek_pr_opgave": 25.1,
+            "tokens_ud_pr_opgave": 1997,
+            "vaerktoejskald_pr_opgave": 1.15,
+            "regnekald_pr_opgave": 0.0,
+            "afviste_kald_pr_opgave": 0.0
+          }
+        },
+        "holdout/tasks-d": {
+          "plugin": {
+            "n": 6,
+            "bestaaet": 5,
+            "opgaver_hash": "99a9abdd6e81",
+            "pris_usd": 1.078,
+            "pris_pr_bestaaet": 0.2157,
+            "sek_pr_opgave": 31.2,
+            "tokens_ud_pr_opgave": 2606,
+            "vaerktoejskald_pr_opgave": 3.83,
+            "regnekald_pr_opgave": 1.5,
+            "afviste_kald_pr_opgave": 0.0
+          }
+        },
+        "udvikling/tasks-d": {
+          "plugin": {
+            "n": 6,
+            "bestaaet": 6,
+            "opgaver_hash": "e04365cd84f0",
+            "pris_usd": 0.832,
+            "pris_pr_bestaaet": 0.1387,
+            "sek_pr_opgave": 28.3,
+            "tokens_ud_pr_opgave": 2326,
+            "vaerktoejskald_pr_opgave": 3.11,
+            "regnekald_pr_opgave": 1.72,
+            "afviste_kald_pr_opgave": 0.0,
+            "fejlede": []
+          }
         }
       },
-      "opdateret": "2026-10-18",
-      "forsoeg": "F-007",
+      "opdateret": "2026-11-01",
+      "forsoeg": "F-039",
       "kilder": {
-        "holdout/tasks-a": "F-007 @ 4ab0e22",
-        "holdout/tasks-b": "F-007 @ 4ab0e22",
         "udvikling/tasks-a": "F-007 @ 4ab0e22",
         "udvikling/tasks-b": "F-007 @ 4ab0e22",
-        "holdout/tasks-c": "F-007 @ 4ab0e22",
-        "udvikling/tasks-c": "F-007 @ 4ab0e22"
+        "udvikling/tasks-c": "F-007 @ 4ab0e22",
+        "regression/tasks-a": "F-039 @ aee7cd2",
+        "regression/tasks-b": "F-039 @ aee7cd2",
+        "regression/tasks-c": "F-039 @ aee7cd2",
+        "holdout/tasks-d": "F-035 @ aee7cd2",
+        "udvikling/tasks-d": "F-035 @ aee7cd2"
       }
     },
     "plumbing": {

@@ -138,6 +138,86 @@ def test_holdout_gaps_are_not_listed():
     expect("holdout-regression vises kun som antal", "H-1" not in text and "- og 1 i holdout" in text, text)
 
 
+def test_holdout_switch():
+    """After a switch (holdout_filer), holdout tasks in other files become 'regression': hidden, not holdout."""
+    original = exam.EXAM_DIR
+    try:
+        with tempfile.TemporaryDirectory() as tmp:
+            exam.EXAM_DIR = pathlib.Path(tmp)
+            write_fixture(exam.EXAM_DIR, [task("E1", "udvikling"), task("E2", "holdout")])
+            d = exam.EXAM_DIR / "electrical"
+            (d / "tasks-d.json").write_text(json.dumps({"opgaver": [task("E3", "udvikling"), task("E4", "holdout")]}),
+                                            encoding="utf-8")
+            expect("uden skifte er alt holdout holdout",
+                   {t["id"]: t["saet"] for t in exam.load_trade("electrical")[1]}["E2"] == "holdout")
+            goals = json.loads((d / "learning-goals.json").read_text(encoding="utf-8"))
+            (d / "learning-goals.json").write_text(json.dumps({**goals, "holdout_filer": ["tasks-d.json"]}),
+                                                   encoding="utf-8")
+            sets = {t["id"]: t["saet"] for t in exam.load_trade("electrical")[1]}
+            expect("gammel holdout bliver regression", sets["E2"] == "regression" and sets["E4"] == "holdout", str(sets))
+            expect("gemt sæt er urørt", {t["id"]: t["saet"] for t in exam.load_trade("electrical", stored=True)[1]}
+                   ["E2"] == "holdout")
+            errors, _ = exam.validate("electrical")
+            expect("skiftet sæt er gyldigt", not errors, str(errors))
+            rows = [{"id": i, "arm": "plugin", "type": "valg", "saet": "holdout", "niveau": "svend", "maal": ["M1"],
+                     "bestaaet": False} for i in ("E2", "E4")]
+            f = exam.EXAM_DIR / "r.json"
+            f.write_text(json.dumps({"fag": "electrical", "resultater": rows}), encoding="utf-8")
+            text = exam.report([f])
+            expect("rapporten grupperer efter nuværende sæt", "| Sæt: regression | 0/1 (0 %) |" in text and "| Sæt: holdout | 0/1 (0 %) |"
+                   in text, text)
+            expect("regression skjules", "E2" not in text and "1 regression-opgaver er ikke bestået" in text, text)
+            (d / "learning-goals.json").write_text(json.dumps({**goals, "holdout_filer": ["tasks-x.json"]}),
+                                                   encoding="utf-8")
+            errors, _ = exam.validate("electrical")
+            expect("ukendt holdout-fil afvises", any("tasks-x.json" in e for e in errors), str(errors))
+    finally:
+        exam.EXAM_DIR = original
+        exam._SETS_CACHE.clear()
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "exam.py"), "run", "electrical", "--set", "regression"],
+                       capture_output=True, text=True)
+    expect("regression kræver --release", r.returncode == 1 and "--release" in r.stdout)
+
+
+def test_tool_calls():
+    def ev(kind, *blocks):
+        return json.dumps({"type": kind, "message": {"content": list(blocks)}})
+    lines = [
+        json.dumps({"type": "system", "subtype": "init"}),
+        ev("assistant", {"type": "text", "text": "..."},
+           {"type": "tool_use", "name": "Read", "input": {"file_path": "/x/SKILL.md"}}),
+        ev("user", {"type": "tool_result", "content": "ok"}),
+        ev("assistant", {"type": "tool_use", "name": "Bash",
+                         "input": {"command": "python3 /p/skills/electrical-knowledge/scripts/el.py iz --size 2.5"}}),
+        ev("assistant", {"type": "tool_use", "id": "t9", "name": "Bash", "input": {"command": "ls /"}}),
+        ev("user", {"type": "tool_result", "tool_use_id": "t9", "is_error": True,
+                    "content": [{"type": "text", "text": "Bash kun til regneværktøjet"}]}),
+        "ikke json",
+        json.dumps({"type": "result", "result": "ANSWER: A", "total_cost_usd": 0.01, "num_turns": 4}),
+    ]
+    res = exam.parse_stream("\n".join(lines))
+    expect("strøm: resultatet findes", res["result"] == "ANSWER: A" and res["num_turns"] == 4, str(res))
+    expect("strøm: kald pr. værktøj", res["vaerktoejskald"] == {"Read": 1, "Bash": 2}, str(res["vaerktoejskald"]))
+    expect("strøm: afviste kald", res["afviste_kald"] == 1)
+    expect("strøm: det afviste kald gemmes med fejltekst",
+           res["afviste"] == [{"vaerktoej": "Bash", "kald": "ls /", "fejl": "Bash kun til regneværktøjet"}],
+           str(res["afviste"]))
+    expect("regnekald tælles", exam.count_calc_calls(res["bash_kommandoer"], ["el.py"]) == 1)
+    expect("andet værktøj er ikke regnekald", exam.count_calc_calls(["python3 hotel.py x"], ["el.py"]) == 0)
+    expect("strøm uden resultat er fejl", exam.parse_stream(lines[1])["is_error"])
+    rows = [{"id": "X-1", "arm": "plugin", "type": "valg", "saet": "udvikling", "niveau": "svend", "maal": ["M1"],
+             "bestaaet": True, "vaerktoejskald": {"Bash": 2, "Read": 1}, "regnekald": 1, "afviste_kald": 0},
+            {"id": "X-2", "arm": "plugin", "type": "valg", "saet": "udvikling", "niveau": "svend", "maal": ["M1"],
+             "bestaaet": True, "vaerktoejskald": {}, "regnekald": 0, "afviste_kald": 0}]
+    with tempfile.TemporaryDirectory() as tmp:
+        f = pathlib.Path(tmp) / "r.json"
+        f.write_text(json.dumps({"fag": "electrical", "resultater": rows}), encoding="utf-8")
+        text = exam.report([f])
+    expect("rapport: værktøjskald pr. opgave", "| Værktøjskald pr. opgave | 1.5 |" in text, text)
+    expect("rapport: kørsler med regnekald", "| Kørsler med regnekald | 1/2 |" in text, text)
+    expect("svar: værktøjskald formateres", exam.format_calls(rows[0]).startswith("Bash 2, Read 1 · regnekald 1"))
+
+
 def case_task(**kw):
     t = {"id": "C-1", "maal": ["M1"], "saet": "udvikling", "type": "case", "niveau": "mester",
          "spoergsmaal": "Et parcelhus skal have ny tavle.", "kilde": "K1", "status": "V 2026-10-18",
@@ -256,6 +336,47 @@ def test_plugin_arm_can_read_its_plugin():
         expect("plugin fra git-revision", (dst / "agents" / "electrician.md").is_file())
 
 
+def test_calc_tool_arm():
+    class Args:
+        web = False
+        max_turns = 12
+        model = ""
+        calc_tool = True
+    tools = exam.arm_args("plugin", Args, pathlib.Path("/tmp/x"), "a")
+    tools = tools[tools.index("--tools") + 1]
+    expect("regneværktøjsarmen får Bash og Write", "Bash" in tools and "Write" in tools)
+    base = exam.arm_args("basis", Args, None, "")
+    expect("basis-armen får aldrig Bash", "Bash" not in base[base.index("--tools") + 1])
+    expect("el har regneværktøj i registret", exam.calc_tools("electrical") == ["el.py"])
+    expect("fag uden regneværktøj", exam.calc_tools("painting") == [])
+    with tempfile.TemporaryDirectory() as tmp:
+        dst = exam.prepare_plugin("byg-electrical", pathlib.Path(tmp))
+        exam.install_calc_guard(dst, "electrical", ["el.py"])
+        hooks = json.loads((dst / "hooks" / "hooks.json").read_text(encoding="utf-8"))
+        cmd = hooks["hooks"]["PreToolUse"][-1]["hooks"][0]["command"]
+        expect("vagten installeret i plugin-kopien", "exam_calc_guard.py" in cmd and cmd.endswith("electrical el.py"))
+        el = dst / "skills" / "electrical-knowledge" / "scripts" / "el.py"
+        work = pathlib.Path(tmp) / "opgave"
+        work.mkdir()
+
+        def decide(tool, tool_input):
+            inp = {"tool_name": tool, "tool_input": tool_input, "cwd": str(work)}
+            out = subprocess.run([sys.executable, str(exam.EXAM_CALC_GUARD), "electrical", "el.py"],
+                                 input=json.dumps(inp), capture_output=True, text=True).stdout
+            return json.loads(out)["hookSpecificOutput"]["permissionDecision"]
+        expect("vagt: el.py tilladt", decide("Bash", {"command": f"python3 {el} iz --size 2.5"}) == "allow")
+        expect("vagt: anden kommando afvist", decide("Bash", {"command": "ls /"}) == "deny")
+        expect("vagt: kæde afvist", decide("Bash", {"command": f"python3 {el} test && ls"}) == "deny")
+        expect("vagt: tavlefil i opgavemappen", decide("Write", {"file_path": str(work / "tavle.json")}) == "allow")
+        expect("vagt: Write uden for opgavemappen afvist", decide("Write", {"file_path": "/tmp/x.json"}) == "deny")
+        expect("vagt: kun .json", decide("Write", {"file_path": str(work / "svar.md")}) == "deny")
+        expect("vagt: andre værktøjer afvist", decide("Edit", {"file_path": str(work / "tavle.json")}) == "deny")
+        bad = subprocess.run([sys.executable, str(exam.EXAM_CALC_GUARD), "electrical", "el.py"],
+                             input="ikke json", capture_output=True, text=True).stdout
+        expect("vagt: fejl afviser", '"deny"' in bad)
+    expect("originalen har ingen hooks", not (ROOT / "plugins" / "byg-electrical" / "hooks").exists())
+
+
 def test_real_sets():
     for trade in exam.all_trades():
         errors, _ = exam.validate(trade)
@@ -268,11 +389,14 @@ if __name__ == "__main__":
     test_report_skips_run_errors()
     test_efficiency_helpers()
     test_holdout_gaps_are_not_listed()
+    test_holdout_switch()
+    test_tool_calls()
     test_case()
     test_shuffle()
     test_validation()
     test_plugin_copy_without_memory()
     test_plugin_arm_can_read_its_plugin()
+    test_calc_tool_arm()
     test_real_sets()
     print(f"\n{len(FAILURES)} fejl")
     sys.exit(1 if FAILURES else 0)

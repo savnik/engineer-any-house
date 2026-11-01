@@ -14,13 +14,20 @@ Brug:
   python3 scripts/experiment.py close F-001 --decision keep|discard|undecided --learning "…"
                                [--rationale "…"] [--rev-after REV] [--pr "#7"]
   python3 scripts/experiment.py benchmark [--trade electrical]
+  python3 scripts/experiment.py compare <fil-a> <fil-b> [--history <fil> ...]
+                               opgaver, der skifter mellem to kørsler, pr. gruppe – uden ID'er, også for skjulte sæt
   python3 scripts/experiment.py check                      format, og at ingen holdout-ID'er står i loggen
+  python3 scripts/experiment.py retire-holdout --trade electrical   benchmarkets gamle holdout-grupper → regression
 
 --decision keep|discard|undecided gemmes som behold|forkast|uafklaret i loggen.
 
 Loggen (`exam/experiments.json`) og benchmarket (`exam/benchmark.json`) ligger i repoet. De rummer kun
 sammendrag pr. gruppe (sæt × opgavefil). Holdout-opgaver gemmes kun som antal og en hash af ID-listen, så
 loggen aldrig peger på enkelte holdout-opgaver. Resultatfilerne bag målingerne ligger lokalt og ignoreres af git.
+
+Holdout-skifte: når et fag har 'holdout_filer' i learning-goals.json, er kun holdout-opgaverne i de filer holdout.
+Tidligere holdout-opgaver hører til sættet 'regression' (skjult, men kun regressionsværn). Holdout-budgettet tæller
+kun målinger af de aktive holdout-filer, og beslutningsreglens krav om holdout opfyldes kun af dem.
 """
 import argparse
 import datetime
@@ -133,7 +140,7 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
         groups: dict[str, dict] = {}
         for (tid, arm), rows in sorted(latest.items()):
             g = groups.setdefault(f"{rows[0]['saet']}/{where.get(tid, 'ukendt')}", {}).setdefault(
-                arm, {"ids": [], "failed": [], "cost": 0.0, "secs": [], "toks": []})
+                arm, {"ids": [], "failed": [], "cost": 0.0, "secs": [], "toks": [], "calls": [], "calc": [], "rejected": []})
             g["ids"].append(tid)
             if sum(r["bestaaet"] for r in rows) * 2 <= len(rows):
                 g["failed"].append(tid)
@@ -141,6 +148,9 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
             g["cost"] += sum(r.get("pris_usd") or 0 for r in rows) / len(rows)
             g["secs"] += [r["sek"] for r in rows if r.get("sek") is not None]
             g["toks"] += [r["tokens_ud"] for r in rows if r.get("tokens_ud") is not None]
+            g["calls"] += [sum(r["vaerktoejskald"].values()) for r in rows if "vaerktoejskald" in r]
+            g["calc"] += [r.get("regnekald", 0) for r in rows if "vaerktoejskald" in r]
+            g["rejected"] += [r["afviste_kald"] for r in rows if "afviste_kald" in r]
         summary = {}
         for name, arms in sorted(groups.items()):
             summary[name] = {}
@@ -150,6 +160,11 @@ def summarize(files: list[pathlib.Path]) -> dict[str, dict]:
                      "pris_pr_bestaaet": round(g["cost"] / ok, 4) if ok else None,
                      "sek_pr_opgave": round(sum(g["secs"]) / len(g["secs"]), 1) if g["secs"] else None,
                      "tokens_ud_pr_opgave": round(sum(g["toks"]) / len(g["toks"])) if g["toks"] else None}
+                if g["calls"]:  # only runs since tool calls were counted
+                    s["vaerktoejskald_pr_opgave"] = round(sum(g["calls"]) / len(g["calls"]), 2)
+                    s["regnekald_pr_opgave"] = round(sum(g["calc"]) / len(g["calc"]), 2)
+                if g["rejected"]:  # only runs since rejected calls were counted
+                    s["afviste_kald_pr_opgave"] = round(sum(g["rejected"]) / len(g["rejected"]), 2)
                 if name.startswith("udvikling/"):
                     s["fejlede"] = sorted(g["failed"])  # holdout task ids are never stored
                 summary[name][arm] = s
@@ -195,7 +210,7 @@ def assess(category: str, measurements: dict) -> tuple[str, list[str]]:
                 unclear = True
                 continue
             d = a["bestaaet"] - b["bestaaet"]
-            holdout_seen |= g.startswith("holdout/")
+            holdout_seen |= is_holdout_group(trade, g)
             gain += d
             harm |= d <= -NOISE_TASKS
             cost_before, cost_after = cost_before + b["pris_usd"], cost_after + a["pris_usd"]
@@ -231,9 +246,28 @@ def line(e: dict) -> str:
     return f"{e['id']} [{e['status']}{dec}] {','.join(e['fag'])} · {e['kategori']} · {e['hypotese']}"
 
 
+_ACTIVE_HOLDOUT: dict[tuple[str, str], set[str] | None] = {}
+
+
+def is_holdout_group(trade: str, group: str) -> bool:
+    """Whether a group '<sæt>/<opgavefil>' measures the trade's current holdout set. Groups logged before a holdout
+    switch keep the name 'holdout/<fil>', so after a switch only the active files count."""
+    if not group.startswith("holdout/"):
+        return False
+    key = (str(exam.EXAM_DIR), trade)
+    if key not in _ACTIVE_HOLDOUT:
+        try:
+            _ACTIVE_HOLDOUT[key] = exam.holdout_files(exam.load_trade(trade)[0])
+        except (OSError, ValueError):
+            _ACTIVE_HOLDOUT[key] = None
+    active = _ACTIVE_HOLDOUT[key]
+    return active is None or group.split("/", 1)[1] + ".json" in active
+
+
 def holdout_uses(log: dict, trade: str) -> int:
+    """Measurements (before or after) of the trade's current holdout set – the count behind HOLDOUT_BUDGET."""
     return sum(1 for e in log["forsoeg"] for side in (e.get("maalinger", {}).get(trade) or {}).values()
-               if any(g.startswith("holdout/") for g in side.get("grupper", {})))
+               if any(is_holdout_group(trade, g) for g in side.get("grupper", {})))
 
 
 def print_benchmark(bench: dict, trades: list[str]) -> None:
@@ -304,7 +338,12 @@ def cmd_show(args) -> int:
                     extra = ", ".join(x for x in (
                         cost,
                         f"{p['sek_pr_opgave']} s/opgave" if p.get("sek_pr_opgave") else "",
-                        f"{p['tokens_ud_pr_opgave']} tokens_ud/opgave" if p.get("tokens_ud_pr_opgave") else "") if x)
+                        f"{p['tokens_ud_pr_opgave']} tokens_ud/opgave" if p.get("tokens_ud_pr_opgave") else "",
+                        f"{p['vaerktoejskald_pr_opgave']} værktøjskald/opgave" if "vaerktoejskald_pr_opgave" in p
+                        else "",
+                        f"{p['regnekald_pr_opgave']} regnekald/opgave" if "regnekald_pr_opgave" in p else "",
+                        f"{p['afviste_kald_pr_opgave']} afviste/opgave" if "afviste_kald_pr_opgave" in p
+                        else "") if x)
                     print("    " + g + ": " + " · ".join(f"{arm} {a['bestaaet']}/{a['n']}" for arm, a in arms.items())
                           + (f" ({extra})" if extra else ""))
     if e.get("maalinger"):
@@ -431,9 +470,88 @@ def cmd_close(args) -> int:
     return 0
 
 
+def compare(a: pathlib.Path, b: pathlib.Path, history: list[pathlib.Path]) -> list[str]:
+    """Per group: how many tasks pass in both, only in A, only in B or in neither, and for the tasks that
+    differ the votes in A and B and their pass record in the history files. No task IDs are printed, so the
+    output is safe for hidden sets (holdout, regression)."""
+    def votes(files: list[pathlib.Path]) -> dict[str, list[bool]]:
+        out: dict[str, list[bool]] = {}
+        for f in files:
+            for r in exam.valid_rows(f):
+                if r["arm"] == "plugin":
+                    out.setdefault(r["id"], []).append(bool(r["bestaaet"]))
+        return out
+
+    def passed(v: list[bool]) -> bool:
+        return sum(v) * 2 > len(v)
+
+    trade = json.loads(a.read_text(encoding="utf-8"))["fag"]
+    where, types = task_files(trade), {}
+    for f in sorted((exam.EXAM_DIR / trade).glob("tasks*.json")):
+        for t in json.loads(f.read_text(encoding="utf-8"))["opgaver"]:
+            types[t["id"]] = f"{t['type']}/{t['niveau']}"
+    va, vb, vh = votes([a]), votes([b]), votes(history)
+    per_file = [votes([h]) for h in history]
+    groups: dict[str, list[str]] = {}
+    for tid in sorted(set(va) & set(vb)):
+        groups.setdefault(where.get(tid, "ukendt"), []).append(tid)
+    lines = []
+    for name, ids in sorted(groups.items()):
+        both = sum(passed(va[i]) and passed(vb[i]) for i in ids)
+        only_a = [i for i in ids if passed(va[i]) and not passed(vb[i])]
+        only_b = [i for i in ids if passed(vb[i]) and not passed(va[i])]
+        lines.append(f"{name}: {len(ids)} opgaver · begge {both} · kun A {len(only_a)} · kun B {len(only_b)} · "
+                     f"ingen {len(ids) - both - len(only_a) - len(only_b)}")
+        # Sorted on the printed text, not on the ID, so the order reveals nothing.
+        rows = []
+        for side, picked in (("kun A", only_a), ("kun B", only_b)):
+            for i in picked:
+                h = vh.get(i, [])
+                each = ", ".join(f"{sum(v[i])}/{len(v[i])}" if i in v else "–" for v in per_file)
+                rows.append(f"  {side}: {types.get(i, '?')} · A {sum(va[i])}/{len(va[i])} · "
+                            f"B {sum(vb[i])}/{len(vb[i])} · historik {sum(h)}/{len(h)}"
+                            + (f" (pr. fil: {each})" if history else ""))
+        flaky = [i for i in ids if 0 < sum(va[i] + vb[i] + vh.get(i, [])) < len(va[i] + vb[i] + vh.get(i, []))]
+        lines += sorted(rows) + [f"  opgaver med både bestået og ikke bestået på tværs af alle filer: {len(flaky)}"]
+    return lines
+
+
+def cmd_compare(args) -> int:
+    print("\n".join(compare(pathlib.Path(args.a), pathlib.Path(args.b), [pathlib.Path(h) for h in args.history])))
+    return 0
+
+
 def cmd_benchmark(args) -> int:
     bench = load_benchmark()
     print_benchmark(bench, [args.trade] if args.trade else sorted(bench["fag"]))
+    return 0
+
+
+def retire_holdout(bench: dict, trade: str) -> list[str]:
+    """Rename the benchmark's groups 'holdout/<fil>' to 'regression/<fil>' for files that are no longer holdout
+    after a switch (holdout_filer). The counts stay: they are the regression baseline."""
+    b = bench["fag"].get(trade)
+    if not b:
+        return []
+    moved = []
+    for g in sorted(b["grupper"]):
+        if g.startswith("holdout/") and not is_holdout_group(trade, g):
+            new = "regression/" + g.split("/", 1)[1]
+            b["grupper"][new] = b["grupper"].pop(g)
+            if g in b.get("kilder", {}):
+                b["kilder"][new] = b["kilder"].pop(g)
+            moved.append(f"{g} → {new}")
+    return moved
+
+
+def cmd_retire_holdout(args) -> int:
+    if exam.holdout_files(exam.load_trade(args.trade)[0]) is None:
+        raise SystemExit(f"{args.trade} har ingen holdout_filer i learning-goals.json – intet skifte at registrere.")
+    bench = load_benchmark()
+    moved = retire_holdout(bench, args.trade)
+    if moved:
+        save(BENCHMARK_FILE, bench)
+    print("\n".join(moved) or "Ingen gamle holdout-grupper i benchmarket.")
     return 0
 
 
@@ -442,7 +560,7 @@ def cmd_benchmark(args) -> int:
 def holdout_ids() -> set[str]:
     out = set()
     for trade in exam.all_trades():
-        out |= {t["id"] for t in exam.load_trade(trade)[1] if t["saet"] == "holdout"}
+        out |= {t["id"] for t in exam.load_trade(trade)[1] if t["saet"] in exam.HIDDEN_SETS}
     return out
 
 
@@ -525,15 +643,21 @@ def main() -> int:
     p.add_argument("--rationale", default="")
     p.add_argument("--rev-after", default="")
     p.add_argument("--pr", default="")
+    p = sub.add_parser("compare")
+    p.add_argument("a")
+    p.add_argument("b")
+    p.add_argument("--history", nargs="*", default=[])
     p = sub.add_parser("benchmark")
     p.add_argument("--trade", default="")
     sub.add_parser("check")
+    p = sub.add_parser("retire-holdout")
+    p.add_argument("--trade", required=True)
     args = ap.parse_args()
     if getattr(args, "decision", None):
         args.decision = DECISION_CHOICES[args.decision]  # English CLI choice → stored Danish value
     return {"status": cmd_status, "list": cmd_list, "show": cmd_show, "search": cmd_search, "new": cmd_new,
             "start": cmd_start, "measure": cmd_measure, "assess": cmd_assess, "close": cmd_close,
-            "benchmark": cmd_benchmark, "check": cmd_check}[args.cmd](args)
+            "benchmark": cmd_benchmark, "compare": cmd_compare, "check": cmd_check, "retire-holdout": cmd_retire_holdout}[args.cmd](args)
 
 if __name__ == "__main__":
     sys.exit(main())

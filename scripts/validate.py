@@ -43,7 +43,8 @@ def frontmatter(path: pathlib.Path) -> dict | None:
 # Runs with the system python3 before any venv exists: standard library and sibling modules only.
 # bim.py/fem.py: only module-level imports (their libraries are imported after switching into the venv).
 STDLIB_ONLY = ["plugins/*/hooks/*.py", "scripts/hooks/*.py", "shared/environment.py",
-              "plugins/*/skills/*/scripts/environment.py", "plugins/*/skills/*/scripts/statik.py"]
+              "plugins/*/skills/*/scripts/environment.py", "plugins/*/skills/*/scripts/statik.py",
+              "plugins/*/skills/*/scripts/el.py"]
 STDLIB_ONLY_TOP = ["plugins/*/skills/*/scripts/bim.py", "plugins/*/skills/*/scripts/fem.py"]
 
 
@@ -247,7 +248,10 @@ def main() -> int:
     r = subprocess.run([sys.executable, str(ROOT / "tests" / "test_calc_guard.py")], capture_output=True, text=True)
     if r.returncode:
         ERRORS.append("Tests af regnevagten fejlede:\n" + r.stdout[-2000:])
-    for v in sorted(PLUGINS.glob("*/skills/*-knowledge/scripts/statik.py")):
+    r = subprocess.run([sys.executable, str(ROOT / "tests" / "test_el.py")], capture_output=True, text=True)
+    if r.returncode:
+        ERRORS.append("Tests af el-regneværktøjet (el.py) fejlede:\n" + r.stdout[-2000:])
+    for v in sorted([*PLUGINS.glob("*/skills/*-knowledge/scripts/statik.py"), *PLUGINS.glob("*/skills/*-knowledge/scripts/el.py")]):
         r = subprocess.run([sys.executable, str(v), "test"], capture_output=True, text=True)
         if r.returncode:
             ERRORS.append(f"Selvtest af {v.relative_to(ROOT)} fejlede:\n" + r.stdout[-2000:])

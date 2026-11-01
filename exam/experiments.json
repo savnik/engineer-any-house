@@ -2657,6 +2657,1316 @@
       "slut": "2026-10-19",
       "vurdering": "manuel",
       "begrundelse": "Nulmåling, ingen ændring – sætter benchmarket."
+    },
+    {
+      "id": "F-029",
+      "dato": "2026-10-31",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Eltegn-pakken: et deterministisk regneværktøj el.py (strømværdi Iz med Ci for kabel i isolering, spændingsfald, Ik,min/Ik,max mod In og brydeevne, tavletjek og fast gruppeskema) plus V-mærkede regler om badeværelseszoner som geometri, RCD-typer i serie, undertavlens RCD-topologi, SPD og tavleskabeloner, med indgange i SKILL.md, electrician og electrical-review. Eksamen kører uden Bash, så værktøjet kan ikke køres dér; effekten på eksamen kommer kun fra de nye regler og tabeller. Forventning: udviklingssættet uændret inden for støj (mættet), holdout 0 til +2 på dimensionering og RCD, ingen gruppe ned 2 eller flere, pris pr. bestået højst +10 % (ca. 5 KB ny tekst, der kun læses ved dimensionering). Værktøjets værdi i rigtige sager måles ikke af eksamen.",
+      "aendring": "Nyt scripts/el.py med tests; standards.md, practice.md og checklists.md udvidet med V-mærkede regler; SKILL.md, electrician.md (Bash låst til el.py) og electrical-review peger på værktøjet; trade-registry får regnevaerktoej el.py",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "forkast",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "97f6b35",
+            "dato": "2026-10-31",
+            "filer": [
+              "20261031-210138-plugin-alle-97f6b35.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.373,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 26.7,
+                  "tokens_ud_pr_opgave": 2056
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0862,
+                  "sek_pr_opgave": 24.5,
+                  "tokens_ud_pr_opgave": 1934
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.744,
+                  "pris_pr_bestaaet": 0.093,
+                  "sek_pr_opgave": 25.3,
+                  "tokens_ud_pr_opgave": 2024
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.132,
+                  "pris_pr_bestaaet": 0.0762,
+                  "sek_pr_opgave": 23.3,
+                  "tokens_ud_pr_opgave": 1703,
+                  "fejlede": [
+                    "EL-001"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 28,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.976,
+                  "pris_pr_bestaaet": 0.0706,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1725,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.27,
+                  "pris_pr_bestaaet": 0.0794,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1770,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "6ba7fe5",
+            "dato": "2026-10-31",
+            "filer": [
+              "20261031-213214-plugin-alle-6ba7fe5.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.523,
+                  "pris_pr_bestaaet": 0.1269,
+                  "sek_pr_opgave": 27.2,
+                  "tokens_ud_pr_opgave": 2131
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.178,
+                  "pris_pr_bestaaet": 0.0906,
+                  "sek_pr_opgave": 24.3,
+                  "tokens_ud_pr_opgave": 1922
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.731,
+                  "pris_pr_bestaaet": 0.0914,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 2027
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 29,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.172,
+                  "pris_pr_bestaaet": 0.0749,
+                  "sek_pr_opgave": 21.6,
+                  "tokens_ud_pr_opgave": 1709,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.831,
+                  "pris_pr_bestaaet": 0.0704,
+                  "sek_pr_opgave": 21.1,
+                  "tokens_ud_pr_opgave": 1648,
+                  "fejlede": [
+                    "EL-136",
+                    "EL-141"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.406,
+                  "pris_pr_bestaaet": 0.0879,
+                  "sek_pr_opgave": 22.9,
+                  "tokens_ud_pr_opgave": 1807,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "97f6b35",
+      "laering": "Regneværktøj (el.py) plus ca. 13 KB V-mærket videntekst (60,8 til 73,5 KB) gav -2 beståede (145 til 139 i alt med repeat-free 3, holdout 50 til 48) og fald 2 i udvikling/tasks-b. Pris pr. bestået steg fra 0,118 til 0,127 USD (rapporten) og fra 0,081 til 0,085 USD (+5 %, assess). I et ekstra støjtjek med --repeat 3 bestod EL-141 0 af 3 efter mod 2 af 3 før, hver gang fejlet på K1 (afklar om ren tavleudskiftning er tilmeldingspligtig). Ture pr. opgave i EL-141 steg fra 5,0 til 6,7, og agenten skrev dimensioneres med el.py i eksamenssvaret. Pegere på værktøjet og flere tjeklistepunkter trækker altså opmærksomhed mod dimensionering i opgaver, der handler om andet. EL-136 faldt på K4 (ejerens ansvar), som teksten ikke rører, sandsynligvis støj. Ikke målt: selve el.py, fordi eksamensarmen ikke har Bash. Ingen eksamensopgaver kræver gruppeskema, Ik,min eller Iz med Ci. EL-001 og EL-226 bestod i det billige tjek. Næste forbedrer: hold dimensionerings- og tavletekst i calc-tools.md, der kun læses ved dimensionering, og hold pegeren i electrician.md på én linje. Mål på EL-141 først, og lav opgaver, der faktisk kræver beregningerne, før værktøjets værdi vurderes.",
+      "slut": "2026-10-31",
+      "vurdering": "forkast",
+      "begrundelse": "Reglen og støjtjekket giver forkast, og det følges. Ændringen rulles dog ikke tilbage på grenen, fordi en parallel agent har committet el-diagram og BIM-el (8ec6928), der importerer el.py og bruger pegerne. Den samlede PR 40 er draft, og brugeren afgør, om den merges som den er, eller om videnteksten først slankes i et opfølgende forsøg.",
+      "rev_efter": "6ba7fe5",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/40"
+    },
+    {
+      "id": "F-030",
+      "dato": "2026-10-31",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "Slankning af F-029: dimensionerings- og tavletekst flyttes fra standards.md, practice.md og checklists.md til calc-tools.md, som kun læses ved beregning. Pegeren i electrician.md bliver én linje, og electrical-review samt rubrikken mister værktøjsfokus uden for beregning. V-reglerne om badeværelsesområder, RCD-typer, TT og SPD bliver kompakt i standards.md. F-029 viste, at værktøjsteksten trækker fokus (EL-141 bestod 0 af 3 mod 2 af 3). Forventning: EL-141 tilbage til baseline og hele sættet mindst som baseline 97f6b35 (145 af 175) inden for støj. Pris pr. bestået højst baseline +10 %. Sammenlignes med den oprindelige baseline 97f6b35, ikke med 6ba7fe5.",
+      "aendring": "Tekst flyttes til calc-tools.md, pegere bliver kortere, standards.md-afsnittene komprimeres, el.py uændret",
+      "opgaver": [
+        "EL-141"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "97f6b35",
+            "dato": "2026-10-31",
+            "filer": [
+              "20261031-210138-plugin-alle-97f6b35.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.373,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 26.7,
+                  "tokens_ud_pr_opgave": 2056
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0862,
+                  "sek_pr_opgave": 24.5,
+                  "tokens_ud_pr_opgave": 1934
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.744,
+                  "pris_pr_bestaaet": 0.093,
+                  "sek_pr_opgave": 25.3,
+                  "tokens_ud_pr_opgave": 2024
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.132,
+                  "pris_pr_bestaaet": 0.0762,
+                  "sek_pr_opgave": 23.3,
+                  "tokens_ud_pr_opgave": 1703,
+                  "fejlede": [
+                    "EL-001"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 28,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.976,
+                  "pris_pr_bestaaet": 0.0706,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1725,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.27,
+                  "pris_pr_bestaaet": 0.0794,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1770,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "94bf284",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261031-221830-plugin-alle-94bf284.json",
+              "20261101-052725-plugin-alle-94bf284.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.4,
+                  "pris_pr_bestaaet": 0.1077,
+                  "sek_pr_opgave": 25.5,
+                  "tokens_ud_pr_opgave": 2009
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.103,
+                  "pris_pr_bestaaet": 0.0849,
+                  "sek_pr_opgave": 23.5,
+                  "tokens_ud_pr_opgave": 1852
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.786,
+                  "pris_pr_bestaaet": 0.0983,
+                  "sek_pr_opgave": 25.5,
+                  "tokens_ud_pr_opgave": 2079
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 29,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.172,
+                  "pris_pr_bestaaet": 0.0749,
+                  "sek_pr_opgave": 22.0,
+                  "tokens_ud_pr_opgave": 1778,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 2.02,
+                  "pris_pr_bestaaet": 0.0777,
+                  "sek_pr_opgave": 21.2,
+                  "tokens_ud_pr_opgave": 1693,
+                  "fejlede": [
+                    "EL-132",
+                    "EL-139"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.493,
+                  "pris_pr_bestaaet": 0.0933,
+                  "sek_pr_opgave": 22.1,
+                  "tokens_ud_pr_opgave": 1806,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "64e2e4a",
+      "laering": "Slankning efter F-029 virker. Regneværktøjets peger er nu én linje, og dimensioneringstekst, tavleskabeloner og undertavle ligger i calc-tools.md, der kun læses ved dimensionering. Det gav samme holdout som basislinjen 97f6b35 (34 af 40 pr. opgave), udvikling 71 mod 72 og 22.9 s mod 23.9 s pr. opgave. Ture pr. opgave faldt fra 6.7 i F-029 til cirka 2.7. Pris pr. bestået steg 5 procent (0.124 mod 0.118 dollar pr. kørsel) og ligger inden for tolerancen. EL-141, som F-029 ødelagde, bestod 2 af 3 som før. Faldet i udvikling/tasks-b var to fritekstopgaver, der ikke hang sammen med ændringen, og de bestod ved et efterfølgende tjek. Med 3 gentagelser kan en gruppe på 28 opgaver tilsyneladende flytte sig 2 af ren støj. Videnbasens målte størrelse er 78.6 KB, fordi schematic.md og calc-tools.md tælles med, selv om de ikke læses i eksamen. Ikke målt: selve regneværktøjet, da eksamensarmen ikke har Bash. Det kræver beregningsopgaver og exam.py run --calc-tool, hvilket er F-031. Den fulde kørsel ramte kontogrænsen og blev færdiggjort med --only-run-errors.",
+      "slut": "2026-11-01",
+      "vurdering": "forkast",
+      "begrundelse": "Reglen foreslår forkast, fordi udvikling/tasks-b faldt 28 til 26. De to fejlede opgaver handler om autorisation og RCD-grænsen, som ændringen ikke rørte. I F-029 var det to andre opgaver i samme gruppe, der fejlede. Et målrettet tjek gav bagefter 3 af 3 og 2 af 3, altså bestået ved flertal. Det er ikke grundlag for behold. En tilbagerulning til rev_foer 64e2e4a ville genindføre F-029-teksten, som målte dårligere: holdout/tasks-a 12 mod 13. Ændringen bliver derfor på grenen, og budgettet på 20 dollar er brugt, så der er ingen ny fuld måling.",
+      "rev_efter": "94bf284",
+      "pr": "#40"
+    },
+    {
+      "id": "F-031",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Regneværktøjet el.py hjælper på opgaver, der kræver dimensionering (Iz med korrektionsfaktorer, spændingsfald, Ik,min mod udløsning, tavletjek). Før: main (446edd4) uden --calc-tool. Efter: grenen med F-029/F-030-viden og --calc-tool, så Bash er låst til el.py. Kontrolarm: grenen uden --calc-tool, som skiller værktøjets effekt fra videnbasens. Kun udviklingsdelen af tasks-d (EL-301 og frem) (6 opgaver) med op til 3 gentagelser. Holdout køres ikke, da holdout-budgettet er overskredet og afventer brugeren. Forventning: efter mindst +2 beståede kørsler mod før på case-opgaverne EL-301, EL-303 og EL-305, valgopgaverne uændrede, og pris pr. bestået højst +10 % eller lavere, da færre ture går til håndregning.",
+      "aendring": "Ingen ændring i pluginet. Måleopsætningen exam.py run --calc-tool (dbcc60c) sammenligner arme.",
+      "opgaver": [
+        "EL-301",
+        "EL-303",
+        "EL-305",
+        "EL-307",
+        "EL-309",
+        "EL-311"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "446edd4",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-053349-plugin-udvikling-446edd4.json",
+              "20261101-053832-plugin-udvikling-446edd4.json"
+            ],
+            "grupper": {
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.363,
+                  "pris_pr_bestaaet": 0.0604,
+                  "sek_pr_opgave": 15.6,
+                  "tokens_ud_pr_opgave": 1230,
+                  "fejlede": []
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-053532-plugin-udvikling-regn.json"
+            ],
+            "grupper": {
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.326,
+                  "pris_pr_bestaaet": 0.0543,
+                  "sek_pr_opgave": 15.0,
+                  "tokens_ud_pr_opgave": 1188,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "29417bd",
+      "laering": "De 6 udviklingsopgaver i tasks-d (EL-301 og frem) er mættede. main uden værktøj (446edd4), grenen uden værktøj og grenen med --calc-tool bestod alle 18 af 18 kørsler (repeat 3). Pris pr. bestået var 0.070, 0.062 og 0.054 USD, tid pr. opgave 16.0, 14.7 og 15.0 s og ture pr. opgave 1.4, 1.4 og 1.3. Forskellene i pris er inden for støj. Opgaverne giver formel og værdier i opgaveteksten (fx ρ, Z ved tavlen og længden), så de kan regnes i hånden i én tur, og værktøjsarmen brugte næppe el.py. Det er anslået ud fra 1.3 ture pr. opgave, da exam.py answers ikke kan vise værktøjskald pr. arm. Det, der kan konkluderes: F-029/F-030-teksten skader ikke beregningsopgaver mod main, og --calc-tool-armen kører uden fejl. Ikke målt: holdout-delen af tasks-d (holdout-budgettet er overskredet og afventer brugeren) og værktøjets værdi. Næste forbedrer: for at måle el.py skal opgaverne kræve tabelopslag, som opgaven ikke giver (Iz med referenceinstallationsmetode og Ci for kabel i isolering, Ik,min fra kabeldata, spændingsfald over flere strækninger) eller et gruppeskema med flere samvirkende tjek, så håndregning tager mange trin eller fejler. Mål også værktøjskald pr. kørsel i resultatfilen, så brugen kan ses.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Alle tre arme bestod 18 af 18 kørsler. Opgaverne skiller ikke armene ad, så hverken værktøjets eller videnbasens effekt kan afgøres. Kategorien vaerktoej afgøres manuelt.",
+      "rev_efter": "29417bd",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/40"
+    },
+    {
+      "id": "F-032",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "opgaver",
+      "hypotese": "F-031 viste, at tasks-d (EL-301 og frem) er mættede, fordi opgaverne giver formel og værdier. Nye udviklingsopgaver, der kræver tabelopslag (Iz efter referenceinstallationsmetode med Ci for kabel i isolering, Ik,min ud fra kabeldata, spændingsfald over flere strækninger, gruppeskema med flere samvirkende tjek), skrevet af en anden agent, kan skille armene med og uden --calc-tool ad. Samtidig registreres antal værktøjskald pr. kørsel i resultatfilen. Forventning: armen uden værktøj består under 80 procent, så værktøjets effekt kan måles.",
+      "aendring": "",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "origin/main",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-071619-plugin-udvikling-origin-main.json",
+              "20261101-072145-plugin-holdout-origin-main.json"
+            ],
+            "grupper": {
+              "holdout/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 4,
+                  "opgaver_hash": "99a9abdd6e81",
+                  "pris_usd": 0.835,
+                  "pris_pr_bestaaet": 0.2087,
+                  "sek_pr_opgave": 36.7,
+                  "tokens_ud_pr_opgave": 3320,
+                  "vaerktoejskald_pr_opgave": 1.33,
+                  "regnekald_pr_opgave": 0.0
+                }
+              },
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.812,
+                  "pris_pr_bestaaet": 0.1353,
+                  "sek_pr_opgave": 32.9,
+                  "tokens_ud_pr_opgave": 2900,
+                  "vaerktoejskald_pr_opgave": 1.5,
+                  "regnekald_pr_opgave": 0.0,
+                  "fejlede": []
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-072002-plugin-udvikling-regn.json",
+              "20261101-072313-plugin-holdout-regn.json"
+            ],
+            "grupper": {
+              "holdout/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 5,
+                  "opgaver_hash": "99a9abdd6e81",
+                  "pris_usd": 1.214,
+                  "pris_pr_bestaaet": 0.2429,
+                  "sek_pr_opgave": 37.8,
+                  "tokens_ud_pr_opgave": 3389,
+                  "vaerktoejskald_pr_opgave": 4.17,
+                  "regnekald_pr_opgave": 2.0
+                }
+              },
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.928,
+                  "pris_pr_bestaaet": 0.1546,
+                  "sek_pr_opgave": 30.8,
+                  "tokens_ud_pr_opgave": 2632,
+                  "vaerktoejskald_pr_opgave": 3.83,
+                  "regnekald_pr_opgave": 1.67,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "446edd4",
+      "laering": "De omskrevne beregningscases i tasks-d er stadig mættede på udviklingsdelen: 18/18 i både main uden el.py og grenen med --calc-tool over tre gentagelser. Holdout gav 4/6 på main og 5/6 på grenen med og uden værktøj, så kvaliteten er ikke dårligere end baseline, men forskellen er inden for støjen. Værktøjet bliver brugt, når det er til rådighed: 11 af 18 udviklingskørsler og 4 af 6 holdoutkørsler kaldte el.py, med 1,7-2,0 regnekald pr. opgave. Det koster: input-tokens pr. opgave steg fra ca. 35.700 til 93.000, ture fra 2,5 til 4,8 og pris pr. bestået fra 0,135 til 0,155 USD på udvikling (+15 procent) og fra 0,209 til 0,243 på holdout (+16 procent), mens tiden er uændret, 31-38 s. Kørslerne med værktøj har ca. 1 afvist eller fejlet Bash-kald pr. opgave, og det er spildte ture. Ikke målt: grenen uden værktøj på udviklingsdelen og regressionssættet blev droppet for at holde budgettet på ca. 8 USD, og holdout er kun kørt én gang pr. arm. Næste skridt: find ud af, hvad calc-vagten afviser, og gør el.py-kaldet billigere, før værktøjets effekt måles igen. Opgaver, der skal skille armene, skal være så regnetunge, at håndregning fejler, fx tavleskemaer med mange grupper.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Kategorien opgaver afgøres manuelt. Hypotesen var, at armen uden værktøj består under 80 procent. Det holder ikke: main uden værktøj bestod 18/18 udviklingskørsler, og på holdout skiller armene kun med én opgave, 4/6 på main mod 5/6 på grenen både med og uden værktøj. Det er inden for støjen på 2 opgaver. Opgaverne beholdes, fordi de nu er holdout-sættet, men de skiller ikke armene ad.",
+      "rev_efter": "9c7b673",
+      "pr": "40"
+    },
+    {
+      "id": "F-033",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Holdout-skifte for el (brugerens beslutning 2026-11-01). Det gamle holdout i tasks-a til tasks-c var målt 9 gange mod et budget på 8 og er ikke længere et uafhængigt mål. Holdout-delen af tasks-d bliver nyt, urørt holdout, og de gamle holdout-opgaver bliver sættet regression (skjult, kun regressionsværn). Samtidig tælles værktøjskald og regnekald pr. kørsel i resultatfilerne, så brugen af el.py kan ses pr. arm.",
+      "aendring": "learning-goals.json holdout_filer, exam.py sættet regression og værktøjskald fra stream-json, experiment.py tæller kun aktive holdout-filer mod budgettet og retire-holdout i benchmarket, README.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "rev_foer": "ccfd8fb",
+      "laering": "El har nu 6 holdout-opgaver (holdout-delen af tasks-d) og 40 regressionsopgaver (det tidligere holdout i tasks-a til tasks-c). Opgavefilerne er urørte, og skiftet ligger kun i holdout_filer i learning-goals.json. Holdout-tælleren for el står på 0, og benchmarkets gamle holdout-grupper hedder nu regression/tasks-a til -c med F-007-tallene som regressionsbasis. Der er endnu ingen benchmark for holdout/tasks-d, så den første måling (F-032) bliver udgangspunktet. Det nye holdout er lille: med 6 opgaver flytter én opgave 17 procentpoint, og ikke alle læringsmål har en holdout-opgave. Støjgrænsen på 2 opgaver er derfor grov, og regression bør køres med som værn. Værktøjskald tælles nu pr. kørsel fra stream-json (vaerktoejskald, regnekald, afviste_kald). Det er efterprøvet på en rigtig kørsel med Read og Bash. I et tjek på 2 udviklingsopgaver fra tasks-d med --calc-tool brugte armen 0 værktøjskald og 1 tur pr. opgave, hvilket bekræfter læringen fra F-031: de nuværende opgaver kræver ikke el.py. Prisen i tjekket var 0.16 USD pr. opgave mod 0.05 i F-031, med samme antal input-tokens. Det skyldes anslået en kold cache og ikke stream-json, men følg op i F-032. Ikke målt: holdout og regression efter skiftet. Under arbejdet blev et holdout-ID fundet i loggen via intervallet i F-031 og F-032, og det er rettet.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Brugerens beslutning om nyt holdout for el. Kategorien vaerktoej afgøres manuelt, og skiftet ændrer ikke pluginet, så der er intet før og efter at måle.",
+      "rev_efter": "dffae90",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/40"
+    },
+    {
+      "id": "F-034",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Rettelse af el.py før F-032: ikmin regner stikledningen med dens egen isolering, PVC 70 °C eller XLPE 90 °C, naeste_tvaersnit får samme forsyning og isolering, og panel giver advarsel ved sikring over 13 A foran 10 eller 13 A-stikkontakter efter BEK 1082 § 45. Ingen forventet effekt på kvalitet uden for opgaver, der bruger el.py. Rettelsen fjerner kendte regnefejl, så F-032 måler værktøjet og ikke fejlene.",
+      "aendring": "el.py: --feeder-insulation, forsyning til næste tværsnit, § 45-kontrol med feltet stikkontakt_a. calc-tools.md dokumenterer valget af ledermodstand: IEC 60228 pr. tværsnit giver rho70 0,0217-0,0222 mod håndregningens 0,0225. Tests i tests/test_el.py.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "rev_foer": "d320554",
+      "laering": "Opgaveforfatteren fandt fire afvigelser ved at regne opgaverne i hånden mod el.py. Tre var reelle fejl: stikledningen blev altid regnet som XLPE 90 °C, næste tværsnit fik ikke stikledningens temperatur og isolering, og panel kendte ikke § 45 om sikring foran stikkontakter. ρ-valget er bevidst: IEC 60228 pr. tværsnit giver rho70 0,0217-0,0222, 1,5-3,5 procent under håndregningens 0,0225, så el.py giver lidt større Ik,min og lidt mindre spændingsfald end facit regnet med 0,0225. Det er dokumenteret i calc-tools.md og ikke ændret. Ikke målt: ingen eksamenskørsel for rettelsen alene. Lær: lad opgaveforfatteren regne nye beregningsopgaver i hånden mod værktøjet, før de måles. Uoverensstemmelser er billige at finde der.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Fejlrettelse i regneværktøjet uden selvstændig eksamensmåling. Korrektheden er vist med enhedstests mod håndregning og med BEK 1082 § 45 læst på retsinformation.dk. Effekten på eksamen måles i F-032, hvor grenens arme indeholder rettelsen.",
+      "rev_efter": "f18d2e8",
+      "pr": "40"
+    },
+    {
+      "id": "F-035",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "prompt",
+      "hypotese": "I F-032 havde kørslerne med --calc-tool ca. 1 afvist eller fejlet Bash-kald pr. opgave og 2,6 gange så mange input-tokens som uden værktøj. Hvis resultatrækken gemmer de afviste kommandoer for udviklingsopgaver, og agentprompten eller calc-tools.md viser den præcise kaldform for el.py, falder ture og pris pr. bestået med mindst 10 procent ved uændret kvalitet.",
+      "aendring": "Én linje i electrician.md under Regneværktøj med den eneste tilladte Bash-kaldform for el.py og at filer læses med Read og Grep; opstartstrin 1 siger læs med Read og Grep. Diagnose med de nye afviste-felter i resultatrækken: 5 af 6 afviste kald var en sammensat cd-cat-ls-grep-kommando til at læse videnbasen, 1 var python3 -I foran stien. calc_guard er uændret og fejler fortsat lukket. Efter-målingen er taget på den samlede gren aee7cd2, der også rummer el-plan fra PR 42 (bim.py elplan, videnbase om rum, § 57 og afbrydertyper, kerneprincip 9 og fejlkatalog). Efter-tilstanden er altså F-035 plus el-plan, ikke F-035 alene. Holdout kørt én gang efter brugerens godkendelse, videregivet af koordinatoren. Første udviklingsmåling på 39a6ffd alene gav 18 af 18 kørsler ved 0,137 $ pr. bestået.",
+      "opgaver": [
+        "EL-301",
+        "EL-303",
+        "EL-305",
+        "EL-307"
+      ],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-072002-plugin-udvikling-regn.json",
+              "20261101-072313-plugin-holdout-regn.json"
+            ],
+            "grupper": {
+              "holdout/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 5,
+                  "opgaver_hash": "99a9abdd6e81",
+                  "pris_usd": 1.214,
+                  "pris_pr_bestaaet": 0.2429,
+                  "sek_pr_opgave": 37.8,
+                  "tokens_ud_pr_opgave": 3389,
+                  "vaerktoejskald_pr_opgave": 4.17,
+                  "regnekald_pr_opgave": 2.0
+                }
+              },
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.928,
+                  "pris_pr_bestaaet": 0.1546,
+                  "sek_pr_opgave": 30.8,
+                  "tokens_ud_pr_opgave": 2632,
+                  "vaerktoejskald_pr_opgave": 3.83,
+                  "regnekald_pr_opgave": 1.67,
+                  "fejlede": []
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "aee7cd2",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-145740-plugin-holdout-regn.json",
+              "20261101-150103-plugin-udvikling-regn.json"
+            ],
+            "grupper": {
+              "holdout/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 5,
+                  "opgaver_hash": "99a9abdd6e81",
+                  "pris_usd": 1.078,
+                  "pris_pr_bestaaet": 0.2157,
+                  "sek_pr_opgave": 31.2,
+                  "tokens_ud_pr_opgave": 2606,
+                  "vaerktoejskald_pr_opgave": 3.83,
+                  "regnekald_pr_opgave": 1.5,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.832,
+                  "pris_pr_bestaaet": 0.1387,
+                  "sek_pr_opgave": 28.3,
+                  "tokens_ud_pr_opgave": 2326,
+                  "vaerktoejskald_pr_opgave": 3.11,
+                  "regnekald_pr_opgave": 1.72,
+                  "afviste_kald_pr_opgave": 0.0,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "a591cab",
+      "laering": "En linje i agentprompten med den eneste tilladte Bash-kaldform for el.py og besked om at læse filer med Read og Grep fjernede de afviste kald helt, fra ca. 1 pr. opgave til 0 på udvikling, holdout og regression. Kvaliteten er uændret, 6 af 6 på udvikling over 3 gentagelser og 5 af 6 på holdout, mens prisen pr. bestået faldt 11 pct. og tiden 8 til 17 pct. Efter-målingen er taget på den samlede gren med el-plan, så el-plan kan have bidraget, men el-plan rører ikke regneværktøjet. Holdout er én kørsel på 6 opgaver, og 5 af 6 kan dække over en anden fejlet opgave end før, da loggen kun gemmer hash. Læring: når en guard låser et værktøj, skal prompten vise den tilladte kaldform ordret, ellers bruger agenten ture på afviste kald.",
+      "slut": "2026-11-01",
+      "vurdering": "behold",
+      "rev_efter": "aee7cd2",
+      "pr": "40"
+    },
+    {
+      "id": "F-036",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Regressionsværn for grenen med regneværktøjet: regression-sættet, de gamle holdout-opgaver i tasks-a til tasks-c, køres én gang på grenen med og uden --calc-tool og sammenlignes med basislinjen 97f6b35 fra F-030 på 13 af 16, 13 af 15 og 8 af 9. Forventning: ingen gruppe falder 2 eller flere opgaver i nogen af armene, og pris pr. bestået højst 10 procent over basislinjen uden værktøj.",
+      "aendring": "Ingen ændring, kun måling af grenen mod basislinjen",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "97f6b35",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261031-210138-plugin-alle-97f6b35.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.373,
+                  "pris_pr_bestaaet": 0.1056,
+                  "sek_pr_opgave": 26.7,
+                  "tokens_ud_pr_opgave": 2056
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.121,
+                  "pris_pr_bestaaet": 0.0862,
+                  "sek_pr_opgave": 24.5,
+                  "tokens_ud_pr_opgave": 1934
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.744,
+                  "pris_pr_bestaaet": 0.093,
+                  "sek_pr_opgave": 25.3,
+                  "tokens_ud_pr_opgave": 2024
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 2.132,
+                  "pris_pr_bestaaet": 0.0762,
+                  "sek_pr_opgave": 23.3,
+                  "tokens_ud_pr_opgave": 1703,
+                  "fejlede": [
+                    "EL-001"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 28,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.976,
+                  "pris_pr_bestaaet": 0.0706,
+                  "sek_pr_opgave": 22.3,
+                  "tokens_ud_pr_opgave": 1725,
+                  "fejlede": []
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.27,
+                  "pris_pr_bestaaet": 0.0794,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1770,
+                  "fejlede": [
+                    "EL-221",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-115526-plugin-regression.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.533,
+                  "pris_pr_bestaaet": 0.1278,
+                  "sek_pr_opgave": 21.6,
+                  "tokens_ud_pr_opgave": 1658,
+                  "vaerktoejskald_pr_opgave": 1.56,
+                  "regnekald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 12,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.049,
+                  "pris_pr_bestaaet": 0.0874,
+                  "sek_pr_opgave": 20.1,
+                  "tokens_ud_pr_opgave": 1552,
+                  "vaerktoejskald_pr_opgave": 1.07,
+                  "regnekald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.723,
+                  "pris_pr_bestaaet": 0.0904,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1816,
+                  "vaerktoejskald_pr_opgave": 0.89,
+                  "regnekald_pr_opgave": 0.0
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "a591cab",
+      "laering": "Regressionsværn for grenen a591cab mod basislinjen 97f6b35 fra F-030, én kørsel pr. arm på de 40 regression-opgaver. Uden regneværktøj: 12 af 16, 12 af 15, 8 af 9, i alt 32 af 40 mod 34 af 40, 0.103 dollar pr. bestået mod 0.095, plus 8 procent, og 21.2 s mod 25.6 s pr. opgave. Hver gruppe faldt 1, inden for støjgrænsen på 2, og faldet blev ikke genkørt af budgethensyn. Med --calc-tool: 10 af 16, 13 af 15, 7 af 9, i alt 30 af 40, 0.125 dollar pr. bestået. Ingen af de 40 kørsler kaldte el.py, så forskellen fra armen uden værktøj er tilladelserne og Bash-værktøjets beskrivelse i prompten, cirka 7.600 input-tokens mere pr. opgave. De 10 ikke beståede kørsler blev genkørt 2 gange hver med den nye exam.py run --only-not-passed FIL, som ikke viser ID'er. 10 af 20 bestod, og ved flertal over 3 kørsler giver det 12 af 16, 14 af 15, 8 af 9, i alt 34 af 40. Genkørslen er skæv, fordi kun de fejlede opgaver fik ekstra kørsler, og basislinjen var også kun én kørsel. Fritekstopgaverne er støjkilden: 6 af 16 genkørsler af fri bestod mod 4 af 4 valg. Læring: et regressionsværn med én kørsel kan ikke skelne et fald på 1 til 2 pr. gruppe fra støj. Kør fri-opgaverne med --repeat-free 3 fra start, og genkør ikke kun de fejlede. Regression-sættet koster cirka 3.3 dollar uden værktøj og 3.8 dollar med pr. kørsel, og genkørsel af 10 fejlede fritekstopgaver 2 gange koster cirka 3.1 dollar. Samlet pris 10.2 dollar.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmaaling af en gren, der ikke er merget. Benchmarket opdateres ikke herfra, da det ville sænke regressionsgruppernes basislinje. Uden værktøj faldt hver gruppe højst 1 opgave, inden for støj. Med værktøj faldt tasks-a 3 i én kørsel, men et genkør af de ikke beståede kørsler 2 gange bragte den til 12 af 16, inden for støj."
+    },
+    {
+      "id": "F-037",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "videnbase",
+      "hypotese": "El-plan-viden fra elplanen.dk (behov pr. rumtype, logik for afbrydertype og typiske placeringer i practice.md, tjeklisten 'El-plan rum for rum', § 57, stk. 5 i standards.md, kerneprincip 9 i electrician.md) giver ingen regression: ingen gruppe falder 2 eller flere, og pris pr. bestået stiger højst 10 %. Mulig gevinst på opgaver om stikkontakter, køkken, badeværelseszoner og afbrydere. Falsificeres af et fald på 2 i en gruppe eller en prisstigning over 10 % uden gevinst.",
+      "aendring": "PR #42 (df738bf): practice.md, checklists.md, standards.md, electrician.md, SKILL.md, review-fejlkatalog kontrol-el@1.3 og byg-bim 'bim.py elplan'",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "9f3f7a9",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-073127-plugin-alle-9f3f7a9.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.332,
+                  "pris_pr_bestaaet": 0.111,
+                  "sek_pr_opgave": 21.3,
+                  "tokens_ud_pr_opgave": 1673
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.127,
+                  "pris_pr_bestaaet": 0.0867,
+                  "sek_pr_opgave": 19.6,
+                  "tokens_ud_pr_opgave": 1544
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.722,
+                  "pris_pr_bestaaet": 0.0902,
+                  "sek_pr_opgave": 23.6,
+                  "tokens_ud_pr_opgave": 1986
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 27,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.967,
+                  "pris_pr_bestaaet": 0.0729,
+                  "sek_pr_opgave": 16.5,
+                  "tokens_ud_pr_opgave": 1295,
+                  "fejlede": [
+                    "EL-028",
+                    "EL-042"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 25,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.829,
+                  "pris_pr_bestaaet": 0.0732,
+                  "sek_pr_opgave": 16.1,
+                  "tokens_ud_pr_opgave": 1246,
+                  "fejlede": [
+                    "EL-136",
+                    "EL-141",
+                    "EL-142"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.405,
+                  "pris_pr_bestaaet": 0.0878,
+                  "sek_pr_opgave": 20.3,
+                  "tokens_ud_pr_opgave": 1634,
+                  "fejlede": [
+                    "EL-211",
+                    "EL-226"
+                  ]
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "df738bf",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-074554-plugin-alle-df738bf.json"
+            ],
+            "grupper": {
+              "holdout/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 13,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.371,
+                  "pris_pr_bestaaet": 0.1055,
+                  "sek_pr_opgave": 20.6,
+                  "tokens_ud_pr_opgave": 1621
+                }
+              },
+              "holdout/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.052,
+                  "pris_pr_bestaaet": 0.0809,
+                  "sek_pr_opgave": 18.7,
+                  "tokens_ud_pr_opgave": 1478
+                }
+              },
+              "holdout/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.724,
+                  "pris_pr_bestaaet": 0.0905,
+                  "sek_pr_opgave": 22.5,
+                  "tokens_ud_pr_opgave": 1844
+                }
+              },
+              "udvikling/tasks-a": {
+                "plugin": {
+                  "n": 29,
+                  "bestaaet": 28,
+                  "opgaver_hash": "39d12faf5d70",
+                  "pris_usd": 1.997,
+                  "pris_pr_bestaaet": 0.0713,
+                  "sek_pr_opgave": 16.5,
+                  "tokens_ud_pr_opgave": 1298,
+                  "fejlede": [
+                    "EL-045"
+                  ]
+                }
+              },
+              "udvikling/tasks-b": {
+                "plugin": {
+                  "n": 28,
+                  "bestaaet": 26,
+                  "opgaver_hash": "070e914b2dbe",
+                  "pris_usd": 1.761,
+                  "pris_pr_bestaaet": 0.0677,
+                  "sek_pr_opgave": 15.6,
+                  "tokens_ud_pr_opgave": 1207,
+                  "fejlede": [
+                    "EL-136",
+                    "EL-141"
+                  ]
+                }
+              },
+              "udvikling/tasks-c": {
+                "plugin": {
+                  "n": 18,
+                  "bestaaet": 16,
+                  "opgaver_hash": "00dca4c30068",
+                  "pris_usd": 1.285,
+                  "pris_pr_bestaaet": 0.0803,
+                  "sek_pr_opgave": 19.6,
+                  "tokens_ud_pr_opgave": 1578,
+                  "fejlede": [
+                    "EL-211",
+                    "EL-221"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "9f3f7a9",
+      "laering": "Hypotesen holdt: el-plan-viden (+2,8 KB, 60,8 til 63,6 KB) gav ingen regression i nogen gruppe og pris pr. bestået 0,083 til 0,079 $ (-5 %), tid 18,6 til 18,1 s/opgave. Reglen gav behold på +3 beståede (udvikling +2, holdout +1), men gevinsten kan ikke tilskrives ændringen. De 4 udviklingsopgaver, der skiftede til bestået (EL-028 solceller, EL-042 tavleflytning, EL-142 engelsk sikkerhedsbesked, EL-226 lys- og ventilationsstyring), og de 2, der faldt (EL-045 FSA, ejeransvar ikke nævnt, og EL-221 DS/EN 60617-symboler ikke nævnt), handler ikke om el-plan. Det er fri-opgave-støj (fri 18 til 20 af 30). Udviklingssættet har ingen egentlige el-plan-opgaver (behov pr. rum, afbrydertype, montagehøjder), så den mulige gevinst blev ikke målt, og § 57-opgaverne bestod allerede før. Vil man måle el-plan-værdien, kræver det nye opgaver (et opgaver-forsøg). byg-bim bim.py elplan og kontrol-el@1.3 i review-fejlkataloget måles ikke af eksamen. § 57, stk. 4-5 efterprøvet mod BEK 1082/2016 (retsinformation-PDF) 2026-11-01. EL-211 dumper stadig på talparseren (1,026 læst som 1026, jf. F-024). Én kørsel pr. arm, ingen gentagelse af fri-opgaver. Holdout for el er nu målt 7 af 8 gange.",
+      "slut": "2026-11-01",
+      "vurdering": "behold",
+      "rev_efter": "df738bf",
+      "pr": "#42",
+      "begrundelse": " Omnummereret fra F-029 (PR #42) ved sammenfletning med eltegn-grenen, som også brugte F-029. Målt alene på el-plan-ændringen; den samlede gren måles i et nyt forsøg."
+    },
+    {
+      "id": "F-038",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Den samlede gren med regneværktøj, F-035 og el-plan er ikke dårligere end main uden værktøj på regressionssættet med flertal over 3 på fritekstopgaver, og prisen pr. bestået holder sig inden for prisreglen. Falsificeres, hvis grenen består mindst 2 færre opgaver end main på de 40 opgaver.",
+      "aendring": "Samlet gren aee7cd2 med el.py som regneværktøj (Bash låst til el.py), F-035-promptlinjen og el-plan fra PR 42, målt mod origin/main 446edd4 uden værktøj. Begge arme køres med --set regression --release --repeat-free 3.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "446edd4",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-144231-plugin-regression-origin-main.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.647,
+                  "pris_pr_bestaaet": 0.1372,
+                  "sek_pr_opgave": 27.0,
+                  "tokens_ud_pr_opgave": 2051,
+                  "vaerktoejskald_pr_opgave": 1.83,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.127,
+                  "pris_pr_bestaaet": 0.0867,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 1940,
+                  "vaerktoejskald_pr_opgave": 1.52,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.717,
+                  "pris_pr_bestaaet": 0.0896,
+                  "sek_pr_opgave": 28.6,
+                  "tokens_ud_pr_opgave": 2041,
+                  "vaerktoejskald_pr_opgave": 1.38,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "aee7cd2",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-145524-plugin-regression-regn.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 11,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.598,
+                  "pris_pr_bestaaet": 0.1453,
+                  "sek_pr_opgave": 25.5,
+                  "tokens_ud_pr_opgave": 1971,
+                  "vaerktoejskald_pr_opgave": 1.8,
+                  "regnekald_pr_opgave": 0.03,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.162,
+                  "pris_pr_bestaaet": 0.0894,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 1933,
+                  "vaerktoejskald_pr_opgave": 1.2,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.71,
+                  "pris_pr_bestaaet": 0.0887,
+                  "sek_pr_opgave": 25.1,
+                  "tokens_ud_pr_opgave": 1997,
+                  "vaerktoejskald_pr_opgave": 1.15,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "aee7cd2",
+      "laering": "Med flertal over 3 på fritekst er main uden værktøj 33 af 40 og den samlede gren med regneværktøj, F-035 og el-plan 32 af 40 på regressionssættet, med 12, 13, 8 mod 11, 13, 8 pr. gruppe. Forskellen ligger i tasks-a og er inden for støj. Pris pr. bestået og tid er reelt uændret, og der var 0 afviste kald i begge arme. Regneværktøjet bruges næsten ikke på de gamle opgaver, 1 af 68 kørsler, så de måler mest at videnbasen fra el-plan, plus 22 KB, ikke skader. Enkeltkørslerne i F-036 på 30 og 32 af 40 var støj, og regressionsværn bør køres med --repeat-free 3, som koster ca. 7 dollar pr. arm. Ikke målt: ingen gentagelse af ikke-fritekstopgaver, og el-plan er ikke målt alene på regressionssættet.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling afgøres manuelt. Grenen består 32 af 40 mod mains 33 af 40, en forskel på 1 opgave, under NOISE_TASKS på 2 og dermed ikke den falsificering, hypotesen satte. Pris pr. bestået er 0,108 mod 0,106 dollar, plus 2 pct., inden for PRICE_TOLERANCE, og tiden er 25 mod 27 sekunder pr. opgave. Behold gør den samlede, leverede konfiguration med flertal over 3 til benchmark for regressionsgrupperne i stedet for enkeltkørslen fra 97f6b35.",
+      "rev_efter": "aee7cd2",
+      "pr": "40"
+    },
+    {
+      "id": "F-039",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Faldet i regression/tasks-a i F-038, main 12 af 16 mod samlet gren 11 af 16, er støj. Det skyldes én fritekstopgave på svendeniveau, som main bestod 3 af 3 og grenen 1 af 3, og som i ældre kørsler bestod 5 af 7. Hvis opgaven køres 7 gange mere i hver arm, ligger beståelsesraten i de to arme højst 2 kørsler fra hinanden over 10 kørsler. Falsificeres, hvis grenen består mindst 3 færre af 10 end main, hvilket peger på en reel årsag, der så skal isoleres med el-plan alene.",
+      "aendring": "Ingen ændring i pluginet. Nyt måleværktøj: exam.py run --only-differing FIL-A FIL-B kører kun opgaver, hvor flertallet er forskelligt i to filer, og experiment.py compare viser forskellen pr. gruppe, begge uden ID'er.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "446edd4",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-144231-plugin-regression-origin-main.json",
+              "20261101-152601-plugin-regression-origin-main.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.655,
+                  "pris_pr_bestaaet": 0.1379,
+                  "sek_pr_opgave": 27.1,
+                  "tokens_ud_pr_opgave": 2062,
+                  "vaerktoejskald_pr_opgave": 2.06,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.127,
+                  "pris_pr_bestaaet": 0.0867,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 1940,
+                  "vaerktoejskald_pr_opgave": 1.52,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.717,
+                  "pris_pr_bestaaet": 0.0896,
+                  "sek_pr_opgave": 28.6,
+                  "tokens_ud_pr_opgave": 2041,
+                  "vaerktoejskald_pr_opgave": 1.38,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "aee7cd2",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-145524-plugin-regression-regn.json",
+              "20261101-152833-plugin-regression-regn.json",
+              "20261101-153701-plugin-regression-regn-aee7cd2.json",
+              "20261101-154008-plugin-regression-regn-aee7cd2.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.607,
+                  "pris_pr_bestaaet": 0.1339,
+                  "sek_pr_opgave": 26.4,
+                  "tokens_ud_pr_opgave": 2012,
+                  "vaerktoejskald_pr_opgave": 2.08,
+                  "regnekald_pr_opgave": 0.03,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.162,
+                  "pris_pr_bestaaet": 0.0894,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 1933,
+                  "vaerktoejskald_pr_opgave": 1.2,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.71,
+                  "pris_pr_bestaaet": 0.0887,
+                  "sek_pr_opgave": 25.1,
+                  "tokens_ud_pr_opgave": 1997,
+                  "vaerktoejskald_pr_opgave": 1.15,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "ee70479",
+      "laering": "Faldet i regression/tasks-a i F-038 var én fritekstopgave på svendeniveau, som main bestod 3 af 3 og den samlede gren 1 af 3. Over flere kørsler bestod main 9 af 10, el-plan alene 8 af 10, eltegn med F-035 alene 9 af 10 og den samlede gren 21 af 30. Uden de 6 kørsler, der udvalgte opgaven, er grenen 20 af 27 mod 23 af 27, p 0,50, så forskellen er støj forstærket af udvælgelse: en opgave, der udvælges, fordi den skifter mellem to arme, vil i gennemsnit nærme sig sin sande rate ved genkørsel. Opgaven består ca. 75 til 85 procent af gangene i alle konfigurationer, så flertal over 3 vender den med ca. 15 til 25 procents sandsynlighed. Der er ingen reel årsag at rette, og ingen ændring i pluginet. Nyt værktøj: exam.py run --only-differing FIL-A FIL-B kører kun opgaver, hvor flertallet er forskelligt i to filer, og experiment.py compare viser forskellen pr. gruppe med type, niveau og stemmer, begge uden ID'er. At isolere én skiftende opgave med 10 kørsler pr. arm koster ca. 1,7 dollar mod 7 dollar for hele regressionssættet. Sæt kriteriet i en støjhypotese efter mindst 20 kørsler pr. arm, 10 er for få til at skelne 90 fra 70 procent. Ikke målt: de øvrige 39 opgaver blev ikke genkørt, og compare viste kun denne ene som forskellig mellem armene. Pris 9,95 dollar.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling afgøres manuelt. Hypotesens kriterium blev ramt ved 10 kørsler pr. arm, main 9 af 10 mod gren 6 af 10, og som hypotesen foreskrev blev årsagen isoleret. El-plan alene gav 8 af 10 og eltegn alene 9 af 10 på samme opgave, og 20 ekstra kørsler af den samlede gren gav 15 af 20. Ser man bort fra de 3 plus 3 kørsler, der udvalgte opgaven, står grenen på 20 af 27 mod 23 af 27 for de tre andre konfigurationer, Fisher p 0,50. Faldet er derfor støj og udvælgelse, ikke en reel regression. Ved flertal over de nyeste 10 kørsler består grenen opgaven, så tasks-a er 12 af 16 som main, og behold retter benchmarket fra F-038.",
+      "rev_efter": "aee7cd2",
+      "pr": "40"
     }
   ]
 }

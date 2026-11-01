@@ -6,7 +6,8 @@
     },
     "electrical": {
       "agent": "electrician",
-      "kontrol": "electrical-review"
+      "kontrol": "electrical-review",
+      "regnevaerktoej": "el.py"
     },
     "masonry": {
       "agent": "mason",
