@@ -3127,10 +3127,93 @@
       "hypotese": "F-031 viste, at tasks-d (EL-301 og frem) er mættede, fordi opgaverne giver formel og værdier. Nye udviklingsopgaver, der kræver tabelopslag (Iz efter referenceinstallationsmetode med Ci for kabel i isolering, Ik,min ud fra kabeldata, spændingsfald over flere strækninger, gruppeskema med flere samvirkende tjek), skrevet af en anden agent, kan skille armene med og uden --calc-tool ad. Samtidig registreres antal værktøjskald pr. kørsel i resultatfilen. Forventning: armen uden værktøj består under 80 procent, så værktøjets effekt kan måles.",
       "aendring": "",
       "opgaver": [],
-      "status": "aaben",
-      "beslutning": null,
-      "maalinger": {},
-      "rev_foer": "446edd4"
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "origin/main",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-071619-plugin-udvikling-origin-main.json",
+              "20261101-072145-plugin-holdout-origin-main.json"
+            ],
+            "grupper": {
+              "holdout/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 4,
+                  "opgaver_hash": "99a9abdd6e81",
+                  "pris_usd": 0.835,
+                  "pris_pr_bestaaet": 0.2087,
+                  "sek_pr_opgave": 36.7,
+                  "tokens_ud_pr_opgave": 3320,
+                  "vaerktoejskald_pr_opgave": 1.33,
+                  "regnekald_pr_opgave": 0.0
+                }
+              },
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.812,
+                  "pris_pr_bestaaet": 0.1353,
+                  "sek_pr_opgave": 32.9,
+                  "tokens_ud_pr_opgave": 2900,
+                  "vaerktoejskald_pr_opgave": 1.5,
+                  "regnekald_pr_opgave": 0.0,
+                  "fejlede": []
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-072002-plugin-udvikling-regn.json",
+              "20261101-072313-plugin-holdout-regn.json"
+            ],
+            "grupper": {
+              "holdout/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 5,
+                  "opgaver_hash": "99a9abdd6e81",
+                  "pris_usd": 1.214,
+                  "pris_pr_bestaaet": 0.2429,
+                  "sek_pr_opgave": 37.8,
+                  "tokens_ud_pr_opgave": 3389,
+                  "vaerktoejskald_pr_opgave": 4.17,
+                  "regnekald_pr_opgave": 2.0
+                }
+              },
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.928,
+                  "pris_pr_bestaaet": 0.1546,
+                  "sek_pr_opgave": 30.8,
+                  "tokens_ud_pr_opgave": 2632,
+                  "vaerktoejskald_pr_opgave": 3.83,
+                  "regnekald_pr_opgave": 1.67,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "446edd4",
+      "laering": "De omskrevne beregningscases i tasks-d er stadig mættede på udviklingsdelen: 18/18 i både main uden el.py og grenen med --calc-tool over tre gentagelser. Holdout gav 4/6 på main og 5/6 på grenen med og uden værktøj, så kvaliteten er ikke dårligere end baseline, men forskellen er inden for støjen. Værktøjet bliver brugt, når det er til rådighed: 11 af 18 udviklingskørsler og 4 af 6 holdoutkørsler kaldte el.py, med 1,7-2,0 regnekald pr. opgave. Det koster: input-tokens pr. opgave steg fra ca. 35.700 til 93.000, ture fra 2,5 til 4,8 og pris pr. bestået fra 0,135 til 0,155 USD på udvikling (+15 procent) og fra 0,209 til 0,243 på holdout (+16 procent), mens tiden er uændret, 31-38 s. Kørslerne med værktøj har ca. 1 afvist eller fejlet Bash-kald pr. opgave, og det er spildte ture. Ikke målt: grenen uden værktøj på udviklingsdelen og regressionssættet blev droppet for at holde budgettet på ca. 8 USD, og holdout er kun kørt én gang pr. arm. Næste skridt: find ud af, hvad calc-vagten afviser, og gør el.py-kaldet billigere, før værktøjets effekt måles igen. Opgaver, der skal skille armene, skal være så regnetunge, at håndregning fejler, fx tavleskemaer med mange grupper.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Kategorien opgaver afgøres manuelt. Hypotesen var, at armen uden værktøj består under 80 procent. Det holder ikke: main uden værktøj bestod 18/18 udviklingskørsler, og på holdout skiller armene kun med én opgave, 4/6 på main mod 5/6 på grenen både med og uden værktøj. Det er inden for støjen på 2 opgaver. Opgaverne beholdes, fordi de nu er holdout-sættet, men de skiller ikke armene ad.",
+      "rev_efter": "9c7b673",
+      "pr": "40"
     },
     {
       "id": "F-033",
@@ -3173,6 +3256,25 @@
       "begrundelse": "Fejlrettelse i regneværktøjet uden selvstændig eksamensmåling. Korrektheden er vist med enhedstests mod håndregning og med BEK 1082 § 45 læst på retsinformation.dk. Effekten på eksamen måles i F-032, hvor grenens arme indeholder rettelsen.",
       "rev_efter": "f18d2e8",
       "pr": "40"
+    },
+    {
+      "id": "F-035",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "prompt",
+      "hypotese": "I F-032 havde kørslerne med --calc-tool ca. 1 afvist eller fejlet Bash-kald pr. opgave og 2,6 gange så mange input-tokens som uden værktøj. Hvis resultatrækken gemmer de afviste kommandoer for udviklingsopgaver, og agentprompten eller calc-tools.md viser den præcise kaldform for el.py, falder ture og pris pr. bestået med mindst 10 procent ved uændret kvalitet.",
+      "aendring": "",
+      "opgaver": [
+        "EL-301",
+        "EL-303",
+        "EL-305",
+        "EL-307"
+      ],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }
