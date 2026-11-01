@@ -90,6 +90,26 @@ def test_summarize():
                g[dev_group]["plugin"].get("afviste_kald_pr_opgave") == 0.5, g[dev_group]["plugin"])
 
 
+def test_compare():
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = pathlib.Path(tmp)
+        _, tasks = experiment.exam.load_trade("electrical")
+        dev = [t for t in tasks if t["saet"] == "udvikling"][:3]
+
+        def row(t, ok):
+            return {"id": t["id"], "arm": "plugin", "saet": t["saet"], "type": t["type"], "niveau": t["niveau"],
+                    "maal": t["maal"], "bestaaet": ok, "pris_usd": 0.1, "sek": 10.0, "note": ""}
+        a, b = tmp / "a.json", tmp / "b.json"
+        a.write_text(json.dumps({"fag": "electrical", "resultater": [row(dev[0], True), row(dev[1], True)]
+                                 + [row(dev[2], ok) for ok in (True, True, False)]}))
+        b.write_text(json.dumps({"fag": "electrical", "resultater": [row(dev[0], True), row(dev[1], False)]
+                                 + [row(dev[2], ok) for ok in (True, False, False)]}))
+        text = "\n".join(experiment.compare(a, b, [a]))
+        expect("compare tæller opgaver, der kun består i A", "kun A 2" in text, text)
+        expect("compare viser stemmer", "A 2/3 · B 1/3" in text, text)
+        expect("compare viser ingen ID'er", not any(t["id"] in text for t in dev), text)
+
+
 def test_validate():
     holdout = experiment.holdout_ids()
     some = sorted(holdout)[0]
@@ -181,7 +201,7 @@ def test_answers_hide_holdout():
 
 
 def main() -> int:
-    for t in (test_assess, test_summarize, test_validate, test_guard, test_holdout_switch, test_answers_hide_holdout):
+    for t in (test_assess, test_summarize, test_compare, test_validate, test_guard, test_holdout_switch, test_answers_hide_holdout):
         t()
     print(f"\n{len(FAILURES)} fejl")
     return 1 if FAILURES else 0

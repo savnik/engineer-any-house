@@ -81,13 +81,13 @@
         "regression/tasks-a": {
           "plugin": {
             "n": 16,
-            "bestaaet": 11,
+            "bestaaet": 12,
             "opgaver_hash": "f3b9d24298f0",
-            "pris_usd": 1.598,
-            "pris_pr_bestaaet": 0.1453,
-            "sek_pr_opgave": 25.5,
-            "tokens_ud_pr_opgave": 1971,
-            "vaerktoejskald_pr_opgave": 1.8,
+            "pris_usd": 1.607,
+            "pris_pr_bestaaet": 0.1339,
+            "sek_pr_opgave": 26.4,
+            "tokens_ud_pr_opgave": 2012,
+            "vaerktoejskald_pr_opgave": 2.08,
             "regnekald_pr_opgave": 0.03,
             "afviste_kald_pr_opgave": 0.0
           }
@@ -151,14 +151,14 @@
         }
       },
       "opdateret": "2026-11-01",
-      "forsoeg": "F-038",
+      "forsoeg": "F-039",
       "kilder": {
         "udvikling/tasks-a": "F-007 @ 4ab0e22",
         "udvikling/tasks-b": "F-007 @ 4ab0e22",
         "udvikling/tasks-c": "F-007 @ 4ab0e22",
-        "regression/tasks-a": "F-038 @ aee7cd2",
-        "regression/tasks-b": "F-038 @ aee7cd2",
-        "regression/tasks-c": "F-038 @ aee7cd2",
+        "regression/tasks-a": "F-039 @ aee7cd2",
+        "regression/tasks-b": "F-039 @ aee7cd2",
+        "regression/tasks-c": "F-039 @ aee7cd2",
         "holdout/tasks-d": "F-035 @ aee7cd2",
         "udvikling/tasks-d": "F-035 @ aee7cd2"
       }

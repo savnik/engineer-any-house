@@ -3837,6 +3837,136 @@
       "begrundelse": "Nulmåling afgøres manuelt. Grenen består 32 af 40 mod mains 33 af 40, en forskel på 1 opgave, under NOISE_TASKS på 2 og dermed ikke den falsificering, hypotesen satte. Pris pr. bestået er 0,108 mod 0,106 dollar, plus 2 pct., inden for PRICE_TOLERANCE, og tiden er 25 mod 27 sekunder pr. opgave. Behold gør den samlede, leverede konfiguration med flertal over 3 til benchmark for regressionsgrupperne i stedet for enkeltkørslen fra 97f6b35.",
       "rev_efter": "aee7cd2",
       "pr": "40"
+    },
+    {
+      "id": "F-039",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "nulmaaling",
+      "hypotese": "Faldet i regression/tasks-a i F-038, main 12 af 16 mod samlet gren 11 af 16, er støj. Det skyldes én fritekstopgave på svendeniveau, som main bestod 3 af 3 og grenen 1 af 3, og som i ældre kørsler bestod 5 af 7. Hvis opgaven køres 7 gange mere i hver arm, ligger beståelsesraten i de to arme højst 2 kørsler fra hinanden over 10 kørsler. Falsificeres, hvis grenen består mindst 3 færre af 10 end main, hvilket peger på en reel årsag, der så skal isoleres med el-plan alene.",
+      "aendring": "Ingen ændring i pluginet. Nyt måleværktøj: exam.py run --only-differing FIL-A FIL-B kører kun opgaver, hvor flertallet er forskelligt i to filer, og experiment.py compare viser forskellen pr. gruppe, begge uden ID'er.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "446edd4",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-144231-plugin-regression-origin-main.json",
+              "20261101-152601-plugin-regression-origin-main.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.655,
+                  "pris_pr_bestaaet": 0.1379,
+                  "sek_pr_opgave": 27.1,
+                  "tokens_ud_pr_opgave": 2062,
+                  "vaerktoejskald_pr_opgave": 2.06,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.127,
+                  "pris_pr_bestaaet": 0.0867,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 1940,
+                  "vaerktoejskald_pr_opgave": 1.52,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.717,
+                  "pris_pr_bestaaet": 0.0896,
+                  "sek_pr_opgave": 28.6,
+                  "tokens_ud_pr_opgave": 2041,
+                  "vaerktoejskald_pr_opgave": 1.38,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "aee7cd2",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-145524-plugin-regression-regn.json",
+              "20261101-152833-plugin-regression-regn.json",
+              "20261101-153701-plugin-regression-regn-aee7cd2.json",
+              "20261101-154008-plugin-regression-regn-aee7cd2.json"
+            ],
+            "grupper": {
+              "regression/tasks-a": {
+                "plugin": {
+                  "n": 16,
+                  "bestaaet": 12,
+                  "opgaver_hash": "f3b9d24298f0",
+                  "pris_usd": 1.607,
+                  "pris_pr_bestaaet": 0.1339,
+                  "sek_pr_opgave": 26.4,
+                  "tokens_ud_pr_opgave": 2012,
+                  "vaerktoejskald_pr_opgave": 2.08,
+                  "regnekald_pr_opgave": 0.03,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-b": {
+                "plugin": {
+                  "n": 15,
+                  "bestaaet": 13,
+                  "opgaver_hash": "9c321d65956a",
+                  "pris_usd": 1.162,
+                  "pris_pr_bestaaet": 0.0894,
+                  "sek_pr_opgave": 25.2,
+                  "tokens_ud_pr_opgave": 1933,
+                  "vaerktoejskald_pr_opgave": 1.2,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              },
+              "regression/tasks-c": {
+                "plugin": {
+                  "n": 9,
+                  "bestaaet": 8,
+                  "opgaver_hash": "0725803aea09",
+                  "pris_usd": 0.71,
+                  "pris_pr_bestaaet": 0.0887,
+                  "sek_pr_opgave": 25.1,
+                  "tokens_ud_pr_opgave": 1997,
+                  "vaerktoejskald_pr_opgave": 1.15,
+                  "regnekald_pr_opgave": 0.0,
+                  "afviste_kald_pr_opgave": 0.0
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "ee70479",
+      "laering": "Faldet i regression/tasks-a i F-038 var én fritekstopgave på svendeniveau, som main bestod 3 af 3 og den samlede gren 1 af 3. Over flere kørsler bestod main 9 af 10, el-plan alene 8 af 10, eltegn med F-035 alene 9 af 10 og den samlede gren 21 af 30. Uden de 6 kørsler, der udvalgte opgaven, er grenen 20 af 27 mod 23 af 27, p 0,50, så forskellen er støj forstærket af udvælgelse: en opgave, der udvælges, fordi den skifter mellem to arme, vil i gennemsnit nærme sig sin sande rate ved genkørsel. Opgaven består ca. 75 til 85 procent af gangene i alle konfigurationer, så flertal over 3 vender den med ca. 15 til 25 procents sandsynlighed. Der er ingen reel årsag at rette, og ingen ændring i pluginet. Nyt værktøj: exam.py run --only-differing FIL-A FIL-B kører kun opgaver, hvor flertallet er forskelligt i to filer, og experiment.py compare viser forskellen pr. gruppe med type, niveau og stemmer, begge uden ID'er. At isolere én skiftende opgave med 10 kørsler pr. arm koster ca. 1,7 dollar mod 7 dollar for hele regressionssættet. Sæt kriteriet i en støjhypotese efter mindst 20 kørsler pr. arm, 10 er for få til at skelne 90 fra 70 procent. Ikke målt: de øvrige 39 opgaver blev ikke genkørt, og compare viste kun denne ene som forskellig mellem armene. Pris 9,95 dollar.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Nulmåling afgøres manuelt. Hypotesens kriterium blev ramt ved 10 kørsler pr. arm, main 9 af 10 mod gren 6 af 10, og som hypotesen foreskrev blev årsagen isoleret. El-plan alene gav 8 af 10 og eltegn alene 9 af 10 på samme opgave, og 20 ekstra kørsler af den samlede gren gav 15 af 20. Ser man bort fra de 3 plus 3 kørsler, der udvalgte opgaven, står grenen på 20 af 27 mod 23 af 27 for de tre andre konfigurationer, Fisher p 0,50. Faldet er derfor støj og udvælgelse, ikke en reel regression. Ved flertal over de nyeste 10 kørsler består grenen opgaven, så tasks-a er 12 af 16 som main, og behold retter benchmarket fra F-038.",
+      "rev_efter": "aee7cd2",
+      "pr": "40"
     }
   ]
 }

@@ -14,6 +14,8 @@ Brug:
   python3 scripts/experiment.py close F-001 --decision keep|discard|undecided --learning "…"
                                [--rationale "…"] [--rev-after REV] [--pr "#7"]
   python3 scripts/experiment.py benchmark [--trade electrical]
+  python3 scripts/experiment.py compare <fil-a> <fil-b> [--history <fil> ...]
+                               opgaver, der skifter mellem to kørsler, pr. gruppe – uden ID'er, også for skjulte sæt
   python3 scripts/experiment.py check                      format, og at ingen holdout-ID'er står i loggen
   python3 scripts/experiment.py retire-holdout --trade electrical   benchmarkets gamle holdout-grupper → regression
 
@@ -468,6 +470,57 @@ def cmd_close(args) -> int:
     return 0
 
 
+def compare(a: pathlib.Path, b: pathlib.Path, history: list[pathlib.Path]) -> list[str]:
+    """Per group: how many tasks pass in both, only in A, only in B or in neither, and for the tasks that
+    differ the votes in A and B and their pass record in the history files. No task IDs are printed, so the
+    output is safe for hidden sets (holdout, regression)."""
+    def votes(files: list[pathlib.Path]) -> dict[str, list[bool]]:
+        out: dict[str, list[bool]] = {}
+        for f in files:
+            for r in exam.valid_rows(f):
+                if r["arm"] == "plugin":
+                    out.setdefault(r["id"], []).append(bool(r["bestaaet"]))
+        return out
+
+    def passed(v: list[bool]) -> bool:
+        return sum(v) * 2 > len(v)
+
+    trade = json.loads(a.read_text(encoding="utf-8"))["fag"]
+    where, types = task_files(trade), {}
+    for f in sorted((exam.EXAM_DIR / trade).glob("tasks*.json")):
+        for t in json.loads(f.read_text(encoding="utf-8"))["opgaver"]:
+            types[t["id"]] = f"{t['type']}/{t['niveau']}"
+    va, vb, vh = votes([a]), votes([b]), votes(history)
+    per_file = [votes([h]) for h in history]
+    groups: dict[str, list[str]] = {}
+    for tid in sorted(set(va) & set(vb)):
+        groups.setdefault(where.get(tid, "ukendt"), []).append(tid)
+    lines = []
+    for name, ids in sorted(groups.items()):
+        both = sum(passed(va[i]) and passed(vb[i]) for i in ids)
+        only_a = [i for i in ids if passed(va[i]) and not passed(vb[i])]
+        only_b = [i for i in ids if passed(vb[i]) and not passed(va[i])]
+        lines.append(f"{name}: {len(ids)} opgaver · begge {both} · kun A {len(only_a)} · kun B {len(only_b)} · "
+                     f"ingen {len(ids) - both - len(only_a) - len(only_b)}")
+        # Sorted on the printed text, not on the ID, so the order reveals nothing.
+        rows = []
+        for side, picked in (("kun A", only_a), ("kun B", only_b)):
+            for i in picked:
+                h = vh.get(i, [])
+                each = ", ".join(f"{sum(v[i])}/{len(v[i])}" if i in v else "–" for v in per_file)
+                rows.append(f"  {side}: {types.get(i, '?')} · A {sum(va[i])}/{len(va[i])} · "
+                            f"B {sum(vb[i])}/{len(vb[i])} · historik {sum(h)}/{len(h)}"
+                            + (f" (pr. fil: {each})" if history else ""))
+        flaky = [i for i in ids if 0 < sum(va[i] + vb[i] + vh.get(i, [])) < len(va[i] + vb[i] + vh.get(i, []))]
+        lines += sorted(rows) + [f"  opgaver med både bestået og ikke bestået på tværs af alle filer: {len(flaky)}"]
+    return lines
+
+
+def cmd_compare(args) -> int:
+    print("\n".join(compare(pathlib.Path(args.a), pathlib.Path(args.b), [pathlib.Path(h) for h in args.history])))
+    return 0
+
+
 def cmd_benchmark(args) -> int:
     bench = load_benchmark()
     print_benchmark(bench, [args.trade] if args.trade else sorted(bench["fag"]))
@@ -590,6 +643,10 @@ def main() -> int:
     p.add_argument("--rationale", default="")
     p.add_argument("--rev-after", default="")
     p.add_argument("--pr", default="")
+    p = sub.add_parser("compare")
+    p.add_argument("a")
+    p.add_argument("b")
+    p.add_argument("--history", nargs="*", default=[])
     p = sub.add_parser("benchmark")
     p.add_argument("--trade", default="")
     sub.add_parser("check")
@@ -600,7 +657,7 @@ def main() -> int:
         args.decision = DECISION_CHOICES[args.decision]  # English CLI choice → stored Danish value
     return {"status": cmd_status, "list": cmd_list, "show": cmd_show, "search": cmd_search, "new": cmd_new,
             "start": cmd_start, "measure": cmd_measure, "assess": cmd_assess, "close": cmd_close,
-            "benchmark": cmd_benchmark, "check": cmd_check, "retire-holdout": cmd_retire_holdout}[args.cmd](args)
+            "benchmark": cmd_benchmark, "compare": cmd_compare, "check": cmd_check, "retire-holdout": cmd_retire_holdout}[args.cmd](args)
 
 if __name__ == "__main__":
     sys.exit(main())

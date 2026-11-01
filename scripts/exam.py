@@ -5,7 +5,7 @@ Brug:
   python3 scripts/exam.py check [fag ...]           format og dækning (alle læringsmål i rollen har opgaver i begge sæt)
   python3 scripts/exam.py show <fag> [--answer-key] [--set development]   sættet og dækningskortet som markdown
   python3 scripts/exam.py run <fag> [--arm plugin|base|both] [--set development|holdout|regression|all --release]
-                                    [--id EL-001,...] [--only-failed] [--only-not-passed FIL] [--repeat 1] [--repeat-free 3]
+                                    [--id EL-001,...] [--only-failed] [--only-not-passed FIL] [--only-differing FIL-A FIL-B] [--repeat 1] [--repeat-free 3]
                                     [--parallel 3] [--model M] [--grader sonnet] [--web]
                                     [--with-memory] [--plugin-rev REV] [--no-base] [--calc-tool]
   python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base] [--file FIL]
@@ -790,7 +790,20 @@ def cmd_run(args) -> int:
         arms = sorted({arm for _, arm in jobs}) or arms
         what = "fejlede" if args.only_run_errors else "ikke bestod"
         print(f"Kun de {len(picked)} kørsler, der {what} i {pathlib.Path(rerun).name} (× {args.repeat})")
-    for t in tasks if not rerun else []:
+    if args.only_differing:
+        # Tasks whose majority verdict differs between two earlier files, without printing their IDs - so a
+        # hidden-set difference between two arms can be re-measured with more repeats without being seen.
+        def verdicts(path: str) -> dict[str, bool]:
+            votes: dict[str, list[bool]] = {}
+            for r in json.loads(pathlib.Path(path).read_text(encoding="utf-8"))["resultater"]:
+                if r["arm"] == "plugin" and not r.get("fejl"):
+                    votes.setdefault(r["id"], []).append(bool(r["bestaaet"]))
+            return {i: sum(v) * 2 > len(v) for i, v in votes.items()}
+        first, second = (verdicts(f) for f in args.only_differing)
+        tasks = [t for t in tasks if t["id"] in first and t["id"] in second and first[t["id"]] != second[t["id"]]]
+        jobs = [(t, arm) for t in tasks for _ in range(args.repeat) for arm in arms]
+        print(f"Kun de {len(tasks)} opgaver, hvor flertallet er forskelligt i de to filer (× {args.repeat})")
+    for t in tasks if not (rerun or args.only_differing) else []:
         repeats = max(args.repeat, args.repeat_free if t["type"] == "fri" else 0)
         jobs += [(t, arm) for _ in range(repeats) for arm in arms]
     print(f"{args.fag}: {len(tasks)} opgaver × {len(arms)} arm(e) = {len(jobs)} kørsler")
@@ -1059,6 +1072,8 @@ def main() -> int:
     p.add_argument("--only-failed", action="store_true", help="kun udviklingsopgaver, plugin-armen ikke bestod sidst")
     p.add_argument("--only-run-errors", metavar="FILE",
                    help="kør kun de kørsler igen, der fejlede (fx kontogrænse) i FILE")
+    p.add_argument("--only-differing", nargs=2, metavar=("FILE_A", "FILE_B"),
+                   help="kør kun opgaver, hvor flertallet i plugin-armen er forskelligt i de to filer (viser ingen ID'er)")
     p.add_argument("--only-not-passed", metavar="FILE",
                    help="kør kun de kørsler igen, der ikke bestod i FILE (også skjulte, uden at vise ID'er); "
                         "med --repeat N gentages hver N gange")
