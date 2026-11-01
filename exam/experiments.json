@@ -3151,6 +3151,27 @@
       "begrundelse": "Brugerens beslutning om nyt holdout for el. Kategorien vaerktoej afgøres manuelt, og skiftet ændrer ikke pluginet, så der er intet før og efter at måle.",
       "rev_efter": "dffae90",
       "pr": "https://github.com/savnik/engineer-any-house/pull/40"
+    },
+    {
+      "id": "F-034",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Rettelse af el.py før F-032: ikmin regner stikledningen med dens egen isolering, PVC 70 °C eller XLPE 90 °C, naeste_tvaersnit får samme forsyning og isolering, og panel giver advarsel ved sikring over 13 A foran 10 eller 13 A-stikkontakter efter BEK 1082 § 45. Ingen forventet effekt på kvalitet uden for opgaver, der bruger el.py. Rettelsen fjerner kendte regnefejl, så F-032 måler værktøjet og ikke fejlene.",
+      "aendring": "el.py: --feeder-insulation, forsyning til næste tværsnit, § 45-kontrol med feltet stikkontakt_a. calc-tools.md dokumenterer valget af ledermodstand: IEC 60228 pr. tværsnit giver rho70 0,0217-0,0222 mod håndregningens 0,0225. Tests i tests/test_el.py.",
+      "opgaver": [],
+      "status": "afsluttet",
+      "beslutning": "behold",
+      "maalinger": {},
+      "rev_foer": "d320554",
+      "laering": "Opgaveforfatteren fandt fire afvigelser ved at regne opgaverne i hånden mod el.py. Tre var reelle fejl: stikledningen blev altid regnet som XLPE 90 °C, næste tværsnit fik ikke stikledningens temperatur og isolering, og panel kendte ikke § 45 om sikring foran stikkontakter. ρ-valget er bevidst: IEC 60228 pr. tværsnit giver rho70 0,0217-0,0222, 1,5-3,5 procent under håndregningens 0,0225, så el.py giver lidt større Ik,min og lidt mindre spændingsfald end facit regnet med 0,0225. Det er dokumenteret i calc-tools.md og ikke ændret. Ikke målt: ingen eksamenskørsel for rettelsen alene. Lær: lad opgaveforfatteren regne nye beregningsopgaver i hånden mod værktøjet, før de måles. Uoverensstemmelser er billige at finde der.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Fejlrettelse i regneværktøjet uden selvstændig eksamensmåling. Korrektheden er vist med enhedstests mod håndregning og med BEK 1082 § 45 læst på retsinformation.dk. Effekten på eksamen måles i F-032, hvor grenens arme indeholder rettelsen.",
+      "rev_efter": "f18d2e8",
+      "pr": "40"
     }
   ]
 }
