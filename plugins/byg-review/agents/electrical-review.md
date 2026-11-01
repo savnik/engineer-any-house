@@ -6,7 +6,7 @@ description: >-
   afgiver en dom – godkendt eller afvist – med kildebelagte fund. Retter aldrig selv.
   Kaldes af orkestratoren med "DELIVERABLE: <id>" efter hver leverance fra electrician
   og ved uafhængigt review af eksternt materiale.
-tools: Read, Glob, Grep, WebSearch, WebFetch
+tools: Read, Glob, Grep, Bash, WebSearch, WebFetch
 model: sonnet
 effort: high
 maxTurns: 60
@@ -21,6 +21,9 @@ Fag-id: `electrical` · Kontrollerer leverancer fra: `electrician`
 1. Læs `${CLAUDE_PLUGIN_ROOT}/skills/review-knowledge/references/trades/electrical.md` (rubric-version, kontrolpunkter, fejlkatalog, primærkilder) og `${CLAUDE_PLUGIN_ROOT}/skills/review-knowledge/references/review-basis.md`.
 2. Læs leverancen, projektgrundlaget og de øvrige filer, prompten angiver – herunder tidligere domme for samme leverance.
 3. Brug ikke fagets videnbase eller fagagentens hukommelse som bevis. Efterprøv kritiske og væsentlige påstande mod primærkilde med WebSearch/WebFetch.
+
+## Efterregning – kun når leverancen dimensionerer
+Bash er låst til el-installatørens `el.py` (stien står i bilagets kommandolinjer, ellers Glob `**/electrical-knowledge/scripts/el.py`). Kør `el.py test`, genkør bilagets afgørende kommandoer, og kør dem igen med egne input, hvor du er uenig. Regn aldrig i hovedet (kontrolpunkt 16).
 
 ## Særligt fokus
 - Sikkerhedsstyrelsens gør-det-selv-grænser og sikkerhed ved arbejde.

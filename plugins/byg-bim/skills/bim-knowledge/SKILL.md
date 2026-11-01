@@ -34,6 +34,7 @@ Er `${CLAUDE_PLUGIN_ROOT}` ikke udfoldet, så find scriptet med Glob `**/bim-kno
 | `draw <fil.ifc> plan|section|elevation|3d|all [--storey] [--line] [--side] [--id] [--dims]` | Plan (snit +1 m), lodret snit, facader, 3D | 2–8 s |
 | `export <fil.ifc> [--out <fil.glb>] [--transparent <glob>…] [--alpha 0.15]` | 3D til webvisning (model-viewer, three.js): glTF i modellens farver, uden rum og huller; `--transparent` gør elementer (id/Tag-glob, fx `"*-YV.1"`) gennemsigtige | 1–3 s |
 | `measure <fil.ifc|model.yaml> <id> [<id2>]` · `--space <navn>` · `--storey <navn>` | Mål i mm i ét kald: væg (længde, tykkelse, højde, inder-/yderflade, åbninger), rum (indvendige mål, areal), fri afstand mellem to elementer, alle vægge på en etage – altid med kilden. En `model.yaml` bygges først, så målet er fra den aktuelle model | < 1 s |
+| `elplan <fil.ifc|model.yaml> [--out <fil.md>]` | El-plan pr. rum: punktliste, stikkontakter mod § 57 (BEK 1082/2016, inkl. køkken ≥ 3 på ≥ 2 kredse), afbrydertype pr. lysgruppe og fund (lamper uden gruppe, grupper uden betjening). Exit 1 ved mangler | < 1 s |
 | `info` · `show <id>` · `find "<selector>"` · `diff <gammel> <ny>` | Inspektion og ændringer | < 5 s |
 
 Udskrifterne er korte med vilje. Detaljer står i filerne – læs dem kun, når udskriften ikke er nok.

@@ -1,6 +1,6 @@
 # El – normgrundlag
 
-Sidst gennemgået: 2026-10-18. BR18 gælder i den version, der er aktuel fra 1/1-2026 (ældre versioner ligger under "Historisk" på bygningsreglementet.dk). §-numre kan være læst i en ældre version – tjek den aktuelle, før du citerer. **V** = verificeret (kilde), **T** = skal verificeres.
+Sidst gennemgået: 2026-10-31. BR18 gælder i den version, der er aktuel fra 1/1-2026 (ældre versioner ligger under "Historisk" på bygningsreglementet.dk). §-numre kan være læst i en ældre version – tjek den aktuelle, før du citerer. **V** = verificeret (kilde), **T** = skal verificeres.
 
 ## Kilder
 | Kilde | Emne og brug | Status |
@@ -9,11 +9,11 @@ Sidst gennemgået: 2026-10-18. BR18 gælder i den version, der er aktuel fra 1/1
 | Installationsbekendtgørelsen, BEK nr. 1082 af 12/07/2016 (ændret ved BEK 639/2017) | Gør DS/HD 60364 gældende; krav til udførelse og dokumentation. Centrale §§ i tabellen nedenfor | V 2026-10-18 (retsinformation.dk/eli/lta/2016/1082) |
 | DS/HD 60364-serien | Lavspændingsinstallationer | V (sik.dk) |
 | DS/HD 60364-4-41 | Beskyttelse mod elektrisk stød, supplerende beskyttelse med RCD | T (afsnit) |
-| DS/HD 60364-5-52 / -5-54 | Kabelinstallationer / jording og beskyttelsesledere | T |
+| DS/HD 60364-5-52 / -5-54 | Kabelinstallationer (strømværdier anneks B, se `calc-tools.md`) / jording og beskyttelsesledere | Tabelværdier V sekundær 2026-10-31; tekst T |
 | DS/HD 60364-6 | Verifikation: eftersyn, afprøvning, rapportering | V (sik.dk-vejledninger om eftersyn, afprøvning og rapportering) |
-| DS/HD 60364-7-701 | Rum med badekar eller brusebad | T (del-nr. og detaljer) |
+| DS/HD 60364-7-701:2024 (= IEC 60364-7-701:2019) | Rum med badekar eller brusebad, se "Badeværelse – områder" | V 2026-10-31 (sik.dk-vejledning og huseftersynshåndbog) |
 | DS/HD 60364-7-712 | Solcelleanlæg | T |
-| DS/HD 60364-7-722 | Forsyning af elbiler | T |
+| DS/HD 60364-7-722 | Forsyning af elbiler; RCD-valg V via sik.dk, se "RCD" | T (pkt.-tekst) |
 | Sikkerhedsstyrelsen – danske tolkninger | Udligningsforbindelser, potentialudligning i badeværelser, dokumentation ved afvigelse fra standarder | V (emner findes på sik.dk) |
 | Sikkerhedsstyrelsen – solceller | Autorisation og tilslutning, se "Solceller" nedenfor; plugin-solceller med stikprop kan udgøre en risiko | V 2026-10-18 (sik.dk) |
 | Autorisationsloven | Elinstallationsarbejde kræver autoriseret virksomhed – undtagen det, privatpersoner udtrykkeligt må | V |
@@ -51,7 +51,7 @@ Alle rækker V 2026-10-18 mod retsinformation.dk/eli/lta/2016/1082, medmindre an
 | 53 | RCD type AC må ikke bruges som fejlbeskyttelse i boliger | Tjek typen på eksisterende RCD/HFI ved ændring |
 | 45 | Kortslutningsbeskyttelse foran stikkontakter: 10 A og 13 A stikkontakter → højst 13 A; 16 A stikkontakter → højst 16 A. Gælder uanset kablets strømværdi | 16 A eller større gruppe til almindelige 10/13 A-stikkontakter er ulovlig |
 | 55 | Beskyttelsesudstyr skal sidde i den bolig, det hører til; højst 2,2 m over gulv; under 1 m over gulv kun i aflåseligt skab | Gælder også ved flytning af tavle |
-| 57 | Stikkontakter (250 V) pr. rum: mindst én pr. påbegyndt 4 m² gulv, dog højst krav om 10. **Køkkenregion: mindst 3 stikkontakter, hvor brugsgenstande bruges, fordelt på mindst 2 grupper.** Kogeniche: mindst 1. Bad og wc: mindst 1, medmindre rummet er for lille | Se "Ændring og udvidelse" for, hvornår kravet udløses i eksisterende boliger |
+| 57 | Stikkontakter (250 V) pr. rum: mindst én pr. påbegyndt 4 m² gulv, dog højst krav om 10. **Køkkenregion: mindst 3 stikkontakter, hvor brugsgenstande bruges, fordelt på mindst 2 grupper.** Kogeniche: mindst 1. Bad og wc: ikke omfattet af 4 m²-reglen, men mindst 1, medmindre rummet er for lille (stk. 4). **Garager, carporte, loftsrum, depotrum og lignende er ikke omfattet af stk. 1** (stk. 5; V retsinformation 2026-11-01) | Se "Ændring og udvidelse" for, hvornår kravet udløses i eksisterende boliger |
 | 62 | Ved udvidelse/ændring skal eksisterende materiel, der får ekstra belastning (stikledning, tavle, kabler), være tilstrækkeligt; jording og udligning skal være tilstrækkelig | Ny lader/varmepumpe/sol → kontrollér det eksisterende |
 | 63 | Udvidelse/ændring med **højst 2 tilslutningssteder**: beskyttelsesleder må udelades, hvis den mangler i forvejen, når det nye får RCD ≤ 30 mA | Flere end 2 → beskyttelsesleder skal fremføres |
 | 64 | Stikkontakter med jord, som er omfattet af en udvidelse eller ændring, skal tilsluttes en **virksom beskyttelsesleder** | Jordet stikkontakt med tom jordklemme bag RCD er ikke lovlig |
@@ -81,8 +81,17 @@ Kilde: Fællesregulativet 2026, V 2026-10-18.
 - **Tilmelding før arbejdet påbegyndes** (Del A pkt. 2): altid ved nye tilslutninger, ændring af bestående installationer, produktionsanlæg (fx solceller), elektriske energilageranlæg (batteri), varmepumper og ladestandere, afmelding og plombebrud. Udvides det tilmeldte, kræves ny tilmelding.
 - **Kortslutningsniveau** (Del B pkt. 13–14), når netselskabet ikke oplyser andet: største kortslutningsstrøm 16 kA (3-faset, cos φ 0,3) foran stikledningen; **mindste fase-nul-kortslutningsstrøm Ik min = 5 × stikledningssikringens mærkestrøm** i kabelnet (også i luftledningsnet, medmindre andet oplyses). I maskenet (Radius Frederiksberg/City, Elektrus) og ved direkte tilslutning i transformerstation skal værdierne altid indhentes.
 
-## Rumkrav i badeværelse (dansk praksis)
-- Stikkontakt uden for område 0, 1 og 2; i praksis mindst 120 cm fra åben bruser. (V sekundær: Bolius, 2026-09; områder V sik.dk 2026-10-18)
+## Badeværelse – områder (DS/HD 60364-7-701:2024)
+Kilde: sik.dk-vejledning om 701:2024 og SIK-huseftersynshåndbog v19 bilag 4, V 2026-10-31. Mål områderne på planen [KRAV]:
+- **Bruser uden kar (også kun forhæng):** område 1 = 1,2 m fra vandudløbet, målt uden om faste skillevægge, op til 2,25 m. **Intet område 2.** Område 0 = i karret eller 0,1 m over brusegulvet, kun SELV ≤ 12 V AC, IPX7.
+- **Badekar/kabine:** område 1 over karret, **område 2 = 0,6 m** ud fra kanten.
+- IPX4 i område 1–2 (spuling: IP55, område 0 IP67). Ingen 230 V-stikkontakter i område 0–2 (i praksis ≥ 1,2 m fra åben bruser, V sekundær Bolius). Afbrydere tidligst i område 2. Område 3 findes ikke længere.
+
+## RCD, jordingssystem og SPD
+- **Mindst to RCD'er** (type A, 30 mA) i nye tavler, lækstrøm ≤ 0,3 × IΔn pr. RCD [ANVISNING sik.dk "Valg og installation af RCD", 531.3.6 – V 2026-10-31].
+- **Elbil:** egen RCD, normalt type B 30 mA. Type A/F kun med RDC-DD (6 mA DC) i laderen efter fabrikanten [ANVISNING sik.dk "Opladning af elbiler" – V 2026-10-31]. Type B sættes ikke efter type A/F, fordi glat DC blinder den, medmindre B'en begrænser DC til 6 mA [ERFARING fabrikant – V sekundær]. Frekvensomformer: 1-faset F, 3-faset B (T).
+- **TT er udgangspunktet** fra det offentlige net. TN kun med egen transformerstation, kabelstikledning direkte fra stationen, eksisterende TN eller netejerens tilladelse. Ingen TN-C efter første tavle [KRAV BEK 1082 §§ 27–28 – V 2026-10-31].
+- **SPD er et betinget krav:** fra 1/7-2019 skal behovet vurderes (§ 13), typisk type 2 i tavlen. Det er ikke krav før 2019, i tæt bymiljø, efter risikovurdering (443.5) eller når værdien er ≤ 5 × SPD-prisen [ANVISNING sik.dk og huseftersynshåndbog pkt. 10a – V 2026-10-31]. Skriv "vurderet", ikke "krævet".
 
 ## Opslagsrækkefølge
 1. sik.dk – regler, gør-det-selv, vejledninger, autorisationsregisteret

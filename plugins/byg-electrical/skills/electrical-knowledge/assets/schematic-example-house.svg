@@ -1,0 +1,269 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1852 1084" width="1852" height="1084" font-family="system-ui, Helvetica, Arial, sans-serif" font-size="12" fill="#1d2330">
+<title>Tavlediagram – eksempelhuset</title>
+<desc>Enstregsdiagram for tavlen: forsyning, måler, hovedafbryder, SPD, fejlstrømsafbrydere og grupper. Ikke målfast. Symboler efter electrical-knowledge/references/schematic.md.</desc>
+<defs>
+  <!-- symbols centred on (0,0) for a vertical conductor; a white mask hides the conductor behind the symbol -->
+  <g id="sikring"><rect x="-6" y="-13" width="12" height="26" fill="#fff" stroke="#1d2330" stroke-width="1.4"/><path d="M0,-13 V13" stroke="#1d2330" stroke-width="1.2"/></g>
+  <g id="automat"><rect x="-12" y="-11" width="24" height="22" fill="#fff"/><path d="M0,11 L-10,-8 M-4,-15 L4,-7 M4,-15 L-4,-7" fill="none" stroke="#1d2330" stroke-width="1.5"/></g>
+  <g id="rcd"><use href="#automat"/><ellipse cy="20" rx="11" ry="4.5" fill="none" stroke="#1d2330" stroke-width="1.3"/><path d="M-11,20 L-7,1" fill="none" stroke="#1d2330" stroke-width="1.1" stroke-dasharray="3 2"/></g>
+  <g id="hovedafbryder"><rect x="-12" y="-11" width="24" height="22" fill="#fff"/><path d="M0,11 L-10,-8 M-5,-11 H5" fill="none" stroke="#1d2330" stroke-width="1.5"/><circle cy="-11" r="2.2" fill="#fff" stroke="#1d2330" stroke-width="1.2"/></g>
+  <g id="maaler"><rect x="-22" y="-15" width="44" height="30" fill="#fff" stroke="#1d2330" stroke-width="1.4"/><text y="4.5" text-anchor="middle" font-size="12" font-weight="700">kWh</text></g>
+  <g id="spd"><rect x="-8" y="-15" width="16" height="30" fill="#fff" stroke="#1d2330" stroke-width="1.4"/><path d="M-11,11 L8,-9 H12" fill="none" stroke="#1d2330" stroke-width="1.3"/></g>
+  <g id="jord"><path d="M0,0 V8 M-11,8 H11 M-7,12.5 H7 M-3,17 H3" fill="none" stroke="#1d2330" stroke-width="1.5"/></g>
+  <g id="udtag"><circle r="4" fill="#fff" stroke="#1d2330" stroke-width="1.4"/></g>
+  <g id="leder"><path d="M-5,4 L5,-4" stroke="#1d2330" stroke-width="1.3"/></g>
+</defs>
+<rect width="1852" height="1084" fill="#fff"/>
+<text x="40" y="34" font-size="20" font-weight="700">Tavlediagram – eksempelhuset</text>
+<text x="40" y="54" fill="#5b6474">Enstregsdiagram · TT-system 3 × 400/230 V · ikke målfast · ID'er som i BIM-modellen</text>
+<path d="M150,76 V430" stroke="#1d2330" stroke-width="2.2"/>
+<text x="160" y="84" font-size="11" fill="#5b6474">fra netselskabets net</text>
+<rect x="40" y="96" width="300" height="92" fill="#f7f8fa" stroke="#1d2330" stroke-width="1.2" stroke-dasharray="6 3"/>
+<text x="48" y="112" font-weight="700">KABELSKAB</text>
+<text x="48" y="127" font-size="11" fill="#5b6474">Kabelskab (netselskabets)</text>
+<use href="#sikring" x="150" y="158"/><use href="#leder" x="128" y="151"/><use href="#leder" x="128" y="158"/><use href="#leder" x="128" y="165"/>
+<text x="164" y="152" font-size="11" font-weight="700">STIKSIKRING</text>
+<text x="164" y="166" font-size="11">Stikledningssikring 3 × 35 A gG</text>
+<text x="164" y="216" font-weight="700">Stikledning NOIKLX 4G16</text>
+<text x="164" y="231" font-size="11" fill="#5b6474">13 m · i jord</text>
+<use href="#leder" x="150" y="211.5"/><use href="#leder" x="150" y="218.5"/><use href="#leder" x="150" y="225.5"/><use href="#leder" x="150" y="232.5"/>
+<rect x="30" y="250" width="1792" height="380" fill="none" stroke="#1d2330" stroke-width="1.4" stroke-dasharray="10 4"/>
+<text x="164" y="268" font-size="13" font-weight="700">TAVLE Hovedtavle</text>
+<text x="164" y="284" font-size="11" fill="#5b6474">Forsikring 35 A · 48 moduler, 34 brugt</text>
+<use href="#maaler" x="150" y="322"/>
+<text x="180" y="320" font-size="11" font-weight="700">ELMAALER</text>
+<text x="180" y="334" font-size="11">Elmåler (fjernaflæst)</text>
+<use href="#hovedafbryder" x="150" y="386"/>
+<text x="168" y="384" font-size="11" font-weight="700">HA</text>
+<text x="168" y="398" font-size="11">Hovedafbryder 4-polet 63 A</text>
+<path d="M150,430 H1696.0" stroke="#1d2330" stroke-width="4"/>
+<circle cx="150" cy="430" r="4" fill="#1d2330"/>
+<path d="M250,430 V500" stroke="#1d2330" stroke-width="1.6"/><circle cx="250" cy="430" r="4" fill="#1d2330"/>
+<use href="#spd" x="250" y="470"/><use href="#jord" x="250" y="500"/>
+<text x="234" y="466" font-size="11" font-weight="700" text-anchor="end">SPD</text>
+<text x="234" y="480" font-size="11" text-anchor="end">type 2</text>
+<text x="140" y="422" font-size="11" text-anchor="end" fill="#5b6474">L1 L2 L3 N</text>
+<text x="144" y="522" font-size="11" text-anchor="end" fill="#5b6474">PE/jord: TT – eget</text>
+<text x="144" y="536" font-size="11" text-anchor="end" fill="#5b6474">jordspyd</text>
+<path d="M426.0,430 V540" stroke="#1d2330" stroke-width="1.8"/><circle cx="426.0" cy="430" r="4" fill="#1d2330"/>
+<use href="#rcd" x="426.0" y="472"/><use href="#leder" x="426" y="515"/><use href="#leder" x="426" y="522"/><use href="#leder" x="426" y="529"/>
+<text x="444" y="460" font-weight="700">RCD1</text>
+<text x="444" y="475" font-weight="700" fill="#1d2330">type A · 30 mA</text>
+<text x="444" y="490" font-size="11" fill="#5b6474">40 A · 4-polet</text>
+<path d="M426.0,540 H822.0" stroke="#1d2330" stroke-width="3"/>
+<path d="M426.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="426.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="426.0" y="580"/><use href="#leder" x="426" y="614"/>
+<use href="#udtag" x="426.0" y="652"/>
+<text x="440" y="578" font-weight="700">B13</text>
+<text x="440" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="368" y="682" font-size="13" font-weight="700">Gruppe 1</text>
+<rect x="368.0" y="690" width="22" height="15" rx="3" fill="#7a4a1e"/>
+<text x="379" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L1</text>
+<text x="368" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="368" y="739" font-size="11" fill="#1d2330">NOIKLX 3G1,5 · ref. C</text>
+<text x="368" y="754" font-size="11" fill="#1d2330">18 m · ΔU 0,48 %</text>
+<text x="368" y="769" font-size="11" fill="#1d2330">RCD1 · type A · 30 mA</text>
+<text x="368" y="790" font-weight="700">Lys kælder og</text>
+<text x="368" y="805" font-weight="700">stueetage</text>
+<text x="368" y="820" font-size="11" fill="#5b6474">8 lamper, 5 afbrydere</text>
+<text x="368" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M558.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="558.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="558.0" y="580"/><use href="#leder" x="558" y="614"/>
+<use href="#udtag" x="558.0" y="652"/>
+<text x="572" y="578" font-weight="700">B13</text>
+<text x="572" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="500" y="682" font-size="13" font-weight="700">Gruppe 3</text>
+<rect x="500.0" y="690" width="22" height="15" rx="3" fill="#8a8f98"/>
+<text x="511" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+<text x="500" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="500" y="739" font-size="11" fill="#1d2330">NOIKLX 3G2,5 · ref. C</text>
+<text x="500" y="754" font-size="11" fill="#1d2330">11 m · ΔU 0,54 %</text>
+<text x="500" y="769" font-size="11" fill="#1d2330">RCD1 · type A · 30 mA</text>
+<text x="500" y="790" font-weight="700">Stik køkken og</text>
+<text x="500" y="805" font-weight="700">køleskab</text>
+<text x="500" y="820" font-size="11" fill="#5b6474">3 stikkontakter, 1</text>
+<text x="500" y="834" font-size="11" fill="#5b6474">køleskab</text>
+<text x="500" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M690.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="690.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="690.0" y="580"/><use href="#leder" x="690" y="614"/>
+<use href="#udtag" x="690.0" y="652"/>
+<text x="704" y="578" font-weight="700">B13</text>
+<text x="704" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="632" y="682" font-size="13" font-weight="700">Gruppe 8</text>
+<rect x="632.0" y="690" width="22" height="15" rx="3" fill="#1d2330"/>
+<text x="643" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L2</text>
+<text x="632" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="632" y="739" font-size="11" fill="#1d2330">NOIKLX 3G2,5 · ref. C</text>
+<text x="632" y="754" font-size="11" fill="#1d2330">6 m · ΔU 0,44 %</text>
+<text x="632" y="769" font-size="11" fill="#1d2330">RCD1 · type A · 30 mA</text>
+<text x="632" y="790" font-weight="700">Vaskemaskine</text>
+<text x="632" y="805" font-size="11" fill="#5b6474">1 stikkontakt, 1</text>
+<text x="632" y="819" font-size="11" fill="#5b6474">vaskemaskine</text>
+<text x="632" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M822.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="822.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="822.0" y="580"/><use href="#leder" x="822" y="614"/>
+<use href="#udtag" x="822.0" y="652"/>
+<text x="836" y="578" font-weight="700">B10</text>
+<text x="836" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="764" y="682" font-size="13" font-weight="700">Gruppe 9</text>
+<rect x="764.0" y="690" width="22" height="15" rx="3" fill="#8a8f98"/>
+<text x="775" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+<text x="764" y="724" font-size="11" fill="#1d2330">B10 A · 10 kA</text>
+<text x="764" y="739" font-size="11" fill="#1d2330">NOIKLX 3G1,5 · ref. C</text>
+<text x="764" y="754" font-size="11" fill="#1d2330">15 m · ΔU 0,40 %</text>
+<text x="764" y="769" font-size="11" fill="#1d2330">RCD1 · type A · 30 mA</text>
+<text x="764" y="790" font-weight="700">Pillefyr</text>
+<text x="764" y="805" font-size="11" fill="#5b6474">1 afbryder</text>
+<text x="764" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M980.0,430 V540" stroke="#1d2330" stroke-width="1.8"/><circle cx="980.0" cy="430" r="4" fill="#1d2330"/>
+<use href="#rcd" x="980.0" y="472"/><use href="#leder" x="980" y="515"/><use href="#leder" x="980" y="522"/><use href="#leder" x="980" y="529"/>
+<text x="998" y="460" font-weight="700">RCD2</text>
+<text x="998" y="475" font-weight="700" fill="#1d2330">type A · 30 mA</text>
+<text x="998" y="490" font-size="11" fill="#5b6474">40 A · 4-polet</text>
+<path d="M980.0,540 H1508.0" stroke="#1d2330" stroke-width="3"/>
+<path d="M980.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="980.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="980.0" y="580"/><use href="#leder" x="980" y="614"/>
+<use href="#udtag" x="980.0" y="652"/>
+<text x="994" y="578" font-weight="700">B13</text>
+<text x="994" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="922" y="682" font-size="13" font-weight="700">Gruppe 2</text>
+<rect x="922.0" y="690" width="22" height="15" rx="3" fill="#1d2330"/>
+<text x="933" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L2</text>
+<text x="922" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="922" y="739" font-size="11" fill="#1d2330">NOIKLX 3G2,5 · ref. C</text>
+<text x="922" y="754" font-size="11" fill="#1d2330">13 m · ΔU 0,43 %</text>
+<text x="922" y="769" font-size="11" fill="#1d2330">RCD2 · type A · 30 mA</text>
+<text x="922" y="790" font-weight="700">Stik stue og</text>
+<text x="922" y="805" font-weight="700">spisestue</text>
+<text x="922" y="820" font-size="11" fill="#5b6474">5 stikkontakter</text>
+<text x="922" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M1112.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="1112.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="1112.0" y="580"/><use href="#leder" x="1112" y="607"/><use href="#leder" x="1112" y="614"/><use href="#leder" x="1112" y="621"/>
+<use href="#udtag" x="1112.0" y="652"/>
+<text x="1126" y="578" font-weight="700">B16</text>
+<text x="1126" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="1054" y="682" font-size="13" font-weight="700">Gruppe 4</text>
+<rect x="1054.0" y="690" width="22" height="15" rx="3" fill="#7a4a1e"/>
+<text x="1065" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L1</text>
+<rect x="1079.0" y="690" width="22" height="15" rx="3" fill="#1d2330"/>
+<text x="1090" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L2</text>
+<rect x="1104.0" y="690" width="22" height="15" rx="3" fill="#8a8f98"/>
+<text x="1115" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+<text x="1054" y="724" font-size="11" fill="#1d2330">B16 A · 10 kA</text>
+<text x="1054" y="739" font-size="11" fill="#1d2330">NOIKLX 5G2,5 · ref. C</text>
+<text x="1054" y="754" font-size="11" fill="#1d2330">7 m · ΔU 0,29 %</text>
+<text x="1054" y="769" font-size="11" fill="#1d2330">RCD2 · type A · 30 mA</text>
+<text x="1054" y="790" font-weight="700">Komfur</text>
+<text x="1054" y="805" font-size="11" fill="#5b6474">1 komfur</text>
+<text x="1054" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M1244.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="1244.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="1244.0" y="580"/><use href="#leder" x="1244" y="614"/>
+<use href="#udtag" x="1244.0" y="652"/>
+<text x="1258" y="578" font-weight="700">B13</text>
+<text x="1258" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="1186" y="682" font-size="13" font-weight="700">Gruppe 5</text>
+<rect x="1186.0" y="690" width="22" height="15" rx="3" fill="#7a4a1e"/>
+<text x="1197" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L1</text>
+<text x="1186" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="1186" y="739" font-size="11" fill="#1d2330">NOIKLX 3G2,5 · ref. C</text>
+<text x="1186" y="754" font-size="11" fill="#1d2330">9 m · ΔU 0,67 %</text>
+<text x="1186" y="769" font-size="11" fill="#1d2330">RCD2 · type A · 30 mA</text>
+<text x="1186" y="790" font-weight="700">Opvaskemaskine</text>
+<text x="1186" y="805" font-size="11" fill="#5b6474">1 opvaskemaskine</text>
+<text x="1186" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M1376.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="1376.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="1376.0" y="580"/><use href="#leder" x="1376" y="614"/>
+<use href="#udtag" x="1376.0" y="652"/>
+<text x="1390" y="578" font-weight="700">B13</text>
+<text x="1390" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="1318" y="682" font-size="13" font-weight="700">Gruppe 6</text>
+<rect x="1318.0" y="690" width="22" height="15" rx="3" fill="#8a8f98"/>
+<text x="1329" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+<text x="1318" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="1318" y="739" font-size="11" fill="#1d2330">NOIKLX 3G1,5 · ref. C</text>
+<text x="1318" y="754" font-size="11" fill="#1d2330">15 m · ΔU 0,60 %</text>
+<text x="1318" y="769" font-size="11" fill="#1d2330">RCD2 · type A · 30 mA</text>
+<text x="1318" y="790" font-weight="700">Lys og stik</text>
+<text x="1318" y="805" font-weight="700">tagetage</text>
+<text x="1318" y="820" font-size="11" fill="#5b6474">1 lampe, 1 afbryder,</text>
+<text x="1318" y="834" font-size="11" fill="#5b6474">2 stikkontakter</text>
+<text x="1318" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M1508.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<circle cx="1508.0" cy="540" r="3.5" fill="#1d2330"/>
+<use href="#automat" x="1508.0" y="580"/><use href="#leder" x="1508" y="614"/>
+<use href="#udtag" x="1508.0" y="652"/>
+<text x="1522" y="578" font-weight="700">B13</text>
+<text x="1522" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="1450" y="682" font-size="13" font-weight="700">Gruppe 7</text>
+<rect x="1450.0" y="690" width="22" height="15" rx="3" fill="#8a8f98"/>
+<text x="1461" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+<text x="1450" y="724" font-size="11" fill="#1d2330">B13 A · 10 kA</text>
+<text x="1450" y="739" font-size="11" fill="#1d2330">NOIKLX 3G2,5 · ref. C</text>
+<text x="1450" y="754" font-size="11" fill="#1d2330">10 m · ΔU 0,25 %</text>
+<text x="1450" y="769" font-size="11" fill="#1d2330">RCD2 · type A · 30 mA</text>
+<text x="1450" y="790" font-weight="700">Stik kælder (IP44 i</text>
+<text x="1450" y="805" font-weight="700">grovkøkken)</text>
+<text x="1450" y="820" font-size="11" fill="#5b6474">3 stikkontakter</text>
+<text x="1450" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M1666.0,430 V540" stroke="#1d2330" stroke-width="1.8"/><circle cx="1666.0" cy="430" r="4" fill="#1d2330"/>
+<use href="#rcd" x="1666.0" y="472"/><use href="#leder" x="1666" y="515"/><use href="#leder" x="1666" y="522"/><use href="#leder" x="1666" y="529"/>
+<text x="1684" y="460" font-weight="700">RCD3</text>
+<text x="1684" y="475" font-weight="700" fill="#1d2330">type B-EV · 30 mA</text>
+<text x="1684" y="490" font-size="11" fill="#5b6474">40 A · 4-polet</text>
+<path d="M1666.0,540 V648" stroke="#1d2330" stroke-width="1.6"/>
+<use href="#automat" x="1666.0" y="580"/><use href="#leder" x="1666" y="607"/><use href="#leder" x="1666" y="614"/><use href="#leder" x="1666" y="621"/>
+<use href="#udtag" x="1666.0" y="652"/>
+<text x="1680" y="578" font-weight="700">B16</text>
+<text x="1680" y="592" font-size="11" fill="#5b6474">10 kA</text>
+<text x="1608" y="682" font-size="13" font-weight="700">Gruppe 10</text>
+<rect x="1608.0" y="690" width="22" height="15" rx="3" fill="#7a4a1e"/>
+<text x="1619" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L1</text>
+<rect x="1633.0" y="690" width="22" height="15" rx="3" fill="#1d2330"/>
+<text x="1644" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L2</text>
+<rect x="1658.0" y="690" width="22" height="15" rx="3" fill="#8a8f98"/>
+<text x="1669" y="701.5" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">L3</text>
+<text x="1608" y="724" font-size="11" fill="#1d2330">B16 A · 10 kA</text>
+<text x="1608" y="739" font-size="11" fill="#1d2330">NOIKLX 5G6 · ref. C</text>
+<text x="1608" y="754" font-size="11" fill="#1d2330">6 m · ΔU 0,10 %</text>
+<text x="1608" y="769" font-size="11" fill="#1d2330">RCD3 · type B-EV · 30 mA</text>
+<text x="1608" y="790" font-weight="700">Elbillader</text>
+<text x="1608" y="805" font-size="11" fill="#5b6474">1 elbillader</text>
+<text x="1608" y="864" font-size="11" font-weight="700" fill="#1a7f37">OK</text>
+<path d="M40,886 H1812" stroke="#dde1e7"/>
+<text x="40" y="904" font-weight="700">el.py panel: Ik,min net 175 A · Ik,max ved tavlen 9,5 kA · faselast L1/L2/L3 31 / 33 / 34 A (uden samtidighed) · 0 advarsler, 0 vejledende</text>
+<g transform="translate(40,954)">
+<text x="0" y="0" font-weight="700">Signaturer (EN 60617, forenklet)</text>
+<g transform="translate(14,28)"><g><use href="#sikring"/></g></g>
+<text x="38" y="32" font-size="11">Sikring (gG)</text>
+<g transform="translate(14,58)"><g><use href="#automat"/></g></g>
+<text x="38" y="62" font-size="11">Automatsikring</text>
+<g transform="translate(14,88)"><g transform="scale(.7)"><use href="#rcd"/></g></g>
+<text x="38" y="92" font-size="11">Fejlstrømsafbryder (RCD)</text>
+<g transform="translate(244,28)"><g><use href="#hovedafbryder"/></g></g>
+<text x="268" y="32" font-size="11">Hovedafbryder</text>
+<g transform="translate(244,58)"><g transform="scale(.7)"><use href="#maaler"/></g></g>
+<text x="268" y="62" font-size="11">Elmåler</text>
+<g transform="translate(244,88)"><g transform="scale(.7)"><use href="#spd"/></g></g>
+<text x="268" y="92" font-size="11">Overspændingsbeskyttelse</text>
+<g transform="translate(474,28)"><use href="#leder" x="0" y="-7"/><use href="#leder" x="0" y="0"/><use href="#leder" x="0" y="7"/></g><text x="498" y="32" font-size="11">Antal faseledere</text>
+<g transform="translate(474,52)"><use href="#jord"/></g><text x="498" y="64" font-size="11">Jord</text>
+<g transform="translate(474,88)"><use href="#udtag"/></g><text x="498" y="92" font-size="11">Gruppeafgang</text>
+</g>
+<g transform="translate(1352,964)">
+<rect width="460" height="90" fill="#fff" stroke="#1d2330" stroke-width="1.4"/><path d="M0,30 H460 M270,30 V90" stroke="#1d2330"/>
+<text x="10" y="21" font-size="14" font-weight="700">Tavlediagram – eksempelhuset</text>
+<text x="10" y="50" font-size="11">Grundlag: bim.py panel · eksempelmodel</text>
+<text x="10" y="66" font-size="11">Ikke målfast · ikke til udførelse</text>
+<text x="10" y="82" font-size="11">Kabelføring i plan: se BIM-model</text>
+<text x="280" y="50" font-size="11">Udarbejdet: electrician</text>
+<text x="280" y="66" font-size="11">Status: projekteringshjælp</text>
+<text x="280" y="82" font-size="11">Rev. A · 2026-10-31</text>
+</g></svg>

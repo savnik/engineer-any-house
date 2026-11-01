@@ -9,6 +9,7 @@ Usage:  python3 scripts/demo_site.py [--out _site]      build the site (CI: .git
 """
 import argparse
 import pathlib
+import re
 import shutil
 import subprocess
 import sys
@@ -19,6 +20,7 @@ FEM = ROOT / "plugins/byg-structural/skills/structural-knowledge/scripts/fem.py"
 BIM_SPEC = ROOT / "plugins/byg-bim/skills/bim-knowledge/assets/example/model.yaml"
 FEM_SPEC = ROOT / "plugins/byg-structural/skills/structural-knowledge/assets/fem-example-house.yaml"
 VVS_DIAGRAM = ROOT / "plugins/byg-plumbing/skills/plumbing-knowledge/assets/schematic-example-house.svg"
+EL_DIAGRAM = ROOT / "plugins/byg-electrical/skills/electrical-knowledge/assets/schematic-example-house.svg"
 IMG = ROOT / "docs/img"
 REPO = "https://github.com/savnik/engineer-any-house"
 MODEL_VIEWER = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js"
@@ -44,7 +46,7 @@ model-viewer {{ flex: 1; width: 100%; background: linear-gradient(#dfe7ef, #f6f7
 @media (prefers-color-scheme: dark) {{ model-viewer {{ background: linear-gradient(#232a33, #14171c); }} }}
 </style></head><body>
 <header><h1>BIM model of the example house</h1>
-<p>The same house as the FEM model: structure, roof windows and the full plumbing and heating installation, with the south and west facades and the south roof face see-through.
+<p>The same house as the FEM model: structure, roof windows, the full plumbing and heating installation and the electrical installation (panel, circuits, cables, lights, switches and sockets), with the south and west facades and the south roof face see-through.
 IFC4 built with <code>bim.py build</code> from <a href="{repo}/blob/main/plugins/byg-bim/skills/bim-knowledge/assets/example/model.yaml">model.yaml</a>,
 exported with <code>bim.py export</code>. Drag to rotate, scroll to zoom. · <a href="../">All examples</a> · <a href="{repo}">GitHub</a></p></header>
 <model-viewer src="hus.glb" alt="3D BIM model of the example house" camera-controls touch-action="pan-y"
@@ -64,8 +66,9 @@ main {{ max-width: 960px; margin: 0 auto; padding: 16px; display: grid; gap: 16p
 <header><h1>Engineer Any House – 3D examples</h1>
 <p>Generated in CI from the examples in the repository. · <a href="{repo}">GitHub</a></p></header>
 <main>
-<a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house with roof windows, central heating, hot and cold water and drains. Two facades and one roof face are see-through so the inside shows.</p></div></a>
+<a class="card" href="bim/"><img src="bim.png" alt=""><div><h2>BIM model</h2><p>IFC4 house with roof windows, central heating, hot and cold water, drains and the electrical installation. Two facades and one roof face are see-through so the inside shows.</p></div></a>
 <a class="card" href="plumbing/schematic.svg"><img src="plumbing/schematic.svg" alt="" style="object-fit: contain; background: #fff"><div><h2>Plumbing and heating diagram</h2><p>The same house's central heating, hot and cold water and drains as a schematic, drawn by the VVS agent's method (Danish labels).</p></div></a>
+<a class="card" href="electrical/schematic.svg"><img src="electrical/schematic.svg" alt="" style="object-fit: contain; background: #fff"><div><h2>Electrical panel diagram</h2><p>The same house's distribution board as a single-line diagram: supply, meter, SPD, RCDs and every circuit with breaker, phase and cable. Generated from the BIM model with <code>bim.py panel</code> and checked with <code>el.py</code> (Danish labels).</p></div></a>
 <a class="card" href="fem/"><img src="fem.png" alt=""><div><h2>FEM model</h2><p>The same house, with walls and slabs as shell elements: stresses, forces and deflection per load combination (Danish UI).</p></div></a>
 </main></body></html>
 """
@@ -95,6 +98,8 @@ def build(out: pathlib.Path):
     shutil.copy(html[0], out / "fem/index.html")
     (out / "plumbing").mkdir()
     shutil.copy(VVS_DIAGRAM, out / "plumbing/schematic.svg")
+    (out / "electrical").mkdir()
+    shutil.copy(EL_DIAGRAM, out / "electrical/schematic.svg")
     (out / "index.html").write_text(INDEX_PAGE.format(style=STYLE, repo=REPO), encoding="utf-8")
     for name in ("bim.png", "fem.png"):
         if (IMG / name).exists():
@@ -105,7 +110,7 @@ def build(out: pathlib.Path):
 
 
 def thumbnails(out: pathlib.Path):
-    """Screenshots of the two viewers and the plumbing diagram, served over http (model-viewer won't load a .glb from file://)."""
+    """Screenshots of the two viewers and the plumbing and electrical diagrams, served over http (model-viewer won't load a .glb from file://)."""
     import functools
     import http.server
     import threading
@@ -134,11 +139,15 @@ def thumbnails(out: pathlib.Path):
         pg.set_viewport_size({"width": 1400, "height": 1040})
         pg.goto(f"{base}/plumbing/schematic.svg")
         pg.screenshot(path=str(IMG / "plumbing.png"))
+        w, h = map(int, re.search(r'viewBox="0 0 (\d+) (\d+)"', EL_DIAGRAM.read_text(encoding="utf-8")).groups())
+        pg.set_viewport_size({"width": w, "height": h})
+        pg.goto(f"{base}/electrical/schematic.svg")
+        pg.screenshot(path=str(IMG / "electrical.png"))
         b.close()
     srv.shutdown()
     for name in ("bim.png", "fem.png"):
         shutil.copy(IMG / name, out / name)
-    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png, {IMG}/plumbing.png")
+    print(f"BILLEDER {IMG}/bim.png, {IMG}/fem.png, {IMG}/plumbing.png, {IMG}/electrical.png")
 
 
 def main():

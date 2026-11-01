@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests calc_guard.py: structural-engineer and structural-review may only run statik.py and fem.py via Bash.
+"""Tests calc_guard.py: trade agents with a calculation tool (statik.py/fem.py, el.py) may only run that tool via Bash.
 
 Run:  python3 tests/test_calc_guard.py
 """
@@ -11,6 +11,7 @@ import sys
 HOOK = pathlib.Path(__file__).resolve().parent.parent / "plugins" / "byg-review" / "hooks" / "calc_guard.py"
 TOOL = "/x/plugins/byg-structural/skills/structural-knowledge/scripts/statik.py"
 FEM = "/x/plugins/byg-structural/skills/structural-knowledge/scripts/fem.py"
+EL = "/x/plugins/byg-electrical/skills/electrical-knowledge/scripts/el.py"
 
 
 def call(agent, cmd):
@@ -39,6 +40,13 @@ CASES = [
     ("structural-review", f"python3 {FEM} view /sag/fem/fem.yaml", "deny"),
     ("structural-review", f"python3 {FEM} draw /sag/fem/fem.yaml M", "deny"),
     ("structural-engineer", "python3 /tmp/fem.py calc x.yaml", "deny"),
+    ("byg-electrical:electrician", f"python3 {EL} iz --size 2.5 --method B2 --method C --insulated-mm 100", "allow"),
+    ("electrical-review", f"python3 {EL} panel /sag/el/tavle.json", "allow"),
+    ("byg-review:electrical-review", f"python3 {EL} test", "allow"),
+    ("electrical-review", f"python3 {EL} panel /sag/el/tavle.json | head", "deny"),
+    ("electrician", "python3 -c 'print(230/1.3)'", "deny"),
+    ("electrician", f"python3 {TOOL} calc 1", "deny"),
+    ("electrical-review", f"python3 {EL} template > /sag/el/tavle.json", "deny"),
     ("byg-masonry:mason", "ls -la", "allow"),
     ("", "ls", "allow"),
 ]

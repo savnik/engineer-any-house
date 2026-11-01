@@ -100,6 +100,11 @@ def _measure(a):
     return measure(pathlib.Path(a.ifc), a.a, a.b, room=a.space, storey_name=a.storey)
 
 
+def _elplan(a):
+    from .elplan import elplan
+    return elplan(pathlib.Path(a.ifc), a.out)
+
+
 def _diff(a):
     from .inspection import diff
     return diff(pathlib.Path(a.old), pathlib.Path(a.new))
@@ -140,6 +145,11 @@ def _property_card(a):
     return import_card(a.model, a.import_) if a.import_ else generate(a.model, check=a.check)
 
 
+def _panel(a):
+    from .panel import panel
+    return panel(a.spec, a.tavle, a.out)
+
+
 def main(argv):
     p = argparse.ArgumentParser(prog="bim.py")
     sp = p.add_subparsers(dest="cmd", required=True)
@@ -168,6 +178,7 @@ def main(argv):
     x = sp.add_parser("find"); x.add_argument("ifc"); x.add_argument("selector"); x.set_defaults(fn=_find)
     x = sp.add_parser("measure"); x.add_argument("ifc"); x.add_argument("a", nargs="?"); x.add_argument("b", nargs="?")
     x.add_argument("--space"); x.add_argument("--storey"); x.set_defaults(fn=_measure)
+    x = sp.add_parser("elplan"); x.add_argument("ifc"); x.add_argument("--out"); x.set_defaults(fn=_elplan)
     x = sp.add_parser("diff"); x.add_argument("old"); x.add_argument("new"); x.set_defaults(fn=_diff)
     x = sp.add_parser("pdf"); x.add_argument("pdf"); x.add_argument("--pages"); x.add_argument("--dpi", type=int, default=200)
     x.add_argument("--overview", action="store_true")
@@ -184,5 +195,7 @@ def main(argv):
     x.add_argument("--force", action="store_true"); x.add_argument("--note"); x.set_defaults(fn=_merge)
     x = sp.add_parser("property-card"); x.add_argument("model"); x.add_argument("--check", action="store_true")
     x.add_argument("--import", dest="import_"); x.set_defaults(fn=_property_card)
+    x = sp.add_parser("panel"); x.add_argument("spec"); x.add_argument("--tavle"); x.add_argument("--out")
+    x.set_defaults(fn=_panel)
     a = p.parse_args(argv)
     return a.fn(a)

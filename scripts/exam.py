@@ -4,11 +4,12 @@
 Brug:
   python3 scripts/exam.py check [fag ...]           format og dækning (alle læringsmål i rollen har opgaver i begge sæt)
   python3 scripts/exam.py show <fag> [--answer-key] [--set development]   sættet og dækningskortet som markdown
-  python3 scripts/exam.py run <fag> [--arm plugin|base|both] [--set development|holdout|all --release]
-                                    [--id EL-001,...] [--only-failed] [--repeat 1] [--repeat-free 3]
+  python3 scripts/exam.py run <fag> [--arm plugin|base|both] [--set development|holdout|regression|all --release]
+                                    [--id EL-001,...] [--only-failed] [--only-not-passed FIL] [--only-differing FIL-A FIL-B] [--repeat 1] [--repeat-free 3]
                                     [--parallel 3] [--model M] [--grader sonnet] [--web]
-                                    [--with-memory] [--plugin-rev REV] [--no-base]
-  python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base]   seneste svar og bedømmelse (kun udvikling)
+                                    [--with-memory] [--plugin-rev REV] [--no-base] [--calc-tool]
+  python3 scripts/exam.py answers <fag> [--id EL-001,...] [--arm plugin|base] [--file FIL]
+                                    seneste svar, bedømmelse og værktøjskald (kun udvikling)
   python3 scripts/exam.py report <resultatfil> [<resultatfil> ...]
   python3 scripts/exam.py regrade <resultatfil> [--only-free]   ret gemte svar igen efter nyt facit/kriterier
 
@@ -17,7 +18,11 @@ afhængigheder som i eval_trade.py og som standard uden agentens lokale hukommel
 måles plugin + hukommelse). Begge kører headless i en tom mappe uden brugerens plugins og uden internet
 (medmindre --web). Standard er kun plugin-armen: basis afhænger ikke af videnbasen, så rapporten genbruger det nyeste
 basis-svar pr. opgave. Holdout-sættet bruges kun til måling – aldrig som grundlag for ny tekst i videnbasen – og
-kræver --release. --only-failed kører kun de udviklingsopgaver, plugin-armen ikke bestod sidst.
+kræver --release. Efter et holdout-skifte (holdout_filer i learning-goals.json) er tidligere holdout-opgaver
+sættet 'regression': skjult som holdout, men kun et regressionsværn. --only-failed kører kun de
+udviklingsopgaver, plugin-armen ikke bestod sidst.
+--calc-tool giver plugin-armen Bash, låst af scripts/hooks/exam_calc_guard.py til fagets regneværktøj
+(trade-registry 'regnevaerktoej'), og Write til en .json-inputfil i opgavemappen. Uden flaget har ingen arm Bash.
 Resultater gemmes i exam/<fag>/results/ (ignoreres af git). 'run' kræver login og koster tokens.
 """
 import argparse
@@ -38,7 +43,11 @@ EXAM_DIR = ROOT / "exam"
 TYPES = {"valg", "tal", "fri", "case"}
 PART_TYPES = {"valg", "tal", "fri"}
 CASE_PASS_SHARE = 0.6  # like the written trade exams: about 60 of 100 points to pass
-SETS = {"udvikling", "holdout"}
+SETS = {"udvikling", "holdout", "regression"}
+STORED_SETS = {"udvikling", "holdout"}  # the values written in the task files
+# Never shown to the CI agent. 'regression' holds former holdout tasks: still hidden, but run only to catch
+# regressions, because they no longer count as an independent measure (see holdout_files).
+HIDDEN_SETS = {"holdout", "regression"}
 # CLI choice (English) ↔ stored data value (Danish).
 CLI_VALUES = {"development": "udvikling", "all": "alle", "base": "basis", "both": "begge"}
 LEVELS = {"svend", "mester"}
@@ -97,14 +106,50 @@ For hver del: én linje pr. kriterium (`<del>K1: ja|nej – kort begrundelse`) o
 
 # ---------- loading and validation ----------
 
-def load_trade(trade: str) -> tuple[dict, list[dict]]:
+def holdout_files(goals: dict) -> set[str] | None:
+    """The task files whose holdout tasks form the trade's current holdout set ('holdout_filer' in
+    learning-goals.json). None means no switch has been made: every holdout task counts as holdout.
+
+    After a switch, holdout tasks in the other files belong to the set 'regression': they stay hidden, but they
+    are no longer an independent measure and do not count against the holdout budget."""
+    files = goals.get("holdout_filer")
+    return set(files) if files else None
+
+
+def load_trade(trade: str, stored: bool = False) -> tuple[dict, list[dict]]:
+    """Goals and tasks. Each task's 'saet' is its current set; stored=True keeps the value in the task file."""
     d = EXAM_DIR / trade
     goals = json.loads((d / "learning-goals.json").read_text(encoding="utf-8"))
+    active = None if stored else holdout_files(goals)
     # Tasks may be split across tasks*.json (one writer per file); they are validated as one set.
     tasks = []
     for f in sorted(d.glob("tasks*.json")):
-        tasks += json.loads(f.read_text(encoding="utf-8"))["opgaver"]
+        for t in json.loads(f.read_text(encoding="utf-8"))["opgaver"]:
+            if active is not None and t.get("saet") == "holdout" and f.name not in active:
+                t["saet"] = "regression"
+            tasks.append(t)
     return goals, tasks
+
+
+_SETS_CACHE: dict[tuple[str, str], dict[str, str]] = {}
+
+
+def current_sets(trade: str) -> dict[str, str]:
+    """Task id -> current set, or {} when the trade cannot be loaded."""
+    key = (str(EXAM_DIR), trade)
+    if key not in _SETS_CACHE:
+        try:
+            _SETS_CACHE[key] = {t["id"]: t["saet"] for t in load_trade(trade)[1]}
+        except (OSError, ValueError, KeyError):
+            _SETS_CACHE[key] = {}
+    return _SETS_CACHE[key]
+
+
+def result_rows(d: dict) -> list[dict]:
+    """The rows of a result file with each task's current set. Rows written before a holdout switch say
+    'holdout' for tasks that are now in 'regression'."""
+    sets = current_sets(d.get("fag", ""))
+    return [{**r, "saet": sets.get(r["id"], r["saet"])} for r in d["resultater"]]
 
 
 def all_trades() -> list[str]:
@@ -115,9 +160,18 @@ def validate(trade: str) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
     try:
-        goals, tasks = load_trade(trade)
+        goals, tasks = load_trade(trade, stored=True)
     except Exception as e:  # noqa: BLE001 – report any load error as a validation error
         return [f"{trade}: kan ikke indlæses ({e})"], []
+    active = holdout_files(goals)
+    if active is not None:
+        d = EXAM_DIR / trade
+        for name in sorted(active):
+            f = d / name
+            if not f.is_file() or not name.startswith("tasks"):
+                errors.append(f"{trade}/learning-goals.json: holdout_filer nævner {name}, som ikke er en opgavefil")
+            elif not any(t.get("saet") == "holdout" for t in json.loads(f.read_text(encoding="utf-8"))["opgaver"]):
+                errors.append(f"{trade}/learning-goals.json: {name} i holdout_filer har ingen holdout-opgaver")
     for key in ("fag", "plugin", "agent", "kilder", "maal"):
         if key not in goals:
             errors.append(f"{trade}/learning-goals.json: mangler '{key}'")
@@ -157,7 +211,7 @@ def validate(trade: str) -> tuple[list[str], list[str]]:
                 errors.append(f"{where}: mangler '{key}'")
         if t.get("type") not in TYPES:
             errors.append(f"{where}: ugyldig type '{t.get('type')}'")
-        if t.get("saet") not in SETS:
+        if t.get("saet") not in STORED_SETS:
             errors.append(f"{where}: ugyldigt sæt '{t.get('saet')}'")
         if t.get("niveau") not in LEVELS:
             errors.append(f"{where}: ugyldigt niveau '{t.get('niveau')}'")
@@ -203,7 +257,7 @@ def validate(trade: str) -> tuple[list[str], list[str]]:
     for gid, g in goal_by_id.items():
         if g.get("rolle") != "i":
             continue
-        missing = SETS - coverage[gid]
+        missing = STORED_SETS - coverage[gid]
         if missing:
             errors.append(f"{trade}: læringsmål {gid} har ingen opgave i {', '.join(sorted(missing))}")
     return errors, warnings
@@ -281,11 +335,11 @@ def render(trade: str, with_key: bool, only_set: str = "") -> str:
     by_goal: dict[str, list[str]] = {}
     for t in tasks:
         for gid in t["maal"]:
-            by_goal.setdefault(gid, []).append(t["id"] + ("ᴴ" if t["saet"] == "holdout" else ""))
+            by_goal.setdefault(gid, []).append(t["id"] + ("ᴴ" if t["saet"] in HIDDEN_SETS else ""))
     for g in goals["maal"]:
         role = "i" if g["rolle"] == "i" else f"uden – {g.get('begrundelse', '')}"
         out.append(f"| {g['id']} | {g.get('niveau', '')} | {g['tekst']} | {role} | {', '.join(by_goal.get(g['id'], [])) or '–'} |")
-    out += ["", "ᴴ = holdout (kun til måling).", "", "## Opgaver", ""]
+    out += ["", "ᴴ = holdout eller regression (kun til måling).", "", "## Opgaver", ""]
     for t in tasks:
         out.append(f"### {t['id']} · {t['type']} · {t['niveau']} · {t['saet']} · mål {', '.join(t['maal'])}")
         out += ["", t["spoergsmaal"], ""]
@@ -389,17 +443,78 @@ def grade_verdict(text: str) -> tuple[bool, str]:
 
 # ---------- running ----------
 
-def run_claude(prompt: str, cwd: pathlib.Path, extra: list[str], timeout: int) -> dict:
-    cmd = ["claude", "-p", prompt, "--output-format", "json", "--setting-sources", "local",
+def run_claude(prompt: str, cwd: pathlib.Path, extra: list[str], timeout: int, stream: bool = False) -> dict:
+    """One headless run. stream=True reads the event stream, so the tool calls can be counted (parse_stream)."""
+    fmt = ["--output-format", "stream-json", "--verbose"] if stream else ["--output-format", "json"]
+    cmd = ["claude", "-p", prompt, *fmt, "--setting-sources", "local",
            "--permission-mode", "dontAsk", "--no-session-persistence", *extra]
     try:
         r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:
         return {"is_error": True, "result": "", "fejl": f"timeout efter {timeout} s"}
+    if stream:
+        return parse_stream(r.stdout, r.stderr)
     try:
         return json.loads(r.stdout)
     except json.JSONDecodeError:
         return {"is_error": True, "result": "", "fejl": (r.stderr or r.stdout)[-500:]}
+
+
+REJECTED_TEXT = 400  # characters kept of a denied or failed call's command and error text
+
+
+def tool_target(name: str, inp: dict) -> str:
+    """What a tool call acted on: the Bash command, the file path or the search pattern."""
+    for key in ("command", "file_path", "pattern", "url", "query"):
+        if inp.get(key):
+            return str(inp[key])
+    return ""
+
+
+def result_text(block: dict) -> str:
+    """The text of a tool_result block (a string or a list of text parts)."""
+    content = block.get("content")
+    if isinstance(content, list):
+        return " ".join(str(c.get("text") or "") for c in content if isinstance(c, dict))
+    return str(content or "")
+
+
+def parse_stream(stdout: str, stderr: str = "") -> dict:
+    """The final result event of a stream-json run, plus the tool calls per tool, the Bash commands and the
+    tool calls that were denied or failed (tool, command or path, error text)."""
+    result, calls, commands, rejected, uses = None, {}, [], [], {}
+    for raw in stdout.splitlines():
+        try:
+            ev = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(ev, dict):
+            continue
+        content = (ev.get("message") or {}).get("content") if ev.get("type") in ("assistant", "user") else None
+        for block in content if isinstance(content, list) else []:
+            if block.get("type") == "tool_use":
+                name = block.get("name") or "?"
+                inp = block.get("input") or {}
+                calls[name] = calls.get(name, 0) + 1
+                uses[block.get("id")] = (name, tool_target(name, inp))
+                if name == "Bash":
+                    commands.append(str(inp.get("command") or ""))
+            elif block.get("type") == "tool_result" and block.get("is_error"):
+                name, target = uses.get(block.get("tool_use_id"), ("?", ""))
+                rejected.append({"vaerktoej": name, "kald": target[:REJECTED_TEXT],
+                                 "fejl": result_text(block).strip()[:REJECTED_TEXT]})
+        if ev.get("type") == "result":
+            result = ev
+    if result is None:
+        return {"is_error": True, "result": "", "fejl": (stderr or stdout)[-500:]}
+    return {**result, "vaerktoejskald": calls, "bash_kommandoer": commands, "afviste_kald": len(rejected),
+            "afviste": rejected}
+
+
+def count_calc_calls(commands: list[str], tools: list[str]) -> int:
+    """Bash commands that run one of the trade's calculation tools (e.g. el.py)."""
+    names = [pathlib.Path(t).name for t in tools]
+    return sum(1 for c in commands if any(re.search(rf"(?<![\w.-]){re.escape(n)}\b", c) for n in names))
 
 
 MEMORY_RE = re.compile(r"^memory:.*\n", re.MULTILINE)
@@ -425,7 +540,7 @@ def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, re
     dst = tmp / plugin
     if rev:
         # The plugin as it was at a git revision, so knowledge-base versions can be compared on equal terms.
-        export = tmp / f"rev-{rev}"
+        export = tmp / f"rev-{rev.replace('/', '-')}"  # branch names like origin/main hold a slash
         export.mkdir()
         archive = subprocess.run(["git", "-C", str(ROOT), "archive", rev, f"plugins/{plugin}"],
                                  capture_output=True, check=True).stdout
@@ -441,6 +556,31 @@ def prepare_plugin(plugin: str, tmp: pathlib.Path, keep_memory: bool = False, re
         for agent_file in (dst / "agents").glob("*.md"):
             strip_memory(agent_file)
     return dst
+
+
+REGISTRY = ROOT / "plugins" / "byg-review" / "hooks" / "trade-registry.json"
+EXAM_CALC_GUARD = ROOT / "scripts" / "hooks" / "exam_calc_guard.py"
+
+
+def calc_tools(trade: str) -> list[str]:
+    """The trade's calculation tools from the trade registry ('regnevaerktoej'), or [] if it has none."""
+    entry = json.loads(REGISTRY.read_text(encoding="utf-8")).get("fag", {}).get(trade, {})
+    tool = entry.get("regnevaerktoej") or []
+    return [tool] if isinstance(tool, str) else list(tool)
+
+
+def install_calc_guard(plugin_dir: pathlib.Path, trade: str, tools: list[str]) -> None:
+    """Adds a PreToolUse hook to the plugin copy that allows Bash only for the trade's calculation tool.
+
+    The plugin copy has no byg-review dependency, so byg-review's calc_guard is not loaded; this hook takes its place
+    and fails closed. It is added to the copy only, never to the plugin in the repo."""
+    hooks_file = plugin_dir / "hooks" / "hooks.json"
+    hooks = json.loads(hooks_file.read_text(encoding="utf-8")) if hooks_file.exists() else {"hooks": {}}
+    command = " ".join(["python3", f'"{EXAM_CALC_GUARD}"', trade, *tools])
+    hooks.setdefault("hooks", {}).setdefault("PreToolUse", []).append(
+        {"matcher": "Bash|Write", "hooks": [{"type": "command", "command": command, "timeout": 10}]})
+    hooks_file.parent.mkdir(exist_ok=True)
+    hooks_file.write_text(json.dumps(hooks, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def shuffled_options(task: dict, seed: str = "") -> tuple[dict, str]:
@@ -471,6 +611,8 @@ def build_prompt(task: dict) -> str:
 
 def arm_args(arm: str, args, plugin_dir: pathlib.Path | None, agent: str) -> list[str]:
     tools = "Read,Glob,Grep,Skill" + (",WebSearch,WebFetch" if args.web else "")
+    if arm == "plugin" and getattr(args, "calc_tool", False):
+        tools += ",Bash,Write"
     extra = ["--tools", tools, "--max-turns", str(args.max_turns)]
     if args.model:
         extra += ["--model", args.model]
@@ -485,15 +627,20 @@ def answer_task(task: dict, arm: str, args, tmp: pathlib.Path, plugin_dir: pathl
                 agent: str) -> dict:
     work = pathlib.Path(tempfile.mkdtemp(prefix="opgave-", dir=tmp))
     extra = arm_args(arm, args, plugin_dir, agent)
-    res = run_claude(build_prompt(task), work, extra, args.timeout)
+    res = run_claude(build_prompt(task), work, extra, args.timeout, stream=True)
     text = res.get("result", "") or ""
     usage = res.get("usage") or {}
+    calls = res.get("vaerktoejskald") or {}
     entry = {"id": task["id"], "arm": arm, "type": task["type"], "saet": task["saet"], "niveau": task["niveau"],
              "maal": task["maal"], "svar": text, "pris_usd": res.get("total_cost_usd", 0.0),
              "ture": res.get("num_turns"), "sek": round((res.get("duration_ms") or 0) / 1000, 1),
              "tokens_ind": sum(usage.get(k) or 0 for k in
                                ("input_tokens", "cache_read_input_tokens", "cache_creation_input_tokens")),
-             "tokens_ud": usage.get("output_tokens") or 0}
+             "tokens_ud": usage.get("output_tokens") or 0,
+             "vaerktoejskald": calls,
+             "regnekald": count_calc_calls(res.get("bash_kommandoer") or [], calc_tools(getattr(args, "fag", ""))),
+             "afviste_kald": res.get("afviste_kald", 0),
+             "afviste": res.get("afviste") or []}
     if res.get("is_error") or not text or (len(text) < 300 and LIMIT_RE.search(text)):
         reason = res.get("fejl") or (text.strip()[:120] if text else res.get("subtype") or "tomt svar")
         entry.update(bestaaet=False, fejl=True, note=f"kørselsfejl: {reason}")
@@ -567,10 +714,10 @@ def grade_case(task: dict, text: str, work: pathlib.Path, args) -> dict:
 
 
 def progress_line(r: dict, task: dict, prefix: str = "") -> str:
-    """One progress line per answer; holdout lines hide ID and note, which can reveal the key."""
+    """One progress line per answer; hidden lines (holdout, regression) hide ID and note, which can reveal the key."""
     status = "OK " if r["bestaaet"] else "NEJ"
-    if task["saet"] == "holdout":
-        return f"  {prefix}{status} {r['arm']:6} {'holdout':8} (skjult)"
+    if task["saet"] in HIDDEN_SETS:
+        return f"  {prefix}{status} {r['arm']:6} {task['saet']:10} (skjult)"
     return f"  {prefix}{status} {r['arm']:6} {r['id']:8} {r['note']}"
 
 
@@ -610,7 +757,12 @@ def cmd_run(args) -> int:
         print("claude CLI ikke fundet")
         return 1
     if args.set != "udvikling" and not args.release:
-        print("Holdout-sættet køres kun ved udgivelse eller en større ændring af videnbasen – tilføj --release.")
+        print("Holdout- og regressionssættet køres kun ved udgivelse eller en større ændring af videnbasen – "
+              "tilføj --release.")
+        return 1
+    tools_for_run = calc_tools(args.fag) if args.calc_tool else []
+    if args.calc_tool and not tools_for_run:
+        print(f"--calc-tool: faget {args.fag} har intet regneværktøj i trade-registry.json")
         return 1
     goals, tasks = load_trade(args.fag)
     if args.set != "alle":
@@ -625,15 +777,33 @@ def cmd_run(args) -> int:
     arms = ["basis", "plugin"] if args.arm == "begge" else [args.arm]
     agent = f"{goals['plugin']}:{goals['agent']}"
     jobs = []
-    if args.only_run_errors:
-        # Re-run exactly the runs that errored in an earlier file, without printing their IDs.
+    rerun = args.only_run_errors or args.only_not_passed
+    if rerun:
+        # Re-run the runs that errored (or, with --only-not-passed, were not passed) in an earlier file, without
+        # printing their IDs - so hidden-set failures can be rechecked for noise without being seen.
         by_id = {t["id"]: t for t in tasks}
-        prev = json.loads(pathlib.Path(args.only_run_errors).read_text(encoding="utf-8"))
-        jobs = [(by_id[r["id"]], r["arm"]) for r in prev["resultater"]
-                if r.get("fejl") and r["id"] in by_id and r["arm"] in arms]
+        prev = json.loads(pathlib.Path(rerun).read_text(encoding="utf-8"))
+        picked = [(by_id[r["id"]], r["arm"]) for r in prev["resultater"]
+                  if (r.get("fejl") if args.only_run_errors else not r.get("bestaaet"))
+                  and r["id"] in by_id and r["arm"] in arms]
+        jobs = [job for job in picked for _ in range(args.repeat)]
         arms = sorted({arm for _, arm in jobs}) or arms
-        print(f"Kun de {len(jobs)} kørsler, der fejlede i {pathlib.Path(args.only_run_errors).name}")
-    for t in tasks if not args.only_run_errors else []:
+        what = "fejlede" if args.only_run_errors else "ikke bestod"
+        print(f"Kun de {len(picked)} kørsler, der {what} i {pathlib.Path(rerun).name} (× {args.repeat})")
+    if args.only_differing:
+        # Tasks whose majority verdict differs between two earlier files, without printing their IDs - so a
+        # hidden-set difference between two arms can be re-measured with more repeats without being seen.
+        def verdicts(path: str) -> dict[str, bool]:
+            votes: dict[str, list[bool]] = {}
+            for r in json.loads(pathlib.Path(path).read_text(encoding="utf-8"))["resultater"]:
+                if r["arm"] == "plugin" and not r.get("fejl"):
+                    votes.setdefault(r["id"], []).append(bool(r["bestaaet"]))
+            return {i: sum(v) * 2 > len(v) for i, v in votes.items()}
+        first, second = (verdicts(f) for f in args.only_differing)
+        tasks = [t for t in tasks if t["id"] in first and t["id"] in second and first[t["id"]] != second[t["id"]]]
+        jobs = [(t, arm) for t in tasks for _ in range(args.repeat) for arm in arms]
+        print(f"Kun de {len(tasks)} opgaver, hvor flertallet er forskelligt i de to filer (× {args.repeat})")
+    for t in tasks if not (rerun or args.only_differing) else []:
         repeats = max(args.repeat, args.repeat_free if t["type"] == "fri" else 0)
         jobs += [(t, arm) for _ in range(repeats) for arm in arms]
     print(f"{args.fag}: {len(tasks)} opgaver × {len(arms)} arm(e) = {len(jobs)} kørsler")
@@ -645,6 +815,8 @@ def cmd_run(args) -> int:
         plugin_dir = (prepare_plugin(goals["plugin"], tmp, args.with_memory, args.plugin_rev)
                       if "plugin" in arms else None)
         kb_bytes = knowledge_base_bytes(plugin_dir) if plugin_dir else 0
+        if plugin_dir and args.calc_tool:
+            install_calc_guard(plugin_dir, args.fag, tools_for_run)
         with concurrent.futures.ThreadPoolExecutor(max_workers=args.parallel) as pool:
             futures = [pool.submit(answer_task, t, arm, args, tmp, plugin_dir, agent) for t, arm in jobs]
             for fut in concurrent.futures.as_completed(futures):
@@ -655,9 +827,11 @@ def cmd_run(args) -> int:
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_dir = EXAM_DIR / args.fag / "results"
     out_dir.mkdir(exist_ok=True)
-    out = out_dir / f"{stamp}-{args.arm}-{args.set}{'-' + args.plugin_rev if args.plugin_rev else ''}.json"
+    calc = "-regn" if args.calc_tool else ""
+    out = out_dir / f"{stamp}-{args.arm}-{args.set}{calc}{'-' + args.plugin_rev.replace('/', '-') if args.plugin_rev else ''}.json"
     out.write_text(json.dumps({"fag": args.fag, "tid": stamp, "model": args.model or "agentens",
-                               "web": args.web, "hukommelse": args.with_memory, "plugin_rev": args.plugin_rev or "arbejdstræ",
+                               "web": args.web, "hukommelse": args.with_memory,
+                               "regnevaerktoej": tools_for_run, "plugin_rev": args.plugin_rev or "arbejdstræ",
                                "videnbase_bytes": kb_bytes, "resultater": results}, ensure_ascii=False, indent=2),
                    encoding="utf-8")
     print(f"\nGemt: {out.relative_to(ROOT)}\n")
@@ -675,7 +849,7 @@ def result_files(trade: str, exclude: pathlib.Path | None = None) -> list[pathli
 
 
 def valid_rows(f: pathlib.Path) -> list[dict]:
-    rows = json.loads(f.read_text(encoding="utf-8"))["resultater"]
+    rows = result_rows(json.loads(f.read_text(encoding="utf-8")))
     return [r for r in rows if not (r.get("fejl") or str(r.get("note", "")).startswith("kørselsfejl"))]
 
 
@@ -699,10 +873,11 @@ def latest_failed_plugin(trade: str) -> set[str]:
     return {tid for tid, ok in latest.items() if not ok}
 
 
-def latest_answers(trade: str, ids: set[str], arm: str = "plugin") -> list[dict]:
-    """The newest answer per task in one arm, for the development set only."""
+def latest_answers(trade: str, ids: set[str], arm: str = "plugin",
+                   files: list[pathlib.Path] | None = None) -> list[dict]:
+    """The newest answer per task in one arm, for the development set only (from the given files, else all)."""
     latest: dict[str, dict] = {}
-    for f in result_files(trade):
+    for f in files if files is not None else result_files(trade):
         for r in valid_rows(f):
             if r["arm"] == arm and r["saet"] == "udvikling" and (not ids or r["id"] in ids):
                 latest[r["id"]] = r
@@ -711,22 +886,35 @@ def latest_answers(trade: str, ids: set[str], arm: str = "plugin") -> list[dict]
 
 def cmd_answers(args) -> int:
     _, tasks = load_trade(args.fag)
-    holdout = {t["id"] for t in tasks if t["saet"] == "holdout"}
+    hidden = {t["id"] for t in tasks if t["saet"] in HIDDEN_SETS}
     ids = {t for t in args.id.split(",") if t}
-    if ids & holdout:
-        print("Holdout-svar vises ikke – holdout må aldrig være grundlag for ændringer.")
+    if ids & hidden:
+        print("Holdout-svar vises ikke (heller ikke regression) – holdout må aldrig være grundlag for ændringer.")
         return 1
-    if not ids:
-        ids = latest_failed_plugin(args.fag) - holdout
-    rows = latest_answers(args.fag, ids, args.arm)
+    files = [pathlib.Path(args.file)] if args.file else None
+    if not ids and not files:
+        ids = latest_failed_plugin(args.fag) - hidden
+    rows = latest_answers(args.fag, ids, args.arm, files)
     for r in rows:
         print(f"## {r['id']} · {r['arm']} · {'bestået' if r['bestaaet'] else 'ikke bestået'} · {r.get('note', '')}\n")
+        if "vaerktoejskald" in r:
+            print(f"Værktøjskald: {format_calls(r)}\n")
+        for a in r.get("afviste") or []:
+            print(f"- afvist eller fejlet {a.get('vaerktoej')}: `{a.get('kald')}` → {a.get('fejl')}")
+        if r.get("afviste"):
+            print()
         print(r.get("svar", "").strip(), "\n")
         if r.get("bedoemmelse"):
             print("**Bedømmelse:**\n" + r["bedoemmelse"].strip() + "\n")
     if not rows:
         print("Ingen svar fundet.")
     return 0
+
+
+def format_calls(r: dict) -> str:
+    calls = r.get("vaerktoejskald") or {}
+    text = ", ".join(f"{name} {n}" for name, n in sorted(calls.items())) or "ingen"
+    return text + f" · regnekald {r.get('regnekald', 0)} · afvist eller fejlet {r.get('afviste_kald', 0)}"
 
 
 def knowledge_base_bytes(plugin_dir: pathlib.Path) -> int:
@@ -751,7 +939,7 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
     for f in files:
         d = json.loads(f.read_text(encoding="utf-8"))
         trade = d["fag"]
-        rows += d["resultater"]
+        rows += result_rows(d)
         if d.get("videnbase_bytes"):
             kb_sizes[d.get("plugin_rev", "arbejdstræ")] = d["videnbase_bytes"]
     arms = sorted({r["arm"] for r in rows})
@@ -791,20 +979,35 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
     out.append("| Ture pr. opgave | " + " | ".join(per_arm(lambda s: mean(s, "ture"))) + " |")
     out.append("| Input-tokens pr. opgave | " + " | ".join(per_arm(lambda s: mean(s, "tokens_ind", 0))) + " |")
     out.append("| Output-tokens pr. opgave | " + " | ".join(per_arm(lambda s: mean(s, "tokens_ud", 0))) + " |")
+    if any("vaerktoejskald" in r for r in rows):
+        # Only rows written since tool calls were counted carry the fields.
+        def counted(sel):
+            return [r for r in sel if "vaerktoejskald" in r]
+        out.append("| Værktøjskald pr. opgave | " + " | ".join(per_arm(lambda s: (
+            f"{sum(sum(r['vaerktoejskald'].values()) for r in counted(s)) / len(counted(s)):.1f}"
+            if counted(s) else "–"))) + " |")
+        out.append("| Regnekald pr. opgave | " + " | ".join(per_arm(
+            lambda s: mean(counted(s), "regnekald") if counted(s) else "–")) + " |")
+        out.append("| Kørsler med regnekald | " + " | ".join(per_arm(lambda s: (
+            f"{sum(1 for r in counted(s) if r.get('regnekald'))}/{len(counted(s))}" if counted(s) else "–"))) + " |")
+        if any("afviste_kald" in r for r in rows):
+            out.append("| Afviste kald pr. opgave | " + " | ".join(per_arm(lambda s: (
+                f"{sum(r.get('afviste_kald', 0) for r in s) / len(s):.2f}"))) + " |")
     if kb_sizes:
         out += ["", "Videnbasens størrelse (references + agentprompt): "
                 + ", ".join(f"{rev}: {size / 1024:.1f} KB" for rev, size in kb_sizes.items())]
     if reused_basis:
         out += ["", f"Basis er genbrugt fra: {', '.join(sorted(reused_basis))}"]
     if errors:
-        dev_errors = [r for r in errors if r["saet"] != "holdout"]
+        dev_errors = [r for r in errors if r["saet"] not in HIDDEN_SETS]
         out += ["", f"**{len(errors)} kørselsfejl er ikke talt med** (fx ramt kontogrænse)."]
         if dev_errors:
             out[-1] += " Kør udviklingsopgaverne igen med `run --id " + \
                 ",".join(sorted({r['id'] for r in dev_errors})) + "`:"
         out += [""] + [f"- {r['id']} ({r['arm']}): {r['note']}" for r in dev_errors]
         if len(dev_errors) < len(errors):
-            out += [f"- {len(errors) - len(dev_errors)} holdout-kørsel(er) med fejl – ID skjult. "
+            out += [f"- {len(errors) - len(dev_errors)} skjulte kørsel(er) med fejl (holdout eller regression) – "
+                    "ID skjult. "
                     "Kør dem igen med `run FAG --only-run-errors FIL --set all --release`."]
 
     by_task: dict[str, dict[str, list[bool]]] = {}
@@ -823,17 +1026,19 @@ def report(files: list[pathlib.Path], extra_rows: list[dict] | None = None,
     gains = sorted(t for t in by_task if passed(t, "plugin") and passed(t, "basis") is False)
     if "plugin" in arms:
         gaps = [t for t in failed_plugin if set_of[t] == "udvikling"]
-        held = [t for t in failed_plugin if set_of[t] == "holdout"]
         out += ["", "## Huller (plugin ikke bestået) – kandidater til videnbasen, kun fra udviklingssættet", ""]
         out += [f"- {t} (mål {', '.join(goals_of[t])})" for t in gaps] or ["- ingen"]
-        if held:
-            out += ["", f"{len(held)} holdout-opgaver er ikke bestået. De vises ikke, fordi holdout aldrig må være "
-                    "grundlag for videnbasen."]
+        for s in sorted(HIDDEN_SETS):
+            held = [t for t in failed_plugin if set_of[t] == s]
+            if held:
+                out += ["", f"{len(held)} {s}-opgaver er ikke bestået. De vises ikke, fordi skjulte opgaver aldrig "
+                        "må være grundlag for videnbasen."]
     if {"basis", "plugin"} <= set(arms):
         def listed(ids: list[str]) -> list[str]:
             shown = [f"- {t}" for t in ids if set_of[t] == "udvikling"]
-            hidden = sum(1 for t in ids if set_of[t] == "holdout")
-            return (shown or (["- ingen"] if not hidden else [])) + ([f"- og {hidden} i holdout"] if hidden else [])
+            hidden = {s: sum(1 for t in ids if set_of[t] == s) for s in sorted(HIDDEN_SETS)}
+            return (shown or (["- ingen"] if not any(hidden.values()) else [])) \
+                + [f"- og {n} i {s}" for s, n in hidden.items() if n]
         out += ["", "## Regressioner (basis bestået, plugin ikke) – videnbasen vildleder", ""]
         out += listed(regressions)
         out += ["", "## Gevinst (plugin bestået, basis ikke)", ""]
@@ -849,12 +1054,12 @@ def main() -> int:
     p = sub.add_parser("show")
     p.add_argument("fag")
     p.add_argument("--answer-key", action="store_true")
-    p.add_argument("--set", choices=["development", "holdout"], default="",
+    p.add_argument("--set", choices=["development", "holdout", "regression"], default="",
                    help="kun ét sæt (CI-agenten bruger development)")
     p = sub.add_parser("run")
     p.add_argument("fag")
     p.add_argument("--arm", choices=["base", "plugin", "both"], default="plugin")
-    p.add_argument("--set", choices=["development", "holdout", "all"], default="development")
+    p.add_argument("--set", choices=["development", "holdout", "regression", "all"], default="development")
     p.add_argument("--id", default="")
     p.add_argument("--parallel", type=int, default=4)
     p.add_argument("--model", default="")
@@ -867,15 +1072,23 @@ def main() -> int:
     p.add_argument("--only-failed", action="store_true", help="kun udviklingsopgaver, plugin-armen ikke bestod sidst")
     p.add_argument("--only-run-errors", metavar="FILE",
                    help="kør kun de kørsler igen, der fejlede (fx kontogrænse) i FILE")
-    p.add_argument("--release", action="store_true", help="kræves for at køre holdout-sættet")
+    p.add_argument("--only-differing", nargs=2, metavar=("FILE_A", "FILE_B"),
+                   help="kør kun opgaver, hvor flertallet i plugin-armen er forskelligt i de to filer (viser ingen ID'er)")
+    p.add_argument("--only-not-passed", metavar="FILE",
+                   help="kør kun de kørsler igen, der ikke bestod i FILE (også skjulte, uden at vise ID'er); "
+                        "med --repeat N gentages hver N gange")
+    p.add_argument("--release", action="store_true", help="kræves for at køre holdout- og regressionssættet")
     p.add_argument("--no-base", action="store_true", help="rapportér plugin-armen uden genbrugt basis")
     p.add_argument("--plugin-rev", default="", help="kør pluginet, som det var i en git-revision (fx før en ændring)")
     p.add_argument("--with-memory", action="store_true",
                    help="indlæs fagagentens lokale hukommelse (~/.claude/agent-memory) i plugin-armen")
+    p.add_argument("--calc-tool", action="store_true",
+                   help="plugin-armen får Bash låst til fagets regneværktøj (måleopsætning for regneværktøjer)")
     p = sub.add_parser("answers")
     p.add_argument("fag")
     p.add_argument("--id", default="", help="standard: udviklingsopgaver, plugin-armen ikke bestod sidst")
     p.add_argument("--arm", choices=["base", "plugin"], default="plugin")
+    p.add_argument("--file", default="", help="svarene i én resultatfil (fx én arm) i stedet for de nyeste")
     p = sub.add_parser("report")
     p.add_argument("filer", nargs="+")
     p = sub.add_parser("regrade")
@@ -905,8 +1118,10 @@ def main() -> int:
             for e in errors:
                 print(f"FEJL      {e}")
             in_role = sum(1 for g in goals.get("maal", []) if g.get("rolle") == "i")
-            print(f"{trade}: {len(goals.get('maal', []))} læringsmål ({in_role} i rollen) · {len(tasks)} opgaver · "
-                  f"{len(errors)} fejl · {len(warnings)} advarsler")
+            per_set = ", ".join(f"{s} {n}" for s in sorted(SETS)
+                                if (n := sum(1 for t in tasks if t.get("saet") == s)))
+            print(f"{trade}: {len(goals.get('maal', []))} læringsmål ({in_role} i rollen) · {len(tasks)} opgaver "
+                  f"({per_set}) · {len(errors)} fejl · {len(warnings)} advarsler")
             failed |= bool(errors)
         return 1 if failed else 0
     if args.cmd == "show":
