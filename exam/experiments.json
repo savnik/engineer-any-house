@@ -3042,6 +3042,94 @@
       "begrundelse": "Reglen foreslår forkast, fordi udvikling/tasks-b faldt 28 til 26. De to fejlede opgaver handler om autorisation og RCD-grænsen, som ændringen ikke rørte. I F-029 var det to andre opgaver i samme gruppe, der fejlede. Et målrettet tjek gav bagefter 3 af 3 og 2 af 3, altså bestået ved flertal. Det er ikke grundlag for behold. En tilbagerulning til rev_foer 64e2e4a ville genindføre F-029-teksten, som målte dårligere: holdout/tasks-a 12 mod 13. Ændringen bliver derfor på grenen, og budgettet på 20 dollar er brugt, så der er ingen ny fuld måling.",
       "rev_efter": "94bf284",
       "pr": "#40"
+    },
+    {
+      "id": "F-031",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "vaerktoej",
+      "hypotese": "Regneværktøjet el.py hjælper på opgaver, der kræver dimensionering (Iz med korrektionsfaktorer, spændingsfald, Ik,min mod udløsning, tavletjek). Før: main (446edd4) uden --calc-tool. Efter: grenen med F-029/F-030-viden og --calc-tool, så Bash er låst til el.py. Kontrolarm: grenen uden --calc-tool, som skiller værktøjets effekt fra videnbasens. Kun udviklingsdelen af EL-301 til EL-312 (6 opgaver) med op til 3 gentagelser. Holdout køres ikke, da holdout-budgettet er overskredet og afventer brugeren. Forventning: efter mindst +2 beståede kørsler mod før på case-opgaverne EL-301, EL-303 og EL-305, valgopgaverne uændrede, og pris pr. bestået højst +10 % eller lavere, da færre ture går til håndregning.",
+      "aendring": "Ingen ændring i pluginet. Måleopsætningen exam.py run --calc-tool (dbcc60c) sammenligner arme.",
+      "opgaver": [
+        "EL-301",
+        "EL-303",
+        "EL-305",
+        "EL-307",
+        "EL-309",
+        "EL-311"
+      ],
+      "status": "afsluttet",
+      "beslutning": "uafklaret",
+      "maalinger": {
+        "electrical": {
+          "foer": {
+            "rev": "446edd4",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-053349-plugin-udvikling-446edd4.json",
+              "20261101-053832-plugin-udvikling-446edd4.json"
+            ],
+            "grupper": {
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.363,
+                  "pris_pr_bestaaet": 0.0604,
+                  "sek_pr_opgave": 15.6,
+                  "tokens_ud_pr_opgave": 1230,
+                  "fejlede": []
+                }
+              }
+            }
+          },
+          "efter": {
+            "rev": "arbejdstræ",
+            "dato": "2026-11-01",
+            "filer": [
+              "20261101-053532-plugin-udvikling-regn.json"
+            ],
+            "grupper": {
+              "udvikling/tasks-d": {
+                "plugin": {
+                  "n": 6,
+                  "bestaaet": 6,
+                  "opgaver_hash": "e04365cd84f0",
+                  "pris_usd": 0.326,
+                  "pris_pr_bestaaet": 0.0543,
+                  "sek_pr_opgave": 15.0,
+                  "tokens_ud_pr_opgave": 1188,
+                  "fejlede": []
+                }
+              }
+            }
+          }
+        }
+      },
+      "rev_foer": "29417bd",
+      "laering": "De 6 udviklingsopgaver i EL-301 til EL-312 er mættede. main uden værktøj (446edd4), grenen uden værktøj og grenen med --calc-tool bestod alle 18 af 18 kørsler (repeat 3). Pris pr. bestået var 0.070, 0.062 og 0.054 USD, tid pr. opgave 16.0, 14.7 og 15.0 s og ture pr. opgave 1.4, 1.4 og 1.3. Forskellene i pris er inden for støj. Opgaverne giver formel og værdier i opgaveteksten (fx ρ, Z ved tavlen og længden), så de kan regnes i hånden i én tur, og værktøjsarmen brugte næppe el.py. Det er anslået ud fra 1.3 ture pr. opgave, da exam.py answers ikke kan vise værktøjskald pr. arm. Det, der kan konkluderes: F-029/F-030-teksten skader ikke beregningsopgaver mod main, og --calc-tool-armen kører uden fejl. Ikke målt: holdout-delen af tasks-d (holdout-budgettet er overskredet og afventer brugeren) og værktøjets værdi. Næste forbedrer: for at måle el.py skal opgaverne kræve tabelopslag, som opgaven ikke giver (Iz med referenceinstallationsmetode og Ci for kabel i isolering, Ik,min fra kabeldata, spændingsfald over flere strækninger) eller et gruppeskema med flere samvirkende tjek, så håndregning tager mange trin eller fejler. Mål også værktøjskald pr. kørsel i resultatfilen, så brugen kan ses.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Alle tre arme bestod 18 af 18 kørsler. Opgaverne skiller ikke armene ad, så hverken værktøjets eller videnbasens effekt kan afgøres. Kategorien vaerktoej afgøres manuelt.",
+      "rev_efter": "29417bd",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/40"
+    },
+    {
+      "id": "F-032",
+      "dato": "2026-11-01",
+      "fag": [
+        "electrical"
+      ],
+      "kategori": "opgaver",
+      "hypotese": "F-031 viste, at EL-301 til EL-312 er mættede, fordi opgaverne giver formel og værdier. Nye udviklingsopgaver, der kræver tabelopslag (Iz efter referenceinstallationsmetode med Ci for kabel i isolering, Ik,min ud fra kabeldata, spændingsfald over flere strækninger, gruppeskema med flere samvirkende tjek), skrevet af en anden agent, kan skille armene med og uden --calc-tool ad. Samtidig registreres antal værktøjskald pr. kørsel i resultatfilen. Forventning: armen uden værktøj består under 80 procent, så værktøjets effekt kan måles.",
+      "aendring": "",
+      "opgaver": [],
+      "status": "forslag",
+      "beslutning": null,
+      "maalinger": {}
     }
   ]
 }
