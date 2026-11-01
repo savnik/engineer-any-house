@@ -57,6 +57,20 @@ def main():
     at_max = el.ik_min(1.5, r["maks_laengde"], 10, "C", service_fuse=25)["ik_min"]
     expect("Ik,min ved maks. længde = Ia", near(at_max, 100, 0.5), (r, at_max))
     expect("Ik,min under Ia giver maks. tid", "maks_tid_s" in el.ik_min(1.5, 40, 10, "C", service_fuse=25))
+    # Feeder insulation: a PVC feeder (70 °C) has lower resistance than XLPE (90 °C) → higher Ik,min
+    pvc = el.ik_min(2.5, 30, 16, "B", service_fuse=35, feeder_size=16, feeder_length=20, feeder_temp=70.0)
+    xlpe = el.ik_min(2.5, 30, 16, "B", service_fuse=35, feeder_size=16, feeder_length=20, feeder_temp=90.0)
+    expect("Stikledning PVC 70 °C vs. XLPE 90 °C", pvc["ik_min"] > xlpe["ik_min"]
+           and near(pvc["z_forsyning"], 2 * 20 * el.r_per_m(16, 70), 1e-4), (pvc, xlpe))
+    out = json.loads(run("ikmin", "--size", "2.5", "--length", "30", "--rating", "16", "--curve", "B",
+                         "--service-fuse", "35", "--feeder-size", "16", "--feeder-length", "20",
+                         "--feeder-insulation", "pvc").stdout)
+    expect("CLI --feeder-insulation pvc", out["forsyning_temperatur"] == 70 and near(out["ik_min"], pvc["ik_min"], 0.05),
+           out)
+    # The next size gets the same feeder temperature and insulation as the main result
+    nxt = el.ik_min(4.0, 30, 16, "B", service_fuse=35, feeder_size=16, feeder_length=20, feeder_temp=70.0,
+                    insulation="pvc")["maks_laengde"]
+    expect("Næste tværsnit med samme stikledning", out["naeste_tvaersnit"]["maks_laengde"] == nxt, (out, nxt))
     expect("Ik,min kræver netværdi", run("ikmin", "--size", "1.5", "--length", "10", "--rating", "10",
                                          "--curve", "B").returncode != 0)
     # Panel: the template is clean; each defect is found
@@ -76,6 +90,9 @@ def main():
         ("selektivitet forsikring", lambda d: d["tavle"].update(forsikring=25), "selektivitet"),
         ("LED-indkobling", lambda d: d["grupper"][0].update(led_spots=40), "LED"),
         ("kun én RCD", lambda d: (d.update(grupper=d["grupper"][:2]), d["grupper"][1].update(rcd="RCD1")), "færre end to"),
+        ("B16 på 13 A-stikkontakter (§ 45)", lambda d: d["grupper"][1].update(sikring=16), "A-stikkontakter"),
+        ("B16 på stik uden mærkestrøm antages 13 A", lambda d: (d["grupper"][1].pop("stikkontakt_a"),
+                                                                d["grupper"][1].update(sikring=16)), "antaget"),
         ("varmepumpe på type A", lambda d: d["grupper"].append(dict(d["grupper"][1], nr="4", anvendelse="varmepumpe",
                                                                      isoleret_mm=0)), "type F"),
     ]
@@ -84,6 +101,9 @@ def main():
         mutate(d)
         t = texts(d)
         expect(f"Tavle: {name}", want in t, t)
+    ok16 = copy.deepcopy(el.TEMPLATE)
+    ok16["grupper"][1].update(sikring=16, stikkontakt_a=16, tvaersnit=2.5, metode=["C"], isoleret_mm=0)
+    expect("B16 på 16 A-stikkontakter er tilladt", "stikkontakter" not in texts(ok16), texts(ok16))
     # CLI: markdown table header is stable (the diagram reuses it) and the command line is printed first
     path = pathlib.Path("/tmp/el_test_tavle.json")
     path.write_text(json.dumps(el.TEMPLATE, ensure_ascii=False), encoding="utf-8")

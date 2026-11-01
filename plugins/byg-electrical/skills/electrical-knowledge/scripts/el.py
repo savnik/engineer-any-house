@@ -12,6 +12,7 @@ Commands:
   el.py iz       --size MM2 --method M [--method …] [--insulated-mm MM] [--rating A --device mcb|gG] …
   el.py vdrop    --size MM2 --length M --current A [--phases 1|3] [--limit PCT] [--upstream PCT]
   el.py ikmin    --size MM2 --length M --rating A --curve B|C|D [--ik-net A | --service-fuse A]
+                 [--feeder-size MM2 --feeder-length M --feeder-insulation pvc|xlpe]
   el.py ikmax    --icn A [--ik-net A] [--feeder-size MM2 --feeder-length M]
   el.py panel    <tavle.json> [--format md|json]     fixed panel schedule with findings
   el.py template                                     example panel file (copy, edit, save as JSON)
@@ -72,9 +73,16 @@ GROUPING = ((1, 1.00), (2, 0.80), (3, 0.70), (4, 0.65), (5, 0.60), (6, 0.57), (7
             (12, 0.45), (16, 0.41), (20, 0.38))
 
 # Conductor resistance at 20 °C [Ω/km], plain copper class 1/2 – IEC 60228 table 1/2 maximum values (T).
+# Deliberate choice: per-size R20 × (1 + α(θ − 20)) gives ρ70 ≈ 0,0217–0,0222 Ω·mm²/m, about 1,5–3,5 % below the
+# hand-calculation convention ρ = 0,0225 (1,25 × ρ20). See references/calc-tools.md, "Modstand".
 R20 = {1.5: 12.1, 2.5: 7.41, 4.0: 4.61, 6.0: 3.08, 10.0: 1.83, 16.0: 1.15, 25.0: 0.727, 35.0: 0.524}
 ALPHA_CU = 0.00393   # 1/K copper (IEC 60228 annex B)
 X_PER_M = 0.08e-3    # Ω/m reactance per conductor – usual value for small cables (T; Annex G value not found)
+
+# Socket-outlet rating → largest permitted rating of the nearest upstream short-circuit protection – BEK 1082/2016
+# § 45 (V 2026-11-01, retsinformation.dk). A group with anvendelse "stik" and no stikkontakt_a is taken as 13 A.
+SOCKET_MAX_FUSE = {10: 13, 13: 13, 16: 16}
+SOCKET_DEFAULT_A = 13
 
 # Instantaneous tripping, upper limit of the band → guaranteed instantaneous trip: EN 60898-1 (B 3–5, C 5–10,
 # D 10–20 × In) (V secondary 2026-10-31, manufacturer catalogues; many D products trip at 10–14 × In).
@@ -105,6 +113,7 @@ SRC = {
     "722": "Sikkerhedsstyrelsen, opladning af elbiler / DS/HD 60364-7-722 (egen RCD, type B eller type A/F + RDC-DD 6 mA)",
     "535": "DS/HD 60364-5-53 pkt. 535 (T): selektivitet kræver type S foran og IΔn ≥ 3 × efterfølgende",
     "5313": "DS/HD 60364-5-53 pkt. 531.3.6 / Sikkerhedsstyrelsen, valg af RCD (som udgangspunkt mindst to RCD'er)",
+    "45": "BEK 1082/2016 § 45 (stikkontakt 10 A og 13 A: højst 13 A kortslutningsbeskyttelse; 16 A: højst 16 A)",
     "erf": "[ERFARING – vejledende]",
 }
 
@@ -126,7 +135,7 @@ TEMPLATE = {
          "laengde": 20, "last": 5, "rcd": "RCD1", "anvendelse": "lys", "led_spots": 24},
         {"nr": "2", "navn": "Stik køkken", "sikring": 13, "kurve": "B", "icn": 6000, "fase": "L2",
          "kabel": "PVIKLX", "tvaersnit": 2.5, "isolering": "pvc", "metode": ["B2", "C"], "isoleret_mm": 100,
-         "samlet": 1, "laengde": 18, "last": 10, "rcd": "RCD2", "anvendelse": "stik"},
+         "samlet": 1, "laengde": 18, "last": 10, "rcd": "RCD2", "anvendelse": "stik", "stikkontakt_a": 13},
         {"nr": "3", "navn": "Elbillader", "sikring": 16, "kurve": "B", "icn": 6000, "fase": "L1L2L3",
          "kabel": "NOIKLX", "tvaersnit": 6, "isolering": "xlpe", "metode": ["C"], "samlet": 1,
          "laengde": 25, "last": 16, "rcd": "RCD3", "anvendelse": "elbil"},
@@ -285,7 +294,7 @@ def ik_min(size, length, rating, curve, ik_net=None, service_fuse=None, ia=None,
     i_a = tripping_current(curve, rating, ia)
     l_max = max(0.0, (U0 / i_a - z_net - z_feed) / (2 * r))
     res = {"ik_net": round(ik_n), "ik_net_kilde": origin, "z_net": round(z_net, 4), "z_forsyning": round(z_feed, 4),
-           "z_kabel": round(z_cable, 4), "ledertemperatur": temp, "ik_min": round(ik, 1), "ia": i_a,
+           "forsyning_temperatur": feeder_temp if z_feed else None, "z_kabel": round(z_cable, 4), "ledertemperatur": temp, "ik_min": round(ik, 1), "ia": i_a,
            "ok": ik >= i_a, "maks_laengde": round(l_max, 1)}
     if ik < i_a:
         # No instantaneous trip: the device's time-current curve must clear Ik,min before the conductor limit.
@@ -338,16 +347,17 @@ def cmd_vdrop(a):
 
 
 def cmd_ikmin(a):
-    res = ik_min(a.size, a.length, a.rating, a.curve, a.ik_net, a.service_fuse, a.ia,
-                 a.temp if a.temp is not None else MAX_TEMP[a.insulation], a.feeder_size, a.feeder_length,
-                 insulation=a.insulation)
+    temp = a.temp if a.temp is not None else MAX_TEMP[a.insulation]
+    feeder_temp = MAX_TEMP[a.feeder_insulation]
+    res = ik_min(a.size, a.length, a.rating, a.curve, a.ik_net, a.service_fuse, a.ia, temp, a.feeder_size,
+                 a.feeder_length, feeder_temp, a.insulation)
     res = {"tvaersnit": a.size, "laengde": a.length, "sikring": f"{a.curve}{fmt(a.rating, 0)}", **res,
            "krav": "Ik,min ≥ Ia (B 5·In, C 10·In, D 20·In – momentan udløsning inden for 0,1 s)", "kilde": SRC["411"]}
     nxt = next_size(a.size)
     if nxt:
         res["naeste_tvaersnit"] = {"tvaersnit": nxt, "maks_laengde": ik_min(
-            nxt, a.length, a.rating, a.curve, a.ik_net, a.service_fuse, a.ia, res["ledertemperatur"],
-            a.feeder_size, a.feeder_length)["maks_laengde"]}
+            nxt, a.length, a.rating, a.curve, a.ik_net, a.service_fuse, a.ia, temp, a.feeder_size, a.feeder_length,
+            feeder_temp, a.insulation)["maks_laengde"]}
     output(res)
 
 
@@ -476,6 +486,15 @@ def check_panel(data):
             add(gid, "advarsel", f"gruppen sidder kun bag {chain[0]['id']} {fmt(chain[0].get('ma', 0), 0)} mA – "
                 "endelige kredse skal have RCD ≤ 30 mA", "35")
         use = str(g.get("anvendelse", "")).lower()
+        if use == "stik" or g.get("stikkontakt_a"):
+            socket = g.get("stikkontakt_a") or SOCKET_DEFAULT_A
+            max_fuse = SOCKET_MAX_FUSE.get(int(socket)) if float(socket).is_integer() else None
+            if max_fuse is None:
+                raise InputError(f"gruppe {gid}: stikkontakt_a skal være 10, 13 eller 16 (A)")
+            if rating > max_fuse:
+                assumed = "" if g.get("stikkontakt_a") else " (antaget – angiv stikkontakt_a, hvis de er 16 A)"
+                add(gid, "advarsel", f"{curve}{fmt(rating, 0)} foran {fmt(socket, 0)} A-stikkontakter{assumed} – "
+                    f"højst {max_fuse} A kortslutningsbeskyttelse", "45")
         if use == "elbil" and chain:
             if not any(is_type_b(r.get("type")) for r in chain) and not g.get("rdc_dd"):
                 add(gid, "advarsel", "elbillader uden type B og uden RDC-DD (6 mA DC-detektering)", "722")
@@ -612,8 +631,9 @@ def selftest(_a=None):
     bad = json.loads(json.dumps(TEMPLATE))
     bad["rcd"][2]["foran"] = "RCD1"
     bad["grupper"][0]["sikring"] = 20
+    bad["grupper"][1]["sikring"] = 16
     texts = " ".join(f["tekst"] for f in check_panel(bad)["fund"])
-    for want in ("blinde", "beskytter ikke kablet"):
+    for want in ("blinde", "beskytter ikke kablet", "A-stikkontakter"):
         if want not in texts:
             errors.append(f"tavlekontrol fandt ikke '{want}'")
     print("Selvtest OK" if not errors else "Selvtest: " + str(len(errors)) + " fejl\n" + "\n".join(errors))
@@ -663,6 +683,8 @@ def main():
     s.add_argument("--service-fuse", type=float, help="stikledningssikring (A) → Ik,min = 5 × In (Fællesregulativet)")
     s.add_argument("--feeder-size", type=float, help="stikledning/hovedledning mm² (lægges til, hvis Ik gælder foran den)")
     s.add_argument("--feeder-length", type=float, default=0.0)
+    s.add_argument("--feeder-insulation", choices=("pvc", "xlpe"), default="xlpe",
+                   help="stikledningens isolering: pvc (70 °C) eller xlpe (90 °C, standard)")
     s.add_argument("--temp", type=float, help="ledertemperatur °C (standard: isoleringens maks.)")
     s.set_defaults(fn=cmd_ikmin)
 
