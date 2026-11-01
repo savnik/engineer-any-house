@@ -2193,8 +2193,8 @@
       "hypotese": "exam.py parse_number tolker et dansk decimaltal med præcis tre decimaler (fx 0,867) som engelsk tusindtal (867), så korrekte talsvar dumper (STAT-132 i F-023). Rettelse: et komma efter et indledende 0 eller et enkelt ciffer er decimaltegn, og et tal med tusindtalskomma kræver et førende ciffer forskelligt fra 0. Tilføj en test. Kør rebedoem på seneste resultater. Forventning: STAT-132 og eventuelle holdout-tal består ved rebedoem, ingen andre ændringer.",
       "aendring": "",
       "opgaver": [],
-      "status": "aaben",
-      "beslutning": null,
+      "status": "afsluttet",
+      "beslutning": "behold",
       "maalinger": {
         "structural": {
           "foer": {
@@ -2585,7 +2585,13 @@
           }
         }
       },
-      "rev_foer": "446edd4"
+      "rev_foer": "446edd4",
+      "laering": "Talregel: et komma efter 0 eller et enkelt ciffer er altid decimalkomma, og tusindtal kræver et forreste ciffer 1-9. Tvetydige tal (1-3 cifre, én separator, præcis tre cifre, fx 1.026 eller 3,680) godtages i begge læsninger, fordi agenter skriver både 1.026 Ω og 3.680 W. Reglen alene (32c322a) flyttede STAT-132 og 2 statik-holdoutopgaver, tvetydighedsreglen flyttede kun EL-211. Holdout-tal i benchmarket fra før F-024 undervurderede statik (holdout tasks-b fra 8/13 til 10/13). Ikke målt: kun gemte svar er genbedømt, ingen nye kørsler og intet holdoutbudget brugt. El har ingen basisarm i de genbedømte filer. El-før er plugin df738bf fra PR #42, som endnu ikke er på main. Statik-filerne fra F-028 er migreret fra fag statik med --trade structural. Værktøjsforsøg genbedømmes deterministisk med regrade --only-deterministic til 0 $.",
+      "slut": "2026-11-01",
+      "vurdering": "manuel",
+      "begrundelse": "Værktøjsforsøg afgøres manuelt. Før-genbedømmelsen med det gamle værktøj (9b268a9) gengav de oprindelige resultater præcist, 0 opgaver ændret. Efter (9e1c854) ændres kun opgaver, hvor talparseren var årsagen: STAT-132 (plugin og basis), EL-211 og 2 holdout-opgaver i statik. Ingen regressioner i nogen gruppe.",
+      "rev_efter": "9e1c854",
+      "pr": "https://github.com/savnik/engineer-any-house/pull/43"
     },
     {
       "id": "F-025",
