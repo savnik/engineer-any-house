@@ -339,6 +339,16 @@ def extract_answer(text: str, part: str = "") -> str | None:
     return matches[-1].strip("*`_ ") if matches else None
 
 
+# A thousands separator needs a leading group of 1–3 digits that does not start with 0: "0,867" and
+# "0.867" are always decimals.
+THOUSANDS_COMMA_RE = re.compile(r"-?[1-9]\d{0,2}(,\d{3})+")
+THOUSANDS_DOT_RE = re.compile(r"-?[1-9]\d{0,2}(\.\d{3})+")
+# One digit, one comma and three digits is read as a Danish decimal ("1,026" = 1.026), since the exam is
+# answered in Danish, where the thousands separator is a dot. Two or three leading digits with one comma
+# group ("12,500") stay ambiguous and keep the English thousands reading, as before.
+DANISH_DECIMAL_RE = re.compile(r"-?\d,\d{3}")
+
+
 def parse_number(s: str) -> float | None:
     """Reads the first number in s; accepts Danish (1.234,5) and English (1,234.5 / 1234.5) notation."""
     m = re.search(r"[-−]?\d[\d.,  ]*", s or "")
@@ -348,8 +358,9 @@ def parse_number(s: str) -> float | None:
     if "," in raw and "." in raw:
         raw = raw.replace(".", "").replace(",", ".") if raw.rfind(",") > raw.rfind(".") else raw.replace(",", "")
     elif "," in raw:
-        raw = raw.replace(",", ".") if not re.fullmatch(r"-?\d{1,3}(,\d{3})+", raw) else raw.replace(",", "")
-    elif re.fullmatch(r"-?\d{1,3}(\.\d{3})+", raw):
+        thousands = THOUSANDS_COMMA_RE.fullmatch(raw) and not DANISH_DECIMAL_RE.fullmatch(raw)
+        raw = raw.replace(",", "") if thousands else raw.replace(",", ".")
+    elif THOUSANDS_DOT_RE.fullmatch(raw):
         raw = raw.replace(".", "")
     try:
         return float(raw)
