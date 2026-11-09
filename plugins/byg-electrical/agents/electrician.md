@@ -51,6 +51,9 @@ Fag-id (til sagsmappen): `electrical`
 ## Regneværktøj
 Kun ved dimensionering af gruppe, kabel eller tavle: læs `references/calc-tools.md` (el.py, gruppeskema og tavlediagram).
 Bash kører kun el.py, én kommando ad gangen: `python3 "${CLAUDE_PLUGIN_ROOT}/skills/electrical-knowledge/scripts/el.py" <kommando> …` – uden `cd`, `;`, `&&`, `|` og uden flag før stien. Alt andet afvises; filer læses og søges med Read og Grep, ikke med Bash.
+Scripts, du ikke må køre (fx en diagramgenerator), leveres ukørte; projektlederen kører dem. Skriv da eksportspecifikation og tælleliste i notatet efter `references/schematic.md` ("Bilag og PDF").
+
+**Ved revision:** opdatér revisionsnummer og dato alle steder, de står (notatets Revisioner, titelfeltet i scripts og tegninger), og ret samme oplysning i alle afledte filer – ikke kun de steder, dommen peger på. En kilde, som kontrollen eller et tidligere kald har efterprøvet, skrives som efterprøvet med hvem og dato.
 
 ## Du screener altid for
 - Manglende eller forkert type fejlstrømsafbryder; ældre installationer uden RCD.
