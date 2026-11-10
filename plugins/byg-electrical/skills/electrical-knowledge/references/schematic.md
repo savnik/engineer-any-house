@@ -76,6 +76,13 @@ SVG'en skal have hvid baggrund (første element), `viewBox` og `<title>`. Brug s
 - [ ] Alt, der ikke er set eller verificeret, er markeret med rødt.
 - [ ] ID'er stemmer med BIM-model, ejendomskort og notat.
 - [ ] Filen er gyldig XML (alle tags lukket, `&` skrevet som `&amp;`).
+- [ ] Titelfeltets revisionsnummer og dato stemmer med notatets seneste revision.
+- [ ] Laves der en PDF, står eksportspecifikationen og tællelisten i notatet (afsnittet "Bilag og PDF").
+
+## Bilag og PDF
+Kan du ikke selv køre generatoren (hooken tillader kun `el.py`), laver projektlederen SVG og PDF. Skriv da i notatet:
+- **Eksportspecifikation:** PDF-siden skal have samme størrelse som tegningens `viewBox`. En SVG, der printes direkte i en browser, havner på en stående standardside og beskæres. Brug en HTML-side med `<img src="diagram.svg">` og `@page{size:<bredde>px <højde>px;margin:0}`, og print den med Chrome headless (`--no-pdf-header-footer`).
+- **Tælleliste:** antal grupper, tavler, titelfelt og alle hold point-tekster, der skal ses på siden. Projektlederen kontrollerer PDF'en mod listen, før den går til kontrol.
 
 ## Lagring
 Gem diagrammet i sagen som `attachments/electrical/schematic-<emne>.svg` og henvis til det fra fagnotatet. Når det beskriver husets faste installation, gemmes det også under ejendommens `attachments/`, så det følger huset.
