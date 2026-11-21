@@ -298,6 +298,11 @@ def main() -> int:
                 ERRORS.append(name)
         C = {"session_id": "s5", "cwd": str(cwd)}
         call_raw("pretool", {**C, "tool_input": {"subagent_type": FAG, "prompt": "DELIVERABLE: 2026-09-25-bad/plumbing/09"}}, env)
+        (case_dir / "closed-by-user.md").write_text("| L-01 | sikkerhedsafløb til spand | \"Se bort fra afløb.\" |\n",
+                                                    encoding="utf-8")
+        branch_dir = case_dir.parent / (case_dir.name + "--silo")
+        branch_dir.mkdir()
+        (branch_dir / "status.md").write_text("# Status (branch)\n", encoding="utf-8")
         out = compact_call("after_compact", {**C, "source": "compact"})
         ctx = json.loads(out)["hookSpecificOutput"]["additionalContext"] if out.strip() else ""
         for name, ok in [
@@ -307,7 +312,12 @@ def main() -> int:
                 ("efter compact uden byg-sag giver intet",
                  compact_call("after_compact", {"session_id": "s9", "cwd": str(cwd), "source": "compact"}) == ""),
                 ("efter compact i sagsmappen uden leverancer genindlæses status.md",
-                 "tæthedsprøvning" in compact_call("after_compact", {"session_id": "s9", "cwd": str(case_dir), "source": "compact"}))]:
+                 "tæthedsprøvning" in compact_call("after_compact", {"session_id": "s9", "cwd": str(case_dir), "source": "compact"})),
+                ("efter compact genindlæses brugerens lukninger før status.md",
+                 "Se bort fra afløb" in ctx and ctx.index("Se bort fra afløb") < ctx.index("Næste skridt: tæthedsprøvning")),
+                ("en branch-sag får hovedsagens lukninger",
+                 "Se bort fra afløb" in compact_call("after_compact", {"session_id": "s9", "cwd": str(branch_dir), "source": "compact"})),
+                ("precompact bevarer brugerens lukninger", "spørg ikke igen" in compact_call("precompact", {**S, "trigger": "auto"}))]:
             print(("OK   " if ok else "FEJL ") + name)
             if not ok:
                 ERRORS.append(f"{name}: {ctx[:300]}")
