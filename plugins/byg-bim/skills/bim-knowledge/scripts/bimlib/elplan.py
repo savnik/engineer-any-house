@@ -173,7 +173,7 @@ def evaluate(spaces):
 def report(rooms, light, findings, loose, title) -> str:
     L = [f"# El-plan – {title}", "",
          "Genereret af `bim.py elplan`. Antal efter installationsbekendtgørelsen (BEK 1082/2016) § 57. Placering, "
-         "kredsdeling og køkkenregion skal stadig vurderes af en autoriseret elinstallatør. Rumtypen læses af "
+         "kredsdeling og køkkenregion skal stadig vurderes fagligt. Rumtypen læses af "
          "rummets navn/anvendelse; tekniske rum (fx fyrrum) tælles efter stk. 1 – vurdér om de er \"lignende\" "
          "efter stk. 5.", "",
          "## Stikkontakter pr. rum (§ 57)", "",

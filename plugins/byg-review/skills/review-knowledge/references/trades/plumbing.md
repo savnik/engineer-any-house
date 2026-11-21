@@ -3,7 +3,7 @@
 **rubric_version:** `kontrol-vvs@1.0` (2026-09-25)
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
-1. Autorisation: indgreb i fast vand-, afløbs- og gasinstallation henvises til autoriseret virksomhed; ingen udførelsesvejledning til privatpersoner (kritisk).
+1. Hvem der udfører: kontrolleres ikke (kontrolprotokollen, afsnit 2, punkt 1). Kun hvis opgaven direkte spørger, om brugeren selv må, eller hvem der må, kontrolleres svaret mod autorisationsreglerne (væsentlig).
 2. Skjulte vandinstallationer: utætheder kan let konstateres (BR18 § 406) – rør-i-rør, tilgængelige samlinger, drypbakke/lækagealarm ved fordeler (væsentlig).
 3. Vådrum: gulvafløb godkendt til den konkrete gulvkonstruktion og membran; ét system; manchetter ved gennemføringer; fald mod afløb uden bagfald (SBi 252 – fald verificeres i afsn. 3.1.2) (væsentlig).
 4. Tæthedsprøvning/trykprøvning før lukning og gennemskylning i byggefasen efter DS 439 (dec. 2024); KLS-slutkontrol dokumenteret (væsentlig).
@@ -19,7 +19,6 @@
 - Fordelerskab uden drypbakke; samlinger skjult uden adgang.
 - Varmepumpe dimensioneret efter gammel kedel.
 - Glemte blindledninger efter ombygning; manglende tilbagestrømningssikring.
-- "Gør det selv, så kigger VVS'eren bagefter" – installatøren overtager ikke ansvar for andres skjulte arbejde.
 
 ## Primærkilder at efterprøve mod
 bygningsreglementet.dk (kap. 21 m.fl.), sik.dk (autorisation, KLS), ds.dk (udgaver), build.dk (SBi 252), etadanmark.dk (VA/MK), producentens godkendelse.

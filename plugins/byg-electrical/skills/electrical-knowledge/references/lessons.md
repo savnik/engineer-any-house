@@ -7,6 +7,7 @@ Format: `### EB-EL-<nr>: <titel>` med Situation/Problem/Løsning, Grundlag, Gyld
 - Problem: installatøren hæfter for arbejdet og vil typisk ikke overtage ansvaret for andres skjulte arbejde.
 - Løsning: aftal på forhånd, hvad bygherren må forberede (fx nedrivning, afdækning), og lad installatøren udføre og dokumentere alt i den faste installation.
 - Grundlag: [KRAV] autorisationsreglerne; [ERFARING] TEKNIQ/branche.
+- Gyldighed: kun når brugeren direkte spørger om samarbejdet med en installatør, eller hvem der må udføre arbejdet (fælles protokol, afsnit 2).
 - Status: verificeret · 2026-09-25
 
 ### EB-EL-002: Spots og dåser punkterer dampspærren

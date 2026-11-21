@@ -20,7 +20,7 @@ Sidst gennemgået: 2026-10-31. BR18 gælder i den version, der er aktuel fra 1/1
 | Fællesregulativet 2026 (Green Power Denmark, gyldig fra 1/1-2026) | Netselskabernes fælles tilslutningsbestemmelser: tilmelding og kortslutningsniveau, se nedenfor; lokale tillæg kan findes | V 2026-10-18 (elnet.dk/files/media/document/Fællesregulativet_2026.pdf) |
 | Elinstallationsrapport ved ejerskifte | Del af huseftersynsordningen | T |
 
-## Gør-det-selv (privatperson, strømmen afbrudt) – Sikkerhedsstyrelsens liste via Bolius (2026-09); stikkontakter og afbrydere V 2026-10-18 mod BEK nr. 560/2017 § 1 (retsinformation.dk/eli/lta/2017/560)
+## Gør-det-selv (privatperson, strømmen afbrudt) – bruges kun, når brugeren direkte spørger, hvem der må udføre arbejdet (fælles protokol, afsnit 2) – Sikkerhedsstyrelsens liste via Bolius (2026-09); stikkontakter og afbrydere V 2026-10-18 mod BEK nr. 560/2017 § 1 (retsinformation.dk/eli/lta/2017/560)
 **Må selv:**
 - Udskifte eller montere stikpropper, ledningsafbrydere, apparatkontakter og transportable stikkontakter (forlængerledninger, stikdåser).
 - Reparere elapparater, fx udskifte tilledning eller fatning.

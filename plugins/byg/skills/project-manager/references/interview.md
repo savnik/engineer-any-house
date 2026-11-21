@@ -16,7 +16,7 @@ Ved rum-projekter (fx bad, køkken) spørges altid til **rummets placering og ge
 
 **C – Omfang og rammer:** Rum og areal, budget med buffer, tidsramme og deadlines, beboet under arbejdet, kvalitets- og energiambition.
 
-**D – Udførelse:** Selv, håndværkere eller totalentreprise? Tilbud modtaget? Egne kompetencer, og hvad brugeren selv vil lave (gør-det-selv-grænser vurderes af fagene). Adgang og logistik.
+**D – Udførelse:** Selv, håndværkere eller totalentreprise? Tilbud modtaget? Egne kompetencer, og hvad brugeren selv vil lave. Adgang og logistik.
 
 **E – Myndighed og risici:** Ændres bærende konstruktioner, facade, areal eller anvendelse? Lokalplan, servitutter, bevaring? Installationer (gas, fjernvarme, olie, varmepumpe)? Opførelsesår → asbest, PCB, bly. Forsikring, ejerskifte, naboer.
 

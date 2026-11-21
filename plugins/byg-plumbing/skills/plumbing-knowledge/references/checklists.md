@@ -11,7 +11,7 @@
 - [ ] Varmeanlæg: varmetab, fremløbstemperatur, indregulering; varmepumpens støj og placering
 - [ ] Ændres varmekilde eller kedelsikkerhed: fejltilstandstabel (drift, dump, strømsvigt, fastlåst ventil, lækage), uafhængige barrierer, funktionstjek af sikkerhedskæden (tryk og flow til afløbssikring, intet luftgab), ekspansion efter DS/EN 12828
 - [ ] Fyringsanlæg/kedelskift: forbrændingsluft, undertryk, aftrækkets T- og G-klasse, lysningsareal (normgrundlag, "Fyringsanlæg og aftræk"); jordvarme: anmeldelse/tilladelse og afstande (normgrundlag, "Jordvarme")
-- [ ] Autorisation, tilladelser og forsyningernes bestemmelser afklaret
+- [ ] Tilladelser og forsyningernes bestemmelser afklaret
 - [ ] Grænseflader aftalt med el, tømrer, murer/flisemurer og ventilation
 
 ## Afleveringstjek – projekteringsnotat (før aflevering og efter hver retur)

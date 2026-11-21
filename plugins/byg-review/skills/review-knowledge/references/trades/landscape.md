@@ -3,7 +3,7 @@
 **rubric_version:** `kontrol-anlaeg@1.0` (2026-10-18)
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
-1. **Autorisation og gør-det-selv:** tilslutning til kloak, afkobling af tagvand, omfangsdræn tilsluttet kloak og indgreb i eksisterende afløb er henvist til autoriseret kloakmester; havebelysning og udendørs el til autoriseret el-installatør. Bygherren instrueres ikke i autorisationspligtigt arbejde (kritisk).
+1. **Snitflader:** tilslutning til kloak, afkobling af tagvand, omfangsdræn tilsluttet kloak og indgreb i eksisterende afløb er beskrevet som snitflade til kloakarbejde; havebelysning og udendørs el som snitflade til el. Hvem der må udføre arbejdet, kontrolleres ikke (kontrolprotokollen, afsnit 2, punkt 1) (væsentlig).
 2. **Vand væk fra huset:** belægning og terræn ved bygningen har fald væk fra huset, og fri sokkel under sokkelkant/fugtspærre er bevaret. Dørtrin og niveaufri adgang er løst med afvandingsrende eller tilsvarende. Løsningen leder ikke vand til naboen (væsentlig – kritisk ved kælder eller anden fugtfølsom konstruktion).
 3. **Nedsivning:** faskine eller anden nedsivning har kommunal tilladelse eller tilladelse anført som forudsætning. Afstandskrav (skel, bygning med/uden kælder, boring, grundvand) er tjekket mod kommunens regler. Nedsivningstest og dimensionering er foreskrevet, og overløb er håndteret (væsentlig).
 4. **Opbygning og fundering:** udgravning, geotekstil, bærelag i komprimerede lag og sættelag er tilpasset jordbund og last (terrasse/sti/indkørsel). Bærende terrasse- og støttemursfundamenter er frostfrit funderet, og værdier er markeret som vejledende, hvor de ikke har kilde (væsentlig).
