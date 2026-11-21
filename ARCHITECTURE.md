@@ -222,6 +222,18 @@ Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigt
 
 **Valg:** agenterne tager ikke stilling til autorisation, certificering eller gør-det-selv-grænser og tilføjer ingen forbehold om det (fælles protokol, afsnit 2). Kun ved et direkte spørgsmål om, hvem der må udføre arbejdet, svarer de ud fra dansk regelgrundlag med én linje om, at reglerne afhænger af land og baggrund. Kontrollen rejser aldrig fund for manglende autorisationsforbehold, men et uopfordret forbehold er et mindre fund (kontrolprotokollen, afsnit 2, punkt 1). Den generelle ansvarsfraskrivelse står i `README.md` og `README.da.md`. Sikkerhedsadvarsler og projektets egne krav (byggetilladelse, statisk dokumentation, screening) er uændrede. Videnbasernes fakta om autorisation (fx Sikkerhedsstyrelsens gør-det-selv-liste) bliver stående til brug ved direkte spørgsmål.
 
+## Brugerens svar og lukninger (2026-11-21)
+**Problem:** pluginet spurgte om det samme igen og igen, også efter "spørg ikke igen". Fuld RCA: `docs/rca-2026-11-21-repeated-questions.md`.
+
+**Grundårsag:** brugerens svar havde intet sted at bo, som alle kilder til "åbne punkter" respekterer. Svar stod kun i beslutningsloggen (fritekst, kun de sidste 15 linjer læses ved genoptagelse), mens godkendte fagnotater, hold points og mindre fund aldrig ændres. Hver ny session, hvert compact og hvert overblik afledte derfor de samme punkter igen. Det blev forstærket af tre ting: anbefalinger blev logget som betingelser for brugerens valg, branch-beslutninger blev ikke delt med hovedsagen, og kontrollen krævede primærkilde for brugerens gengivelse af et myndighedssvar.
+
+| Komponent | Design |
+|---|---|
+| `closed-by-user.md` | Register i hovedsagen (branches bruger hovedsagens) med brugerens ord ordret, hvad rækken lukker (HP, fund, risici, spørgsmål) og hvad den betyder. Skrives straks af projektlederen. Gælder frem for ældre fagnotater, hold points, risici og domme, også godkendte, uden revision |
+| Hook (`review_gate.py`) | Efter compact genindlæses registret før `status.md`. PreCompact bevarer lukninger og skelner dem fra åbne spørgsmål |
+| Filtrering | `/byg:status` læser registret først. Projektlederen filtrerer alle spørgsmål og åbne punkter (domme, fagrapporter, hjælpeagenter) mod det, før de når brugeren eller `status.md` |
+| Fag og kontrol | Stien står i fagforespørgslen og kontrolkaldet. Kilde B er grundlag, krav om dokumentation er aldrig et fund, valget kontrolleres, som brugeren traf det, og genåbning er et mindre fund |
+
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
 

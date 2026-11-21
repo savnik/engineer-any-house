@@ -24,6 +24,7 @@ byg-cases/<case-id>--<emne>/           branch-sag (samme struktur, forslag oven 
 byg-cases/<case-id>/
 ├── project-basis.md      formål, omfang, rammer, antagelser (skabelon i interview.md); husets fakta henvises fra ejendomskortet
 ├── decision-log.md       beslutninger med begrundelse
+├── closed-by-user.md     det, brugeren har lukket: svar, fravalg, accepterede risici (kun i hovedsagen; branches bruger hovedsagens)
 ├── solution-presentation.md  løsningen til brugerens manuelle godkendelse efter fase 2 (Approve G2 <case-id>)
 ├── changes.md           ændringslog efter design freeze: ændring, kilde, konsekvensanalyse, batch
 ├── status.md               fase, næste skridt, åbne spørgsmål, kontrolstatus
@@ -44,6 +45,24 @@ byg-cases/<case-id>/
 ├── bim/                    BIM-hovedmodel (model.yaml, history/, proposals/, out/) – kun i hovedsagen
 └── attachments/                  fotos, tilbud, rapporter, tegninger
 ```
+
+## Lukket af brugeren – closed-by-user.md
+Registret over det, brugeren har svaret på, valgt, fravalgt eller bedt om ikke at blive spurgt om igen. Det er filteret for alle åbne punkter: et emne, der står her, er ikke åbent, uanset hvad ældre fagnotater, hold points, risici, domme eller `status.md` siger.
+
+```
+# Lukket af brugeren – <case-id>
+| ID | Dato | Emne (søgeord) | Brugerens ord (ordret) | Lukker | Betyder |
+|---|---|---|---|---|---|
+| L-01 | 2026-10-16 | sikkerhedsafløb, SV-afløb, spand | "Spanden bliver." · 2026-11-21: "Se bort fra afløb." | HP-VVS-12, risiko R-03 | Afløbet går til en spand uden rør og alarm. Restrisikoen er accepteret. Nævnes ikke igen. |
+| L-02 | 2026-11-20 | gør-det-selv, Sikkerhedsstyrelsen | "Sikkerhedsstyrelsen siger, at jeg selv må …" · "Accepter det svar …" | plumbing/07 F2 | Grundlag (B). Ingen dokumentation. |
+```
+
+**Regler:**
+- **Skriv straks**, når brugeren svarer på et spørgsmål, vælger eller fravælger noget, accepterer en risiko eller skriver "spørg ikke igen", "se bort fra", "drop", "N/A" eller lignende. Brugerens ord står ordret. "Betyder" er brugerens valg – ikke dine anbefalinger. Skriv ikke betingelser (afbødning, kontroller), som brugeren ikke selv har valgt.
+- **Lukker:** de hold points, fund, risici, spørgsmål og Æ-punkter, rækken lukker. Ret samtidig `status.md`, så de ikke står som åbne.
+- **Kun i hovedsagen.** En branch-sag skriver i hovedsagens register, fordi brugerens svar gælder huset og ikke branchen. Det er den eneste fil i hovedsagen, en branch ændrer.
+- **Ændrer brugeren mening**, så ret rækken, og tilføj datoen. Rækken slettes ikke.
+- Hooken genindlæser registret efter compact, og `/byg:status` læser det først. Giv stien med i alle fag- og kontrolkald.
 
 ## Ejendomskort – byg-cases/properties/<property-id>.md
 **Ejendomskortet** er ejendommens langtidshukommelse. Det holder husets og anlæggenes faste fakta, som gælder på tværs af sager: opførelsesår, konstruktion, installationer, målinger og kendte skader. Sagsmappen er projektets korttidshukommelse og holder omfang, beslutninger, leverancer og status. Et faktum om huset skrives kun ét sted, nemlig i ejendomskortet.

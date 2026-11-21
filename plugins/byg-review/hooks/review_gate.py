@@ -1113,6 +1113,15 @@ def open_deliverables(inp: dict, s: dict) -> list:
     return lines
 
 
+CLOSED_FILE = "closed-by-user.md"
+CLOSED_MAX_CHARS = 8_000
+
+
+def closed_register(case_dir: pathlib.Path) -> pathlib.Path:
+    """The user's closures live in the main case, so a branch case (<main>--<topic>) shares them."""
+    return case_dir.parent / case_dir.name.split("--")[0] / CLOSED_FILE
+
+
 def precompact(inp: dict, d: pathlib.Path) -> None:
     """PreCompact: stdout becomes extra instructions for the summary."""
     with Lock(d):
@@ -1125,7 +1134,9 @@ def precompact(inp: dict, d: pathlib.Path) -> None:
           "compact, så gengiv ikke filindhold, fagnotater eller agentrapporter. Bevar i stedet præcist: sag-id og "
           "sagsmappe; den igangværende opgave og næste konkrete skridt; alle leverance-ID'er fra samtalen med status, "
           "runde/forsøg og blokerende fund ordret (fund-ID og krav); brugerens beslutninger og svar, som endnu ikke "
-          "står i decision-log.md eller status.md, ordret; åbne spørgsmål til brugeren; aftalte afgrænsninger og "
+          "står i decision-log.md, closed-by-user.md eller status.md, ordret; brugerens lukninger ('spørg ikke igen', "
+          "'se bort fra', 'accepter svaret') ordret – de er ikke åbne spørgsmål; åbne spørgsmål, som brugeren hverken "
+          "har besvaret eller lukket; aftalte afgrænsninger og "
           "brugerens præferencer for denne opgave; stier til filer, der er ændret, men ikke kontrolleret.")
 
 
@@ -1145,6 +1156,14 @@ def after_compact(inp: dict, d: pathlib.Path) -> None:
     if open_items:
         parts.append("Åbne leverancer i denne session (byg-reviews tilstand – den gælder frem for resuméet):\n" + "\n".join(open_items))
     for case_id, p in sorted(cases.items()):
+        closed = closed_register(p) if p else None
+        if closed and closed.is_file():
+            text = closed.read_text(encoding="utf-8", errors="replace")
+            if len(text) > CLOSED_MAX_CHARS:
+                text = text[:CLOSED_MAX_CHARS] + f"\n[… afkortet – læs resten af {closed}]"
+            parts.append(f"Lukket af brugeren for {case_id} ({closed}) – spørg ikke om dette igen, anbefal ikke det "
+                         "fravalgte, og vis det ikke som åbent punkt. Det gælder frem for status.md, fagnotater, hold "
+                         f"points, risici og domme:\n{text}")
         f = p / "status.md" if p else None
         if f and f.is_file():
             text = f.read_text(encoding="utf-8", errors="replace")
