@@ -1,5 +1,23 @@
 # Ændringslog
 
+## 2.1.0 – 2026-11-21
+
+- `byg` 1.0.0 → 1.1.0
+- `byg-architecture` 1.0.0 → 1.0.1
+- `byg-bim` 1.0.0 → 1.0.1
+- `byg-carpentry` 1.0.0 → 1.0.1
+- `byg-electrical` 1.0.0 → 1.0.1
+- `byg-landscape` 1.0.0 → 1.0.1
+- `byg-masonry` 1.0.0 → 1.0.1
+- `byg-painting` 1.0.0 → 1.0.1
+- `byg-plumbing` 1.0.0 → 1.0.1
+- `byg-review` 1.0.0 → 1.1.0
+- `byg-structural` 1.0.0 → 1.0.1
+- `byg-ventilation` 1.0.0 → 1.0.1
+
+### user-decisions-stand (byg, byg-architecture, byg-bim, byg-carpentry, byg-electrical, byg-landscape, byg-masonry, byg-painting, byg-plumbing, byg-review, byg-structural, byg-ventilation)
+Pluginet spørger ikke om det samme igen. Nyt register `closed-by-user.md` i hovedsagen (branches deler det) holder brugerens svar, fravalg og accepterede risici med brugerens ord. Det gælder frem for ældre fagnotater, hold points, risici og domme, også godkendte. Hooken genindlæser registret efter compact, og `/byg:status`, projektlederen, fagagenterne og kontrollen filtrerer åbne punkter og spørgsmål mod det. Det, brugeren oplyser (også et gengivet myndighedssvar), er grundlag uden krav om dokumentation, og valg logges, som brugeren traf dem, uden projektlederens anbefalinger som betingelser. RCA: `docs/rca-2026-11-21-repeated-questions.md`.
+
 ## 2.0.0 – 2026-11-21
 
 - `byg` 0.13.2 → 1.0.0
