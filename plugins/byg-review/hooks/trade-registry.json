@@ -87,6 +87,7 @@
   "maks_forsoeg": 2,
   "maks_runder": 2,
   "maks_sammenligninger": 3,
+  "udeladt": {"aldrig_fag": ["electrical", "structural", "bim"], "maks_fase": 2, "begrundelse": "Bygherrens regel (2026-11-21): hurtige afklarende spørgsmål i en løbende sag får kun fagagenten. El og statik kontrolleres altid; BIM-ændringer, PHASE ≥ 3 og forslag til fælles sagsfiler (HP, ejendomskort) skal gennem kontrol."},
   "stikproeve": {
     "andel": 0.34,
     "aldrig_fag": [

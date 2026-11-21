@@ -66,6 +66,25 @@ Brug det fulde navn fra din agentliste: `byg-plumbing:plumber` og `byg-review:pl
 10. **Ingen baggrundskontrol:** kør ikke kontrolkald i baggrunden. Agentens rapport når frem 20–60 sekunder før hooken har registreret dommen, og venten på hooken koster et statuskald i hovedtråden hver gang. Er en kontrol alligevel kørt i baggrunden, og afviser hooken næste fagkald med "er ikke kontrolleret endnu", så vent på næste hændelse i stedet for at tjekke status gentagne gange.
 11. **Retur og genoptagelse:** Send altid de blokerende fund retur til fagagenten med et nyt kald i Agent-værktøjet (skabelonen i afsnit 4). Genoptager du fagagenten med SendMessage, registrerer hooken ikke forsøget. Er en dom fra en baggrundskørsel ikke registreret, må kontrolagenten gerne genoptages, så den gentager JSON-dommen, men kun mens leverancen står som `under_kontrol`. Hooken ignorerer domme, der er gentaget eller forældede (status er ikke `under_kontrol`, eller dommens `forsoeg` passer ikke), så de ikke tæller som et nyt forsøg.
 
+## 2b. Kontrol udeladt – hurtige spørgsmål
+Bygherren kan have valgt, at **hurtige afklarende spørgsmål i en løbende sag** (produktvalg, "er X nok?", "virker denne fitting?") kun får fagagenten. Kontrollen tages først, når svaret skal ind i godkendt projektmateriale via ændringsstyring (hold points, tegninger, BIM, ejendomskort).
+- **Kun når brugeren har bedt om det** (står i `closed-by-user.md` eller beslutningsloggen), og kun i fase 0–2 eller uden `PHASE:`. **Aldrig for el, statik og BIM**, og aldrig når fagagenten foreslår ændringer i fælles sagsfiler (`proposals/`). Hooken håndhæver det.
+- **Fagkald med kontrol udeladt:**
+  ```
+  DELIVERABLE: <sag-id>/<fag-id>/<nr>
+  PHASE: <0-2> · REVIEW-LEVEL: none (hurtigt spørgsmål)
+  Opgave: <spørgsmålet, kort og afgrænset>
+  Svar kort i <sagsmappe>/trade-notes/<fag-id>-<nr>.md. Skriv ingen forslag til fælles sagsfiler – ændringer i hold points, kontrolplan eller ejendomskort kræver en kontrolleret leverance.
+  Sagsmappe: <sti>
+  ```
+  Resten af linjen efter `none` er grunden. Den står i `status`, i `quality/<id>__udeladt.json` og i case-git-committen. Ved aflevering får leverancen status `udeladt`. Stop blokerer ikke, men viser leverancen én gang.
+- **Glemte du markøren** (fagkaldet er kørt, og leverancen står som `afventer_kontrol`), så luk den uden kontrol med
+  `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py" skip <leverance-id> --grund "hurtigt spørgsmål (bygherrens ønske)"`. Samme regler gælder. Kør ikke kontrollen mod brugerens ønske.
+- **Svaret:** markér det tydeligt **"Ikke kvalitetskontrolleret (udeladt efter bygherrens ønske – hurtigt spørgsmål)"**.
+- **Review-loggen:** `dato · leverance · – · udeladt (<grund>) · – · hele leverancen`.
+- **Ingen fletning og ingen beskyttelse:** forslag flettes ikke, og notatet beskyttes ikke som godkendt. En udeladt leverance kan ikke indgå i `DESIGN-BASIS` eller G2.
+- **Skal svaret senere ind i projektmaterialet:** kald fagets kontrolagent med samme `DELIVERABLE: <id>` (skabelonen i afsnit 3). Hooken behandler det som forsøg 1 i det normale loop. En ændret fagversion kræver et nyt leverance-ID (`…-r2`).
+
 ## 3. Skabelon – kontrolkald
 ```
 DELIVERABLE: <id>
@@ -85,7 +104,7 @@ Tidligere domme: <stier eller "ingen">
 Sagsmappe: <sti>
 Udfør et review på det angivne kontrolniveau efter din kontrolprotokol (forsøg 1: fuldt review; forsøg 2 og senere: kun lukning af fund og regressioner i ændrede afsnit), og afslut med JSON-dommen.
 ```
-- **PHASE og REVIEW-LEVEL** følger `phases-and-gates.md` i projektlederens skill. Niveauet sættes efter **opgavens risiko**, ikke kun efter faget. `full` gælder design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3. Ellers er niveauet `light`, også for indkøb, priser, sortiment, materialelister og styklister til et godkendt design. `tool` findes kun for bim (fagregistret `vaerktoejskontrol`): ren geometri godkendes af sammenligneren og `bim.py check` uden kontrolagent (skill `drawing-import`). `sample` bruges kun til enkeltstående fagspørgsmål uden sag (ingen `PHASE:`) uden sikkerhedsfunktion og aldrig for el og statik: niveauet skrives i **fagkaldet**, og hooken udtager ca. hver tredje. Afviser hooken kontrolkaldet med "ikke udtaget", er svaret afleveret uden kontrol og skal markeres "Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)".
+- **PHASE og REVIEW-LEVEL** følger `phases-and-gates.md` i projektlederens skill. Niveauet sættes efter **opgavens risiko**, ikke kun efter faget. `full` gælder design i fase 2, der fastlægger eller ændrer en sikkerhedsfunktion i et sikkerhedskritisk fag, og den samlede plan i fase 3. Ellers er niveauet `light`, også for indkøb, priser, sortiment, materialelister og styklister til et godkendt design. `tool` findes kun for bim (fagregistret `vaerktoejskontrol`): ren geometri godkendes af sammenligneren og `bim.py check` uden kontrolagent (skill `drawing-import`). `sample` bruges kun til enkeltstående fagspørgsmål uden sag (ingen `PHASE:`) uden sikkerhedsfunktion og aldrig for el og statik: niveauet skrives i **fagkaldet**, og hooken udtager ca. hver tredje. Afviser hooken kontrolkaldet med "ikke udtaget", er svaret afleveret uden kontrol og skal markeres "Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)". `none` (kontrol udeladt efter bygherrens ønske) skrives også i **fagkaldet** – se afsnit 2b.
 - **Model:** kontrolagenterne kører på Sonnet. Ved `REVIEW-LEVEL: full` kaldes de med `model: "opus"` i Agent-kaldet (hooken afviser ellers kaldet). `bim-comparer` kører på Sonnet.
 - **Giv kun det nødvendige med:** henvis til de relevante afsnit i andre fagnotater (fil og afsnit) frem for hele filer.
 - **Projektkontrol** kræver `PHASE:`. I fase 3+ kræver den også `DESIGN-BASIS:` med godkendte fagleverancer (hooken håndhæver det).
@@ -133,6 +152,7 @@ Kan Agent-værktøjet ikke bruges (fx i claude.ai-chat), så sig tydeligt, at ua
 - Hovedtråden kan ikke afslutte, mens sessionens leverancer afventer kontrol eller er afvist (én påmindelse pr. stop). En stoppet leverance giver én påmindelse om at eskalere til brugeren. RCA kræves kun, når brugeren har bedt om en ny runde.
 - **Én skriver pr. fil:** en fagagents Write/Edit i `byg-cases/` uden for dens egne filer afvises (afsnit 8).
 - Hovedtråden kan heller ikke afslutte, mens et godkendt forslag ikke kunne flettes (konflikt), før konflikten er løst.
+- **Kontrol udeladt** (afsnit 2b): `REVIEW-LEVEL: none` i fagkaldet eller `review_gate.py skip <id> --grund "…"` giver status `udeladt`, som ikke blokerer stop. Det afvises for el, statik og bim, ved `PHASE: 3+` og ved leverancer med forslag. En leverance med forslag falder tilbage til `afventer_kontrol`. `REVIEW-LEVEL: none` på et ID, der allerede er i kontrolloopet, afvises.
 - Status for alle leverancer: `python3 "${CLAUDE_PLUGIN_ROOT}/hooks/review_gate.py" status`.
 
 ## 8. Én skriver pr. fil, forslag og revisionsstyring
