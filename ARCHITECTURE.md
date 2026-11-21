@@ -222,6 +222,13 @@ Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigt
 
 **Valg:** agenterne tager ikke stilling til autorisation, certificering eller gør-det-selv-grænser og tilføjer ingen forbehold om det (fælles protokol, afsnit 2). Kun ved et direkte spørgsmål om, hvem der må udføre arbejdet, svarer de ud fra dansk regelgrundlag med én linje om, at reglerne afhænger af land og baggrund. Kontrollen rejser aldrig fund for manglende autorisationsforbehold, men et uopfordret forbehold er et mindre fund (kontrolprotokollen, afsnit 2, punkt 1). Den generelle ansvarsfraskrivelse står i `README.md` og `README.da.md`. Sikkerhedsadvarsler og projektets egne krav (byggetilladelse, statisk dokumentation, screening) er uændrede. Videnbasernes fakta om autorisation (fx Sikkerhedsstyrelsens gør-det-selv-liste) bliver stående til brug ved direkte spørgsmål.
 
+## Brugerens svar og beslutninger (2026-11-21)
+**Problem:** brugeren oplevede pluginet som en modvillig kollega, der spurgte om det samme igen og igen. I en rigtig sag blev bygherrens valg "sikkerhedsafløb til spand" (beslutningslog 2026-10-11, bekræftet 2026-10-16) genåbnet i senere VVS-leverancer, indtil brugeren skrev "Se bort fra afløb". Bygherrens gengivelse af Sikkerhedsstyrelsens svar (2026-11-20) gav "gem svaret"-fund og `afklar_med_bruger` i tre domme i træk og blev ført videre som åbent punkt i `status.md`, indtil brugeren skrev "Accepter det svar som er givet og spørg ikke igen".
+
+**Årsager:** (1) ingen regel sagde, at brugerens oplysning (kilde B) er tilstrækkeligt grundlag, så kontrollen behandlede den som udokumenteret; (2) ingen regel sagde, at en logget beslutning er afgjort, så fag og kontrol anbefalede det fravalgte igen; (3) kontrolkaldet fik ikke beslutningsloggen med; (4) projektlederen førte dommenes spørgsmål og mindre fund videre uden at tjekke, om de var besvaret.
+
+**Valg:** brugerens oplysninger (også gengivne svar fra myndigheder og producenter) er grundlag, og der bedes aldrig om dokumentation for dem. Brugerens beslutninger er afgjort: der designes inden for valget, det fravalgte anbefales ikke igen, og accepterede restrisici gentages ikke. Kun ny viden, der ændrer risikoen væsentligt, forelægges én gang. Reglen står i fælles protokol afsnit 2, kontrolprotokollen afsnit 2 punkt 1 (genåbning er et mindre fund, krav om dokumentation er aldrig et fund) og projektlederens grundregel 6. Kontrolkaldet får beslutningsloggen med, og projektlederen filtrerer spørgsmål mod projektgrundlag, beslutningslog og ejendomskort, før de stilles (`quality-review`, "Filtrér før du spørger").
+
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.
 

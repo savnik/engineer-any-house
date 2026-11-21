@@ -42,11 +42,12 @@ Brug det fulde navn fra din agentliste: `byg-plumbing:plumber` og `byg-review:pl
 
 ## 2. Loopet
 1. **Fagkald (forsøg n):** DELIVERABLE, opgaven, sagsmappen og stien til notatet (`<sagsmappe>/trade-notes/<trade-id>.md`). Fagagenten skriver kun sine egne filer; ændringer i grænseflader, risici, kontrolplan og ejendomskort kommer som forslag (`<sagsmappe>/proposals/<trade-id>-<nr>__<mål>.md`) og står under "Forslag" i rapporten.
-2. **Kontrolkald:** brug skabelonen i afsnit 3. Giv kun leverancen, projektgrundlaget, ejendomskortet, relevante andre fagnotater og tidligere domme – aldrig fagagentens ræsonnement eller dit eget forsvar for løsningen.
+2. **Kontrolkald:** brug skabelonen i afsnit 3. Giv kun leverancen, projektgrundlaget, beslutningsloggen, ejendomskortet, relevante andre fagnotater og tidligere domme – aldrig fagagentens ræsonnement eller dit eget forsvar for løsningen.
 3. **Dom:** hooken gemmer JSON-dommen i `<sagsmappe>/quality/`, og ved **godkendt** fletter den leverancens forslag ind i målfilerne (afsnit 8). Tilføj en linje i `<sagsmappe>/quality/review-log.md`: dato · leverance · forsøg · dom · åbne fund (kritisk/væsentlig/mindre) · ikke kontrolleret (dommens `ikke_kontrolleret`, ellers "–"). En godkendelse dækker kun det kontrollerede: bygger du videre på en del, der står under `ikke_kontrolleret`, så sig det til brugeren, eller bestil en kontrol af netop den del.
 4. **Godkendt:** leverancen må bruges. **Afvist:** send **kun de blokerende fund** (kritisk og væsentlig) ordret retur til fagagenten (afsnit 4) som forsøg n+1. Mindre fund sendes ikke retur. De står i dommen og tages kun med, hvis notatet alligevel revideres senere. En retur må ikke indeholde nye ønsker eller opgaver; de bliver en ny leverance med nyt ID.
 5. **Fund der kræver brugeren** ("afklar med bruger" eller `eskaler: true`): stop loopet og spørg brugeren (AskUserQuestion, hvis tilgængelig). Svaret skrives ind i projektgrundlaget, derefter fortsætter loopet.
    **Spørgsmål i `afklar_med_bruger`** blokerer ikke: loopet fortsætter. Saml dem fra sagens domme, og stil dem samlet til brugeren ved næste naturlige stop (fx ved gaten), de vigtigste først. Svarene skrives ind i projektgrundlaget.
+   **Filtrér før du spørger.** Stil aldrig et spørgsmål, brugeren allerede har svaret på eller besluttet (projektgrundlag, beslutningslog, ejendomskort), og bed aldrig om dokumentation for noget, brugeren har oplyst – heller ikke når en dom eller en fagagent beder om det. Det gælder også mindre fund af den slags: de bliver ikke åbne punkter i `status.md`. Skriv i stedet i review-loggen "afvist af PL: besvaret <dato>".
 6. **Højst 2 forsøg pr. runde, højst 2 runder.** Afvises 2. forsøg i en runde:
    1. **Stop runden, og eskalér til brugeren.** Vis de åbne blokerende fund kort (én linje hver), og spørg, om leverancen skal (a) bruges med fundene som åbne antagelser eller hold points, (b) have en ny runde – brugeren skriver selv `New round <leverance-id>` – eller (c) omformuleres som en ny, mindre opgave under et nyt leverance-ID. Start ingen ny runde, og skriv ingen RCA, før brugeren har valgt (b). Hooken håndhæver det.
    2. **Root cause-analyse (kun ved (b)):** skriv RCA'en efter `${CLAUDE_PLUGIN_ROOT}/skills/review-knowledge/references/rca-template.md` til `<sagsmappe>/quality/RCA-<leverance-id med / erstattet af __>.md`. Fra runde 2 får filnavnet `__round-<n>`. Analysen undersøger, **hvorfor fagagenten ikke kunne levere korrekt i første forsøg**, med **5 Why-metoden**: mindst én kæde med fem hvorfor-niveauer, evidens til hvert svar og en handlingsbar grundårsag (skabelonens afsnit 3).
@@ -76,6 +77,7 @@ Deliverable: <sti til fagnotat>
 Forslag: <stier fra fagagentens rapport, eller "ingen">
 Ændringer: <forsøg 2 og senere og rettelser: <sagsmappe>/quality/<leverance-id med / erstattet af __>__changes.diff, ellers "ingen">
 Projektgrundlag: <sti>
+Beslutningslog: <sagsmappe>/decision-log.md
 Ejendomskort: <sti eller "ingen">
 Relevante andre fagnotater: <stier eller "ingen">
 Tidligere domme: <stier eller "ingen">
