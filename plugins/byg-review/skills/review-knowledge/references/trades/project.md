@@ -15,7 +15,7 @@ Kontrollerer projektgrundlag, koordineringsplan, grænsefladematrix, tidsplan, r
 3. Alle fagleverancer har en godkendt kontroldom, eller afvigelse er eskaleret til brugeren (kritisk).
 4. Grænseflader: hver snitflade har ejer, tidspunkt og leverance; konflikter mellem fagnotater er løst eller eskaleret (væsentlig).
 5. Rækkefølge og tidsplan: realistisk rækkefølge, tørretider, hold points og lovpligtige kontroller før lukning (væsentlig).
-6. Myndighed: byggetilladelse vurderet (BR18 § 5/§ 6, lokalplan), affaldsanmeldelse og screening (PCB, asbest, bly), autorisationskrav, skorstensfejer, netselskab (kritisk–væsentlig).
+6. Myndighed: byggetilladelse vurderet (BR18 § 5/§ 6, lokalplan), affaldsanmeldelse og screening (PCB, asbest, bly), skorstensfejer, netselskab (kritisk–væsentlig).
 7. Aftaler og arbejdsmiljø: aftalegrundlag (AB-Forbruger/AB 18), forbrugeraftaleloven ved aftaler indgået uden for fast forretningssted, bygherrens pligter (koordinator ved ≥ 2 arbejdsgivere samtidig – også for private) (væsentlig).
 8. Risikoregister dækker sikkerhed, fugt, økonomi og tid med konkrete tiltag (væsentlig).
 9. Anbefalinger til brugeren er konsistente med fagnotaterne og markerer usikkerheder (væsentlig).

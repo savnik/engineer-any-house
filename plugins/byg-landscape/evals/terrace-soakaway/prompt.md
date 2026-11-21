@@ -1,5 +1,5 @@
 ---
-description: Anlægsgartneren skal se, at terrassen ved kælderen kræver fald væk fra huset og fri sokkel, at faskinen 2 m fra kælderen i lerjord bryder typiske afstandskrav og kræver nedsivningstest og kommunal tilladelse, at afkobling af tagnedløbet er kloakmesterarbejde, og at en hævet terrasse over 0,30 m skal holde 2,5 m til skel.
+description: Anlægsgartneren skal se, at terrassen ved kælderen kræver fald væk fra huset og fri sokkel, at faskinen 2 m fra kælderen i lerjord bryder typiske afstandskrav og kræver nedsivningstest og kommunal tilladelse, at afkobling af tagnedløbet er en ændring af afløbet med egne krav (uden stillingtagen til, hvem der må udføre den), og at en hævet terrasse over 0,30 m skal holde 2,5 m til skel.
 tags: [landscape, terrasse, faskine, regnvand, myndighed]
 max_turns: 20
 timeout_seconds: 600

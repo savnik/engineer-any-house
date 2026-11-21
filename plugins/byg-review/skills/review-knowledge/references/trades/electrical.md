@@ -8,7 +8,7 @@
 - En leverance, der blander de to regelgrundlag, giver et **væsentligt** fund.
 
 ## Kontrolpunkter (typisk klasse ved afvigelse)
-1. **Gør-det-selv og autorisation:** kun det, Sikkerhedsstyrelsens liste tillader; ingen udførelsesvejledning til autorisationskrævende arbejde (kritisk).
+1. **Hvem der udfører:** kontrolleres ikke (kontrolprotokollen, afsnit 2, punkt 1). Kun hvis opgaven direkte spørger, om brugeren selv må, eller hvem der må, kontrolleres svaret mod Sikkerhedsstyrelsens regler (væsentlig).
 2. **Sikkerhed ved arbejde:** afbryd, sikr mod genindkobling, konstatér spændingsløshed (kritisk, hvis udeladt ved praktisk vejledning).
 3. **RCD:** boliger skal have RCD ≤ 30 mA (alle boliger fra 1.7.2008); type A (HPFI) fra 1.7.1991; mindst to RCD'er ved nye tavler efter 1.7.2019; RCD-type ved DC-fejlstrøm: elbil type B eller type A/F med RDC-DD 6 mA efter laderens anvisning [ANVISNING SIK, opladning af elbiler – V]; type B må ikke sidde efter en type A/F, medmindre den begrænser DC til 6 mA [ERFARING fabrikant – V sekundær]. RCD'en skal virke ved testknap og kontrolmåling (kritisk).
 4. **Overstrømsbeskyttelse mod materiel og tværsnit:** 10 A- og 13 A-stikkontakter højst 13 A [KRAV BEK 1082 – V]; vejledende maks. sikring efter tværsnit fra 1.7.2019: 1,5 mm² → 10 A · 2,5 mm² → 13 A · 4 mm² → 16 A · 6 mm² → 20 A · 10 mm² → 25 A (XLPE 90 °C, 4 belastede kredse samlet) [ANVISNING håndbog pkt. 9 – V]; samlet fremføring nedsætter strømværdien (T); pasring/bundskrue skal hindre for store sikringer. Ny tavle i eksisterende installation: sikringen skal passe til det ældste materiel på gruppen – gamle 10 A-udtag og -afbrydere (typisk før ca. 2001) højst 10 A, 6 A-materiel (ca. 1938–1950) højst 10 A [ERFARING – fund opretholdt i Sikkerhedsstyrelsens revision; regelkæde T, se "Afklaret"] (kritisk–væsentlig).
@@ -42,7 +42,6 @@
 - Elbillader på eksisterende gruppe uden kapacitetsberegning; RCD uden egnethed for DC-fejlstrøm.
 - Spots og dåser, der perforerer dampspærren.
 - Stikkontakter med jord i installation uden beskyttelse; plugin-solceller.
-- Gør-det-selv-forarbejde, som en installatør forventes at "godkende".
 
 ### Misforståelser i el-planlægningsværktøjer (elplanen.dk-guide, gennemgået 2026-11-01)
 - **"Zone 3" i badeværelset:** Begrebet er forældet. Gældende regler bruger område 0, 1 og 2 (V, se normgrundlag). Bruger en leverance zone 3 som grundlag for placering eller IP-krav, er det et **væsentligt** fund. Hvornår zone 3 udgik, er T.

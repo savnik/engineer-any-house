@@ -65,7 +65,7 @@ Grundlag: <godkendte fagleverancer med ID> · beslutningslog <dato>
 ## 3. Sikkerhed – de vigtigste barrierer og hvem der sikrer dem
 ## 4. Økonomi (groft ±20 %) mod rammen, inkl. fag uden agent og buffer
 ## 5. Tid – milepæle og realistisk slutdato (tidlig, forventet, sen) mod rammen
-## 6. Det du selv skal gøre, og gør-det-selv-grænser
+## 6. Det du selv skal gøre (beslutninger, forberedelse, kontrol)
 ## 7. Opgørelse af dine ønsker: besvaret, delvis og åbne punkter – hold points før tilbud (accepteret ved G2)
 ## 8. Risici og hvad der kan ændre løsningen
 ## 9. Beslutning

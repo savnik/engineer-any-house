@@ -2,7 +2,7 @@
 name: electrical-knowledge
 description: >-
   Dansk el-faglig videnbase på mesterniveau: boliginstallationer, tavler, RCD,
-  badeværelser, elbilladning, solceller, varmepumper, gør-det-selv-grænser og
+  badeværelser, elbilladning, solceller, varmepumper og
   verifikation med normgrundlag (Elsikkerhedsloven, DS/HD 60364-serien,
   Sikkerhedsstyrelsen), faglig praksis, tjeklister og erfaringsblade. Bruges af
   electrician-agenten og direkte ved el-spørgsmål, hvor subagenter ikke er tilgængelige.
@@ -12,7 +12,7 @@ description: >-
 
 | Fil | Indhold | Læs når |
 |---|---|---|
-| `references/standards.md` | Lov, bekendtgørelser, standarder, gør-det-selv-listen, installationsbekendtgørelsens centrale §§, ændring og udvidelse (køkken, tavleflytning, beskyttelsesleder), solceller, netselskab (tilmelding, kortslutningsniveau), badeværelsesområder (701:2024), RCD-typer, TT/TN, SPD, status | Krav, grænseværdier, rumkrav, ombygning af eksisterende installation, autorisation, gør-det-selv |
+| `references/standards.md` | Lov, bekendtgørelser, standarder, gør-det-selv-listen, installationsbekendtgørelsens centrale §§, ændring og udvidelse (køkken, tavleflytning, beskyttelsesleder), solceller, netselskab (tilmelding, kortslutningsniveau), badeværelsesområder (701:2024), RCD-typer, TT/TN, SPD, status | Krav, grænseværdier, rumkrav, ombygning af eksisterende installation; autorisation og gør-det-selv kun, når brugeren direkte spørger |
 | `references/practice.md` | Principper, løsninger, ældre installationer, fejlfinding, grænseflader, el-plan (behov pr. rum, § 57, afbrydertype) | Projektering, el-plan, vurdering, fejlfinding |
 | `references/calc-tools.md` | Regneværktøjet `scripts/el.py` og dimensioneringsgrundlag: Iz, spændingsfald, Ik, tavlekontrol, gruppeskema, tavleskabeloner | Kun ved dimensionering af gruppe, kabel eller tavle |
 | `references/schematic.md` | Tavlediagram (enstregsdiagram): indhold, symboler, `scripts/diagram.py`, eksempel i `assets/` | Ny eller ændret tavle, aflevering |

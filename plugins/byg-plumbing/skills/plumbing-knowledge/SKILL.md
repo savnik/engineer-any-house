@@ -14,7 +14,7 @@ Indgang til den kuraterede VVS-viden. Læs kun de filer, opgaven kræver.
 
 | Fil | Indhold | Læs når |
 |---|---|---|
-| `references/standards.md` | Kilder, hvad der er bindende, verifikationsstatus, opslagsrækkefølge | Spørgsmål om krav, normer, autorisation – også vådrum (§339), fyringsanlæg og aftræk, gaseftersyn, jordvarme |
+| `references/standards.md` | Kilder, hvad der er bindende, verifikationsstatus, opslagsrækkefølge | Spørgsmål om krav og normer (autorisation kun, når brugeren direkte spørger) – også vådrum (§339), fyringsanlæg og aftræk, gaseftersyn, jordvarme |
 | `references/practice.md` | Principper, løsninger, ældre huse, fejlfinding, grænseflader | Projektering, vurdering, fejlfinding |
 | `references/checklists.md` | Projektering, hold points, idriftsættelse, aflevering, gaseftersyn | KS, tilbudsgennemgang, aflevering, eftersyn |
 | `references/schematic.md` | Principdiagram: indhold, layout, farver, SVG-symbolbibliotek, tjekliste | Diagram over varme, brugsvand og afløb – projektering, kedel- og VVB-skift, fejlfinding, aflevering |

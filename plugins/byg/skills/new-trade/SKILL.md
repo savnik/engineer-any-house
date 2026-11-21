@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 Opret et nyt fag: $ARGUMENTS
 
-1. Interview brugeren kort: fagområde og afgrænsning, typiske opgaver, kerneprincipper, autorisations- og myndighedskrav, vigtigste normer og anvisninger, typiske fejl (til kontrollens fejlkatalog).
+1. Interview brugeren kort: fagområde og afgrænsning, typiske opgaver, kerneprincipper, myndighedskrav (ikke hvem der må udføre arbejdet), vigtigste normer og anvisninger, typiske fejl (til kontrollens fejlkatalog).
 2. Research normgrundlaget, og markér hvert punkt V (verificeret med kilde og dato) eller T (skal verificeres).
 3. Arbejder brugeren i Engineer Any House-repoet: kør `python3 scripts/new_trade.py <trade-id> "<Fagnavn>" <agentnavn>` og udfyld de genererede filer (fagagent, videnbase, kontrolagent, `review-knowledge/references/trades/<trade-id>.md`). Scriptet registrerer faget i marketplace, byg-team og hookens fagregister.
 4. Uden repo: skriv udkastene til `byg-new-trade/<trade-id>/` i arbejdsmappen med samme struktur, og forklar, hvordan de lægges ind i repoet.

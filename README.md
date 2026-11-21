@@ -82,6 +82,12 @@ You can also run the project lead as the main agent: `claude --agent byg:project
 
 Cases are stored in `byg-cases/<YYYY-MM-DD>-<name>/` in your working directory. Keep sessions short and continue a case in a new session with `/byg:status <case-id>`, since the case folder remembers the rest.
 
+## Disclaimer: who may do the work
+
+The plugins do not know your professional background or which country you live in. They therefore **never assess whether you may do the work yourself, or who may do it** (authorisation, licensing, do-it-yourself limits), and they describe solutions and their execution in full without reservations about it. It is your own responsibility to check which rules apply to you and your project, and to make sure that work requiring authorisation, a licence or certification where you live is done by someone who holds it. Only if you ask directly whether you may do something yourself, or who may do it, will the agents answer, based on Danish rules.
+
+The agents still give safety warnings and point out permits, notifications and documentation that the project itself requires (for example a building permit, structural documentation or a survey for hazardous substances). Their advice does not replace a professional who sees the house, and it is not a signed project or legally binding documentation.
+
 ## Data and privacy
 
 Cases and your data stay on your machine: case folders in your working directory, the knowledge bank and review state in the plugin's data folder, and API keys in `~/.config/`. None of it goes into the plugins or this repository. Lessons from cases only reach the repository as generalised knowledge, and `scripts/check_data.py` blocks commits that contain case data, private terms or keys.

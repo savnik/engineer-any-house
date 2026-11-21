@@ -128,7 +128,7 @@ Alle scripts er Python. npm blev fravalgt: de tunge afhængigheder (IfcOpenShell
 
 | Komponent | Design |
 |---|---|
-| Autorisationsgrænse | Faskine på egen grund må bygherren selv lave (med tilladelse); tilslutning til kloak, afkobling af tagvand og omfangsdræn til kloak henvises til kloakmester (fag uden agent). Kontrollen afviser instruktion i kloakarbejde (kritisk) |
+| Snitflade til kloak | Faskine på egen grund er anlægsgartnerens; tilslutning til kloak, afkobling af tagvand og omfangsdræn til kloak beskrives som snitflade til kloakarbejde (fag uden agent). Hvem der må udføre arbejdet, vurderes ikke (se "Hvem der udfører") |
 | Hold points | `HP-ANL-1` LER og myndighed før gravning, `HP-ANL-2` udgravning og bund før bærelag, `HP-ANL-3` komprimering og fald før belægning, `HP-ANL-4` faskine og dræn før tildækning |
 | `landscape-review` | Tjekker fald væk fra huset og fri sokkel, nedsivningens tilladelse og afstande, BR18 § 179 for hævede terrasser og henvisning til statiker ved støttemure |
 
@@ -216,6 +216,11 @@ Kontrollen fangede ingen af de 7 forkerte svar, og alle 6 afvisninger ramte rigt
 - Kildedisciplin: fagagenten skriver kun "efterprøvet", når den selv har slået op i opgaven; kontrollen bedømmer selve reglen, ikke påstanden om efterprøvning (F-014). Målt på F-012's 13 fejlramte opgaver: falske afvisninger 6 → 2,5 pr. kørsel og ingen skadede svar (før 2); kontrollen fanger stadig ingen forkerte svar på eksamen.
 
  Eksamen viser, at fagagenten består 87–100 % af udviklingsopgaverne. Over Googles tærskel på ca. 45 % skal kontrollen bevise sin værdi: lav præcision betyder returer for intet. Kontrol-armen afgør pr. fag, om `let` kontrol skal beholdes, gøres til stikprøve eller kun bruges ved sikkerhedsfunktioner. Ændringer i kontrolniveau besluttes først ud fra målingen (forsøgsloggen) og returandelen i rigtige sager (`usage.py`).
+
+## Hvem der udfører (2026-11-21)
+**Krav:** pluginet kender hverken brugerens faglige baggrund eller land, så det kan ikke afgøre, om brugeren selv må udføre et arbejde.
+
+**Valg:** agenterne tager ikke stilling til autorisation, certificering eller gør-det-selv-grænser og tilføjer ingen forbehold om det (fælles protokol, afsnit 2). Kun ved et direkte spørgsmål om, hvem der må udføre arbejdet, svarer de ud fra dansk regelgrundlag med én linje om, at reglerne afhænger af land og baggrund. Kontrollen rejser aldrig fund for manglende autorisationsforbehold, men et uopfordret forbehold er et mindre fund (kontrolprotokollen, afsnit 2, punkt 1). Den generelle ansvarsfraskrivelse står i `README.md` og `README.da.md`. Sikkerhedsadvarsler og projektets egne krav (byggetilladelse, statisk dokumentation, screening) er uændrede. Videnbasernes fakta om autorisation (fx Sikkerhedsstyrelsens gør-det-selv-liste) bliver stående til brug ved direkte spørgsmål.
 
 ## Videnmodel
 Fagviden (gælder alle huse) og sagsviden (gælder ét hus) holdes adskilt. Hver oplysning står ét sted med kilde og dato.

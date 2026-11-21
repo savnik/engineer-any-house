@@ -92,6 +92,11 @@ I **claude.ai-chat** kører hverken subagenter eller hooks; der markeres svar so
 
 Fagviden og sagsviden holdes adskilt: agenternes hukommelse er kun til fagviden. Når en sag afsluttes, høster projektlederen den (`/byg:lessons`): husets fakta går til ejendomskortet, og fagviden går til videnbanken og forankringskøen. Accepterede kanon-kandidater indarbejdes i repoet med ny version.
 
+## Ansvarsfraskrivelse: hvem der må udføre arbejdet
+Pluginene kender hverken din faglige baggrund eller det land, du bor i. De tager derfor **aldrig stilling til, om du selv må udføre arbejdet, eller hvem der må** (autorisation, certificering, gør-det-selv-grænser), og de beskriver løsninger og udførelse fuldt ud uden forbehold om det. Det er dit eget ansvar at undersøge, hvilke regler der gælder for dig og dit projekt, og at arbejde, der kræver autorisation eller certificering der, hvor du bor, udføres af en, der har den. Kun hvis du direkte spørger, om du selv må, eller hvem der må, svarer agenterne – ud fra danske regler.
+
+Agenterne advarer stadig om sikkerhed og peger på tilladelser, anmeldelser og dokumentation, som selve projektet kræver (fx byggetilladelse, statisk dokumentation eller screening for problemstoffer). Rådgivningen erstatter ikke en fagperson, der ser huset, og er hverken et underskrevet projekt eller juridisk bindende dokumentation.
+
 ## Data og privatliv
 Sager og brugerdata ligger kun lokalt: sagsmapper i `byg-cases/` i din arbejdsmappe, videnbank og kontroltilstand i pluginets datamappe og API-nøgler i `~/.config/`. Intet af det kommer i pluginet. Læring fra sager kommer kun i repoet som generaliseret viden via `/byg:lessons`. Se "Dataseparation" i `ARCHITECTURE.md`.
 
