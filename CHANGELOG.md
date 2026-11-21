@@ -1,5 +1,70 @@
 # Ændringslog
 
+## 2.0.0 – 2026-11-21
+
+- `byg` 0.13.2 → 1.0.0
+- `byg-architecture` 0.1.3 → 1.0.0
+- `byg-bim` 0.9.0 → 1.0.0
+- `byg-carpentry` 0.1.14 → 1.0.0
+- `byg-data` 0.1.1 → 0.1.2
+- `byg-electrical` 0.2.5 → 1.0.0
+- `byg-landscape` 0.1.3 → 1.0.0
+- `byg-masonry` 0.2.3 → 1.0.0
+- `byg-painting` 0.1.14 → 1.0.0
+- `byg-plumbing` 0.2.5 → 1.0.0
+- `byg-review` 0.16.2 → 1.0.0
+- `byg-structural` 0.5.0 → 1.0.0
+- `byg-team` 0.4.2 → 1.0.0
+- `byg-ventilation` 0.1.15 → 1.0.0
+
+### 3d-demo-same-house (byg-bim, byg-plumbing, byg-structural)
+Eksempelhuset er nu det samme i BIM og FEM. BIM: nyt afsnit `ovenlys` til tagvinduer i tagfladen, `farve` på systemer, `bim.py eksport --gennemsigtig/--alfa` til gennemsigtige facader og en komplet VVS-installation i eksemplet (centralvarme, radiatorer, varmtvandsbeholder, koldt og varmt brugsvand, spildevand til brønd). Statik: nyt FEM-eksempel `fem-example-house.yaml` med husets vægge og dæk. Nyt felt `spaer` på tage: spær, veksler om ovenlys og skorsten samt hanebånd som IfcMember i taget, og eksemplet viser spærkonstruktionen gennem den gennemsigtige tagflade. FEM-eksemplet: bjælkelaget er nu leddet på murkronen, og dækket over kælderen holder kældervæggenes top. Det fjerner de urealistiske spændingsspring ved væghjørnerne. fem.md beskriver begge modelleringsregler. VVS: ny reference `schematic.md` med indhold, layout, farver (samme som BIM-systemerne), SVG-symbolbibliotek og tjekliste, så plumber kan tegne et principdiagram over varme, brugsvand og afløb, samt et færdigt eksempel for eksempelhuset (`assets/principdiagram-eksempelhus.svg`).
+
+### 3d-demo (byg-bim, byg-structural)
+3D-visning på GitHub Pages: `bim.py eksport` skriver modellen som glTF (.glb) i modellens farver, og `fem.py vis --cdn` laver en lille HTML, der henter plotly fra nettet. `scripts/demo_site.py` og workflowet Pages bygger eksempelhuset og FEM-eksemplet som interaktive 3D-sider, som README viser.
+
+### el-plan (byg-bim, byg-electrical, byg-review)
+El-plan efter gennemgang af elplanen.dk:
+
+- **Ny kommando `bim.py elplan`.** Den laver en punktliste pr. rum og kontrollerer antallet af stikkontakter mod § 57 i BEK 1082/2016:
+  - stk. 1: 1 pr. påbegyndt 4 m², højst 10
+  - køkken: mindst 3 på mindst 2 kredse
+  - bad/wc: mindst 1
+  - garage, carport, loft og depot er undtaget
+
+  Kommandoen udleder også afbrydertypen pr. lysgruppe (1-polet, korrespondance, kryds eller krone) og finder lamper uden gruppe.
+- **BIM-spec.** Nye el-arter: `kraftstik`, `data` og `pir`. Nye felter: `lysgruppe`, `kreds` og `dimmer`, som gemmes i `Byg_El`. `geometri` kan nu udelades for el-punkter.
+- **El-videnbasen** har fået:
+  - behov pr. rumtype
+  - logikken for afbrydertype
+  - typiske placeringer (markeret T, ikke krav)
+  - tjeklisten "El-plan rum for rum"
+  - § 57, stk. 5 (verificeret)
+- **El-fejlkataloget** (kontrol-el@1.3) har fået typiske misforståelser i el-planlægningsværktøjer, fx forældet zone 3, stik i område 2 og montagehøjder fremstillet som krav.
+
+### electrical-calc-tool (byg-bim, byg-electrical, byg-review)
+El får et regneværktøj og et tavlediagram, og eksempelhuset får en komplet el-installation. El: nyt `scripts/el.py` (kun standardbiblioteket) regner strømværdi Iz med korrektion for forlægning, samlet fremføring og kabel i isolering, spændingsfald, Ik,min og Ik,max mod Fællesregulativet 2026 og laver tavlekontrol med et fast gruppeskema og fund (`el.py panel`). Det gælder bl.a. RCD-kæde og -typer, mindst to 30 mA-RCD'er, selektivitet, faselast og reserve. Nyt `scripts/diagram.py` tegner et enstregsdiagram (SVG) af tavlen, og `references/schematic.md` beskriver det med et eksempel i `assets/`. Videnbasen har V-mærkede regler om badeværelsesområder efter 701:2024, RCD-typer (elbil, frekvensomformer, type B i kæde), TT/TN og SPD som betinget krav. Dimensioneringsgrundlaget ligger samlet i `references/calc-tools.md`, som kun læses ved dimensionering. electrician har Bash, låst til `el.py`. BIM: eksempelhuset har kabelskab, stikledning, hovedtavle med måler, SPD og tre RCD'er samt ti grupper som IfcDistributionCircuit med kabellængder. Nye felter i spec'en (`systemer.under`, `installationer.del_af`, art kabel og belysning), og `bim.py panel` eksporterer tavlen i el.py's tavleformat. Review: calc_guard låser også electrical-review til `el.py`, og rubrikken `kontrol-el@1.3` har et nyt punkt 16 om dimensionering og gruppeskema samt verificerede punkter om RCD-typer og badeværelse.
+
+Rettelser i `el.py`: `ikmin` har `--feeder-insulation pvc/xlpe` (stikledningen blev altid regnet som XLPE 90 °C), og næste tværsnit regnes nu med samme stikledningstemperatur og isolering. `el.py panel` giver advarsel ved sikring over 13 A foran 10/13 A-stikkontakter og over 16 A foran 16 A (BEK 1082 § 45, nyt felt `stikkontakt_a`, 13 A antages ved `stik`). `calc-tools.md` dokumenterer, at modstanden regnes efter IEC 60228 pr. tværsnit (ρ70 ≈ 0,0217–0,0222), lidt under håndregningskonventionen 0,0225.
+
+electrician-prompten viser den eneste tilladte Bash-kaldform for `el.py` (én kommando, uden `cd`, `;`, `&&`, `|` og flag før stien) og siger, at filer læses med Read og Grep. Agenten forsøgte før at læse videnbasen med sammensatte Bash-kommandoer, som vagten afviste (F-035: 0 afviste kald, −11 % pris pr. bestået ved uændret kvalitet på udvikling og holdout). Den samlede gren med regneværktøj og el-plan består 32 af 40 gamle opgaver mod mains 33 af 40, inden for støj, ved samme pris pr. bestået (F-038).
+
+### english-code (byg, byg-architecture, byg-bim, byg-carpentry, byg-data, byg-electrical, byg-landscape, byg-masonry, byg-painting, byg-plumbing, byg-review, byg-structural, byg-team, byg-ventilation)
+Koden er oversat til engelsk: Python-moduler, funktioner, variabler, kommentarer og docstrings har engelske navne (fx `review_gate.py`, `bimlib/decode.py`, `femlib/shells.py`). CLI-kommandoer, flag og valgmuligheder er også engelske – fx `bim.py decode check`, `bim.py check … --draw`, `bim.py merge … --dry-run`, `fem.py calc … --no-files`, `fem.py result`, `statik.py beam --span …` og `bim.py draw … all --out …`. De gamle danske kommandonavne virker ikke længere. Resten af produktet er uændret dansk – hjælpetekster og al tekst til brugere og agenter, YAML/JSON-nøgler, og værdier i gemte data (domme, hændelser) er de samme som før.
+
+Også navne er nu engelske: filnavne, plugins, agenter, skills, fag-id'er og markører. Plugins: byg-kontrol→byg-review, byg-anlaeg→byg-landscape, byg-arkitekt→byg-architecture, byg-el→byg-electrical, byg-maler→byg-painting, byg-murer→byg-masonry, byg-statik→byg-structural, byg-toemrer→byg-carpentry, byg-vvs→byg-plumbing. Agenter fx projektleder→project-manager (`claude --agent byg:project-manager`), statiker→structural-engineer, vvs-mester→plumber og `<fag>-kontrol`→`<trade>-review`; skills fx kvalitetskontrol→quality-review, tegningsimport→drawing-import, koordiner→coordinate og `<fag>-viden`→`<trade>-knowledge`. Fag-id'er: vvs→plumbing, el→electrical, murer→masonry, maler→painting, toemrer→carpentry, statik→structural, arkitekt→architecture, anlaeg→landscape, projekt→project. Sagsmappen hedder nu `byg-cases/` (før `byg-sager/`) med engelske filnavne: projektgrundlag.md→project-basis.md, beslutningslog.md→decision-log.md, fagnotater/→trade-notes/, forslag/→proposals/, kvalitet/kontrollog.md→quality/review-log.md, bilag/→attachments/, ejendomme/→properties/, erfaringer.md→lessons-learned.md, tilstand.json→state.json m.fl.; videnbanken hedder knowledge-bank/ (sager.md→cases.md). Markører i prompts: LEVERANCE:→DELIVERABLE:, FASE:→PHASE:, KONTROLNIVEAU: let|fuld→REVIEW-LEVEL: light|full, DESIGNGRUNDLAG:→DESIGN-BASIS:, GENFORSØG→RETRY, `<!-- GENERERET`→`<!-- GENERATED`, og godkendelsen "Godkend G2 <sag-id>" hedder nu "Approve G2 <case-id>". I repoet: eksamen/→exam/, faelles/→shared/, skabelon/→template/, versionsnoter/→release-notes/, ARKITEKTUR.md→ARCHITECTURE.md, og udgivelsesgrene hedder `release/<version>`.
+
+Det kræver handling: afinstallér de gamle plugins og installér dem igen under de nye navne (fx `byg-plumbing` i stedet for `byg-vvs`). Eksisterende sagsmapper og videnbanker skal omdøbes til de nye mappe- og filnavne – der er ingen danske aliaser, så hooks og agenter genkender ikke de gamle navne. Regnemiljøet til statik flytter til `~/.local/share/byg-structural` og installeres igen automatisk ved første kørsel.
+
+### glb-contrast (byg-bim)
+BIM: `bim.py export` skriver nu farverne korrekt til glTF (IFC-farver er sRGB, glTF lineære), så tegl, træ og beton ikke længere ser udvaskede og pastelagtige ud i 3D-visningen. Materialerne får navn efter IFC-stilen, rør og kanaler i systemfarver lyser svagt, så de tynde rør kan ses, og standarddækkevnen for `--transparent` er sænket fra 0,25 til 0,15, så det indvendige står tydeligere. 3D-demoen har tættere kamera, retningsbestemt lys og kraftigere skygger.
+
+### no-diy-assessment (byg, byg-architecture, byg-bim, byg-carpentry, byg-electrical, byg-landscape, byg-masonry, byg-painting, byg-plumbing, byg-review, byg-structural, byg-ventilation)
+Agenterne tager ikke længere stilling til, om brugeren selv må udføre arbejdet, eller hvem der må (autorisation, gør-det-selv-grænser), fordi pluginet hverken kender brugerens faglige baggrund eller land. De beskriver løsning og udførelse fuldt ud uden forbehold og svarer kun på spørgsmålet, når brugeren spørger direkte. Kontrollen giver ikke længere fund for manglende autorisationsforbehold, men et uopfordret forbehold er et mindre fund. En generel ansvarsfraskrivelse står i README. Sikkerhedsadvarsler og projektets egne krav (byggetilladelse, statisk dokumentation, screening) er uændrede.
+
+### wind-braces (byg-bim)
+BIM: nyt felt `vindbaand` under `spaer` på tage (true eller `{b, t}`, standard 100 × 25). Det sætter to vindbånd (IfcMember BRACE) under spærene i hver skrå tagflade, i 45° mellem murrem og kip fra hver gavl, inden for omridset og uden om ovenlys og skorsten. Eksempelhuset og 3D-demoen viser nu vindbåndene i tagkonstruktionen.
+
 ## 1.0.0 – 2026-10-28
 
 Første stabile udgivelse af Engineer Any House-marketplacet (MIT-licens). Marketplacet går fra 0.16.1 til 1.0.0; de enkelte plugins følger deres egne versionsnoter.
