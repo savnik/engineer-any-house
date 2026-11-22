@@ -5,6 +5,7 @@ Fra hooks/hooks.json:  python3 review_gate.py pretool | protect | subagentstop |
                        (hook-input på stdin)
 Manuelt:               python3 review_gate.py status
                        python3 review_gate.py reset <leverance-id>
+                       python3 review_gate.py skip <leverance-id> --grund "<tekst>"
                        python3 review_gate.py merge <sagsmappe>/proposals/<fag>-<nr>__<mål>.md [--dry-run] [--force]
                        (uden CLAUDE_PLUGIN_DATA findes pluginets datamappe under ~/.claude/plugins/data/)
 
@@ -33,6 +34,11 @@ Regler
   "stikproeve.aldrig_fag") udtages deterministisk ud fra leverance-ID'et med andelen "stikproeve.andel". Udtaget →
   normal kontrol. Ikke udtaget → status "ikke_udtaget" ved aflevering: Stop blokerer ikke, og et kontrolkald
   afvises med besked om at markere svaret som ikke kvalitetskontrolleret.
+- Kontrol udeladt (bygherrens regel om hurtige spørgsmål): et fagkald med "REVIEW-LEVEL: none" (resten af linjen
+  er grunden) eller "review_gate.py skip <id> --grund ..." efter afleveringen giver status "udeladt": Stop blokerer
+  ikke (én besked), forslag flettes ikke, notatet beskyttes ikke, og et senere kontrolkald på samme ID er forsøg 1.
+  Afvises for "udeladt.aldrig_fag" (el, statik, bim), PHASE > "udeladt.maks_fase" (2) og leverancer med forslag i
+  proposals/ (de falder tilbage til "afventer_kontrol"). Registreres i quality/<id>__udeladt.json og case-git.
 - Værktøjskontrol (trade-registry "vaerktoejskontrol", i dag bim): et fagkald med "REVIEW-LEVEL: tool" godkendes
   uden kontrolagent, når hjælpeagentens sammenligning ender med "resultat": "ok" og "tjek": {"fejl": 0,
   "sporbarhed": 0} (bim.py check). Ellers kaldes kontrolagenten som normalt. Godkendelsen gemmes som en dom
@@ -99,6 +105,11 @@ MAX_COMPARISONS = int(REG.get("maks_sammenligninger", 3))
 SAMPLE = REG.get("stikproeve") or {}
 SAMPLE_SHARE = float(SAMPLE.get("andel", 1.0))
 SAMPLE_NEVER = set(SAMPLE.get("aldrig_fag") or [])
+SKIP = REG.get("udeladt") or {}
+SKIP_NEVER = set(SKIP.get("aldrig_fag") or []) | SAMPLE_NEVER
+SKIP_MAX_PHASE = int(SKIP.get("maks_fase", 2))
+SKIP_DEFAULT_REASON = "hurtigt spørgsmål"
+SKIP_MARK = "Ikke kvalitetskontrolleret (udeladt efter bygherrens ønske – hurtigt spørgsmål)"
 RESULT_RE = re.compile(r'"resultat"\s*:\s*"(ok|ret)"', re.IGNORECASE)
 IMPROVEMENT_RE = re.compile(r"forbedring\s+implementeret\W{0,6}ja\b", re.IGNORECASE)
 WHY_RE = re.compile(r"^\s*\d+\.\s.*\bhvorfor\b", re.IGNORECASE | re.MULTILINE)
@@ -114,6 +125,8 @@ LEVEL_FULL_RE = re.compile(r"REVIEW-LEVEL\s*:\s*full", re.IGNORECASE)
 LEVEL_TOOL_RE = re.compile(r"REVIEW-LEVEL\s*:\s*tool", re.IGNORECASE)
 CHECK_RE = re.compile(r'"tjek"\s*:\s*(\{[^{}]*\})')
 LEVEL_SAMPLE_RE = re.compile(r"REVIEW-LEVEL\s*:\s*sample", re.IGNORECASE)
+# "REVIEW-LEVEL: none" (or "udeladt"); the rest of the line is the reason, e.g. "REVIEW-LEVEL: none (hurtigt spørgsmål)"
+LEVEL_NONE_RE = re.compile(r"REVIEW-LEVEL\s*:\s*(?:none|udeladt)\b([^\n]*)", re.IGNORECASE)
 APPROVE_G2_RE = re.compile(r"\bapprove(?:s|d)?\s+G2\s+([A-Za-z0-9ÆØÅæøå._-]+)", re.IGNORECASE)
 NEW_BASIS = {"regression", "aendret_tekst", "kritisk_sikkerhed"}
 BLOCKING = {"kritisk", "væsentlig"}
@@ -237,6 +250,49 @@ def sampled(deliv: str) -> bool:
     return int(hashlib.sha256(deliv.encode("utf-8")).hexdigest(), 16) % 1000 < round(SAMPLE_SHARE * 1000)
 
 
+def skip_reason_text(m) -> str:
+    text = (m.group(1) if m else "").strip(" \t·:–-()")
+    return text or SKIP_DEFAULT_REASON
+
+
+def skip_refusal(trade: str, phase, case_dir=None, deliv: str = "") -> str | None:
+    """Why the review may not be left out (status 'udeladt'), or None. Same rules for the prompt marker and the CLI."""
+    if trade in SKIP_NEVER:
+        return (f"Kontrol kan ikke udelades for {trade}: el, statik og BIM kontrolleres altid. Kald kontrolagenten "
+                "(REVIEW-LEVEL: light) – se skill 'quality-review', afsnit 2b.")
+    if phase is not None and int(phase) > SKIP_MAX_PHASE:
+        return (f"Kontrol kan kun udelades i fase {SKIP_MAX_PHASE} eller tidligere (eller uden PHASE). I fase {phase} går "
+                "svaret ind i godkendt projektmateriale og skal kontrolleres.")
+    props = case_merge.deliverable_proposals(case_dir, deliv) if case_dir and deliv else []
+    if props:
+        return (f"Kontrol kan ikke udelades: leverancen har forslag til fælles sagsfiler ({', '.join(p.name for p in props)}). "
+                "Ændringer i hold points, kontrolplan, grænseflader, risici eller ejendomskort skal gennem kontrol.")
+    return None
+
+
+def mark_skipped(e: dict, reason: str, via: str) -> None:
+    e.update(status="udeladt", opdateret=now(), udeladt={"grund": reason, "via": via, "tid": now()})
+    e.pop("kontrolniveau", None)
+    e.pop("udeladt_afvist", None)
+
+
+def write_skip_record(d: pathlib.Path, case_dir, deliv: str, e: dict):
+    """quality/<id>__udeladt.json: the case's own record that the review was left out (committed with case git)."""
+    if not case_dir:
+        return None
+    try:
+        qdir = case_dir / "quality"
+        qdir.mkdir(exist_ok=True)
+        f = qdir / f"{safe(deliv)}__udeladt.json"
+        f.write_text(json.dumps({"leverance_id": deliv, "fag": e.get("fag"), "forsoeg": e.get("forsoeg"), "dom": "udeladt",
+                                 "markering": SKIP_MARK, **(e.get("udeladt") or {})}, ensure_ascii=False, indent=2),
+                     encoding="utf-8")
+        return f
+    except Exception:
+        log(d, haendelse="udeladt_fil_fejl", leverance=deliv, fejl=traceback.format_exc()[-400:])
+        return None
+
+
 def round_no(e: dict) -> int:
     return int(e.get("runde") or 1)
 
@@ -323,6 +379,12 @@ def next_step(deliv: str, e: dict) -> str:
         return (f"Ikke udtaget til stikprøvekontrol: {deliv} er afleveret uden kontrol. Svar brugeren, og skriv tydeligt "
                 "'Ikke kvalitetskontrolleret (stikprøve, ikke udtaget)'. Skal svaret alligevel kontrolleres, eller "
                 f"ændres det, så brug et nyt leverance-ID (fx '{deliv}-r2') med REVIEW-LEVEL: light.")
+    if st == "udeladt":
+        reason = (e.get("udeladt") or {}).get("grund") or SKIP_DEFAULT_REASON
+        return (f"Kontrol udeladt ({reason}): {deliv} er afleveret uden kontrol. Svar brugeren, og skriv tydeligt "
+                f"'{SKIP_MARK}'. Skriv linjen i quality/review-log.md med dom 'udeladt'. Skal svaret ind i godkendt "
+                f"projektmateriale, så kald {e.get('kontrol_agent')} med 'DELIVERABLE: {deliv}' (forsøg 1). Ændres svaret, "
+                f"så brug et nyt leverance-ID (fx '{deliv}-r2').")
     return ""
 
 
@@ -361,10 +423,15 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 reason = g2_missing(s, case_of(deliv), [])
                 if reason:
                     return deny_call(reason)
+            none_m = LEVEL_NONE_RE.search(str(ti.get("prompt") or ""))
             if e:
                 if e.get("fag") != trade:
                     return deny_call(f"Leverance-ID {deliv} tilhører faget '{e.get('fag')}'. Brug et nyt ID til {trade}.")
                 status = e.get("status")
+                if none_m and not (status == "fagkald_igang" and e.get("kontrolniveau") == "udeladt"):
+                    return deny_call(f"REVIEW-LEVEL: none gælder kun det første fagkald på et nyt leverance-ID. {deliv} er "
+                                      f"allerede i kontrolloopet (status '{status}'). Brug et nyt leverance-ID til et hurtigt "
+                                      "spørgsmål.")
                 if status == "fagkald_igang":
                     e.update(session_id=sid, opdateret=now())
                     save(d, s)
@@ -386,7 +453,7 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                     save(d, s)
                     log(d, haendelse="rettelse_efter_sammenligning", leverance=deliv, rettelse=e["rettelser"], agent=st)
                     return
-                if status in ("godkendt", "ikke_udtaget"):
+                if status in ("godkendt", "ikke_udtaget", "udeladt"):
                     return deny_call(next_step(deliv, e))
                 if status in ("stoppet", "rca_udfoert"):
                     reason = new_round_blocked(inp, e, deliv)
@@ -413,18 +480,32 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                 if tool_level and not REG["fag"].get(trade, {}).get("vaerktoejskontrol"):
                     return deny_call(f"REVIEW-LEVEL: tool findes kun for fag med deterministisk kontrol og "
                                       f"sammenligning (bim). Brug light eller full for {trade}.")
+                if none_m:
+                    if sample or tool_level:
+                        return deny_call("Fagkaldet har både REVIEW-LEVEL: none og et andet kontrolniveau. Vælg ét.")
+                    reason = skip_refusal(trade, fm.group(1) if fm else None)
+                    if reason:
+                        return deny_call(reason)
                 e = delivs[deliv] = {"fag": trade, "type": "fag", "forsoeg": 1, "fag_agent": st,
                               "kontrol_agent": review_name(trade, pre), "oprettet": now(), "domme": []}
                 if sample:
                     e["stikproeve"] = sample
                 if tool_level:
                     e["kontrolniveau"] = "vaerktoej"
+                if none_m:
+                    e.update(kontrolniveau="udeladt", udeladt_grund=skip_reason_text(none_m))
+            if fm:
+                e["fase"] = int(fm.group(1))
             e.update(status="fagkald_igang", session_id=sid, opdateret=now())
             save(d, s)
             log(d, haendelse="fagkald", leverance=deliv, runde=round_no(e), forsoeg=e["forsoeg"], agent=st)
             try:
                 case_dir = find_case_dir(inp, e, deliv)
                 if case_dir:
+                    if not e.get("sagsmappe"):
+                        # remembered so manual commands (skip) find the case regardless of cwd
+                        e["sagsmappe"] = str(case_dir.resolve())
+                        save(d, s)
                     case_merge.save_base_for_deliverable(case_dir, deliv)
             except Exception:
                 log(d, haendelse="basis_fejl", leverance=deliv, fejl=traceback.format_exc()[-400:])
@@ -486,9 +567,15 @@ def pretool(inp: dict, d: pathlib.Path) -> None:
                     e["forsoeg"] = int(e.get("forsoeg", 0)) + 1
             elif e.get("status") == "ikke_udtaget":
                 return deny_call(next_step(deliv, e))
-            elif e.get("status") not in ("fagkald_igang", "afventer_kontrol", "under_kontrol", "sammenlignet"):
+            elif e.get("status") not in ("fagkald_igang", "afventer_kontrol", "under_kontrol", "sammenlignet", "udeladt"):
                 return deny_call(f"Leverance {deliv} har status '{e.get('status')}' – der er ingen ny fagversion at "
                                   f"kontrollere. {next_step(deliv, e)}")
+            if e.get("status") == "udeladt" or e.get("kontrolniveau") == "udeladt":
+                # Review requested after all (e.g. before the answer goes into approved project material): normal
+                # loop from attempt 1 of the current round; the record of the skip is kept in "udeladt".
+                e.pop("kontrolniveau", None)
+                e.pop("udeladt_grund", None)
+                log(d, haendelse="kontrol_efter_udeladt", leverance=deliv, forsoeg=e.get("forsoeg"))
         pm = PATH_RE.search(str(ti.get("prompt") or ""))
         if pm and e.get("type") != "ekstern":
             path = pathlib.Path(pm.group(1)).expanduser()
@@ -675,13 +762,31 @@ def trade_handoff(inp: dict, d: pathlib.Path, trade: str, agent_name: str) -> No
             if e and e.get("fag") == trade and e.get("status") == "fagkald_igang":
                 new_status = "ikke_udtaget" if e.get("stikproeve") == "ikke_udtaget" else "afventer_kontrol"
                 e.update(status=new_status, opdateret=now())
+                case_dir = find_case_dir(inp, e, deliv)
+                what = f"runde {round_no(e)}, forsøg {e.get('forsoeg')}"
+                skipped = None
+                if e.get("kontrolniveau") == "udeladt":
+                    refusal = skip_refusal(trade, e.get("fase"), case_dir, deliv)
+                    if refusal:
+                        # The trade wrote proposals to shared case files: the review can no longer be left out
+                        e.pop("kontrolniveau", None)
+                        e["udeladt_afvist"] = refusal
+                        log(d, haendelse="udeladt_afvist", leverance=deliv, grund=refusal)
+                    else:
+                        mark_skipped(e, e.pop("udeladt_grund", None) or SKIP_DEFAULT_REASON, "fagkald")
+                        skipped = e
+                        what += f", kontrol udeladt – {e['udeladt']['grund']}"
                 save(d, s)
                 log(d, haendelse="fagaflevering", leverance=deliv, forsoeg=e.get("forsoeg"), agent=agent_name,
-                    stikproeve=e.get("stikproeve"))
-                handed_off.append((deliv, find_case_dir(inp, e, deliv), f"runde {round_no(e)}, forsøg {e.get('forsoeg')}"))
+                    stikproeve=e.get("stikproeve"), status=e.get("status"))
+                if skipped:
+                    write_skip_record(d, case_dir, deliv, e)
+                handed_off.append((deliv, case_dir, what, bool(skipped)))
     # git outside the state lock, so parallel hooks do not wait for it
-    for deliv, case_dir, what in handed_off:
-        sha = git_commit(d, case_dir, f"{deliv}: fagaflevering ({what})", git_patterns(case_dir.name, trade)) if case_dir else None
+    for deliv, case_dir, what, skipped in handed_off:
+        paths = (git_patterns(case_dir.name, trade) + ([f"{case_dir.name}/quality/{safe(deliv)}__udeladt.json"] if skipped else [])
+                 if case_dir else None)
+        sha = git_commit(d, case_dir, f"{deliv}: fagaflevering ({what})", paths) if case_dir else None
         if not sha:
             continue
         with Lock(d):
@@ -1105,7 +1210,7 @@ def open_deliverables(inp: dict, s: dict) -> list:
     sid = str(inp.get("session_id") or "")
     lines = []
     for deliv, e in sorted(s["leverancer"].items()):
-        if not sid or e.get("session_id") != sid or e.get("status") in ("godkendt", "vurderet_ekstern", "rca_udfoert", "ikke_udtaget"):
+        if not sid or e.get("session_id") != sid or e.get("status") in ("godkendt", "vurderet_ekstern", "rca_udfoert", "ikke_udtaget", "udeladt"):
             continue
         step = next_step(deliv, e)
         lines.append(f"- {deliv}: {e.get('status')} (runde {round_no(e)}/{MAX_ROUNDS}, forsøg {e.get('forsoeg')}/{MAX_ATTEMPTS})"
@@ -1243,7 +1348,7 @@ def stop(inp: dict, d: pathlib.Path) -> None:
     if inp.get("stop_hook_active"):
         return
     sid = str(inp.get("session_id") or "")
-    items, changed = [], False
+    items, notices, changed = [], [], False
     with Lock(d):
         s = load(d)
         for deliv, e in s["leverancer"].items():
@@ -1267,8 +1372,17 @@ def stop(inp: dict, d: pathlib.Path) -> None:
                     items.append(f"{deliv}: fagkaldet har ikke afleveret i over {IN_PROGRESS_MAX_SEC // 60} min. Er agenten "
                                    f"afbrudt, så kald {e.get('fag_agent')} igen med 'DELIVERABLE: {deliv}' (tæller ikke som nyt forsøg).")
                 continue
+            if status == "udeladt":
+                # Not blocking: shown once, so the answer is marked and the review log gets its line
+                if not e.get("udeladt_vist"):
+                    e["udeladt_vist"] = True
+                    changed = True
+                    notices.append(f"{deliv}: kontrol udeladt ({(e.get('udeladt') or {}).get('grund') or SKIP_DEFAULT_REASON}) – "
+                                   f"markér svaret '{SKIP_MARK}', og skriv linjen i quality/review-log.md.")
+                continue
             if status == "afventer_kontrol":
-                items.append(f"{deliv}: afventer kontrol → kald {e.get('kontrol_agent')} med 'DELIVERABLE: {deliv}'.")
+                why = (f" Kontrollen kunne ikke udelades: {e['udeladt_afvist']}" if e.get("udeladt_afvist") else "")
+                items.append(f"{deliv}: afventer kontrol → kald {e.get('kontrol_agent')} med 'DELIVERABLE: {deliv}'.{why}")
             elif status == "under_sammenligning":
                 items.append(f"{deliv}: sammenligningens resultat mangler → kald {e.get('hjaelper_agent')} igen.")
             elif status == "sammenlignet":
@@ -1291,7 +1405,11 @@ def stop(inp: dict, d: pathlib.Path) -> None:
         if changed:
             save(d, s)
     if items:
-        block("Kvalitetskontrollen er ikke afsluttet for denne sessions leverancer:\n- " + "\n- ".join(items))
+        block("Kvalitetskontrollen er ikke afsluttet for denne sessions leverancer:\n- " + "\n- ".join(items)
+              + ("\nUden kontrol (blokerer ikke):\n- " + "\n- ".join(notices) if notices else ""))
+    elif notices:
+        print(json.dumps({"systemMessage": "byg-review – uden kvalitetskontrol:\n- " + "\n- ".join(notices)},
+                         ensure_ascii=False))
 
 
 # ---------- manual commands ----------
@@ -1303,8 +1421,10 @@ def manual(cmd: str, args: list) -> int:
             if not s["leverancer"]:
                 print("Ingen registrerede leverancer.")
             for deliv, e in sorted(s["leverancer"].items()):
+                skip = e.get("udeladt") if e.get("status") == "udeladt" else None
                 print(f"{deliv:45} {e.get('fag', ''):12} {e.get('status', ''):18} "
-                      f"runde {round_no(e)}/{MAX_ROUNDS} forsøg {e.get('forsoeg')}/{MAX_ATTEMPTS}")
+                      f"runde {round_no(e)}/{MAX_ROUNDS} forsøg {e.get('forsoeg')}/{MAX_ATTEMPTS}"
+                      + (f"  (kontrol udeladt: {skip.get('grund')}, {skip.get('tid')})" if skip else ""))
             for case_id, g in sorted((s.get("gates") or {}).items()):
                 if g.get("G2"):
                     print(f"GATE G2 {case_id}: godkendt af bruger {g['G2'].get('tid')} ({len(g['G2'].get('design') or [])} fagleverancer)")
@@ -1317,6 +1437,46 @@ def manual(cmd: str, args: list) -> int:
             return 0
     print(__doc__)
     return 1
+
+
+def manual_skip(args: list) -> int:
+    """skip <deliverable-id> --grund "<text>": a handed-off trade deliverable is closed without review (status 'udeladt')."""
+    deliv = next((a for a in args if not a.startswith("--")), "")
+    reason = ""
+    if "--grund" in args:
+        i = args.index("--grund")
+        reason = args[i + 1].strip() if i + 1 < len(args) else ""
+    if not deliv or not reason:
+        print('Brug: review_gate.py skip <leverance-id> --grund "<hvorfor kontrollen udelades>"')
+        return 1
+    d = data_dir()
+    with Lock(d):
+        s = load(d)
+        e = s["leverancer"].get(deliv)
+        if not e:
+            print(f"Ukendt leverance-ID: {deliv}")
+            return 1
+        if e.get("type") != "fag":
+            print(f"{deliv} er en {e.get('type')}-leverance. Kun fagleverancer kan afsluttes uden kontrol.")
+            return 1
+        if e.get("status") not in ("afventer_kontrol", "sammenlignet"):
+            print(f"{deliv} har status '{e.get('status')}'. Kun en afleveret fagversion, der ikke er under kontrol "
+                  "(afventer_kontrol eller sammenlignet), kan afsluttes uden kontrol.")
+            return 1
+        case_dir = find_case_dir({}, e, deliv)
+        refusal = skip_refusal(e.get("fag"), e.get("fase"), case_dir, deliv)
+        if refusal:
+            print(refusal)
+            return 1
+        mark_skipped(e, reason, "skip")
+        save(d, s)
+        log(d, haendelse="udeladt", leverance=deliv, grund=reason, via="skip")
+    f = write_skip_record(d, case_dir, deliv, e)
+    if f:
+        git_commit(d, case_dir, f"{deliv}: kontrol udeladt – {reason}", [f"{case_dir.name}/quality/{f.name}"])
+    print(f"{deliv}: kontrol udeladt ({reason}). Markér svaret '{SKIP_MARK}', og skriv linjen i quality/review-log.md. "
+          f"Senere kontrol: kald {e.get('kontrol_agent')} med 'DELIVERABLE: {deliv}' (forsøg 1).")
+    return 0
 
 
 def manual_merge(f: pathlib.Path, args: list) -> int:
@@ -1338,6 +1498,8 @@ def main() -> int:
     cmd = sys.argv[1] if len(sys.argv) > 1 else ""
     if cmd == "merge" and len(sys.argv) > 2:
         return manual_merge(pathlib.Path(sys.argv[2]).expanduser().resolve(), sys.argv[3:])
+    if cmd == "skip":
+        return manual_skip(sys.argv[2:])
     if cmd in ("status", "reset", "help"):
         return manual(cmd, sys.argv[2:])
     try:

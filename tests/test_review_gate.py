@@ -582,8 +582,134 @@ def main() -> int:
         expect("udtaget: kontrolkald tilladt", call_raw("pretool", {**U, "tool_input": {
             "subagent_type": MKON, "prompt": f"DELIVERABLE: {LU}"}}, env), "tilladt")
 
+        skip_section(tmp, cwd, case_dir, env)
+
     print(f"\n{'ALLE TESTS BESTÅET' if not ERRORS else f'{len(ERRORS)} FEJL'}")
     return 1 if ERRORS else 0
+
+
+def check(name, ok, detail=""):
+    print(("OK   " if ok else "FEJL ") + name + ("" if ok else f"  → {detail}"))
+    if not ok:
+        ERRORS.append(name)
+
+
+def skip_section(tmp, cwd, case_dir, env):
+    """Review left out ('udeladt'): REVIEW-LEVEL: none in the trade call, or 'skip' after hand-off."""
+    state_file = pathlib.Path(tmp) / "data" / "review" / "state.json"
+
+    def status(deliv):
+        return json.loads(state_file.read_text(encoding="utf-8"))["leverancer"].get(deliv, {})
+
+    def cli(*args):
+        return subprocess.run([sys.executable, str(GATE), *args], text=True, capture_output=True, env=env, timeout=30)
+
+    case = case_dir.name
+    VVS, VKON = "byg-plumbing:plumber", "byg-review:plumbing-review"
+    EL = "byg-electrical:electrician"
+    X = {"session_id": "s-udeladt", "cwd": str(cwd)}
+
+    # Refusals: electrical/structural/bim, PHASE > 2, mixed levels
+    expect("udeladt afvises for el", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": EL, "prompt": f"DELIVERABLE: {case}/electrical/90\nREVIEW-LEVEL: none"}}, env), "afvist")
+    expect("udeladt afvises for statik", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": "byg-structural:structural-engineer", "prompt": f"DELIVERABLE: {case}/structural/90\nREVIEW-LEVEL: none"}}, env), "afvist")
+    expect("udeladt afvises for bim", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": "byg-bim:bim-modeller", "prompt": f"DELIVERABLE: {case}/bim/90\nREVIEW-LEVEL: none"}}, env), "afvist")
+    expect("udeladt afvises sammen med sample", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": VVS, "prompt": f"DELIVERABLE: {case}/plumbing/91\nREVIEW-LEVEL: none\nREVIEW-LEVEL: sample"}}, env), "afvist")
+
+    # The trade call with REVIEW-LEVEL: none in phase 2 → 'udeladt' at hand-off; Stop does not block
+    L1 = f"{case}/plumbing/92"
+    expect("udeladt: fagkald med REVIEW-LEVEL: none tilladt i fase 2", call("pretool", {**X, "tool_input": {
+        "subagent_type": VVS, "prompt": f"DELIVERABLE: {L1}\nPHASE: 2 · REVIEW-LEVEL: none (hurtigt spørgsmål: fitting)"}}, env), "tilladt")
+    e = status(L1)
+    check("udeladt: status 'udeladt' efter aflevering med grund",
+          e.get("status") == "udeladt" and (e.get("udeladt") or {}).get("grund") == "hurtigt spørgsmål: fitting", e)
+    record = case_dir / "quality" / f"{L1.replace('/', '__')}__udeladt.json"
+    check("udeladt: registreret i quality/<id>__udeladt.json", record.is_file())
+    r = call_raw("stop", X, env)
+    check("udeladt: stop blokerer ikke, men viser leverancen én gang",
+          r is not None and "decision" not in r and L1 in r.get("systemMessage", ""), r)
+    expect("udeladt: anden stop er stille", call_raw("stop", X, env), "tilladt")
+    out = cli("status").stdout
+    check("udeladt: status viser grunden", "kontrol udeladt: hurtigt spørgsmål: fitting" in out, out[-300:])
+    expect("udeladt: ny fagversion kræver nyt ID", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": VVS, "prompt": f"DELIVERABLE: {L1}"}}, env), "afvist")
+    note = case_dir / "trade-notes" / "plumbing-92.md"
+    note.parent.mkdir(exist_ok=True)
+    note.write_text("# Notat\n", encoding="utf-8")
+    expect("udeladt: notatet er ikke beskyttet", call_raw("protect", {**X, "agent_type": VVS, "tool_input": {
+        "file_path": str(note)}}, env), "tilladt")
+
+    # Review later on the same ID works as attempt 1
+    expect("udeladt: senere kontrolkald på samme ID tilladt", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": VKON, "prompt": f"DELIVERABLE: {L1}\nDeliverable: {note}"}}, env), "tilladt")
+    e = status(L1)
+    check("udeladt: senere kontrol er forsøg 1", e.get("status") == "under_kontrol" and e.get("forsoeg") == 1, e)
+    call_raw("subagentstop", {**X, "agent_type": VKON, "last_assistant_message": verdict(L1, "godkendt", [], str(case_dir))}, env)
+    check("udeladt: senere kontrol kan godkende", status(L1).get("status") == "godkendt", status(L1))
+
+    # Proposals to shared case files: the skip is refused at hand-off and the deliverable needs review
+    L2 = f"{case}/plumbing/93"
+    expect("udeladt med forslag: fagkald tilladt", call_raw("pretool", {**X, "tool_input": {
+        "subagent_type": VVS, "prompt": f"DELIVERABLE: {L2}\nREVIEW-LEVEL: none"}}, env), "tilladt")
+    (case_dir / "proposals").mkdir(exist_ok=True)
+    (case_dir / "proposals" / "plumbing-93__review-plan.md").write_text("## Hold points\n| HP-VVS-9 | x |\n", encoding="utf-8")
+    call_raw("subagentstop", {**X, "agent_type": VVS,
+                              "agent_transcript_path": transcript(f"DELIVERABLE: {L2}\nREVIEW-LEVEL: none")}, env)
+    e = status(L2)
+    check("udeladt med forslag: falder tilbage til afventer_kontrol", e.get("status") == "afventer_kontrol"
+          and "forslag" in str(e.get("udeladt_afvist")), e)
+    r = call_raw("stop", X, env)
+    check("udeladt med forslag: stop blokerer og forklarer", bool(r) and r.get("decision") == "block"
+          and "kunne ikke udelades" in r.get("reason", ""), r)
+    r = cli("skip", L2, "--grund", "hurtigt spørgsmål")
+    check("skip afviser leverance med forslag", r.returncode == 1 and "forslag" in r.stdout, r.stdout)
+    (case_dir / "proposals" / "plumbing-93__review-plan.md").unlink()
+
+    # skip after hand-off (the 2026-11-21 case: trade call without the marker)
+    S2 = {"session_id": "s-skip", "cwd": str(cwd)}
+    L3 = f"{case}/plumbing/94"
+    call("pretool", {**S2, "tool_input": {"subagent_type": VVS, "prompt": f"DELIVERABLE: {L3}\nPHASE: 1"}}, env)
+    expect("skip: stop blokerer før skip", call_raw("stop", S2, env), "blokeret")
+    r = cli("skip", L3)
+    check("skip uden --grund afvises", r.returncode == 1 and status(L3).get("status") == "afventer_kontrol", r.stdout)
+    r = cli("skip", L3, "--grund", "hurtigt spørgsmål (produktvalg)")
+    e = status(L3)
+    check("skip: afventer_kontrol → udeladt", r.returncode == 0 and e.get("status") == "udeladt"
+          and (e.get("udeladt") or {}).get("via") == "skip", (r.stdout, r.stderr, e))
+    check("skip: registreret i quality/", (case_dir / "quality" / f"{L3.replace('/', '__')}__udeladt.json").is_file())
+    r = call_raw("stop", S2, env)
+    check("skip: stop blokerer ikke bagefter", r is None or "decision" not in r, r)
+    r = cli("skip", L3, "--grund", "igen")
+    check("skip afviser en leverance, der ikke afventer kontrol", r.returncode == 1, r.stdout)
+
+    L4 = f"{case}/electrical/95"
+    call("pretool", {**S2, "tool_input": {"subagent_type": EL, "prompt": f"DELIVERABLE: {L4}"}}, env)
+    r = cli("skip", L4, "--grund", "hurtigt spørgsmål")
+    check("skip afviser el", r.returncode == 1 and status(L4).get("status") == "afventer_kontrol", r.stdout)
+
+    # PHASE 3 is stored on the deliverable and blocks a later skip (G2 opened by the user first)
+    call_raw("prompt", {**S2, "prompt": f"Approve G2 {case}"}, env)
+    L5 = f"{case}/plumbing/96"
+    call("pretool", {**S2, "tool_input": {"subagent_type": VVS, "prompt": f"DELIVERABLE: {L5}\nPHASE: 3"}}, env)
+    r = cli("skip", L5, "--grund", "hurtigt spørgsmål")
+    check("skip afviser fase 3", r.returncode == 1 and "fase" in r.stdout and status(L5).get("status") == "afventer_kontrol",
+          (r.stdout, status(L5)))
+    expect("udeladt afvises i fagkald med PHASE: 3", call_raw("pretool", {**S2, "tool_input": {
+        "subagent_type": VVS, "prompt": f"DELIVERABLE: {case}/plumbing/97\nPHASE: 3 · REVIEW-LEVEL: none"}}, env), "afvist")
+    expect("REVIEW-LEVEL: none afvises på en leverance i kontrolloopet", call_raw("pretool", {**S2, "tool_input": {
+        "subagent_type": VVS, "prompt": f"DELIVERABLE: {L5}\nREVIEW-LEVEL: none"}}, env), "afvist")
+
+    # case git: the skip is in the commit log
+    root = case_dir.parent
+    if (root / ".git").is_dir():
+        logtxt = subprocess.run(["git", "-C", str(root), "log", "--format=%s"], text=True, capture_output=True).stdout
+        check("udeladt logges i case-git", f"{L1}: fagaflevering" in logtxt and "kontrol udeladt" in logtxt
+              and f"{L3}: kontrol udeladt – hurtigt spørgsmål (produktvalg)" in logtxt, logtxt[:600])
+    else:
+        check("case-git findes i testsagen", False, "byg-cases/.git mangler")
 
 
 if __name__ == "__main__":
